@@ -1,0 +1,186 @@
+# =====================
+# Xcode
+# =====================
+
+# User-specific settings
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+
+# Build products
+build/
+DerivedData/
+*.o
+*.d
+*.LinkFileList
+*.hmap
+
+# Xcode project specifics
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Xcode Previews
+*.xcworkspace/xcshareddata/swiftpm/
+!*.xcworkspace/contents.xcworkspacedata
+?.xcworkspace
+!default.xcworkspace
+
+# Archives
+*.xcarchive
+
+# Instruments
+*.trace
+
+# =====================
+# Swift Package Manager
+# =====================
+
+.build/
+.swiftpm/
+*.resolved
+# Uncomment if SPM packages should not be committed:
+# Packages/
+# Package.pins
+
+# =====================
+# CocoaPods
+# =====================
+
+Pods/
+*.xcworkspace
+!*.xcodeproj/*.xcworkspace
+!*.xcodeproj/project.xcworkspace
+
+Podfile.lock
+
+# =====================
+# Carthage
+# =====================
+
+Carthage/Build/
+Carthage/Checkouts/
+
+# =====================
+# fastlane
+# =====================
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+fastlane/README.md
+
+# =====================
+# App Store / TestFlight
+# =====================
+
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# =====================
+# macOS system files
+# =====================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.DocumentRevisions-V100
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# =====================
+# Dependency managers
+# =====================
+
+# Mint (Swift package manager)
+.mint/
+mint.lock
+
+# =====================
+# Sensitive files
+# =====================
+
+# API keys, secrets, config files
+*.env
+*.env.*
+Secrets.swift
+APIKeys.swift
+GoogleService-Info.plist
+Secrets.plist
+Config.xcconfig
+*.p12
+*.mobileprovision
+*.provisionprofile
+
+# =====================
+# Test coverage
+# =====================
+
+*.gcno
+*.gcda
+*.gcov
+
+# =====================
+# Simulator
+# =====================
+
+*.app
+*.appex
+
+# =====================
+# Xcode Logs
+# =====================
+
+*.log
+
+# =====================
+# JetBrains / AppCode
+# =====================
+
+.idea/
+*.iml
+
+# =====================
+# VS Code
+# =====================
+
+.vscode/
+
+# =====================
+# Tuist
+# =====================
+
+graph.json
+Derived/
+
+# =====================
+# Other
+# =====================
+
+*.orig
+*.rej
+*~
+*.swp
+*.bak
