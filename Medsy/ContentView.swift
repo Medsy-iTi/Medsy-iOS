@@ -6,56 +6,46 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+
+    @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
+        NavigationStack {
+            VStack(spacing: 24) {
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+                Text(languageManager.currentLanguage.displayName)
+                    .font(.largeTitle.bold())
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                Text("common.ok".localized)
+                    .foregroundStyle(.secondary)
+
+                Text("common.welcome".localized("Ahmed"))
+                    .foregroundStyle(.secondary)
+
+                Divider()
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        languageManager.toggle()
+                    }
+                } label: {
+                    Label("Switch Language", systemImage: "globe")
+                        .padding()
+                        .background(.blue, in: .capsule)
+                        .foregroundStyle(.white)
+                }
             }
+            .padding()
+            .navigationTitle("common.language".localized)
+            .localizedEnvironment()
         }
+        .id(languageManager.currentLanguage)
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .environment(LanguageManager.shared)
 }
