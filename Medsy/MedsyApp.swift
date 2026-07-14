@@ -10,12 +10,19 @@ import SwiftUI
 @main
 struct MedsyApp: App {
 
-    private let languageManager = LanguageManager.shared
+    private let languageManager: LanguageManager
+
+    init() {
+        AppAssembler.shared.assemble(modules: [
+            CoreAssembly(),
+        ])
+
+        languageManager = AppAssembler.shared.container.resolveUnwrapped(LanguageManager.self)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(languageManager)
+            ContentView().environment(languageManager)
         }
     }
 }
