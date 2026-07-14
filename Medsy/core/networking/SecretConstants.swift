@@ -1,8 +1,8 @@
 //
-//  SeacretConstants.swift
-//  shopify-ecommerce-ios
+//  SecretConstants.swift
+//  Medsy
 //
-//  Created by albaraa alsayed on 16/01/1448 AH.
+//  Created by Ehab Salah on 15/07/2026.
 //
 
 import Foundation
