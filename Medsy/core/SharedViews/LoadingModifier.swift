@@ -1,6 +1,6 @@
 //
 //  LoadingModifier.swift
-//  shopify-ecommerce-ios
+//  Medsy
 //
 //  Created by Ehab Salah on 29/06/2026.
 //
