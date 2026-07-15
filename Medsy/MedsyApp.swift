@@ -28,9 +28,8 @@ struct MedsyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView(
-                onboardingFactory: onboardingFactory,
-                authenticationFactory: authenticationFactory
+            MainTabBarView(
+            
             )
                 .localizedEnvironment()
                 .environment(languageManager)
