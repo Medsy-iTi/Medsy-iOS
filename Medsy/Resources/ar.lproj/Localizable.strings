@@ -60,6 +60,8 @@
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
 
+
+// Home Status Keys
 "home.status.home" = "الرئيسية";
 "home.status.searching" = "البحث جارٍ";
 "home.status.firstOffer" = "أول عرض";

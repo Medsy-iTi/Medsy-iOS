@@ -61,6 +61,7 @@
 "home.category.dailyEssentials" = "Daily Essentials";
 
 
+// Home Status Keys
 "home.status.home" = "Home";
 "home.status.searching" = "Searching";
 "home.status.firstOffer" = "First Offer";
