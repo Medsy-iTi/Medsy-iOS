@@ -60,6 +60,7 @@
 "home.category.hairCare" = "Hair Care";
 "home.category.dailyEssentials" = "Daily Essentials";
 
+
 "home.status.home" = "Home";
 "home.status.searching" = "Searching";
 "home.status.firstOffer" = "First Offer";
@@ -99,3 +100,4 @@
 "home.status.expired.subtitle" = "We haven't received a suitable offer yet";
 "home.status.expired.searchWider" = "Search in a wider range";
 "home.status.expired.cancelOrder" = "Cancel Order";
+
