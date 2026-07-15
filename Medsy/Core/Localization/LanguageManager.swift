@@ -38,11 +38,11 @@ final class LanguageManager {
            let language = AppLanguage(rawValue: saved) {
             currentLanguage = language
         } else {
-            currentLanguage = .systemDefault
+            currentLanguage = .arabic
         }
 
         BundleLanguage.setLanguage(currentLanguage.rawValue)
-        applyUIKitDirection(currentLanguage)  // Apply on launch too
+        applyUIKitDirection(currentLanguage)
     }
 
    

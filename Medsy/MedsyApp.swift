@@ -11,18 +11,30 @@ import SwiftUI
 struct MedsyApp: App {
 
     private let languageManager: LanguageManager
+    private let onboardingFactory: OnboardingFactory
+    private let authenticationFactory: AuthenticationFactory
 
     init() {
         AppAssembler.shared.assemble(modules: [
             CoreAssembly(),
+            OnboardingAssembly(),
+            AuthenticationAssembly(),
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
+        onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
+        authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView().environment(languageManager)
+            AppRootView(
+                onboardingFactory: onboardingFactory,
+                authenticationFactory: authenticationFactory
+            )
+                .localizedEnvironment()
+                .environment(languageManager)
+                .id(languageManager.currentLanguage)
         }
     }
 }

@@ -1,0 +1,81 @@
+//
+//  SearchBar.swift
+//  Medsy
+//
+//  Created by Shahudaa on 15/07/2026.
+//
+
+import SwiftUI
+
+struct SearchBar: View {
+    @Binding var text: String
+    var placeholder: String
+    var onSubmit: (() -> Void)? = nil
+
+    @FocusState private var isFocused: Bool
+    @Environment(\.layoutDirection) private var layoutDirection
+    @ObservedObject private var appSettings = AppSettings.shared
+    private var isRTL: Bool { layoutDirection == .rightToLeft }
+
+    var body: some View {
+        HStack(spacing: MedsySpacing.xs) {
+
+            if isRTL {
+                clearButton
+            } else {
+                searchIcon
+            }
+
+            TextField(placeholder, text: $text)
+                .font(MedsyFont.body())
+                .foregroundStyle(AppColor.textPrim)
+
+				.multilineTextAlignment(isRTL ? .leading : .trailing)
+                .focused($isFocused)
+                .submitLabel(.search)
+                .onSubmit { onSubmit?() }
+
+
+            if isRTL {
+                searchIcon
+            } else {
+                clearButton
+            }
+        }
+        .padding(.horizontal, MedsySpacing.md)
+        .padding(.vertical, MedsySpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: MedsyRadius.pill)
+                .fill(AppColor.card)
+                .overlay(
+                    RoundedRectangle(cornerRadius: MedsyRadius.pill)
+                        .stroke(AppColor.border, lineWidth: 1)
+                )
+        )
+        .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
+    }
+
+   
+
+    @ViewBuilder
+    private var searchIcon: some View {
+        Image(systemName: "magnifyingglass")
+            .foregroundStyle(AppColor.textSec)
+    }
+
+    @ViewBuilder
+    private var clearButton: some View {
+        if !text.isEmpty {
+            Button {
+                text = ""
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppColor.textSec)
+                    .frame(width: 24, height: 24)
+                    .background(Circle().fill(AppColor.surface))
+            }
+            .accessibilityLabel(Text("empty.clear_search".localized))
+        }
+    }
+}

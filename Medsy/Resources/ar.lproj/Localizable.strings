@@ -15,6 +15,161 @@
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
 
+"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.searchPlaceholder" = "ابحث باسم الدواء";
+"home.promoTitle" = "صحتك تهمنا";
+"home.promoDiscount" = "خصم حتى 30%";
+"home.promoTarget" = "على مجموعة مختارة";
+"home.shopNow" = "تسوق الآن";
+
+"home.promo2.title" = "عروض الفيتامينات";
+"home.promo2.discount" = "اشترِ 1 واحصل على 1 مجاناً";
+"home.promo2.target" = "لفترة محدودة";
+"home.promo2.button" = "اكتشف الآن";
+
+"home.promo3.title" = "توصيل سريع ومجاني";
+"home.promo3.discount" = "للطلبات فوق 200 جنيه";
+"home.promo3.target" = "تطبق الشروط والأحكام";
+"home.promo3.button" = "اطلب الآن";
+"home.weMadeOrderEasy" = "سهلنا الطلب عليك";
+"home.orderByPrescription" = "اطلب بالروشتة";
+"home.uploadPrescriptionDesc" = "ارفع صورة الروشتة وسنقوم بمراجعتها";
+"home.searchForMedicine" = "ابحث عن دواء";
+"home.searchForMedicineDesc" = "ابحث عن أي دواء تحتاجه بسهولة";
+"home.shopByCategories" = "تسوق من الفئات";
+"home.viewAll" = "عرض الكل";
+"home.category.medicines" = "أدوية";
+"home.category.vitamins" = "فيتامينات";
+"home.category.personalCare" = "عناية شخصية";
+"home.category.medicalDevices" = "أجهزة طبية";
+"home.category.more" = "المزيد";
+"home.fastDelivery" = "توصيل سريع";
+"home.toYourDoorstep" = "إلى باب منزلك";
+
+/* Search */
+"search.title" = "نتائج البحث";
+"search.placeholder" = "بانادول إكسترا";
+"search.result_count" = "%d نتيجة";
+
+/* Filters */
+"filter.sort" = "تصفية";
+"filter.type" = "النوع";
+"filter.price" = "السعر";
+"filter.most_relevant" = "الأكثر صلة";
+
+/* Empty state */
+"empty.title" = "لم نجد نتائج";
+"empty.subtitle" = "جرّب البحث باسم مختلف أو تحقق من كتابة اسم الدواء";
+"empty.clear_search" = "مسح البحث";
+"empty.request_prescription" = "اطلب بالروشتة";
+
+/* No connection */
+"error.no_connection_title" = "تعذر تحميل النتائج";
+"error.no_connection_subtitle" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى";
+"error.retry" = "إعادة المحاولة";
+
+/* Product card */
+"product.add" = "إضافة";
+"product.currency" = "جنيه";
+"product.price_value" = "%.0f جنيه";
+
+/* Tab bar */
+"tab.home" = "الرئيسية";
+"tab.favorites" = "المفضلة";
+"tab.offers" = "العروض";
+"tab.orders" = "الطلبات";
+"tab.account" = "حسابي";
+
+"categories.title" = "الفئات";
+"categories.searchPlaceholder" = "ابحث عن فئة...";
+"categories.itemsCount" = "%d منتج";
+"home.category.babyCare" = "رعاية الطفل";
+"home.category.skinCare" = "عناية بالبشرة";
+"home.category.hairCare" = "عناية بالشعر";
+"home.category.dailyEssentials" = "مستلزمات يومية";
+
+
+// Home Status Keys
+"home.status.home" = "الرئيسية";
+"home.status.searching" = "البحث جارٍ";
+"home.status.firstOffer" = "أول عرض";
+"home.status.multipleOffers" = "عدة عروض";
+"home.status.expired" = "انتهى البحث";
+
+"home.status.searching.title" = "جاري البحث عن أدويتك";
+"home.status.searching.subtitle" = "نطابق طلبك مع الصيدليات القريبة";
+"home.status.searching.time" = "وقت البحث";
+"home.status.searching.stage1" = "المرحلة ١";
+"home.status.searching.stage1Desc" = "صيدليات قريبة";
+"home.status.searching.stage2" = "المرحلة ٢";
+"home.status.searching.stage2Desc" = "نطاق أوسع";
+"home.status.searching.stage3" = "المرحلة ٣";
+"home.status.searching.stage3Desc" = "جميع المناطق";
+"home.status.searching.notify" = "سنرسل لك إشعاراً فور وصول عرض مناسب";
+
+"home.status.firstOffer.title" = "وصل أول عرض!";
+"home.status.firstOffer.subtitle" = "ما زلنا نستقبل عروضاً إضافية";
+"home.status.firstOffer.availableMeds" = "الأدوية المتاحة";
+"home.status.firstOffer.medsCount" = "٢ / ٣ دواء";
+"home.status.firstOffer.priceFrom" = "من";
+"home.status.firstOffer.priceValue" = "٤٨ جنيه";
+"home.status.firstOffer.showOffer" = "عرض العرض";
+"home.status.firstOffer.continueCompare" = "متابعة ومقارنة العروض";
+"home.status.firstOffer.orderDetails" = "عرض تفاصيل الطلب";
+
+"home.status.multipleOffers.title" = "وصلت عدة عروض";
+"home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
+"home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
+"home.status.multipleOffers.priceValue" = "٣٦ جنيه";
+"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
+"home.status.multipleOffers.compareOffers" = "مقارنة العروض";
+"home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
+
+"home.status.expired.title" = "انتهى وقت البحث";
+"home.status.expired.subtitle" = "لم نتلقَ عرضاً مناسباً حتى الآن";
+"home.status.expired.searchWider" = "البحث في نطاق أوسع";
+"home.status.expired.cancelOrder" = "إلغاء الطلب";
+
+"onboarding.skip" = "تخطي";
+"onboarding.next" = "التالي";
+"onboarding.get_started" = "ابدأ الآن";
+"onboarding.page_indicator" = "الصفحة %d من %d";
+
+"onboarding.order.title" = "اطلب أدويتك بسهولة";
+"onboarding.order.body" = "اطلب جميع احتياجاتك من الأدوية ومنتجات الصيدلية من مكان واحد.";
+"onboarding.delivery.title" = "توصيل سريع وآمن";
+"onboarding.delivery.body" = "نصل طلبك بسرعة إلى باب بيتك مع الحفاظ على جودة المنتجات.";
+"onboarding.trust.title" = "موثوق وآمن";
+"onboarding.trust.body" = "نختار لك أفضل الصيدليات والمنتجات لنضمن لك تجربة آمنة وموثوقة.";
+
+"auth.login.title" = "مرحباً بعودتك";
+"auth.login.subtitle" = "سجّل الدخول لمتابعة الاهتمام بصحتك.";
+"auth.login.action" = "تسجيل الدخول";
+"auth.signup.title" = "إنشاء حساب";
+"auth.signup.subtitle" = "انضم إلى ميدسي وأدر صحتك بسهولة.";
+"auth.signup.action" = "إنشاء حساب";
+"auth.full_name" = "الاسم الكامل";
+"auth.phone" = "رقم الهاتف";
+"auth.email" = "البريد الإلكتروني";
+"auth.password" = "كلمة المرور";
+"auth.confirm_password" = "تأكيد كلمة المرور";
+"auth.forgot_password" = "نسيت كلمة المرور؟";
+"auth.or" = "أو";
+"auth.continue_google" = "المتابعة باستخدام Google";
+"auth.continue_apple" = "المتابعة باستخدام Apple";
+"auth.no_account" = "ليس لديك حساب؟";
+"auth.has_account" = "لديك حساب بالفعل؟";
+"auth.signup.link" = "إنشاء حساب";
+"auth.login.link" = "تسجيل الدخول";
+"auth.terms.prefix" = "أوافق على";
+"auth.terms" = "الشروط وسياسة الخصوصية";
+"auth.validation.required" = "يرجى ملء جميع الحقول المطلوبة.";
+"auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
+"auth.password.show" = "إظهار كلمة المرور";
+"auth.password.hide" = "إخفاء كلمة المرور";
+"auth.brand.name" = "Medesy";
+"auth.brand.tagline" = "صحتك، أولويتنا";
+
 "profile.title" = "حسابي";
 "profile.sample.name" = "محمود الدمرداش";
 "profile.section.account" = "الحساب";
@@ -30,6 +185,16 @@
 "profile.language" = "اللغة";
 "profile.theme" = "المظهر";
 "profile.coming_soon" = "قريباً";
+"profile.language.title" = "اختر اللغة";
+"profile.language.message" = "يتغير اتجاه التطبيق والنصوص فوراً.";
+"profile.language.arabic.subtitle" = "واجهة عربية من اليمين لليسار";
+"profile.language.english.subtitle" = "واجهة إنجليزية من اليسار لليمين";
+"profile.theme.title" = "اختر المظهر";
+"profile.theme.message" = "اختر شكل Medsy على هذا الجهاز.";
+"profile.theme.light" = "فاتح";
+"profile.theme.light.subtitle" = "واجهة مضيئة";
+"profile.theme.dark" = "داكن";
+"profile.theme.dark.subtitle" = "واجهة مناسبة للإضاءة الهادئة";
 "profile.how_it_works" = "كيف يعمل Medsy";
 "profile.how_it_works.subtitle" = "إعادة عرض شرح التطبيق";
 "profile.help_center" = "مركز المساعدة";
