@@ -20,7 +20,7 @@ struct ProfileSectionView: View {
                 .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
-                ForEach(Array(rows.enumerated()), id: \.element.id) { index, item in
+                ForEach(Array(rows.enumerated()), id: \.offset) { index, item in
                     Button {
                         onSelect(item)
                     } label: {
