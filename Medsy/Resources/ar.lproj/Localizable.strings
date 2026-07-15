@@ -15,6 +15,40 @@
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
 
+/* Search */
+"search.title" = "نتائج البحث";
+"search.placeholder" = "بانادول إكسترا";
+"search.result_count" = "%d نتيجة";
+
+/* Filters */
+"filter.sort" = "تصفية";
+"filter.type" = "النوع";
+"filter.price" = "السعر";
+"filter.most_relevant" = "الأكثر صلة";
+
+/* Empty state */
+"empty.title" = "لم نجد نتائج";
+"empty.subtitle" = "جرّب البحث باسم مختلف أو تحقق من كتابة اسم الدواء";
+"empty.clear_search" = "مسح البحث";
+"empty.request_prescription" = "اطلب بالروشتة";
+
+/* No connection */
+"error.no_connection_title" = "تعذر تحميل النتائج";
+"error.no_connection_subtitle" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى";
+"error.retry" = "إعادة المحاولة";
+
+/* Product card */
+"product.add" = "إضافة";
+"product.currency" = "جنيه";
+"product.price_value" = "%.0f جنيه";
+
+/* Tab bar */
+"tab.home" = "الرئيسية";
+"tab.favorites" = "المفضلة";
+"tab.offers" = "العروض";
+"tab.orders" = "الطلبات";
+"tab.account" = "حسابي";
+
 "onboarding.skip" = "تخطي";
 "onboarding.next" = "التالي";
 "onboarding.get_started" = "ابدأ الآن";
@@ -26,3 +60,4 @@
 "onboarding.delivery.body" = "نصل طلبك بسرعة إلى باب بيتك مع الحفاظ على جودة المنتجات.";
 "onboarding.trust.title" = "موثوق وآمن";
 "onboarding.trust.body" = "نختار لك أفضل الصيدليات والمنتجات لنضمن لك تجربة آمنة وموثوقة.";
+
