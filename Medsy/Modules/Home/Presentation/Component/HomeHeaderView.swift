@@ -12,9 +12,9 @@ struct HomeHeaderView: View {
     var body: some View {
         HStack {
             Button {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    languageManager.toggle()
-                }
+//                withAnimation(.easeInOut(duration: 0.3)) {
+//                    languageManager.toggle()
+//                }
             } label: {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "bell")
