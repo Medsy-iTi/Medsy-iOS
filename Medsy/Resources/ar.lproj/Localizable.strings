@@ -14,3 +14,48 @@
 
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
+
+"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.searchPlaceholder" = "ابحث باسم الدواء";
+"home.promoTitle" = "صحتك تهمنا";
+"home.promoDiscount" = "خصم حتى 30%";
+"home.promoTarget" = "على مجموعة مختارة";
+"home.shopNow" = "تسوق الآن";
+
+"home.promo2.title" = "عروض الفيتامينات";
+"home.promo2.discount" = "اشترِ 1 واحصل على 1 مجاناً";
+"home.promo2.target" = "لفترة محدودة";
+"home.promo2.button" = "اكتشف الآن";
+
+"home.promo3.title" = "توصيل سريع ومجاني";
+"home.promo3.discount" = "للطلبات فوق 200 جنيه";
+"home.promo3.target" = "تطبق الشروط والأحكام";
+"home.promo3.button" = "اطلب الآن";
+"home.weMadeOrderEasy" = "سهلنا الطلب عليك";
+"home.orderByPrescription" = "اطلب بالروشتة";
+"home.uploadPrescriptionDesc" = "ارفع صورة الروشتة وسنقوم بمراجعتها";
+"home.searchForMedicine" = "ابحث عن دواء";
+"home.searchForMedicineDesc" = "ابحث عن أي دواء تحتاجه بسهولة";
+"home.shopByCategories" = "تسوق من الفئات";
+"home.viewAll" = "عرض الكل";
+"home.category.medicines" = "أدوية";
+"home.category.vitamins" = "فيتامينات";
+"home.category.personalCare" = "عناية شخصية";
+"home.category.medicalDevices" = "أجهزة طبية";
+"home.category.more" = "المزيد";
+"home.fastDelivery" = "توصيل سريع";
+"home.toYourDoorstep" = "إلى باب منزلك";
+
+"tab.home" = "الرئيسية";
+"tab.favorites" = "المفضلة";
+"tab.offers" = "العروض";
+"tab.orders" = "الطلبات";
+"tab.account" = "حسابي";
+
+"categories.title" = "الفئات";
+"categories.searchPlaceholder" = "ابحث عن فئة...";
+"categories.itemsCount" = "%d منتج";
+"home.category.babyCare" = "رعاية الطفل";
+"home.category.skinCare" = "عناية بالبشرة";
+"home.category.hairCare" = "عناية بالشعر";
+"home.category.dailyEssentials" = "مستلزمات يومية";

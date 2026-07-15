@@ -14,3 +14,48 @@
 
 "language.english" = "English";
 "language.arabic"  = "Arabic";
+
+"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.searchPlaceholder" = "Search by medicine name";
+"home.promoTitle" = "Your Health Matters";
+"home.promoDiscount" = "Discount up to 30%";
+"home.promoTarget" = "on selected group";
+"home.shopNow" = "Shop Now";
+
+"home.promo2.title" = "Vitamin Offers";
+"home.promo2.discount" = "Buy 1 Get 1 Free";
+"home.promo2.target" = "For a limited time";
+"home.promo2.button" = "Discover Now";
+
+"home.promo3.title" = "Free Fast Delivery";
+"home.promo3.discount" = "For orders above 200 EGP";
+"home.promo3.target" = "T&C Apply";
+"home.promo3.button" = "Order Now";
+"home.weMadeOrderEasy" = "We made ordering easy for you";
+"home.orderByPrescription" = "Order by Prescription";
+"home.uploadPrescriptionDesc" = "Upload prescription photo and we will review it";
+"home.searchForMedicine" = "Search for Medicine";
+"home.searchForMedicineDesc" = "Search for any medicine you need easily";
+"home.shopByCategories" = "Shop by Categories";
+"home.viewAll" = "View All";
+"home.category.medicines" = "Medicines";
+"home.category.vitamins" = "Vitamins";
+"home.category.personalCare" = "Personal Care";
+"home.category.medicalDevices" = "Medical Devices";
+"home.category.more" = "More";
+"home.fastDelivery" = "Fast Delivery";
+"home.toYourDoorstep" = "To your doorstep";
+
+"tab.home" = "Home";
+"tab.favorites" = "Favorites";
+"tab.offers" = "Offers";
+"tab.orders" = "Orders";
+"tab.account" = "My Account";
+
+"categories.title" = "Categories";
+"categories.searchPlaceholder" = "Search categories...";
+"categories.itemsCount" = "%d Products";
+"home.category.babyCare" = "Baby Care";
+"home.category.skinCare" = "Skin Care";
+"home.category.hairCare" = "Hair Care";
+"home.category.dailyEssentials" = "Daily Essentials";
