@@ -21,9 +21,9 @@ Keep application code under `Medsy/` and organize it by product feature:
 Medsy/
   App/
     MedsyApp.swift
-    AppContainer.swift
     AppRouter.swift
   Core/
+    DI/
     DesignSystem/
     Networking/
     Persistence/
@@ -31,6 +31,8 @@ Medsy/
     Utilities/
   Features/
     Authentication/
+      DI/
+        AuthenticationFactory.swift
       Domain/
         Entities/
         Repositories/
@@ -46,6 +48,8 @@ Medsy/
         Components/
         Routing/
     Onboarding/
+      DI/
+        OnboardingFactory.swift
       Domain/
       Data/
       Presentation/
@@ -70,10 +74,40 @@ Presentation -> Domain <- Data
 - `Domain` contains entities, repository protocols, use cases, and business rules. It must not import SwiftUI, SwiftData, UIKit, or concrete networking libraries.
 - `Data` implements domain repository protocols and owns API DTOs, persistence models, data sources, and mapping.
 - `Presentation` owns SwiftUI views, view models, navigation state, and presentation-only models. It depends on domain abstractions, not concrete data implementations.
-- `App` is the composition root. Construct concrete services and inject them into features here.
-- `Core` contains stable, product-agnostic infrastructure. Features must not depend on each other's `Data` or `Presentation` layers.
+- `App` starts the composition root, selects the root flow, and passes shared dependencies from `Core/DI` to each feature factory.
+- `Core` contains stable, product-agnostic infrastructure. `Core/DI` registers shared application dependencies only. Features must not depend on each other's `Data` or `Presentation` layers.
+- Each feature owns a `DI` folder that assembles its repositories, use cases, view models, and entry views.
 
 Prefer protocols at architectural boundaries, not for every type. Avoid global mutable state and service locators.
+
+## Dependency Injection
+
+Keep shared application dependency construction and registration under `Core/DI`:
+
+```text
+Core/
+  DI/
+    AppContainer.swift
+    DependencyFactory.swift
+
+Features/
+  Authentication/
+    DI/
+      AuthenticationFactory.swift
+  Onboarding/
+    DI/
+      OnboardingFactory.swift
+```
+
+- `AppContainer` owns long-lived shared infrastructure such as the HTTP client, secure storage, persistence stack, and application router.
+- `Core/DI` must not import or register individual features.
+- A feature factory receives the shared services it needs, constructs that feature's data and domain dependencies, and returns its entry view or coordinator.
+- Keep feature-specific repositories in the feature factory rather than `AppContainer`; `AppContainer` should expose only shared infrastructure.
+- Pass dependencies through initializers. Do not read dependencies from global singletons or static mutable containers.
+- Depend on domain protocols at feature boundaries; keep concrete implementations private to the composition layer when possible.
+- Scope stateful dependencies intentionally. Application services may be shared, while view models should normally be created for their feature flow.
+- Tests and previews must be able to replace production dependencies with fakes without modifying global state.
+- Do not import a feature's `DI` layer from its `Domain`, `Data`, or `Presentation` layers. Only `App` or parent composition code may request assembled feature dependencies.
 
 ## MVVM Conventions
 
