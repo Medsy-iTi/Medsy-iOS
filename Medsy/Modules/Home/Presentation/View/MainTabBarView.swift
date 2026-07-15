@@ -14,15 +14,9 @@ struct MainTabBarView: View {
             Group {
                 switch selectedTab {
                 case 0:
-                    VStack {
-                        Spacer()
-                        Text("Tab \(selectedTab)")
-                            .font(AppColor.sans(18, .medium))
-                            .foregroundStyle(AppColor.textSec)
-                        Spacer()
+                    NavigationStack {
+                        HomeView()
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(AppColor.bg)
                 default:
                     VStack {
                         Spacer()

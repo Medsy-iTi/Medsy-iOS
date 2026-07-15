@@ -59,3 +59,44 @@
 "home.category.skinCare" = "Skin Care";
 "home.category.hairCare" = "Hair Care";
 "home.category.dailyEssentials" = "Daily Essentials";
+
+// Home Status Keys
+"home.status.home" = "Home";
+"home.status.searching" = "Searching";
+"home.status.firstOffer" = "First Offer";
+"home.status.multipleOffers" = "Multiple Offers";
+"home.status.expired" = "Expired";
+
+"home.status.searching.title" = "Searching for your order...";
+"home.status.searching.subtitle" = "We are checking with nearby pharmacies to find your items.";
+"home.status.searching.time" = "Time elapsed";
+"home.status.searching.stage3" = "Reviewing";
+"home.status.searching.stage3Desc" = "Final check";
+"home.status.searching.stage2" = "Searching";
+"home.status.searching.stage2Desc" = "Pharmacy response";
+"home.status.searching.stage1" = "Placed";
+"home.status.searching.stage1Desc" = "Order received";
+"home.status.searching.notify" = "You will receive notifications as soon as we get offers.";
+
+"home.status.firstOffer.title" = "First Offer Received!";
+"home.status.firstOffer.subtitle" = "A pharmacy has responded to your request.";
+"home.status.firstOffer.showOffer" = "Show Offer";
+"home.status.firstOffer.priceFrom" = "Price From";
+"home.status.firstOffer.priceValue" = "120 EGP";
+"home.status.firstOffer.availableMeds" = "Available Items";
+"home.status.firstOffer.medsCount" = "3 of 4";
+"home.status.firstOffer.continueCompare" = "Continue and Compare";
+"home.status.firstOffer.orderDetails" = "Order Details";
+
+"home.status.multipleOffers.title" = "Multiple Offers Received!";
+"home.status.multipleOffers.subtitle" = "Compare prices and choose the best offer for you.";
+"home.status.multipleOffers.priceValue" = "95 EGP";
+"home.status.multipleOffers.medsCount" = "4 of 4";
+"home.status.multipleOffers.offersAvailableCount" = "3 Offers Available";
+"home.status.multipleOffers.compareOffers" = "Compare Offers";
+"home.status.multipleOffers.stopSearchDesc" = "You can stop searching and choose an offer now";
+
+"home.status.expired.title" = "Search Period Expired";
+"home.status.expired.subtitle" = "We couldn't find offers in your area within the time limit.";
+"home.status.expired.searchWider" = "Search in a Wider Area";
+"home.status.expired.cancelOrder" = "Cancel Order";

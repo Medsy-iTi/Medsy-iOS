@@ -59,3 +59,44 @@
 "home.category.skinCare" = "عناية بالبشرة";
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
+
+// Home Status Keys
+"home.status.home" = "الرئيسية";
+"home.status.searching" = "جاري البحث";
+"home.status.firstOffer" = "العرض الأول";
+"home.status.multipleOffers" = "عروض متعددة";
+"home.status.expired" = "منتهي الصلاحية";
+
+"home.status.searching.title" = "جاري البحث عن طلبك...";
+"home.status.searching.subtitle" = "نتواصل مع الصيدليات المجاورة للعثور على أدويتك.";
+"home.status.searching.time" = "الوقت المنقضي";
+"home.status.searching.stage3" = "مراجعة";
+"home.status.searching.stage3Desc" = "التحقق النهائي";
+"home.status.searching.stage2" = "جاري البحث";
+"home.status.searching.stage2Desc" = "استجابة الصيدليات";
+"home.status.searching.stage1" = "تم التقديم";
+"home.status.searching.stage1Desc" = "تم استلام الطلب";
+"home.status.searching.notify" = "ستصلك إشعارات بمجرد حصولنا على عروض.";
+
+"home.status.firstOffer.title" = "تم استلام العرض الأول!";
+"home.status.firstOffer.subtitle" = "قامت صيدلية بالرد على طلبك.";
+"home.status.firstOffer.showOffer" = "عرض العرض";
+"home.status.firstOffer.priceFrom" = "السعر يبدأ من";
+"home.status.firstOffer.priceValue" = "١٢٠ ج.م";
+"home.status.firstOffer.availableMeds" = "الأدوية المتاحة";
+"home.status.firstOffer.medsCount" = "٣ من ٤";
+"home.status.firstOffer.continueCompare" = "متابعة ومقارنة";
+"home.status.firstOffer.orderDetails" = "تفاصيل الطلب";
+
+"home.status.multipleOffers.title" = "تم استلام عروض متعددة!";
+"home.status.multipleOffers.subtitle" = "قارن الأسعار واختر العرض الأنسب لك.";
+"home.status.multipleOffers.priceValue" = "٩٥ ج.م";
+"home.status.multipleOffers.medsCount" = "٤ من ٤";
+"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة";
+"home.status.multipleOffers.compareOffers" = "مقارنة العروض";
+"home.status.multipleOffers.stopSearchDesc" = "يمكنك إيقاف البحث واختيار عرض الآن";
+
+"home.status.expired.title" = "انتهت فترة البحث";
+"home.status.expired.subtitle" = "لم نتمكن من العثور على عروض في منطقتك خلال الوقت المحدد.";
+"home.status.expired.searchWider" = "البحث في نطاق أوسع";
+"home.status.expired.cancelOrder" = "إلغاء الطلب";
