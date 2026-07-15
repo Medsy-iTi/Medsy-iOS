@@ -14,3 +14,15 @@
 
 "language.english" = "English";
 "language.arabic"  = "Arabic";
+
+"onboarding.skip" = "Skip";
+"onboarding.next" = "Next";
+"onboarding.get_started" = "Get Started";
+"onboarding.page_indicator" = "Page %d of %d";
+
+"onboarding.order.title" = "Order your medicines with ease";
+"onboarding.order.body" = "Order all your medicines and pharmacy essentials from one place.";
+"onboarding.delivery.title" = "Fast and secure delivery";
+"onboarding.delivery.body" = "We deliver your order quickly to your doorstep while keeping every product in excellent condition.";
+"onboarding.trust.title" = "Trusted and secure";
+"onboarding.trust.body" = "We select trusted pharmacies and quality products for a safe, reliable experience.";
