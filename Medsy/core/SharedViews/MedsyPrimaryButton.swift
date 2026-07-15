@@ -13,6 +13,8 @@ struct MedsyPrimaryButton: View {
     var isProminent: Bool = true
     var action: () -> Void
 
+    @ObservedObject private var appSettings = AppSettings.shared
+
     var body: some View {
         Button(action: action) {
             Text(title)
