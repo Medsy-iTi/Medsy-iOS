@@ -17,7 +17,7 @@ struct MedsyApp: App {
             CoreAssembly(),
         ])
 
-        languageManager = AppAssembler.shared.container.resolveUnwrapped(LanguageManager.self)
+        languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
     }
 
     var body: some Scene {

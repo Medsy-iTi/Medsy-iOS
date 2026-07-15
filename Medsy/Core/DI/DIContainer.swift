@@ -44,10 +44,7 @@ final class DIContainer {
         return self
     }
 
-    func resolve<T>(_ type: T.Type) -> T? {
-        container.resolve(type)
-    }
-    func resolveUnwrapped<T>(_ type: T.Type) -> T {
+    func resolve<T>(_ type: T.Type) -> T {
         guard let instance = container.resolve(type) else {
             fatalError("""
             ❌ DIContainer: Failed to resolve \(T.self).
@@ -57,7 +54,13 @@ final class DIContainer {
         return instance
     }
 
-    func resolve<T>(_ type: T.Type, name: String) -> T? {
-        container.resolve(type, name: name)
+    func resolve<T>(_ type: T.Type, name: String) -> T {
+        guard let instance = container.resolve(type, name: name) else {
+            fatalError("""
+            ❌ DIContainer: Failed to resolve \(T.self) named "\(name)".
+            Did you forget to register it in a ModuleAssembly?
+            """)
+        }
+        return instance
     }
 }

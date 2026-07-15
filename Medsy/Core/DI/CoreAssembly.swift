@@ -20,7 +20,7 @@ struct CoreAssembly: ModuleAssembly {
 
         container.register(NetworkServiceProtocol.self) { c in
             NetworkService(
-                languageManager: c.resolveUnwrapped(LanguageManager.self)
+                languageManager: c.resolve(LanguageManager.self)
             )
         }
     }
