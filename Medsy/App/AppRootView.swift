@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppRootView: View {
     private let onboardingFactory: OnboardingFactory
+    @State private var isShowingSplash = true
     @State private var isShowingOnboarding: Bool
 
     init(onboardingFactory: OnboardingFactory) {
@@ -18,7 +19,11 @@ struct AppRootView: View {
 
     var body: some View {
         Group {
-            if isShowingOnboarding {
+            if isShowingSplash {
+                AnimatedSplashView {
+                    isShowingSplash = false
+                }
+            } else if isShowingOnboarding {
                 onboardingFactory.makeView {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         isShowingOnboarding = false
@@ -32,5 +37,4 @@ struct AppRootView: View {
         }
     }
 }
-
 
