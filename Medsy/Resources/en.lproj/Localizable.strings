@@ -11,7 +11,6 @@
 "common.retry"    = "Retry";
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
-
 "language.english" = "English";
 "language.arabic"  = "Arabic";
 
@@ -186,6 +185,16 @@
 "profile.language" = "Language";
 "profile.theme" = "Appearance";
 "profile.coming_soon" = "Coming soon";
+"profile.language.title" = "Choose language";
+"profile.language.message" = "The app direction and text update immediately.";
+"profile.language.arabic.subtitle" = "Arabic layout, right to left";
+"profile.language.english.subtitle" = "English layout, left to right";
+"profile.theme.title" = "Choose appearance";
+"profile.theme.message" = "Pick how Medsy should look on this device.";
+"profile.theme.light" = "Light";
+"profile.theme.light.subtitle" = "Bright interface";
+"profile.theme.dark" = "Dark";
+"profile.theme.dark.subtitle" = "Low-light interface";
 "profile.how_it_works" = "How it works";
 "profile.how_it_works.subtitle" = "Replay the Medsy tutorial";
 "profile.help_center" = "Help Center";
