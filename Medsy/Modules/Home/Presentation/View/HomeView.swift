@@ -14,7 +14,7 @@ struct HomeView: View {
             VStack(spacing: 20) {
                 HomeHeaderView()
                 HomeSearchBar()
-                HomeStatusSelectorView(selectedStatus: $selectedStatus)
+                //HomeStatusSelectorView(selectedStatus: $selectedStatus)
                 HomePromoBanner()
                 
                 switch selectedStatus {
