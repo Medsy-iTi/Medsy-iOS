@@ -6,27 +6,23 @@
 //
 
 import SwiftUI
-import SwiftData
 
 @main
 struct MedsyApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    private let languageManager: LanguageManager
+
+    init() {
+        AppAssembler.shared.assemble(modules: [
+            CoreAssembly(),
+        ])
+
+        languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(languageManager)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
