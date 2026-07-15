@@ -14,3 +14,15 @@
 
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
+
+"onboarding.skip" = "تخطي";
+"onboarding.next" = "التالي";
+"onboarding.get_started" = "ابدأ الآن";
+"onboarding.page_indicator" = "الصفحة %d من %d";
+
+"onboarding.order.title" = "اطلب أدويتك بسهولة";
+"onboarding.order.body" = "اطلب جميع احتياجاتك من الأدوية ومنتجات الصيدلية من مكان واحد.";
+"onboarding.delivery.title" = "توصيل سريع وآمن";
+"onboarding.delivery.body" = "نصل طلبك بسرعة إلى باب بيتك مع الحفاظ على جودة المنتجات.";
+"onboarding.trust.title" = "موثوق وآمن";
+"onboarding.trust.body" = "نختار لك أفضل الصيدليات والمنتجات لنضمن لك تجربة آمنة وموثوقة.";
