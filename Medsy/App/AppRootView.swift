@@ -9,11 +9,16 @@ import SwiftUI
 
 struct AppRootView: View {
     private let onboardingFactory: OnboardingFactory
+    private let authenticationFactory: AuthenticationFactory
     @State private var isShowingSplash = true
     @State private var isShowingOnboarding: Bool
 
-    init(onboardingFactory: OnboardingFactory) {
+    init(
+        onboardingFactory: OnboardingFactory,
+        authenticationFactory: AuthenticationFactory
+    ) {
         self.onboardingFactory = onboardingFactory
+        self.authenticationFactory = authenticationFactory
         _isShowingOnboarding = State(initialValue: onboardingFactory.shouldShow())
     }
 
@@ -31,10 +36,9 @@ struct AppRootView: View {
                 }
                 .transition(.opacity)
             } else {
-                ContentView()
+                authenticationFactory.makeView()
                     .transition(.opacity)
             }
         }
     }
 }
-
