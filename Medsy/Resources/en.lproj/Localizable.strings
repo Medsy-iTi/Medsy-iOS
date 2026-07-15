@@ -46,6 +46,34 @@
 "home.fastDelivery" = "Fast Delivery";
 "home.toYourDoorstep" = "To your doorstep";
 
+/* Search */
+"search.title" = "Search Results";
+"search.placeholder" = "Panadol Extra";
+"search.result_count" = "%d results";
+
+/* Filters */
+"filter.sort" = "Filter";
+"filter.type" = "Type";
+"filter.price" = "Price";
+"filter.most_relevant" = "Most Relevant";
+
+/* Empty state */
+"empty.title" = "No results found";
+"empty.subtitle" = "Try a different name or check the medicine spelling";
+"empty.clear_search" = "Clear Search";
+"empty.request_prescription" = "Request with Prescription";
+
+/* No connection */
+"error.no_connection_title" = "Couldn't load results";
+"error.no_connection_subtitle" = "Check your internet connection and try again";
+"error.retry" = "Retry";
+
+/* Product card */
+"product.add" = "Add";
+"product.currency" = "EGP";
+"product.price_value" = "%.0f EGP";
+
+/* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
 "tab.offers" = "Offers";
@@ -102,6 +130,7 @@
 "home.status.expired.searchWider" = "Search in a wider range";
 "home.status.expired.cancelOrder" = "Cancel Order";
 
+"tab.account" = "Account";
 "onboarding.skip" = "Skip";
 "onboarding.next" = "Next";
 "onboarding.get_started" = "Get Started";
