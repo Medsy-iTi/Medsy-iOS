@@ -60,43 +60,45 @@
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
 
+
 // Home Status Keys
 "home.status.home" = "الرئيسية";
-"home.status.searching" = "جاري البحث";
-"home.status.firstOffer" = "العرض الأول";
-"home.status.multipleOffers" = "عروض متعددة";
-"home.status.expired" = "منتهي الصلاحية";
+"home.status.searching" = "البحث جارٍ";
+"home.status.firstOffer" = "أول عرض";
+"home.status.multipleOffers" = "عدة عروض";
+"home.status.expired" = "انتهى البحث";
 
-"home.status.searching.title" = "جاري البحث عن طلبك...";
-"home.status.searching.subtitle" = "نتواصل مع الصيدليات المجاورة للعثور على أدويتك.";
-"home.status.searching.time" = "الوقت المنقضي";
-"home.status.searching.stage3" = "مراجعة";
-"home.status.searching.stage3Desc" = "التحقق النهائي";
-"home.status.searching.stage2" = "جاري البحث";
-"home.status.searching.stage2Desc" = "استجابة الصيدليات";
-"home.status.searching.stage1" = "تم التقديم";
-"home.status.searching.stage1Desc" = "تم استلام الطلب";
-"home.status.searching.notify" = "ستصلك إشعارات بمجرد حصولنا على عروض.";
+"home.status.searching.title" = "جاري البحث عن أدويتك";
+"home.status.searching.subtitle" = "نطابق طلبك مع الصيدليات القريبة";
+"home.status.searching.time" = "وقت البحث";
+"home.status.searching.stage1" = "المرحلة ١";
+"home.status.searching.stage1Desc" = "صيدليات قريبة";
+"home.status.searching.stage2" = "المرحلة ٢";
+"home.status.searching.stage2Desc" = "نطاق أوسع";
+"home.status.searching.stage3" = "المرحلة ٣";
+"home.status.searching.stage3Desc" = "جميع المناطق";
+"home.status.searching.notify" = "سنرسل لك إشعاراً فور وصول عرض مناسب";
 
-"home.status.firstOffer.title" = "تم استلام العرض الأول!";
-"home.status.firstOffer.subtitle" = "قامت صيدلية بالرد على طلبك.";
-"home.status.firstOffer.showOffer" = "عرض العرض";
-"home.status.firstOffer.priceFrom" = "السعر يبدأ من";
-"home.status.firstOffer.priceValue" = "١٢٠ ج.م";
+"home.status.firstOffer.title" = "وصل أول عرض!";
+"home.status.firstOffer.subtitle" = "ما زلنا نستقبل عروضاً إضافية";
 "home.status.firstOffer.availableMeds" = "الأدوية المتاحة";
-"home.status.firstOffer.medsCount" = "٣ من ٤";
-"home.status.firstOffer.continueCompare" = "متابعة ومقارنة";
-"home.status.firstOffer.orderDetails" = "تفاصيل الطلب";
+"home.status.firstOffer.medsCount" = "٢ / ٣ دواء";
+"home.status.firstOffer.priceFrom" = "من";
+"home.status.firstOffer.priceValue" = "٤٨ جنيه";
+"home.status.firstOffer.showOffer" = "عرض العرض";
+"home.status.firstOffer.continueCompare" = "متابعة ومقارنة العروض";
+"home.status.firstOffer.orderDetails" = "عرض تفاصيل الطلب";
 
-"home.status.multipleOffers.title" = "تم استلام عروض متعددة!";
-"home.status.multipleOffers.subtitle" = "قارن الأسعار واختر العرض الأنسب لك.";
-"home.status.multipleOffers.priceValue" = "٩٥ ج.م";
-"home.status.multipleOffers.medsCount" = "٤ من ٤";
-"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة";
+"home.status.multipleOffers.title" = "وصلت عدة عروض";
+"home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
+"home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
+"home.status.multipleOffers.priceValue" = "٣٦ جنيه";
+"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
 "home.status.multipleOffers.compareOffers" = "مقارنة العروض";
-"home.status.multipleOffers.stopSearchDesc" = "يمكنك إيقاف البحث واختيار عرض الآن";
+"home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
 
-"home.status.expired.title" = "انتهت فترة البحث";
-"home.status.expired.subtitle" = "لم نتمكن من العثور على عروض في منطقتك خلال الوقت المحدد.";
+"home.status.expired.title" = "انتهى وقت البحث";
+"home.status.expired.subtitle" = "لم نتلقَ عرضاً مناسباً حتى الآن";
 "home.status.expired.searchWider" = "البحث في نطاق أوسع";
 "home.status.expired.cancelOrder" = "إلغاء الطلب";
+
