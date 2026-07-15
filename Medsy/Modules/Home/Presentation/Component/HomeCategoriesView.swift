@@ -57,7 +57,11 @@ struct HomeCategoriesView: View {
                 
                 Spacer()
                 
-             
+                NavigationLink(destination: CategoriesView()) {
+                    Text("home.viewAll".localized)
+                        .font(AppColor.sans(13, .bold))
+                        .foregroundStyle(AppColor.green)
+                }
             }
             .padding(.horizontal)
             
