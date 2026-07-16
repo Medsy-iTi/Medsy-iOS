@@ -7,126 +7,122 @@
 
 import SwiftUI
 
-
 struct SearchResultsView: View {
-    @StateObject private var viewModel: SearchResultsViewModel
-    @Environment(LanguageManager.self) private var languageManager
-    @ObservedObject private var appSettings = AppSettings.shared
+	@StateObject private var viewModel: SearchResultsViewModel
+	@Environment(LanguageManager.self) private var languageManager
+	@ObservedObject private var appSettings = AppSettings.shared
 	private let coordinator: SearchCoordinator
-    private let onBack: () -> Void
+	private let onBack: () -> Void
 
-    init(query: String, onBack: @escaping () -> Void = {},coordinator: SearchCoordinator) {
-        _viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
-        self.onBack = onBack
+	init(query: String, onBack: @escaping () -> Void = {}, coordinator: SearchCoordinator) {
+		_viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
+		self.onBack = onBack
 		self.coordinator = coordinator
-    }
+	}
 
-    var body: some View {
-        VStack(spacing: 0) {
-            header
+	var body: some View {
+		VStack(spacing: 0) {
+			header
 
-            VStack(spacing: MedsySpacing.sm) {
-                SearchBar(
-                    text: $viewModel.query,
-                    placeholder: "search.placeholder".localized
-                ) {
-                    viewModel.load()
-                }
+			VStack(spacing: MedsySpacing.sm) {
+				SearchBar(
+					text: $viewModel.query,
+					placeholder: "search.placeholder".localized
+				) {
+					viewModel.load()
+				}
 
-                ChipsRow {
-                    FilterChip(title: "filter.sort".localized, systemIcon: "slider.horizontal.3") {}
-                    FilterChip(title: "filter.type".localized) {}
-                    FilterChip(title: "filter.price".localized) {}
-                    FilterChip(
-                        title: "filter.most_relevant".localized,
-                        isSelected: viewModel.selectedFilter == "relevant"
-                    ) {
-                        viewModel.selectedFilter = "relevant"
-                    }
-                }
+				ChipsRow {
+					FilterChip(title: "filter.sort".localized, systemIcon: "slider.horizontal.3") {}
+					FilterChip(title: "filter.type".localized) {}
+					FilterChip(title: "filter.price".localized) {}
+					FilterChip(
+						title: "filter.most_relevant".localized,
+						isSelected: viewModel.selectedFilter == "relevant"
+					) {
+						viewModel.selectedFilter = "relevant"
+					}
+				}
 
-                if viewModel.state == .loaded {
-                    Text("search.result_count".localized(viewModel.products.count))
-                        .font(MedsyFont.caption())
-                        .foregroundStyle(AppColor.textSec)
+				if viewModel.state == .loaded {
+					Text("search.result_count".localized(viewModel.products.count))
+						.font(MedsyFont.caption())
+						.foregroundStyle(AppColor.textSec)
+						.frame(maxWidth: .infinity, alignment: .leading)
+				}
+			}
+			.padding(.horizontal, MedsySpacing.md)
+			.padding(.top, MedsySpacing.sm)
 
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-            .padding(.horizontal, MedsySpacing.md)
-            .padding(.top, MedsySpacing.sm)
+			content
+		}
+		.background(AppColor.bg.ignoresSafeArea())
+		.localizedEnvironment()
+		.id("\(languageManager.currentLanguage)-\(appSettings.isDarkMode)")
+		.onAppear { viewModel.load() }
+	}
 
-            content
-        }
-        .background(AppColor.bg.ignoresSafeArea())
-        .localizedEnvironment()
+	private var header: some View {
+		HStack {
+			Button {
+				onBack()
+			} label: {
+				Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
+					.foregroundStyle(AppColor.textPrim)
+					.imageScale(.large)
+			}
+			.frame(width: 44, height: 44)
 
-        .id("\(languageManager.currentLanguage)-\(appSettings.isDarkMode)")
-        .onAppear { viewModel.load() }
-    }
+			Spacer()
 
+			Text("search.title".localized)
+				.font(MedsyFont.title())
+				.foregroundStyle(AppColor.textPrim)
 
-    private var header: some View {
-        HStack {
-            Button {
-                onBack()
-            } label: {
+			Spacer()
 
-                Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
-                    .foregroundStyle(AppColor.textPrim)
-                    .imageScale(.large)
-            }
-            .frame(width: 44, height: 44)
+			Color.clear.frame(width: 44)
+		}
+		.padding(.horizontal, MedsySpacing.md)
+		.frame(height: 56)
+		.background(AppColor.bg)
+	}
 
-            Spacer()
+	@ViewBuilder
+	private var content: some View {
+		switch viewModel.state {
+			case .loading:
+				ScrollView {
+					MedsySkeletonList().padding(MedsySpacing.md)
+				}
 
-            Text("search.title".localized)
-                .font(MedsyFont.title())
-                .foregroundStyle(AppColor.textPrim)
-
-            Spacer()
-
-            Color.clear.frame(width: 44)
-        }
-        .padding(.horizontal, MedsySpacing.md)
-        .frame(height: 56)
-        .background(AppColor.bg)
-    }
-
-   
-
-    @ViewBuilder
-    private var content: some View {
-        switch viewModel.state {
-        case .loading:
-            ScrollView {
-                MedsySkeletonList().padding(MedsySpacing.md)
-            }
-
-        case .loaded:
-            ScrollView {
-                LazyVStack(spacing: MedsySpacing.sm) {
-                    ForEach($viewModel.products) { $product in
-                        SearchedProductCard(product: $product, onTap: {
-                            coordinator.showProductDetail(productId: product.id)
-                        })
-                    }
-                }
-                .padding(MedsySpacing.md)
-            }
-
-        case .empty:
-            MedsyStatusView(
-                config: .noResults(
-                    onClear: { viewModel.clearSearch() },
-                    onPrescription: {}
-                )
-            )
-
-        case .noConnection:
-            MedsyStatusView(
-                config: .noConnection(onRetry: { viewModel.load() })
-            )
-        }
-    }
+			case .loaded:
+				ScrollView {
+					LazyVStack(spacing: MedsySpacing.sm) {
+						ForEach($viewModel.products) { $product in
+							SearchedProductCard(product: $product, onTap: {
+								coordinator.showProductDetail(productId: product.id)
+							})
+							.onAppear {
+								viewModel.loadNextPageIfNeeded(currentItem: product)
+							}
+						}
+					}
+					.padding(MedsySpacing.md)
+				}
+				
+			case .empty:
+				MedsyStatusView(
+					config: .noResults(
+						onClear: { viewModel.clearSearch() },
+						onPrescription: {}
+					)
+				)
+				
+			case .noConnection:
+				MedsyStatusView(
+					config: .noConnection(onRetry: { viewModel.load() })
+				)
+		}
+	}
 }
