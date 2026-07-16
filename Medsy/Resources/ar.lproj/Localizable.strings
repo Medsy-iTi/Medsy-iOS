@@ -1,6 +1,7 @@
 /* ar.lproj/Localizable.strings */
 /* Arabic — Medsy */
 
+/* Common */
 "common.ok"       = "حسناً";
 "common.cancel"   = "إلغاء";
 "common.save"     = "حفظ";
@@ -15,18 +16,17 @@
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
 
+/* Home */
 "home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
 "home.promoTitle" = "صحتك تهمنا";
 "home.promoDiscount" = "خصم حتى 30%";
 "home.promoTarget" = "على مجموعة مختارة";
 "home.shopNow" = "تسوق الآن";
-
 "home.promo2.title" = "عروض الفيتامينات";
 "home.promo2.discount" = "اشترِ 1 واحصل على 1 مجاناً";
 "home.promo2.target" = "لفترة محدودة";
 "home.promo2.button" = "اكتشف الآن";
-
 "home.promo3.title" = "توصيل سريع ومجاني";
 "home.promo3.discount" = "للطلبات فوق 200 جنيه";
 "home.promo3.target" = "تطبق الشروط والأحكام";
@@ -43,8 +43,54 @@
 "home.category.personalCare" = "عناية شخصية";
 "home.category.medicalDevices" = "أجهزة طبية";
 "home.category.more" = "المزيد";
+"home.category.babyCare" = "رعاية الطفل";
+"home.category.skinCare" = "عناية بالبشرة";
+"home.category.hairCare" = "عناية بالشعر";
+"home.category.dailyEssentials" = "مستلزمات يومية";
 "home.fastDelivery" = "توصيل سريع";
 "home.toYourDoorstep" = "إلى باب منزلك";
+
+/* Home Status */
+"home.status.home" = "الرئيسية";
+"home.status.searching" = "البحث جارٍ";
+"home.status.firstOffer" = "أول عرض";
+"home.status.multipleOffers" = "عدة عروض";
+"home.status.expired" = "انتهى البحث";
+"home.status.searching.title" = "جاري البحث عن أدويتك";
+"home.status.searching.subtitle" = "نطابق طلبك مع الصيدليات القريبة";
+"home.status.searching.time" = "وقت البحث";
+"home.status.searching.stage1" = "المرحلة ١";
+"home.status.searching.stage1Desc" = "صيدليات قريبة";
+"home.status.searching.stage2" = "المرحلة ٢";
+"home.status.searching.stage2Desc" = "نطاق أوسع";
+"home.status.searching.stage3" = "المرحلة ٣";
+"home.status.searching.stage3Desc" = "جميع المناطق";
+"home.status.searching.notify" = "سنرسل لك إشعاراً فور وصول عرض مناسب";
+"home.status.firstOffer.title" = "وصل أول عرض!";
+"home.status.firstOffer.subtitle" = "ما زلنا نستقبل عروضاً إضافية";
+"home.status.firstOffer.availableMeds" = "الأدوية المتاحة";
+"home.status.firstOffer.medsCount" = "٢ / ٣ دواء";
+"home.status.firstOffer.priceFrom" = "من";
+"home.status.firstOffer.priceValue" = "٤٨ جنيه";
+"home.status.firstOffer.showOffer" = "عرض العرض";
+"home.status.firstOffer.continueCompare" = "متابعة ومقارنة العروض";
+"home.status.firstOffer.orderDetails" = "عرض تفاصيل الطلب";
+"home.status.multipleOffers.title" = "وصلت عدة عروض";
+"home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
+"home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
+"home.status.multipleOffers.priceValue" = "٣٦ جنيه";
+"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
+"home.status.multipleOffers.compareOffers" = "مقارنة العروض";
+"home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
+"home.status.expired.title" = "انتهى وقت البحث";
+"home.status.expired.subtitle" = "لم نتلقَ عرضاً مناسباً حتى الآن";
+"home.status.expired.searchWider" = "البحث في نطاق أوسع";
+"home.status.expired.cancelOrder" = "إلغاء الطلب";
+
+/* Categories */
+"categories.title" = "الفئات";
+"categories.searchPlaceholder" = "ابحث عن فئة...";
+"categories.itemsCount" = "%d منتج";
 
 /* Search */
 "search.title" = "نتائج البحث";
@@ -63,7 +109,7 @@
 "empty.clear_search" = "مسح البحث";
 "empty.request_prescription" = "اطلب بالروشتة";
 
-/* No connection */
+/* Errors / No connection */
 "error.no_connection_title" = "تعذر تحميل النتائج";
 "error.no_connection_subtitle" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى";
 "error.retry" = "إعادة المحاولة";
@@ -73,6 +119,32 @@
 "product.currency" = "جنيه";
 "product.price_value" = "%.0f جنيه";
 
+/* Product detail */
+"product.info_title" = "معلومات المنتج";
+"product.add_to_cart" = "أضف إلى السلة";
+"product.consult_pharmacist" = "استشارة صيدلي";
+"product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
+"product.manufacturer" = "الشركة المنتجة";
+"product.type" = "النوع";
+"product.category" = "فئة الدواء";
+"product.dispense_method" = "طريقة الصرف";
+"product.price_format" = "%@ %@";
+"product.not_found_title" = "المنتج غير موجود";
+"product.not_found_subtitle" = "لم نتمكن من العثور على هذا المنتج. ربما تم حذفه أو أنه غير متاح مؤقتاً.";
+"product.try_search" = "بحث جديد";
+"product.error_title" = "تعذر تحميل المنتج";
+"product.error_subtitle" = "حدثت مشكلة أثناء تحميل المنتج. تحقق من الاتصال وحاول مرة أخرى.";
+
+/* Currency */
+"currency.egp" = "جنيه";
+"currency.usd" = "دولار";
+
+/* Accessibility */
+"accessibility.add_favorite" = "إضافة إلى المفضلة";
+"accessibility.remove_favorite" = "إزالة من المفضلة";
+"accessibility.back" = "رجوع";
+"accessibility.share" = "مشاركة";
+
 /* Tab bar */
 "tab.home" = "الرئيسية";
 "tab.favorites" = "المفضلة";
@@ -80,61 +152,11 @@
 "tab.orders" = "الطلبات";
 "tab.account" = "حسابي";
 
-"categories.title" = "الفئات";
-"categories.searchPlaceholder" = "ابحث عن فئة...";
-"categories.itemsCount" = "%d منتج";
-"home.category.babyCare" = "رعاية الطفل";
-"home.category.skinCare" = "عناية بالبشرة";
-"home.category.hairCare" = "عناية بالشعر";
-"home.category.dailyEssentials" = "مستلزمات يومية";
-
-
-// Home Status Keys
-"home.status.home" = "الرئيسية";
-"home.status.searching" = "البحث جارٍ";
-"home.status.firstOffer" = "أول عرض";
-"home.status.multipleOffers" = "عدة عروض";
-"home.status.expired" = "انتهى البحث";
-
-"home.status.searching.title" = "جاري البحث عن أدويتك";
-"home.status.searching.subtitle" = "نطابق طلبك مع الصيدليات القريبة";
-"home.status.searching.time" = "وقت البحث";
-"home.status.searching.stage1" = "المرحلة ١";
-"home.status.searching.stage1Desc" = "صيدليات قريبة";
-"home.status.searching.stage2" = "المرحلة ٢";
-"home.status.searching.stage2Desc" = "نطاق أوسع";
-"home.status.searching.stage3" = "المرحلة ٣";
-"home.status.searching.stage3Desc" = "جميع المناطق";
-"home.status.searching.notify" = "سنرسل لك إشعاراً فور وصول عرض مناسب";
-
-"home.status.firstOffer.title" = "وصل أول عرض!";
-"home.status.firstOffer.subtitle" = "ما زلنا نستقبل عروضاً إضافية";
-"home.status.firstOffer.availableMeds" = "الأدوية المتاحة";
-"home.status.firstOffer.medsCount" = "٢ / ٣ دواء";
-"home.status.firstOffer.priceFrom" = "من";
-"home.status.firstOffer.priceValue" = "٤٨ جنيه";
-"home.status.firstOffer.showOffer" = "عرض العرض";
-"home.status.firstOffer.continueCompare" = "متابعة ومقارنة العروض";
-"home.status.firstOffer.orderDetails" = "عرض تفاصيل الطلب";
-
-"home.status.multipleOffers.title" = "وصلت عدة عروض";
-"home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
-"home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
-"home.status.multipleOffers.priceValue" = "٣٦ جنيه";
-"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
-"home.status.multipleOffers.compareOffers" = "مقارنة العروض";
-"home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
-
-"home.status.expired.title" = "انتهى وقت البحث";
-"home.status.expired.subtitle" = "لم نتلقَ عرضاً مناسباً حتى الآن";
-"home.status.expired.searchWider" = "البحث في نطاق أوسع";
-"home.status.expired.cancelOrder" = "إلغاء الطلب";
-
+/* Onboarding */
 "onboarding.skip" = "تخطي";
 "onboarding.next" = "التالي";
 "onboarding.get_started" = "ابدأ الآن";
 "onboarding.page_indicator" = "الصفحة %d من %d";
-
 "onboarding.order.title" = "اطلب أدويتك بسهولة";
 "onboarding.order.body" = "اطلب جميع احتياجاتك من الأدوية ومنتجات الصيدلية من مكان واحد.";
 "onboarding.delivery.title" = "توصيل سريع وآمن";
@@ -142,6 +164,7 @@
 "onboarding.trust.title" = "موثوق وآمن";
 "onboarding.trust.body" = "نختار لك أفضل الصيدليات والمنتجات لنضمن لك تجربة آمنة وموثوقة.";
 
+/* Authentication */
 "auth.login.title" = "مرحباً بعودتك";
 "auth.login.subtitle" = "سجّل الدخول لمتابعة الاهتمام بصحتك.";
 "auth.login.action" = "تسجيل الدخول";
@@ -170,6 +193,7 @@
 "auth.brand.name" = "Medesy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
 
+/* Profile */
 "profile.title" = "حسابي";
 "profile.sample.name" = "محمود الدمرداش";
 "profile.section.account" = "الحساب";

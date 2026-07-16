@@ -19,28 +19,19 @@ struct SearchBar: View {
 
     var body: some View {
         HStack(spacing: MedsySpacing.xs) {
+            searchIcon
 
-            if isRTL {
-                clearButton
-            } else {
-                searchIcon
-            }
-
-            TextField(placeholder, text: $text)
+            TextField("", text: $text, prompt: 
+                Text(placeholder).foregroundStyle(AppColor.textSec)
+            )
                 .font(MedsyFont.body())
                 .foregroundStyle(AppColor.textPrim)
-
-				.multilineTextAlignment(isRTL ? .leading : .trailing)
+				.multilineTextAlignment(.leading)
                 .focused($isFocused)
                 .submitLabel(.search)
                 .onSubmit { onSubmit?() }
 
-
-            if isRTL {
-                searchIcon
-            } else {
-                clearButton
-            }
+            clearButton
         }
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
@@ -52,7 +43,6 @@ struct SearchBar: View {
                         .stroke(AppColor.border, lineWidth: 1)
                 )
         )
-        .environment(\.layoutDirection, isRTL ? .rightToLeft : .leftToRight)
     }
 
    
