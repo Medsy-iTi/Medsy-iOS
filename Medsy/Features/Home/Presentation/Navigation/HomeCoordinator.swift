@@ -17,10 +17,8 @@ enum HomeRoute: Hashable {
 final class HomeCoordinator {
     var path: [HomeRoute] = []
 
-    func search(for query: String) {
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedQuery.isEmpty else { return }
-        path.append(.search(trimmedQuery))
+    func openSearch() {
+        path.append(.search(""))
     }
 
     func goBack() {
@@ -36,7 +34,7 @@ struct HomeCoordinatorView: View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            HomeView(onSearch: coordinator.search)
+            HomeView(onSearchTap: coordinator.openSearch)
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
