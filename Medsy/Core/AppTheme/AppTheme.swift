@@ -26,7 +26,9 @@ enum AppColor {
   
     static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#FFFFFF") : Color(hex: "#1C1C1C") }
     static var textSec: Color { Color(hex: "#6B7280") }
-    static let hintPlaceholder = Color(hex: "#9CA3AF")
+    static var hintPlaceholder: Color {
+        AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
+    }
     
     static var btnBg: Color { green }
     static var btnText: Color { white }
