@@ -16,19 +16,20 @@ enum HomeRoute: Hashable {
 @MainActor
 @Observable
 final class HomeCoordinator {
-    var path: [HomeRoute] = []
+    var path = NavigationPath()
 
     func openSearch() {
-        path.append(.search(""))
+        path.append(HomeRoute.search(""))
     }
 
     func showPrescription() {
-        path.append(.prescription)
+        path.append(HomeRoute.prescription)
     }
 
     func goBack() {
-        guard !path.isEmpty else { return }
-        path.removeLast()
+        if !path.isEmpty {
+            path.removeLast()
+        }
     }
 }
 
@@ -48,7 +49,9 @@ struct HomeCoordinatorView: View {
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack)
+                        SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
+                            coordinator.path.append(dest)
+                        }
                     case .prescription:
                         PrescriptionUploadView(
                             onCamera: {},

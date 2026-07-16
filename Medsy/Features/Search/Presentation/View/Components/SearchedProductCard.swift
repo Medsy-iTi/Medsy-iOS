@@ -13,6 +13,7 @@ struct SearchedProductCard: View {
     var onIncrement: (() -> Void)? = nil
     var onDecrement: (() -> Void)? = nil
     var onToggleFavorite: (() -> Void)? = nil
+	var onTap: (() -> Void)?
 
     @Environment(\.layoutDirection) private var layoutDirection
     @ObservedObject private var appSettings = AppSettings.shared
@@ -21,16 +22,9 @@ struct SearchedProductCard: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: MedsySpacing.sm) {
-            if isRTL {
-				productBadge
-                textContent
-                actionColumn
-            } else {
-
-                actionColumn
-                textContent
-                productBadge
-            }
+            productBadge
+            textContent
+            actionColumn
         }
         .padding(MedsySpacing.sm)
         .background(
@@ -40,7 +34,10 @@ struct SearchedProductCard: View {
                     RoundedRectangle(cornerRadius: MedsyRadius.lg)
                         .stroke(AppColor.border, lineWidth: 1)
                 )
-        )
+		).contentShape(Rectangle())       
+			.onTapGesture {
+				onTap?()
+			}
     }
 
 
@@ -66,23 +63,23 @@ struct SearchedProductCard: View {
 
     private var textContent: some View {
         VStack(
-            alignment: isRTL ? .trailing : .leading,
+            alignment: .leading,
             spacing: MedsySpacing.xxs
         ) {
             Text(product.name)
                 .font(MedsyFont.bodyMedium(16))
                 .foregroundStyle(AppColor.textPrim)
-                .multilineTextAlignment(isRTL ? .trailing : .leading)
+                .multilineTextAlignment(.leading)
             Text(product.subtitle)
                 .font(MedsyFont.caption())
                 .foregroundStyle(AppColor.textSec)
-                .multilineTextAlignment(isRTL ? .trailing : .leading)
+                .multilineTextAlignment(.leading)
             Spacer(minLength: MedsySpacing.xs)
             Text("product.price_value".localized(product.price))
                 .font(MedsyFont.price())
                 .foregroundStyle(AppColor.green)
         }
-        .frame(maxWidth: .infinity, alignment: isRTL ? .trailing : .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var productBadge: some View {

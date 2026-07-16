@@ -27,12 +27,12 @@ class AppSettings: ObservableObject {
 }
 
 enum AppColor {
-    static var bg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#F7F9F9") }
-    static var surface: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#FFFFFF") }
-    static var card: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#FFFFFF") }
-    static var border: Color { Color(hex: "#E0E0E0") }
+    static var bg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#141E18") : Color(hex: "#FAFAF8") }
+    static var surface: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A2920") : Color(hex: "#FFFFFF") }
+    static var card: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A2920") : Color(hex: "#FFFFFF") }
+    static var border: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : Color(white: 0, opacity: 0.08) }
     
-    static var green: Color { Color(hex: "#1E7B4D") }
+    static var green: Color { Color(hex: "#0D8653") } // ProfileStyle.green
     static let darkGreen = Color(hex: "#158F73")
     static let lightGreen = Color(hex: "#E8F8F4")
     static let white = Color(hex: "#FFFFFF")
@@ -52,11 +52,11 @@ enum AppColor {
     static let errorRed = Color(hex: "#EF4444")
     static let warningYellow = Color(hex: "#F59E0B")
     
-    static var pill: Color { lightGreen }
+    static var pill: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
     static var pillSel: Color { green }
 
-    static var warningBg: Color { lightGreen }
-    static var warningBorder: Color { warningYellow }
+    static var warningBg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
+    static var warningBorder: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A4D2E") : green.opacity(0.3) }
 
     static func serif(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
         Font.system(size: size, weight: weight, design: .serif)
@@ -69,8 +69,7 @@ enum AppColor {
 
 	static var danger: Color { errorRed }
 
-
-	static var skeleton: Color { lightGreen }
+	static var skeleton: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : lightGreen }
 
 }
 

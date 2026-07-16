@@ -38,6 +38,7 @@ struct MedsyApp: App {
                 .localizedEnvironment()
                 .environment(languageManager)
                 .id(languageManager.currentLanguage)
+			
         }
     }
 }
