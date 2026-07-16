@@ -30,7 +30,7 @@ struct MedsyNavBar<Trailing: View>: View {
             Button {
                 onBack?()
             } label: {
-                Image(systemName: languageManager.isRTL ? "arrow.forward" : "arrow.backward")
+                Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
                     .foregroundStyle(AppColor.textPrim)
                     .imageScale(.large)
             }
