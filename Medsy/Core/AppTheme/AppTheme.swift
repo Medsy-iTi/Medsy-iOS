@@ -14,28 +14,36 @@ class AppSettings: ObservableObject {
 }
 
 enum AppColor {
-    static var bg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#0F0F0F") : Color(hex: "#FAFAF8") }
-    static var surface: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A1A1A") : Color(hex: "#F5F7F8") }
-    static var card: Color { AppSettings.shared.isDarkMode ? Color(hex: "#222222") : Color(hex: "#FFFFFF") }
-    static var border: Color { AppSettings.shared.isDarkMode ? Color(white: 1, opacity: 0.12) : Color(white: 0, opacity: 0.08) }
+    static var bg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#F7F9F9") }
+    static var surface: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#FFFFFF") }
+    static var card: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1C1C1C") : Color(hex: "#FFFFFF") }
+    static var border: Color { Color(hex: "#E0E0E0") }
     
-    static var green: Color { AppSettings.shared.isDarkMode ? Color(hex: "#34C759") : Color(hex: "#2A8754") }
-    static let white = Color.white
+    static var green: Color { Color(hex: "#1E7B4D") }
+    static let darkGreen = Color(hex: "#158F73")
+    static let lightGreen = Color(hex: "#E8F8F4")
+    static let white = Color(hex: "#FFFFFF")
   
-    static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#F5F5F7") : Color(hex: "#1A1A1A") }
-    static var textSec: Color { AppSettings.shared.isDarkMode ? Color(white: 1, opacity: 0.55) : Color(white: 0, opacity: 0.45) }
+    static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#FFFFFF") : Color(hex: "#1C1C1C") }
+    static var textSec: Color { Color(hex: "#6B7280") }
+    static var hintPlaceholder: Color {
+        AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
+    }
     
     static var btnBg: Color { green }
-    static var btnText: Color { Color.white }
+    static var btnText: Color { white }
 
     static var tagNew: Color { green }
-    static let tagSold = Color(hex: "#C0392B")
+    static let tagSold = Color(hex: "#EF4444")
+    static let successGreen = Color(hex: "#22C55E")
+    static let errorRed = Color(hex: "#EF4444")
+    static let warningYellow = Color(hex: "#F59E0B")
     
-    static var pill: Color { AppSettings.shared.isDarkMode ? Color(white: 1, opacity: 0.08) : Color(white: 0, opacity: 0.06) }
+    static var pill: Color { lightGreen }
     static var pillSel: Color { green }
 
-    static var warningBg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#2C1A0C") : Color(hex: "#FFF5EC") }
-    static var warningBorder: Color { AppSettings.shared.isDarkMode ? Color(hex: "#8B9E7A") : Color(hex: "#829E6C") }
+    static var warningBg: Color { lightGreen }
+    static var warningBorder: Color { warningYellow }
 
     static func serif(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
         Font.system(size: size, weight: weight, design: .serif)
@@ -46,10 +54,10 @@ enum AppColor {
     }
 
 
-	static var danger: Color { AppSettings.shared.isDarkMode ? Color(hex: "#EB6666") : Color(hex: "#D13D3D") }
+	static var danger: Color { errorRed }
 
 
-	static var skeleton: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1F3029") : Color(hex: "#E6F0EB") }
+	static var skeleton: Color { lightGreen }
 
 }
 

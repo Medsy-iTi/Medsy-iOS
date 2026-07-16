@@ -2,6 +2,8 @@
 //  AuthenticationFactory.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import SwiftUI
 
@@ -9,7 +11,7 @@ import SwiftUI
 /// Future login and registration use cases are injected here.
 struct AuthenticationFactory {
     @MainActor
-    func makeView() -> AuthenticationFlowView {
-        AuthenticationFlowView()
+    func makeCoordinator(onAuthenticated: @escaping () -> Void) -> AuthenticationCoordinator {
+        AuthenticationCoordinator(onAuthenticated: onAuthenticated)
     }
 }

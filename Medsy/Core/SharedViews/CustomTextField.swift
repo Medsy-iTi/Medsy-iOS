@@ -14,6 +14,7 @@ struct CustomTextField: View {
     @Binding var text: String
 
     @State private var isPasswordVisible = false
+    @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
         HStack(spacing: 12) {
@@ -51,14 +52,24 @@ struct CustomTextField: View {
     @ViewBuilder
     private var field: some View {
         if type.isSecure && !isPasswordVisible {
-            SecureField(title, text: $text)
+            SecureField(
+                "",
+                text: $text,
+                prompt: Text(title).foregroundStyle(AppColor.hintPlaceholder)
+            )
                 .textContentType(type.contentType)
+                .foregroundStyle(AppColor.textPrim)
         } else {
-            TextField(title, text: $text)
+            TextField(
+                "",
+                text: $text,
+                prompt: Text(title).foregroundStyle(AppColor.hintPlaceholder)
+            )
                 .textContentType(type.contentType)
                 .keyboardType(type.keyboardType)
                 .textInputAutocapitalization(type.usesWordCapitalization ? .words : .never)
                 .autocorrectionDisabled(type == .email)
+                .foregroundStyle(AppColor.textPrim)
         }
     }
 }

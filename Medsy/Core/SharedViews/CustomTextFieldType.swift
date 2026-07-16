@@ -2,6 +2,8 @@
 //  CustomTextField.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import SwiftUI
 
@@ -47,4 +49,3 @@ enum TextFieldType: Equatable {
         self == .name
     }
 }
-
