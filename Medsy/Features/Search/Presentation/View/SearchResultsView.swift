@@ -13,8 +13,11 @@ struct SearchResultsView: View {
     @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
 
-    init(query: String) {
+    private let onBack: () -> Void
+
+    init(query: String, onBack: @escaping () -> Void = {}) {
         _viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
+        self.onBack = onBack
     }
 
     var body: some View {
@@ -65,7 +68,7 @@ struct SearchResultsView: View {
     private var header: some View {
         HStack {
             Button {
-
+                onBack()
             } label: {
 
                 Image(systemName: languageManager.isRTL ? "arrow.forward" : "arrow.backward")

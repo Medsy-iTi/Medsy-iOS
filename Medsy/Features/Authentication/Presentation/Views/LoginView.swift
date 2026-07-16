@@ -2,12 +2,15 @@
 //  LoginView.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import SwiftUI
 
 struct LoginView: View {
     @State private var viewModel = LoginViewModel()
     let onSignupTapped: () -> Void
+    let onAuthenticated: () -> Void
 
     var body: some View {
         AuthScreenContainer {
@@ -32,7 +35,9 @@ struct LoginView: View {
             validationMessage
 
             PrimaryButton(title: "auth.login.action".localized) {
-                viewModel.submit()
+                if viewModel.submit() {
+                    onAuthenticated()
+                }
             }
 
             AuthDivider()
@@ -63,6 +68,6 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(onSignupTapped: {})
+    LoginView(onSignupTapped: {}, onAuthenticated: {})
         .environment(LanguageManager.shared)
 }

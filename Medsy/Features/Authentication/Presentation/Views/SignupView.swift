@@ -2,12 +2,15 @@
 //  SignupView.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import SwiftUI
 
 struct SignupView: View {
     @State private var viewModel = SignupViewModel()
     let onLoginTapped: () -> Void
+    let onAuthenticated: () -> Void
 
     var body: some View {
         AuthScreenContainer {
@@ -41,7 +44,9 @@ struct SignupView: View {
                 title: "auth.signup.action".localized,
                 isDisabled: !viewModel.hasAcceptedTerms
             ) {
-                viewModel.submit()
+                if viewModel.submit() {
+                    onAuthenticated()
+                }
             }
 
             AuthPrompt(
@@ -67,7 +72,7 @@ struct SignupView: View {
 
 #Preview {
     NavigationStack {
-        SignupView(onLoginTapped: {})
+        SignupView(onLoginTapped: {}, onAuthenticated: {})
     }
     .environment(LanguageManager.shared)
 }

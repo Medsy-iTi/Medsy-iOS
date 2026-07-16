@@ -10,35 +10,47 @@ import SwiftUI
 struct AppRootView: View {
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
-    @State private var isShowingSplash = true
-    @State private var isShowingOnboarding: Bool
+    @State private var coordinator: AppCoordinator
 
     init(
         onboardingFactory: OnboardingFactory,
-        authenticationFactory: AuthenticationFactory
+        authenticationFactory: AuthenticationFactory,
+        coordinator: AppCoordinator
     ) {
         self.onboardingFactory = onboardingFactory
         self.authenticationFactory = authenticationFactory
-        _isShowingOnboarding = State(initialValue: onboardingFactory.shouldShow())
+        _coordinator = State(initialValue: coordinator)
     }
 
     var body: some View {
         Group {
-            if isShowingSplash {
+            switch coordinator.route {
+            case .splash:
                 AnimatedSplashView {
-                    isShowingSplash = false
+                    coordinator.finishSplash()
                 }
-            } else if isShowingOnboarding {
-                onboardingFactory.makeView {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isShowingOnboarding = false
-                    }
-                }
+            case .onboarding:
+                onboardingFactory.makeCoordinator(onComplete: coordinator.finishOnboarding)
+                    .makeView()
                 .transition(.opacity)
-            } else {
-                authenticationFactory.makeView()
-                    .transition(.opacity)
+            case .authentication:
+                AuthenticationCoordinatorView(
+                    coordinator: authenticationFactory.makeCoordinator(
+                        onAuthenticated: coordinator.finishAuthentication
+                    )
+                )
+                .transition(.opacity)
+            case .main:
+                MainTabBarView(
+                    coordinator: MainTabCoordinator(
+                        selectedTab: coordinator.selectedTab,
+                        onTabSelected: { coordinator.selectedTab = $0 },
+                        onLogout: coordinator.logout
+                    )
+                )
+                .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: coordinator.route)
     }
 }

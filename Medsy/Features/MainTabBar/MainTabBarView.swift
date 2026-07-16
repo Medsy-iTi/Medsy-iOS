@@ -5,22 +5,28 @@
 //
 
 import SwiftUI
+import Observation
 
+@MainActor
 struct MainTabBarView: View {
-    @State private var selectedTab = 0
+    @State private var coordinator: MainTabCoordinator
+
+    init(coordinator: MainTabCoordinator) {
+        _coordinator = State(initialValue: coordinator)
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                switch selectedTab {
-                case 0:
-                    NavigationStack {
-                        HomeView()
-                    }
-                default:
+                switch coordinator.selectedTab {
+                case .home:
+                    HomeCoordinatorView()
+                case .profile:
+                    ProfileCoordinatorView(onLogout: coordinator.logout)
+                case .favorites, .offers, .orders:
                     VStack {
                         Spacer()
-                        Text("Tab \(selectedTab)")
+                        Text("Tab \(coordinator.selectedTab.rawValue)")
                             .font(AppColor.sans(18, .medium))
                             .foregroundStyle(AppColor.textSec)
                         Spacer()
@@ -36,11 +42,11 @@ struct MainTabBarView: View {
                     .background(AppColor.border)
                 
                 HStack(spacing: 0) {
-                    tabItem(index: 0, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
-                    tabItem(index: 1, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                    tabItem(index: 2, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
-                    tabItem(index: 3, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
-                    tabItem(index: 4, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
+                    tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
+                    tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
+                    tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
+                    tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
+                    tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
                 }
                 .padding(.top, 10)
                 .padding(.bottom, 24)
@@ -51,10 +57,10 @@ struct MainTabBarView: View {
         .ignoresSafeArea(edges: .bottom)
     }
     
-    private func tabItem(index: Int, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {
-        let isActive = selectedTab == index
+    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {
+        let isActive = coordinator.selectedTab == tab
         return Button {
-            selectedTab = index
+            coordinator.select(tab)
         } label: {
             VStack(spacing: 4) {
                 Image(systemName: isActive ? activeIcon : inactiveIcon)

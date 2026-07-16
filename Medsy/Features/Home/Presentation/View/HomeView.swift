@@ -8,12 +8,13 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedStatus: HomeSearchStatus = .home
+    let onSearch: (String) -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
                 HomeHeaderView()
-                HomeSearchBar()
+                HomeSearchBar(onSubmit: onSearch)
                 //HomeStatusSelectorView(selectedStatus: $selectedStatus)
                 HomePromoBanner()
                 
