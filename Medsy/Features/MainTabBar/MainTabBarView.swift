@@ -10,6 +10,7 @@ import Observation
 @MainActor
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
+    @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -55,6 +56,7 @@ struct MainTabBarView: View {
             .frame(height: 80)
         }
         .ignoresSafeArea(edges: .bottom)
+        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
     
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {

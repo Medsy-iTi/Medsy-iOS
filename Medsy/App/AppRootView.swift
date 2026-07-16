@@ -10,6 +10,7 @@ import SwiftUI
 struct AppRootView: View {
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
+    @ObservedObject private var appSettings = AppSettings.shared
     @State private var coordinator: AppCoordinator
 
     init(
@@ -52,5 +53,6 @@ struct AppRootView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: coordinator.route)
+        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 }

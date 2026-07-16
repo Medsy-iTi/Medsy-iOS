@@ -10,6 +10,7 @@ import SwiftUI
 
 enum HomeRoute: Hashable {
     case search(String)
+    case prescription
 }
 
 @MainActor
@@ -17,10 +18,12 @@ enum HomeRoute: Hashable {
 final class HomeCoordinator {
     var path: [HomeRoute] = []
 
-    func search(for query: String) {
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedQuery.isEmpty else { return }
-        path.append(.search(trimmedQuery))
+    func openSearch() {
+        path.append(.search(""))
+    }
+
+    func showPrescription() {
+        path.append(.prescription)
     }
 
     func goBack() {
@@ -36,11 +39,17 @@ struct HomeCoordinatorView: View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            HomeView(onSearch: coordinator.search)
+            HomeView(onSearchTap: coordinator.openSearch, onPrescription: coordinator.showPrescription)
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
                         SearchCoordinatorView(query: query, onBack: coordinator.goBack)
+                    case .prescription:
+                        PrescriptionUploadView(
+                            onCamera: {},
+                            onGallery: {}
+                        )
+                        .localizedNavigationBackButton(action: coordinator.goBack)
                     }
                 }
         }
