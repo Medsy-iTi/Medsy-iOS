@@ -10,6 +10,8 @@ import Observation
 @MainActor
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
+    @State private var isTabBarHidden = false
+    @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -20,9 +22,10 @@ struct MainTabBarView: View {
             Group {
                 switch coordinator.selectedTab {
                 case .home:
-                    HomeCoordinatorView()
+                    HomeCoordinatorView { isTabBarHidden = $0 }
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
+                        .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
                     VStack {
                         Spacer()
@@ -33,33 +36,40 @@ struct MainTabBarView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(AppColor.bg)
+                    .onAppear { isTabBarHidden = false }
                 }
             }
-            .padding(.bottom, 80)
+            .padding(.bottom, isTabBarHidden ? 0 : 80)
             
-            VStack(spacing: 0) {
-                Divider()
-                    .background(AppColor.border)
-                
-                HStack(spacing: 0) {
-                    tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
-                    tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                    tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
-                    tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
-                    tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
+            if !isTabBarHidden {
+                VStack(spacing: 0) {
+                    Divider()
+                        .background(AppColor.border)
+                    
+                    HStack(spacing: 0) {
+                        tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
+                        tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
+                        tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
+                        tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
+                        tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 24)
+                    .background(AppColor.card)
                 }
-                .padding(.top, 10)
-                .padding(.bottom, 24)
-                .background(AppColor.card)
+                .frame(height: 80)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            .frame(height: 80)
         }
         .ignoresSafeArea(edges: .bottom)
+        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
     }
     
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {
         let isActive = coordinator.selectedTab == tab
         return Button {
+            isTabBarHidden = false
             coordinator.select(tab)
         } label: {
             VStack(spacing: 4) {

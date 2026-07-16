@@ -10,7 +10,20 @@ import SwiftUI
 
 class AppSettings: ObservableObject {
     static let shared = AppSettings()
-    @Published var isDarkMode: Bool = false
+
+    private enum Keys {
+        static let isDarkMode = "app_is_dark_mode"
+    }
+
+    @Published var isDarkMode: Bool {
+        didSet {
+            UserDefaults.standard.set(isDarkMode, forKey: Keys.isDarkMode)
+        }
+    }
+
+    private init() {
+        isDarkMode = UserDefaults.standard.bool(forKey: Keys.isDarkMode)
+    }
 }
 
 enum AppColor {
