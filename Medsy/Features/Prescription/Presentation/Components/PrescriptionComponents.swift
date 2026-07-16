@@ -2,7 +2,7 @@
 //  PrescriptionComponents.swift
 //  Medsy
 //
-//  Created by Codex on 16/07/2026.
+//  Created by Ahmed Elkady on 16/07/2026.
 //
 
 import SwiftUI
