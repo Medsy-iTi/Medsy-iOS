@@ -9,17 +9,25 @@ import SwiftUI
 
 struct EditProfileScreen: View {
 
-    @Environment(\.dismiss) private var dismiss
     @Binding var name: String
 
     let phoneNumber: String
+    let onCancel: () -> Void
+    let onSave: () -> Void
 
     @State private var draftName: String
     @State private var nameError: String?
 
-    init(name: Binding<String>, phoneNumber: String) {
+    init(
+        name: Binding<String>,
+        phoneNumber: String,
+        onCancel: @escaping () -> Void = {},
+        onSave: @escaping () -> Void = {}
+    ) {
         _name = name
         self.phoneNumber = phoneNumber
+        self.onCancel = onCancel
+        self.onSave = onSave
         _draftName = State(initialValue: name.wrappedValue)
     }
 
@@ -49,7 +57,7 @@ struct EditProfileScreen: View {
     private var header: some View {
         HStack {
             Button {
-                dismiss()
+                onCancel()
             } label: {
                 Image(systemName: "chevron.backward")
                     .font(.system(size: 17, weight: .bold))
@@ -176,7 +184,7 @@ struct EditProfileScreen: View {
         }
 
         name = trimmed
-        dismiss()
+        onSave()
     }
 }
 

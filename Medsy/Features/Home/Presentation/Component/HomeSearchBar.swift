@@ -9,6 +9,7 @@ import SwiftUI
 struct HomeSearchBar: View {
     @Environment(LanguageManager.self) private var languageManager
     @State private var searchText = ""
+    let onSubmit: (String) -> Void
     
     var body: some View {
         HStack {
@@ -19,6 +20,8 @@ struct HomeSearchBar: View {
             .font(AppColor.sans(14))
             .foregroundStyle(AppColor.textPrim)
             .multilineTextAlignment(languageManager.isRTL ? .trailing : .leading)
+            .submitLabel(.search)
+            .onSubmit { onSubmit(searchText) }
             
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(AppColor.textSec)

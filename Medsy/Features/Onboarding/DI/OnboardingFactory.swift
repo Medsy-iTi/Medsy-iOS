@@ -24,8 +24,8 @@ struct OnboardingFactory {
     }
 
     @MainActor
-    func makeView(onComplete: @escaping () -> Void) -> OnboardingView {
-        OnboardingView(
+    func makeCoordinator(onComplete: @escaping () -> Void) -> OnboardingCoordinator {
+        OnboardingCoordinator(
             viewModel: OnboardingViewModel(
                 completeOnboarding: completeOnboarding,
                 onComplete: onComplete

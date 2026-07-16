@@ -2,6 +2,8 @@
 //  LoginViewModel.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import Observation
 
@@ -10,7 +12,7 @@ protocol LoginViewModelProtocol: AnyObject {
     var phoneNumber: String { get set }
     var password: String { get set }
     var validationMessage: String? { get }
-    func submit()
+    @discardableResult func submit() -> Bool
 }
 
 @MainActor
@@ -20,9 +22,11 @@ final class LoginViewModel: LoginViewModelProtocol {
     var password = ""
     private(set) var validationMessage: String?
 
-    func submit() {
+    @discardableResult
+    func submit() -> Bool {
         validationMessage = phoneNumber.isEmpty || password.isEmpty
             ? "auth.validation.required".localized
             : nil
+        return validationMessage == nil
     }
 }
