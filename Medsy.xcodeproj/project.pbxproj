@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-			6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
-			6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
-			9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
+		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
+		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
+		9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,16 +78,16 @@
 			path = "Medsy-PharmacyTests";
 			sourceTree = "<group>";
 		};
-			787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */ = {
-				isa = PBXFileSystemSynchronizedRootGroup;
-				path = "Medsy-PharmacyUITests";
-				sourceTree = "<group>";
-			};
-			9A000002300A000100000001 /* SharedCore */ = {
-				isa = PBXFileSystemSynchronizedRootGroup;
-				path = SharedCore;
-				sourceTree = "<group>";
-			};
+		787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Medsy-PharmacyUITests";
+			sourceTree = "<group>";
+		};
+		9A000002300A000100000001 /* SharedCore */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SharedCore;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,14 +114,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-			787FF8703009785B006556E7 /* Frameworks */ = {
-				isa = PBXFrameworksBuildPhase;
-				buildActionMask = 2147483647;
-				files = (
-					9A000001300A000100000001 /* Alamofire in Frameworks */,
-				);
-				runOnlyForDeploymentPostprocessing = 0;
-			};
+		787FF8703009785B006556E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A000001300A000100000001 /* Alamofire in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		787FF87E3009785D006556E7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -144,14 +144,14 @@
 			children = (
 				7834991B30055416001D87B6 /* Medsy */,
 				7834992B3005541E001D87B6 /* MedsyTests */,
-					783499353005541E001D87B6 /* MedsyUITests */,
-					787FF8743009785B006556E7 /* Medsy-Pharmacy */,
-					787FF8843009785D006556E7 /* Medsy-PharmacyTests */,
-					787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */,
-					9A000002300A000100000001 /* SharedCore */,
-					7834991A30055416001D87B6 /* Products */,
-				);
-				sourceTree = "<group>";
+				783499353005541E001D87B6 /* MedsyUITests */,
+				787FF8743009785B006556E7 /* Medsy-Pharmacy */,
+				787FF8843009785D006556E7 /* Medsy-PharmacyTests */,
+				787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */,
+				9A000002300A000100000001 /* SharedCore */,
+				7834991A30055416001D87B6 /* Products */,
+			);
+			sourceTree = "<group>";
 		};
 		7834991A30055416001D87B6 /* Products */ = {
 			isa = PBXGroup;
@@ -181,11 +181,11 @@
 			);
 			dependencies = (
 			);
-				fileSystemSynchronizedGroups = (
-					7834991B30055416001D87B6 /* Medsy */,
-					9A000002300A000100000001 /* SharedCore */,
-				);
-				name = Medsy;
+			fileSystemSynchronizedGroups = (
+				7834991B30055416001D87B6 /* Medsy */,
+				9A000002300A000100000001 /* SharedCore */,
+			);
+			name = Medsy;
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
@@ -252,14 +252,14 @@
 			);
 			dependencies = (
 			);
-				fileSystemSynchronizedGroups = (
-					787FF8743009785B006556E7 /* Medsy-Pharmacy */,
-					9A000002300A000100000001 /* SharedCore */,
-				);
-				name = "Medsy-Pharmacy";
-				packageProductDependencies = (
-					6D8B26563006BA48001616C8 /* Alamofire */,
-				);
+			fileSystemSynchronizedGroups = (
+				787FF8743009785B006556E7 /* Medsy-Pharmacy */,
+				9A000002300A000100000001 /* SharedCore */,
+			);
+			name = "Medsy-Pharmacy";
+			packageProductDependencies = (
+				6D8B26563006BA48001616C8 /* Alamofire */,
+			);
 			productName = "Medsy-Pharmacy";
 			productReference = 787FF8733009785B006556E7 /* Medsy-Pharmacy.app */;
 			productType = "com.apple.product-type.application";
