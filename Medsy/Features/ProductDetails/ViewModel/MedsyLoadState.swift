@@ -11,5 +11,6 @@ enum MedsyLoadState {
     case loaded
     case empty
     case noConnection
+    
+    case error
 }
-

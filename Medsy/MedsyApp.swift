@@ -28,10 +28,16 @@ struct MedsyApp: App {
 
     var body: some Scene {
         WindowGroup {
+
 			ProductDetailView(productId: "1")
+				.localizedEnvironment()
+				.environment(languageManager)
+				.id(languageManager.currentLanguage)
+			ProfileScreen()
                 .localizedEnvironment()
                 .environment(languageManager)
                 .id(languageManager.currentLanguage)
+			
         }
     }
 }

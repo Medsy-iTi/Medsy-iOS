@@ -19,6 +19,7 @@ struct PrimaryButton: View {
 	var isLoading = false
 	var isDisabled = false
 	let action: () -> Void
+	@ObservedObject private var appSettings = AppSettings.shared
 
 	var body: some View {
 		Button(action: action) {
@@ -54,6 +55,7 @@ struct PrimaryButton: View {
 private struct PrimaryButtonStyle: ButtonStyle {
 	let kind: MedsyButtonStyleKind
 	@Environment(\.isEnabled) private var isEnabled
+	@ObservedObject private var appSettings = AppSettings.shared
 
 	func makeBody(configuration: Configuration) -> some View {
 		configuration.label

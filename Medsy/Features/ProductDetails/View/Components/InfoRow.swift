@@ -14,47 +14,43 @@ struct InfoRow: View {
     var valueColor: MedsyRowTint = .primary
 
     @Environment(LanguageManager.self) private var languageManager
+    @ObservedObject private var appSettings = AppSettings.shared
 
     private var valueTint: Color {
         switch valueColor {
         case .primary: return AppColor.textPrim
-        case .danger: return AppColor.danger
+        case .danger:  return AppColor.danger
         }
     }
 
     var body: some View {
-        HStack {
-            if languageManager.isRTL {
-                Text(label)
-                    .font(MedsyFont.body(14))
-                    .foregroundStyle(AppColor.textSec)
-                Spacer()
-                valueView
-            } else {
-                valueView
-                Spacer()
-                Text(label)
-                    .font(MedsyFont.body(14))
-                    .foregroundStyle(AppColor.textSec)
+        HStack(spacing: MedsySpacing.xs) {
+          
+            Text(label)
+                .font(MedsyFont.body(14))
+                .foregroundStyle(AppColor.textSec)
+
+            Spacer()
+
+
+            HStack(spacing: MedsySpacing.xxs) {
+                Image(systemName: icon)
+                    .foregroundStyle(valueTint)
+                    .imageScale(.small)
+                Text(value)
+                    .font(MedsyFont.bodyMedium(14))
+                    .foregroundStyle(valueTint)
             }
         }
         .padding(.vertical, MedsySpacing.xs)
     }
-
-    private var valueView: some View {
-        HStack(spacing: MedsySpacing.xxs) {
-            Image(systemName: icon)
-                .foregroundStyle(valueTint)
-                .imageScale(.small)
-            Text(value)
-                .font(MedsyFont.bodyMedium(14))
-                .foregroundStyle(valueTint)
-        }
-    }
 }
+
+// MARK: - Card container
 
 struct MedsyInfoCard<Content: View>: View {
     @ViewBuilder var content: () -> Content
+    @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -70,13 +66,15 @@ struct MedsyInfoCard<Content: View>: View {
     }
 }
 
+// MARK: - Row list
+
 struct MedsyInfoRowList: View {
     let rows: [ProductInfoRow]
 
     var body: some View {
         MedsyInfoCard {
             ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
-			 InfoRow(
+                InfoRow(
                     icon: row.icon,
                     label: row.label.localized,
                     value: row.value,
@@ -89,4 +87,3 @@ struct MedsyInfoRowList: View {
         }
     }
 }
-

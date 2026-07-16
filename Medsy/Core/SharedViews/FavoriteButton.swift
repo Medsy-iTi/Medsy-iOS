@@ -11,6 +11,7 @@ import SwiftUI
 struct FavoriteButton: View {
     @Binding var isFavorite: Bool
     var size: CGFloat = 44
+    @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
         Button {

@@ -13,6 +13,7 @@ struct MedsyNavBar<Trailing: View>: View {
     @ViewBuilder var trailing: () -> Trailing
 
     @Environment(LanguageManager.self) private var languageManager
+    @ObservedObject private var appSettings = AppSettings.shared
 
     init(
         title: String? = nil,

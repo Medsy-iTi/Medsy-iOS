@@ -11,12 +11,13 @@ struct SectionHeader: View {
     let title: String
 
     @Environment(LanguageManager.self) private var languageManager
+    @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
         Text(title)
             .font(MedsyFont.title(17))
             .foregroundStyle(AppColor.textPrim)
-            .frame(maxWidth: .infinity, alignment: languageManager.isRTL ? .trailing : .leading)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-

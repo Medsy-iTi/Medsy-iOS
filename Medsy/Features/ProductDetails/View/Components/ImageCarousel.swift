@@ -14,8 +14,13 @@ struct ImageCarousel: View {
     var showFavorite: Bool = true
     var height: CGFloat = 260
 
+    @Environment(\.layoutDirection) private var layoutDirection
+    @ObservedObject private var appSettings = AppSettings.shared
+
+    private var isRTL: Bool { layoutDirection == .rightToLeft }
+
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: isRTL ? .topLeading : .topTrailing) {
             TabView(selection: $selectedIndex) {
                 ForEach(images.indices, id: \.self) { index in
                     Image(images[index])
@@ -26,7 +31,10 @@ struct ImageCarousel: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .flipsForRightToLeftLayoutDirection(true)
             .frame(height: height)
+            .background(AppColor.surface)
+            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
 
             if showFavorite {
                 FavoriteButton(isFavorite: $isFavorite, size: 40)
@@ -35,10 +43,12 @@ struct ImageCarousel: View {
         }
         .overlay(alignment: .bottom) {
             if images.count > 1 {
-                PageDots(count: images.count, selectedIndex: selectedIndex)
-                    .padding(.bottom, MedsySpacing.xs)
+                PageDots(
+                    count: images.count,
+                    selectedIndex: selectedIndex
+                )
+                .padding(.bottom, MedsySpacing.xs)
             }
         }
     }
 }
-
