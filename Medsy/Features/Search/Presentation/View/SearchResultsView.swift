@@ -107,9 +107,9 @@ struct SearchResultsView: View {
             ScrollView {
                 LazyVStack(spacing: MedsySpacing.sm) {
                     ForEach($viewModel.products) { $product in
-						SearchedProductCard(product: $product) {
-							coordinator.showProductDetail(productId: product.id)
-						}
+                        SearchedProductCard(product: $product, onTap: {
+                            coordinator.showProductDetail(productId: product.id)
+                        })
                     }
                 }
                 .padding(MedsySpacing.md)
