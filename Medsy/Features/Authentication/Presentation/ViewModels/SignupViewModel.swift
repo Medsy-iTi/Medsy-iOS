@@ -2,6 +2,8 @@
 //  SignupViewModel.swift
 //  Medsy
 //
+//  Created by Ehab Salah on 16/07/2026.
+//
 
 import Observation
 
@@ -14,7 +16,7 @@ protocol SignupViewModelProtocol: AnyObject {
     var confirmedPassword: String { get set }
     var hasAcceptedTerms: Bool { get set }
     var validationMessage: String? { get }
-    func submit()
+    @discardableResult func submit() -> Bool
 }
 
 @MainActor
@@ -28,15 +30,17 @@ final class SignupViewModel: SignupViewModelProtocol {
     var hasAcceptedTerms = false
     private(set) var validationMessage: String?
 
-    func submit() {
+    @discardableResult
+    func submit() -> Bool {
         guard !fullName.isEmpty, !phoneNumber.isEmpty, !email.isEmpty,
               !password.isEmpty, !confirmedPassword.isEmpty else {
             validationMessage = "auth.validation.required".localized
-            return
+            return false
         }
 
         validationMessage = password == confirmedPassword
             ? nil
             : "auth.validation.password_mismatch".localized
+        return validationMessage == nil
     }
 }

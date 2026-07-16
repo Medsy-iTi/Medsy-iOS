@@ -8,20 +8,21 @@ import SwiftUI
 
 struct HomeSearchBar: View {
     @Environment(LanguageManager.self) private var languageManager
-    @State private var searchText = ""
+    let onTap: () -> Void
     
     var body: some View {
-        HStack {
-            TextField("", text: $searchText, prompt: 
+        Button(action: onTap) {
+            HStack {
                 Text("home.searchPlaceholder".localized)
+                    .font(AppColor.sans(14))
                     .foregroundStyle(AppColor.textSec)
-            )
-            .font(AppColor.sans(14))
-            .foregroundStyle(AppColor.textPrim)
-            .multilineTextAlignment(languageManager.isRTL ? .trailing : .leading)
-            
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(AppColor.textSec)
+                    .multilineTextAlignment(languageManager.isRTL ? .trailing : .leading)
+
+                Spacer()
+
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(AppColor.textSec)
+            }
         }
         .environment(\.layoutDirection, .leftToRight)
         .padding(.horizontal, 16)

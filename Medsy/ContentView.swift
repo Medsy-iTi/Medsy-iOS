@@ -7,12 +7,13 @@
 
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
 
     @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
-        MainTabBarView()
+        MainTabBarView(coordinator: MainTabCoordinator())
             .localizedEnvironment()
             .id(languageManager.currentLanguage)
     }

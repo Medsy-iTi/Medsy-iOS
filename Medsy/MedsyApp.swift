@@ -13,6 +13,7 @@ struct MedsyApp: App {
     private let languageManager: LanguageManager
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
+    private let appCoordinator: AppCoordinator
 
     init() {
         AppAssembler.shared.assemble(modules: [
@@ -24,16 +25,16 @@ struct MedsyApp: App {
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
+        appCoordinator = AppCoordinator(shouldShowOnboarding: onboardingFactory.shouldShow())
     }
 
     var body: some Scene {
         WindowGroup {
-
-			ProductDetailView(productId: "1")
-				.localizedEnvironment()
-				.environment(languageManager)
-				.id(languageManager.currentLanguage)
-			ProfileScreen()
+            AppRootView(
+                onboardingFactory: onboardingFactory,
+                authenticationFactory: authenticationFactory,
+                coordinator: appCoordinator
+            )
                 .localizedEnvironment()
                 .environment(languageManager)
                 .id(languageManager.currentLanguage)
