@@ -137,7 +137,7 @@ struct ProfileScreen: View {
 
         }
         .localizedEnvironment()
-        .id(languageManager.currentLanguage)
+        .id("\(languageManager.currentLanguage.rawValue)-\(appSettings.isDarkMode)")
     }
 
     private var header: some View {
