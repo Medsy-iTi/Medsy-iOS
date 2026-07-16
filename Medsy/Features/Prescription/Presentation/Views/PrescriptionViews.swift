@@ -10,9 +10,16 @@ import SwiftUI
 struct PrescriptionUploadView: View {
     let onCamera: () -> Void
     let onGallery: () -> Void
+    let onBack: (() -> Void)?
+
+    init(onCamera: @escaping () -> Void, onGallery: @escaping () -> Void, onBack: (() -> Void)? = nil) {
+        self.onCamera = onCamera
+        self.onGallery = onGallery
+        self.onBack = onBack
+    }
 
     var body: some View {
-        PrescriptionPage(title: "prescription.upload.title".localized) {
+        PrescriptionPage(title: "prescription.upload.title".localized, onBack: onBack) {
             ScrollView {
                 VStack(spacing: MedsySpacing.lg) {
                     VStack(spacing: MedsySpacing.sm) {
@@ -217,19 +224,25 @@ struct PrescriptionResultView: View {
 
 private struct PrescriptionPage<Content: View>: View {
     let title: String
+    let onBack: (() -> Void)?
     let content: Content
 
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: String, onBack: (() -> Void)? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.onBack = onBack
         self.content = content()
     }
 
     var body: some View {
-        content
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .background(AppColor.bg)
-            .toolbarBackground(AppColor.bg, for: .navigationBar)
+        VStack(spacing: 0) {
+            MedsyNavBar(title: title, onBack: onBack) {
+                EmptyView()
+            }
+            content
+        }
+        .background(AppColor.bg)
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarHidden(true)
     }
 }
 

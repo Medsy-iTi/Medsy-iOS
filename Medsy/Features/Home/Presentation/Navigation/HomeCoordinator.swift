@@ -55,9 +55,9 @@ struct HomeCoordinatorView: View {
                     case .prescription:
                         PrescriptionUploadView(
                             onCamera: {},
-                            onGallery: {}
+                            onGallery: {},
+                            onBack: coordinator.goBack
                         )
-                        .localizedNavigationBackButton(action: coordinator.goBack)
                     }
                 }
                 .navigationDestination(for: ProductDetailDestination.self) { destination in
