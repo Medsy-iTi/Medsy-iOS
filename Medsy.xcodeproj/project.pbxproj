@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
-		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
+			6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
+			6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
+			9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,12 +27,29 @@
 			remoteGlobalIDString = 7834991830055416001D87B6;
 			remoteInfo = Medsy;
 		};
+		787FF8823009785D006556E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7834991130055416001D87B6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 787FF8723009785B006556E7;
+			remoteInfo = "Medsy-Pharmacy";
+		};
+		787FF88C3009785D006556E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7834991130055416001D87B6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 787FF8723009785B006556E7;
+			remoteInfo = "Medsy-Pharmacy";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		7834991930055416001D87B6 /* Medsy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medsy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		783499283005541E001D87B6 /* MedsyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedsyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		783499323005541E001D87B6 /* MedsyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MedsyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		787FF8733009785B006556E7 /* Medsy-Pharmacy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Medsy-Pharmacy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		787FF8813009785D006556E7 /* Medsy-PharmacyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Medsy-PharmacyTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		787FF88B3009785D006556E7 /* Medsy-PharmacyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Medsy-PharmacyUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -50,6 +68,26 @@
 			path = MedsyUITests;
 			sourceTree = "<group>";
 		};
+		787FF8743009785B006556E7 /* Medsy-Pharmacy */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Medsy-Pharmacy";
+			sourceTree = "<group>";
+		};
+		787FF8843009785D006556E7 /* Medsy-PharmacyTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Medsy-PharmacyTests";
+			sourceTree = "<group>";
+		};
+			787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */ = {
+				isa = PBXFileSystemSynchronizedRootGroup;
+				path = "Medsy-PharmacyUITests";
+				sourceTree = "<group>";
+			};
+			9A000002300A000100000001 /* SharedCore */ = {
+				isa = PBXFileSystemSynchronizedRootGroup;
+				path = SharedCore;
+				sourceTree = "<group>";
+			};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +114,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+			787FF8703009785B006556E7 /* Frameworks */ = {
+				isa = PBXFrameworksBuildPhase;
+				buildActionMask = 2147483647;
+				files = (
+					9A000001300A000100000001 /* Alamofire in Frameworks */,
+				);
+				runOnlyForDeploymentPostprocessing = 0;
+			};
+		787FF87E3009785D006556E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF8883009785D006556E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -84,10 +144,14 @@
 			children = (
 				7834991B30055416001D87B6 /* Medsy */,
 				7834992B3005541E001D87B6 /* MedsyTests */,
-				783499353005541E001D87B6 /* MedsyUITests */,
-				7834991A30055416001D87B6 /* Products */,
-			);
-			sourceTree = "<group>";
+					783499353005541E001D87B6 /* MedsyUITests */,
+					787FF8743009785B006556E7 /* Medsy-Pharmacy */,
+					787FF8843009785D006556E7 /* Medsy-PharmacyTests */,
+					787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */,
+					9A000002300A000100000001 /* SharedCore */,
+					7834991A30055416001D87B6 /* Products */,
+				);
+				sourceTree = "<group>";
 		};
 		7834991A30055416001D87B6 /* Products */ = {
 			isa = PBXGroup;
@@ -95,6 +159,9 @@
 				7834991930055416001D87B6 /* Medsy.app */,
 				783499283005541E001D87B6 /* MedsyTests.xctest */,
 				783499323005541E001D87B6 /* MedsyUITests.xctest */,
+				787FF8733009785B006556E7 /* Medsy-Pharmacy.app */,
+				787FF8813009785D006556E7 /* Medsy-PharmacyTests.xctest */,
+				787FF88B3009785D006556E7 /* Medsy-PharmacyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,10 +181,11 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				7834991B30055416001D87B6 /* Medsy */,
-			);
-			name = Medsy;
+				fileSystemSynchronizedGroups = (
+					7834991B30055416001D87B6 /* Medsy */,
+					9A000002300A000100000001 /* SharedCore */,
+				);
+				name = Medsy;
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
@@ -172,6 +240,76 @@
 			productReference = 783499323005541E001D87B6 /* MedsyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		787FF8723009785B006556E7 /* Medsy-Pharmacy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 787FF8993009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-Pharmacy" */;
+			buildPhases = (
+				787FF86F3009785B006556E7 /* Sources */,
+				787FF8703009785B006556E7 /* Frameworks */,
+				787FF8713009785B006556E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+				fileSystemSynchronizedGroups = (
+					787FF8743009785B006556E7 /* Medsy-Pharmacy */,
+					9A000002300A000100000001 /* SharedCore */,
+				);
+				name = "Medsy-Pharmacy";
+				packageProductDependencies = (
+					6D8B26563006BA48001616C8 /* Alamofire */,
+				);
+			productName = "Medsy-Pharmacy";
+			productReference = 787FF8733009785B006556E7 /* Medsy-Pharmacy.app */;
+			productType = "com.apple.product-type.application";
+		};
+		787FF8803009785D006556E7 /* Medsy-PharmacyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 787FF89A3009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-PharmacyTests" */;
+			buildPhases = (
+				787FF87D3009785D006556E7 /* Sources */,
+				787FF87E3009785D006556E7 /* Frameworks */,
+				787FF87F3009785D006556E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				787FF8833009785D006556E7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				787FF8843009785D006556E7 /* Medsy-PharmacyTests */,
+			);
+			name = "Medsy-PharmacyTests";
+			packageProductDependencies = (
+			);
+			productName = "Medsy-PharmacyTests";
+			productReference = 787FF8813009785D006556E7 /* Medsy-PharmacyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		787FF88A3009785D006556E7 /* Medsy-PharmacyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 787FF89B3009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-PharmacyUITests" */;
+			buildPhases = (
+				787FF8873009785D006556E7 /* Sources */,
+				787FF8883009785D006556E7 /* Frameworks */,
+				787FF8893009785D006556E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				787FF88D3009785D006556E7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				787FF88E3009785D006556E7 /* Medsy-PharmacyUITests */,
+			);
+			name = "Medsy-PharmacyUITests";
+			packageProductDependencies = (
+			);
+			productName = "Medsy-PharmacyUITests";
+			productReference = 787FF88B3009785D006556E7 /* Medsy-PharmacyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -192,6 +330,17 @@
 					783499313005541E001D87B6 = {
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 7834991830055416001D87B6;
+					};
+					787FF8723009785B006556E7 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					787FF8803009785D006556E7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 787FF8723009785B006556E7;
+					};
+					787FF88A3009785D006556E7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 787FF8723009785B006556E7;
 					};
 				};
 			};
@@ -217,6 +366,9 @@
 				7834991830055416001D87B6 /* Medsy */,
 				783499273005541E001D87B6 /* MedsyTests */,
 				783499313005541E001D87B6 /* MedsyUITests */,
+				787FF8723009785B006556E7 /* Medsy-Pharmacy */,
+				787FF8803009785D006556E7 /* Medsy-PharmacyTests */,
+				787FF88A3009785D006556E7 /* Medsy-PharmacyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -237,6 +389,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		783499303005541E001D87B6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF8713009785B006556E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF87F3009785D006556E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF8893009785D006556E7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -267,6 +440,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		787FF86F3009785B006556E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF87D3009785D006556E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		787FF8873009785D006556E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -279,6 +473,16 @@
 			isa = PBXTargetDependency;
 			target = 7834991830055416001D87B6 /* Medsy */;
 			targetProxy = 783499333005541E001D87B6 /* PBXContainerItemProxy */;
+		};
+		787FF8833009785D006556E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 787FF8723009785B006556E7 /* Medsy-Pharmacy */;
+			targetProxy = 787FF8823009785D006556E7 /* PBXContainerItemProxy */;
+		};
+		787FF88D3009785D006556E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 787FF8723009785B006556E7 /* Medsy-Pharmacy */;
+			targetProxy = 787FF88C3009785D006556E7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -526,6 +730,128 @@
 			};
 			name = Release;
 		};
+		787FF8933009785D006556E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-Pharmacy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		787FF8943009785D006556E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-Pharmacy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		787FF8953009785D006556E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-PharmacyTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Medsy-Pharmacy.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Medsy-Pharmacy";
+			};
+			name = Debug;
+		};
+		787FF8963009785D006556E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-PharmacyTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Medsy-Pharmacy.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Medsy-Pharmacy";
+			};
+			name = Release;
+		};
+		787FF8973009785D006556E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-PharmacyUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Medsy-Pharmacy";
+			};
+			name = Debug;
+		};
+		787FF8983009785D006556E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "iti.Medsy-PharmacyUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Medsy-Pharmacy";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -561,6 +887,33 @@
 			buildConfigurations = (
 				783499433005541E001D87B6 /* Debug */,
 				783499443005541E001D87B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		787FF8993009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-Pharmacy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				787FF8933009785D006556E7 /* Debug */,
+				787FF8943009785D006556E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		787FF89A3009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-PharmacyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				787FF8953009785D006556E7 /* Debug */,
+				787FF8963009785D006556E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		787FF89B3009785D006556E7 /* Build configuration list for PBXNativeTarget "Medsy-PharmacyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				787FF8973009785D006556E7 /* Debug */,
+				787FF8983009785D006556E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
