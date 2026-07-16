@@ -44,8 +44,8 @@ Medsy/
         Mappers/
       Presentation/
         Views/
+          Components/
         ViewModels/
-        Components/
         Routing/
     Onboarding/
       DI/
@@ -78,7 +78,7 @@ Presentation -> Domain <- Data
 - `Core` contains stable, product-agnostic infrastructure. `Core/DI` registers shared application dependencies only. Features must not depend on each other's `Data` or `Presentation` layers.
 - Each feature owns a `DI` folder that assembles its repositories, use cases, view models, and entry views.
 
-Prefer protocols at architectural boundaries, not for every type. Avoid global mutable state and service locators.
+Prefer protocols at architectural boundaries. As a project convention, every use case and view model must define a protocol in its owning layer so callers, previews, and tests can inject substitutes. Other concrete types do not require protocols unless they cross an architectural boundary. Avoid global mutable state and service locators.
 
 ## Dependency Injection
 
@@ -112,8 +112,11 @@ Features/
 ## MVVM Conventions
 
 - Views render state and forward user intent. Keep business rules, API calls, and persistence out of SwiftUI view bodies.
+- Place feature-specific reusable view components under `Presentation/Views/Components/`, next to the feature's screen views. Do not create `Presentation/Components/` as a sibling of `Views/`.
 - View models are `@MainActor` and expose explicit screen state. Prefer a single state value when a screen has meaningful loading, content, empty, and error states.
+- Define a protocol for every view model in `Presentation/ViewModels/`. Views and factories should depend on the protocol when practical, while the concrete implementation remains responsible for Observation state and behavior.
 - Use cases express one business action and are injected into view models.
+- Define a protocol for every use case in `Domain/UseCases/`. Name the protocol after the capability and keep the implementation replaceable through constructor injection.
 - Repositories hide remote and local storage details from the domain layer.
 - Navigation is modeled explicitly through routes or coordinators. Do not scatter navigation decisions across reusable views.
 - Use constructor injection. Previews and tests should receive fakes without starting production services.
