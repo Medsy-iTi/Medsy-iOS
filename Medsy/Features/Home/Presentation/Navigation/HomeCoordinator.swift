@@ -34,6 +34,11 @@ final class HomeCoordinator {
 
 struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
+    private let onTabBarHiddenChange: (Bool) -> Void
+
+    init(onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }) {
+        self.onTabBarHiddenChange = onTabBarHiddenChange
+    }
 
     var body: some View {
         @Bindable var coordinator = coordinator
@@ -52,6 +57,12 @@ struct HomeCoordinatorView: View {
                         .localizedNavigationBackButton(action: coordinator.goBack)
                     }
                 }
+        }
+        .onAppear {
+            onTabBarHiddenChange(!coordinator.path.isEmpty)
+        }
+        .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
+            onTabBarHiddenChange(!isEmpty)
         }
     }
 }
