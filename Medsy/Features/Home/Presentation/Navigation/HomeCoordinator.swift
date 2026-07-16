@@ -60,6 +60,9 @@ struct HomeCoordinatorView: View {
                         .localizedNavigationBackButton(action: coordinator.goBack)
                     }
                 }
+                .navigationDestination(for: ProductDetailDestination.self) { destination in
+                    ProductDetailView(productId: destination.productId)
+                }
         }
         .onAppear {
             onTabBarHiddenChange(!coordinator.path.isEmpty)

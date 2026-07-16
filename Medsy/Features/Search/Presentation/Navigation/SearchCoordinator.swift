@@ -25,39 +25,36 @@ final class SearchCoordinator {
         onBack()
     }
 
-	func showProductDetail(productId: String) {
-		onPush(ProductDetailDestination(productId: productId))
-	}
+    func showProductDetail(productId: String) {
+        onPush(ProductDetailDestination(productId: productId))
+    }
 }
 
 struct ProductDetailDestination: Hashable, Equatable {
-	let productId: String
+    let productId: String
 
-	static func == (lhs: ProductDetailDestination, rhs: ProductDetailDestination) -> Bool {
-		lhs.productId == rhs.productId
-	}
+    static func == (lhs: ProductDetailDestination, rhs: ProductDetailDestination) -> Bool {
+        lhs.productId == rhs.productId
+    }
 
-	func hash(into hasher: inout Hasher) {
-		hasher.combine(productId)
-	}
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(productId)
+    }
 }
 
 struct SearchCoordinatorView: View {
-	@State private var coordinator: SearchCoordinator
+    @State private var coordinator: SearchCoordinator
 
-	init(query: String, onBack: @escaping () -> Void, onPush: @escaping (ProductDetailDestination) -> Void) {
-		_coordinator = State(initialValue: SearchCoordinator(query: query, onBack: onBack, onPush: onPush))
-	}
+    init(query: String, onBack: @escaping () -> Void, onPush: @escaping (ProductDetailDestination) -> Void) {
+        _coordinator = State(initialValue: SearchCoordinator(query: query, onBack: onBack, onPush: onPush))
+    }
 
-	var body: some View {
-		SearchResultsView(
-			query: coordinator.query,
-			onBack: coordinator.goBack,
-			coordinator: coordinator
-		)
-		.navigationDestination(for: ProductDetailDestination.self) { destination in
-			ProductDetailView(productId: destination.productId)
-		}
+    var body: some View {
+        SearchResultsView(
+            query: coordinator.query,
+            onBack: coordinator.goBack,
+            coordinator: coordinator
+        )
         .navigationBarHidden(true)
-	}
+    }
 }
