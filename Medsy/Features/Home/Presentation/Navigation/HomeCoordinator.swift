@@ -23,7 +23,7 @@ final class HomeCoordinator {
     }
 
     func showPrescription() {
-        path.append(.prescription)
+        path.append(HomeRoute.prescription)
     }
 
     func goBack() {
@@ -52,7 +52,6 @@ struct HomeCoordinatorView: View {
                         SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
                             coordinator.path.append(dest)
                         }
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack)
                     case .prescription:
                         PrescriptionUploadView(
                             onCamera: {},
