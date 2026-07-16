@@ -12,12 +12,13 @@ struct SearchResultsView: View {
     @StateObject private var viewModel: SearchResultsViewModel
     @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
-
+	private let coordinator: SearchCoordinator
     private let onBack: () -> Void
 
-    init(query: String, onBack: @escaping () -> Void = {}) {
+    init(query: String, onBack: @escaping () -> Void = {},coordinator: SearchCoordinator) {
         _viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
         self.onBack = onBack
+		self.coordinator = coordinator
     }
 
     var body: some View {
@@ -49,7 +50,7 @@ struct SearchResultsView: View {
                         .font(MedsyFont.caption())
                         .foregroundStyle(AppColor.textSec)
 
-                        .frame(maxWidth: .infinity, alignment: languageManager.isRTL ? .leading : .trailing)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .padding(.horizontal, MedsySpacing.md)
@@ -106,7 +107,9 @@ struct SearchResultsView: View {
             ScrollView {
                 LazyVStack(spacing: MedsySpacing.sm) {
                     ForEach($viewModel.products) { $product in
-                        SearchedProductCard(product: $product)
+						SearchedProductCard(product: $product) {
+							coordinator.showProductDetail(productId: product.id)
+						}
                     }
                 }
                 .padding(MedsySpacing.md)
