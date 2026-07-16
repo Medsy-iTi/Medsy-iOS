@@ -74,7 +74,7 @@ struct MedsyStatusView: View {
             .padding(.horizontal, MedsySpacing.xl)
 
             VStack(spacing: MedsySpacing.sm) {
-                MedsyPrimaryButton(title: config.primaryButtonTitle, action: config.primaryAction)
+                PrimaryButton(title: config.primaryButtonTitle, action: config.primaryAction)
                     .padding(.horizontal, MedsySpacing.xl)
 
                 if let secondaryTitle = config.secondaryButtonTitle, let secondaryAction = config.secondaryAction {

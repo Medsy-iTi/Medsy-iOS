@@ -170,3 +170,25 @@
 "auth.password.hide" = "Hide password";
 "auth.brand.name" = "Medesy";
 "auth.brand.tagline" = "Your health, our priority";
+
+	// MARK: - Product Detail
+"product.info_title" = "Product Information";
+"product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
+"product.price_format" = "%@ %@";
+"product.add_to_cart" = "Add to Cart";
+"product.consult_pharmacist" = "Consult a Pharmacist";
+
+	// MARK: - Product Info Rows
+"product.manufacturer" = "Manufacturer";
+"product.type" = "Type";
+"product.category" = "Drug Category";
+"product.dispense_method" = "Dispensing Method";
+
+	// MARK: - Currency
+"currency.egp" = "EGP";
+
+	// MARK: - Accessibility
+"accessibility.add_favorite" = "Add to favorites";
+"accessibility.remove_favorite" = "Remove from favorites";
+"accessibility.back" = "Back";
+"accessibility.share" = "Share";

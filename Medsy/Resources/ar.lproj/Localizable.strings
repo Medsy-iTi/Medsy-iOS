@@ -169,3 +169,45 @@
 "auth.password.hide" = "إخفاء كلمة المرور";
 "auth.brand.name" = "Medesy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
+
+	// MARK: - Search
+"search.title" = "بحث";
+"search.placeholder" = "ابحث عن دواء...";
+"search.result_count" = "تم العثور على %d نتيجة";
+
+	// MARK: - Filters
+"filter.sort" = "ترتيب";
+"filter.type" = "النوع";
+"filter.price" = "السعر";
+"filter.most_relevant" = "الأكثر صلة";
+
+	// MARK: - Empty / No connection states
+"status.no_results.title" = "لا توجد نتائج";
+"status.no_results.subtitle" = "جرّب كلمة بحث مختلفة أو امسح البحث.";
+"status.no_results.clear_action" = "مسح البحث";
+"status.no_results.prescription_action" = "رفع روشتة بدلاً من ذلك";
+"status.no_connection.title" = "لا يوجد اتصال بالإنترنت";
+"status.no_connection.subtitle" = "من فضلك تحقق من اتصالك وحاول مرة أخرى.";
+"status.no_connection.retry_action" = "إعادة المحاولة";
+
+	// MARK: - Product Detail
+"product.info_title" = "معلومات المنتج";
+"product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
+"product.price_format" = "%@ %@";
+"product.add_to_cart" = "أضف إلى السلة";
+"product.consult_pharmacist" = "استشارة صيدلي";
+
+	// MARK: - Product Info Rows
+"product.manufacturer" = "الشركة المنتجة";
+"product.type" = "النوع";
+"product.category" = "فئة الدواء";
+"product.dispense_method" = "طريقة الصرف";
+
+	// MARK: - Currency
+"currency.egp" = "جنيه";
+
+	// MARK: - Accessibility
+"accessibility.add_favorite" = "إضافة إلى المفضلة";
+"accessibility.remove_favorite" = "إزالة من المفضلة";
+"accessibility.back" = "رجوع";
+"accessibility.share" = "مشاركة";
