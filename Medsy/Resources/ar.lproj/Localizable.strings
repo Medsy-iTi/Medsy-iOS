@@ -94,14 +94,21 @@
 
 /* Search */
 "search.title" = "نتائج البحث";
-"search.placeholder" = "بانادول إكسترا";
+"search.placeholder" = " اكتب اسم الدواء للبحث";
 "search.result_count" = "%d نتيجة";
 
-/* Filters */
-"filter.sort" = "تصفية";
+/* Filters & Sort */
+"filter.sort" = "ترتيب";
+"filter.sort_title" = "ترتيب وتصفية";
+"filter.sort_by" = "رتب حسب";
+"filter.clear" = "مسح الترتيب";
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
+"sort.price_asc" = "السعر ↑";
+"sort.price_desc" = "السعر ↓";
+"sort.name_asc" = "الاسم أ→ي";
+"sort.name_desc" = "الاسم ي→أ";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";
@@ -171,11 +178,14 @@
 "auth.signup.title" = "إنشاء حساب";
 "auth.signup.subtitle" = "انضم إلى ميدسي وأدر صحتك بسهولة.";
 "auth.signup.action" = "إنشاء حساب";
-"auth.full_name" = "الاسم الكامل";
+"auth.first_name" = "الاسم الأول";
+"auth.last_name" = "اسم العائلة";
 "auth.phone" = "رقم الهاتف";
 "auth.email" = "البريد الإلكتروني";
 "auth.password" = "كلمة المرور";
 "auth.confirm_password" = "تأكيد كلمة المرور";
+"auth.home_address" = "عنوان المنزل";
+"auth.date_of_birth" = "تاريخ الميلاد";
 "auth.forgot_password" = "نسيت كلمة المرور؟";
 "auth.or" = "أو";
 "auth.continue_google" = "المتابعة باستخدام Google";
@@ -188,6 +198,13 @@
 "auth.terms" = "الشروط وسياسة الخصوصية";
 "auth.validation.required" = "يرجى ملء جميع الحقول المطلوبة.";
 "auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
+"auth.verification.title" = "تأكيد بريدك الإلكتروني";
+"auth.verification.subtitle" = "أدخل الرمز المكون من ٦ أرقام الذي أرسلناه إلى بريدك الإلكتروني.";
+"auth.verification.sent_to" = "تم إرسال الرمز إلى %@";
+"auth.verification.action" = "تأكيد الحساب";
+"auth.verification.resend" = "إعادة إرسال الرمز";
+"auth.verification.invalid_code" = "يرجى إدخال رمز التحقق المكون من ٦ أرقام.";
+"auth.verification.code_accessibility" = "رمز التحقق المكون من ستة أرقام";
 "auth.password.show" = "إظهار كلمة المرور";
 "auth.password.hide" = "إخفاء كلمة المرور";
 "auth.brand.name" = "Medesy";

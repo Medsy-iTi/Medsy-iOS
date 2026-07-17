@@ -9,6 +9,7 @@ import SwiftUI
 
 enum TextFieldType: Equatable {
     case name
+    case address
     case phone
     case email
     case password
@@ -17,6 +18,7 @@ enum TextFieldType: Equatable {
     var systemImage: String {
         switch self {
         case .name: "person"
+        case .address: "house"
         case .phone: "phone"
         case .email: "envelope"
         case .password, .confirmPassword: "lock"
@@ -34,6 +36,7 @@ enum TextFieldType: Equatable {
     var contentType: UITextContentType? {
         switch self {
         case .name: .name
+        case .address: .fullStreetAddress
         case .phone: .telephoneNumber
         case .email: .emailAddress
         case .password: .password
@@ -46,6 +49,6 @@ enum TextFieldType: Equatable {
     }
 
     var usesWordCapitalization: Bool {
-        self == .name
+        self == .name || self == .address
     }
 }

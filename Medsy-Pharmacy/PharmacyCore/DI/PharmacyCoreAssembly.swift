@@ -17,8 +17,21 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
             PharmacyAppSettings.shared
         }
 
-        container.register(NetworkServiceProtocol.self) { c in
-            NetworkService(languageManager: c.resolve(LanguageManager.self))
+        container.register(NetworkTransportProtocol.self) { _ in
+            NetworkTransport()
+        }
+
+        container.register(NetworkRequestBuilder.self) { container in
+            NetworkRequestBuilder(
+                languageManager: container.resolve(LanguageManager.self)
+            )
+        }
+
+        container.register(NetworkServiceProtocol.self) { container in
+            NetworkService(
+                transport: container.resolve(NetworkTransportProtocol.self),
+                requestBuilder: container.resolve(NetworkRequestBuilder.self)
+            )
         }
     }
 }

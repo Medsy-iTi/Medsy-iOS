@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var viewModel = LoginViewModel()
+    @State private var viewModel: LoginViewModel
     let onSignupTapped: () -> Void
     let onAuthenticated: () -> Void
+
+    init(
+        viewModel: LoginViewModel,
+        onSignupTapped: @escaping () -> Void,
+        onAuthenticated: @escaping () -> Void
+    ) {
+        _viewModel = State(initialValue: viewModel)
+        self.onSignupTapped = onSignupTapped
+        self.onAuthenticated = onAuthenticated
+    }
 
     var body: some View {
         AuthScreenContainer {
@@ -21,7 +31,7 @@ struct LoginView: View {
             )
 
             VStack(spacing: 12) {
-                CustomTextField(title: "auth.phone".localized, type: .phone, text: $viewModel.phoneNumber)
+                CustomTextField(title: "auth.email".localized, type: .email, text: $viewModel.email)
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
             }
 
@@ -32,11 +42,17 @@ struct LoginView: View {
                     .foregroundStyle(AppColor.green)
             }
 
-            validationMessage
+            AuthValidationMessage(message: viewModel.validationMessage)
 
-            PrimaryButton(title: "auth.login.action".localized) {
-                if viewModel.submit() {
-                    onAuthenticated()
+            PrimaryButton(
+                title: "auth.login.action".localized,
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.isLoading
+            ) {
+                Task {
+                    if await viewModel.submit() {
+                        onAuthenticated()
+                    }
                 }
             }
 
@@ -54,20 +70,44 @@ struct LoginView: View {
             )
         }
         .navigationBarBackButtonHidden()
+        .showCustomAlert(
+            title: "common.error".localized,
+            alertMessage: Binding(
+                get: { viewModel.alertMessage },
+                set: { value in
+                    if value == nil {
+                        viewModel.dismissError()
+                    }
+                }
+            )
+        )
     }
 
-    @ViewBuilder
-    private var validationMessage: some View {
-        if let message = viewModel.validationMessage {
-            Text(message)
-                .font(.footnote)
-                .foregroundStyle(.red)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
 #Preview {
-    LoginView(onSignupTapped: {}, onAuthenticated: {})
+    LoginView(
+        viewModel: LoginViewModel(loginUseCase: PreviewLoginUseCase()),
+        onSignupTapped: {},
+        onAuthenticated: {}
+    )
         .environment(LanguageManager.shared)
+}
+
+private struct PreviewLoginUseCase: LoginUseCaseProtocol {
+    func execute(input: LoginInput) async throws -> AuthenticatedSession {
+        AuthenticatedSession(
+            accessToken: "",
+            refreshToken: "",
+            user: AuthenticatedUser(
+                id: 0,
+                email: input.email,
+                firstName: "",
+                lastName: "",
+                role: "CUSTOMER",
+                homeAddress: "",
+                dateOfBirth: ""
+            )
+        )
+    }
 }
