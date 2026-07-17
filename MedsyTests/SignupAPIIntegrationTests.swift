@@ -66,18 +66,54 @@ final class SignupAPIIntegrationTests: XCTestCase {
         XCTAssertEqual(dataSource.receivedRequest, SignupRequestDTO(input: input))
     }
 
-    func testNetworkServiceExtractsBackendMessageFromFailedEnvelope() throws {
+    func testNetworkErrorHandlerExtractsBackendMessageFromFailedEnvelope() throws {
         let data = try XCTUnwrap(
             #"{"success":false,"message":"Email already exists","data":null}"#
                 .data(using: .utf8)
         )
 
-        let error = try XCTUnwrap(NetworkService.apiEnvelopeError(from: data))
+        let error = try XCTUnwrap(NetworkErrorHandler.apiEnvelopeError(from: data))
 
         guard case .validationError(let message) = error else {
             return XCTFail("Expected a validation error")
         }
         XCTAssertEqual(message, "Email already exists")
+    }
+
+    func testNetworkErrorHandlerPrioritizesEnvelopeMessageOverHTTPStatus() throws {
+        let data = try XCTUnwrap(
+            #"{"success":false,"message":"Email already exists","data":null}"#
+                .data(using: .utf8)
+        )
+
+        let error = NetworkErrorHandler.map(
+            error: SignupTestError.invalidResponseType,
+            statusCode: 400,
+            data: data
+        )
+
+        guard case .validationError(let message) = error else {
+            return XCTFail("Expected the API envelope message")
+        }
+        XCTAssertEqual(message, "Email already exists")
+    }
+
+    func testNetworkErrorHandlerUsesResponseMessageFor422() throws {
+        let data = try XCTUnwrap(
+            #"{"success":false,"message":"Email format is invalid","data":null}"#
+                .data(using: .utf8)
+        )
+
+        let error = NetworkErrorHandler.map(
+            error: SignupTestError.invalidResponseType,
+            statusCode: 422,
+            data: data
+        )
+
+        guard case .validationError(let message) = error else {
+            return XCTFail("Expected a validation error")
+        }
+        XCTAssertEqual(message, "Email format is invalid")
     }
 
     @MainActor
