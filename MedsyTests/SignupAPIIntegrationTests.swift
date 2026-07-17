@@ -216,6 +216,10 @@ private final class NetworkServiceSpy: NetworkServiceProtocol {
 private final class AuthNetworkDataSourceSpy: AuthNetworkDataSourceProtocol {
     var receivedRequest: SignupRequestDTO?
 
+    func login(request: LoginRequestDTO) async throws -> AuthSessionDTO {
+        throw SignupTestError.invalidResponseType
+    }
+
     func register(request: SignupRequestDTO) async throws {
         receivedRequest = request
     }

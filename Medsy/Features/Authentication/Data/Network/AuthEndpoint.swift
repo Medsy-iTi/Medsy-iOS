@@ -9,6 +9,7 @@ import Alamofire
 import Foundation
 
 enum AuthEndpoint {
+    case login(LoginRequestDTO)
     case register(SignupRequestDTO)
     case verify(VerificationRequestDTO)
     case refresh(RefreshTokenRequestDTO)
@@ -17,6 +18,8 @@ enum AuthEndpoint {
 extension AuthEndpoint: ApiEndpoint {
     var path: String {
         switch self {
+        case .login:
+            return "auth/login"
         case .register:
             return "auth/register"
         case .verify:
@@ -28,13 +31,15 @@ extension AuthEndpoint: ApiEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .register, .verify, .refresh:
+        case .login, .register, .verify, .refresh:
             return .post
         }
     }
 
     var body: Data? {
         switch self {
+        case .login(let request):
+            return try? JSONEncoder().encode(request)
         case .register(let request):
             return try? JSONEncoder().encode(request)
         case .verify(let request):

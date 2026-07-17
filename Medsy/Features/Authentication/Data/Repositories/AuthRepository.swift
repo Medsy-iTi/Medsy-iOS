@@ -12,6 +12,11 @@ final class AuthRepository: AuthRepositoryProtocol {
         self.networkDataSource = networkDataSource
     }
 
+    func login(input: LoginInput) async throws -> AuthenticatedSession {
+        let session = try await networkDataSource.login(request: LoginRequestDTO(input: input))
+        return session.toDomain()
+    }
+
     func register(input: SignupInput) async throws {
         try await networkDataSource.register(request: SignupRequestDTO(input: input))
     }

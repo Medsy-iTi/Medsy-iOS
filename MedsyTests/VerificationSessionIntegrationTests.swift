@@ -202,10 +202,11 @@ private final class VerificationDataSourceSpy: AuthNetworkDataSourceProtocol {
     var verificationRequest: VerificationRequestDTO?
 
     init(session: AuthenticatedSession) { self.session = session }
+    func login(request: LoginRequestDTO) async throws -> AuthSessionDTO { makeSessionDTO(from: session) }
     func register(request: SignupRequestDTO) async throws {}
     func verify(request: VerificationRequestDTO) async throws -> AuthSessionDTO {
         verificationRequest = request
-        return AuthSessionDTO(accessToken: session.accessToken, refreshToken: session.refreshToken, user: .init(id: session.user.id, email: session.user.email, firstName: session.user.firstName, lastName: session.user.lastName, role: session.user.role, homeAddress: session.user.homeAddress, dob: session.user.dateOfBirth))
+        return makeSessionDTO(from: session)
     }
 }
 
@@ -276,3 +277,19 @@ private struct ProtectedEndpoint: ApiEndpoint {
 }
 
 private struct TestResponse: Decodable { let value: String }
+
+private func makeSessionDTO(from session: AuthenticatedSession) -> AuthSessionDTO {
+    AuthSessionDTO(
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+        user: .init(
+            id: session.user.id,
+            email: session.user.email,
+            firstName: session.user.firstName,
+            lastName: session.user.lastName,
+            role: session.user.role,
+            homeAddress: session.user.homeAddress,
+            dob: session.user.dateOfBirth
+        )
+    )
+}
