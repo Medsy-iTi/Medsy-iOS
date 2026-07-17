@@ -20,6 +20,7 @@ struct AuthenticationCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             LoginView(
+                viewModel: coordinator.makeLoginViewModel(),
                 onSignupTapped: coordinator.showSignup,
                 onAuthenticated: coordinator.finishAuthentication
             )
@@ -27,12 +28,20 @@ struct AuthenticationCoordinatorView: View {
                 switch route {
                 case .login:
                     LoginView(
+                        viewModel: coordinator.makeLoginViewModel(),
                         onSignupTapped: coordinator.showSignup,
                         onAuthenticated: coordinator.finishAuthentication
                     )
                 case .signup:
                     SignupView(
+                        viewModel: coordinator.makeSignupViewModel(),
                         onLoginTapped: coordinator.showLogin,
+                        onVerificationRequested: coordinator.showVerification
+                    )
+                case let .verification(email):
+                    VerificationView(
+                        email: email,
+                        viewModel: coordinator.makeVerificationViewModel(),
                         onAuthenticated: coordinator.finishAuthentication
                     )
                 }

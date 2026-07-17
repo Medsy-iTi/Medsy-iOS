@@ -20,9 +20,9 @@ struct CustomAlertModifier: ViewModifier {
                     set: { newValue in if !newValue { alertMessage = nil } }
                 )
             ) {
-                Button("OK", role: .cancel) { }
+                Button("common.ok".localized, role: .cancel) { }
             } message: {
-                Text(alertMessage ?? "Unknown Error occurred.")
+                Text(alertMessage ?? "common.error".localized)
             }
     }
 }

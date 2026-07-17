@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct SignupView: View {
-    @State private var viewModel = SignupViewModel()
+    @State private var viewModel: SignupViewModel
     let onLoginTapped: () -> Void
-    let onAuthenticated: () -> Void
+    let onVerificationRequested: (String) -> Void
+
+    init(
+        viewModel: SignupViewModel,
+        onLoginTapped: @escaping () -> Void,
+        onVerificationRequested: @escaping (String) -> Void
+    ) {
+        _viewModel = State(initialValue: viewModel)
+        self.onLoginTapped = onLoginTapped
+        self.onVerificationRequested = onVerificationRequested
+    }
 
     var body: some View {
         AuthScreenContainer {
@@ -20,11 +30,15 @@ struct SignupView: View {
             )
 
             VStack(spacing: 12) {
-                CustomTextField(title: "auth.full_name".localized, type: .name, text: $viewModel.fullName)
+                CustomTextField(title: "auth.first_name".localized, type: .name, text: $viewModel.firstName)
+                CustomTextField(title: "auth.last_name".localized, type: .name, text: $viewModel.lastName)
                 CustomTextField(title: "auth.phone".localized, type: .phone, text: $viewModel.phoneNumber)
                 CustomTextField(title: "auth.email".localized, type: .email, text: $viewModel.email)
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
                 CustomTextField(title: "auth.confirm_password".localized, type: .confirmPassword, text: $viewModel.confirmedPassword)
+                CustomTextField(title: "auth.home_address".localized, type: .address, text: $viewModel.homeAddress)
+
+                SignupDatePicker(dateOfBirth: $viewModel.dateOfBirth)
             }
 
             Toggle(isOn: $viewModel.hasAcceptedTerms) {
@@ -38,14 +52,17 @@ struct SignupView: View {
             }
             .tint(AppColor.green)
 
-            validationMessage
+            AuthValidationMessage(message: viewModel.validationMessage)
 
             PrimaryButton(
                 title: "auth.signup.action".localized,
-                isDisabled: !viewModel.hasAcceptedTerms
+                isLoading: viewModel.isLoading,
+                isDisabled: !viewModel.hasAcceptedTerms || viewModel.isLoading
             ) {
-                if viewModel.submit() {
-                    onAuthenticated()
+                Task {
+                    if await viewModel.submit() {
+                        onVerificationRequested(viewModel.email)
+                    }
                 }
             }
 
@@ -57,22 +74,32 @@ struct SignupView: View {
         }
         .navigationTitle("auth.signup.title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .showCustomAlert(
+            title: "common.error".localized,
+            alertMessage: Binding(
+                get: { viewModel.alertMessage },
+                set: { value in
+                    if value == nil {
+                        viewModel.dismissError()
+                    }
+                }
+            )
+        )
     }
 
-    @ViewBuilder
-    private var validationMessage: some View {
-        if let message = viewModel.validationMessage {
-            Text(message)
-                .font(.footnote)
-                .foregroundStyle(.red)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
 #Preview {
     NavigationStack {
-        SignupView(onLoginTapped: {}, onAuthenticated: {})
+        SignupView(
+            viewModel: SignupViewModel(signupUseCase: PreviewSignupUseCase()),
+            onLoginTapped: {},
+            onVerificationRequested: { _ in }
+        )
     }
     .environment(LanguageManager.shared)
+}
+
+private struct PreviewSignupUseCase: SignupUseCaseProtocol {
+    func execute(input: SignupInput) async throws {}
 }
