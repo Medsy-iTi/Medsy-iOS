@@ -24,7 +24,7 @@ final class LogoutUseCase: LogoutUseCaseProtocol {
             return
         }
 
-        try? tokenStore.clearTokens()
+        defer { try? tokenStore.clearTokens() }
         try? await repository.logout(refreshToken: refreshToken)
     }
 }
