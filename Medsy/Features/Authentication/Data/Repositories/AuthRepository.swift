@@ -15,4 +15,9 @@ final class AuthRepository: AuthRepositoryProtocol {
     func register(input: SignupInput) async throws {
         try await networkDataSource.register(request: SignupRequestDTO(input: input))
     }
+
+    func verify(input: VerificationInput) async throws -> AuthenticatedSession {
+        let session = try await networkDataSource.verify(request: VerificationRequestDTO(input: input))
+        return session.toDomain()
+    }
 }

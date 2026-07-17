@@ -7,4 +7,5 @@
 
 protocol AuthRepositoryProtocol {
     func register(input: SignupInput) async throws
+    func verify(input: VerificationInput) async throws -> AuthenticatedSession
 }

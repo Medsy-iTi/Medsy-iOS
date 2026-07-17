@@ -10,6 +10,8 @@ import Foundation
 
 enum AuthEndpoint {
     case register(SignupRequestDTO)
+    case verify(VerificationRequestDTO)
+    case refresh(RefreshTokenRequestDTO)
 }
 
 extension AuthEndpoint: ApiEndpoint {
@@ -17,12 +19,16 @@ extension AuthEndpoint: ApiEndpoint {
         switch self {
         case .register:
             return "auth/register"
+        case .verify:
+            return "auth/verify"
+        case .refresh:
+            return "auth/refresh"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .register:
+        case .register, .verify, .refresh:
             return .post
         }
     }
@@ -30,6 +36,10 @@ extension AuthEndpoint: ApiEndpoint {
     var body: Data? {
         switch self {
         case .register(let request):
+            return try? JSONEncoder().encode(request)
+        case .verify(let request):
+            return try? JSONEncoder().encode(request)
+        case .refresh(let request):
             return try? JSONEncoder().encode(request)
         }
     }
