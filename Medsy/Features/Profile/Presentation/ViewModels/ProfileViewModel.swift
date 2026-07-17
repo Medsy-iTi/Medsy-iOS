@@ -26,7 +26,7 @@ final class ProfileViewModel {
     private let getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol
     private let updateCustomerProfileUseCase: UpdateCustomerProfileUseCaseProtocol
 
-    init(
+    nonisolated init(
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         updateCustomerProfileUseCase: UpdateCustomerProfileUseCaseProtocol
     ) {
