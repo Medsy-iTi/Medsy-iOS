@@ -33,6 +33,11 @@ struct AuthenticationCoordinatorView: View {
                 case .signup:
                     SignupView(
                         onLoginTapped: coordinator.showLogin,
+                        onVerificationRequested: coordinator.showVerification
+                    )
+                case let .verification(email):
+                    VerificationView(
+                        email: email,
                         onAuthenticated: coordinator.finishAuthentication
                     )
                 }

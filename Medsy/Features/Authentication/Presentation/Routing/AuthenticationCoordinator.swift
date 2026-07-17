@@ -27,6 +27,10 @@ final class AuthenticationCoordinator {
         path.removeLast()
     }
 
+    func showVerification(email: String) {
+        path.append(.verification(email: email))
+    }
+
     func finishAuthentication() {
         path.removeAll()
         onAuthenticated()
