@@ -8,5 +8,4 @@
 enum PharmacyAuthenticationRoute: Hashable {
     case accountType
     case verification
-    case license
 }

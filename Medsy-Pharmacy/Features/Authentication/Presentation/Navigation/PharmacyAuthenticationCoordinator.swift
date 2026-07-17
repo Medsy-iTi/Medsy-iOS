@@ -13,15 +13,14 @@ final class PharmacyAuthenticationCoordinator {
     var path: [PharmacyAuthenticationRoute] = []
     let registrationViewModel: PharmacyRegistrationViewModel
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
-    private(set) var licenseViewModel: PharmacyLicenseViewModel?
     private let actions: PharmacyAuthenticationActions
     private let onLoginRequested: () -> Void
-    private let onAuthenticated: () -> Void
+    private let onAuthenticated: (PharmacyAccountType) -> Void
 
     init(
         actions: PharmacyAuthenticationActions,
         onLoginRequested: @escaping () -> Void,
-        onAuthenticated: @escaping () -> Void
+        onAuthenticated: @escaping (PharmacyAccountType) -> Void
     ) {
         self.actions = actions
         self.onLoginRequested = onLoginRequested
@@ -51,21 +50,16 @@ final class PharmacyAuthenticationCoordinator {
     }
 
     func finishVerification() {
-        guard registrationViewModel.accountType == .owner else {
-            finishAuthentication()
-            return
-        }
-
-        licenseViewModel = PharmacyLicenseViewModel(submitAction: actions.submitLicense)
-        path.append(.license)
+        guard let accountType = registrationViewModel.accountType else { return }
+        finishAuthentication(accountType)
     }
 
     func showLogin() {
         onLoginRequested()
     }
 
-    func finishAuthentication() {
+    private func finishAuthentication(_ accountType: PharmacyAccountType) {
         path.removeAll()
-        onAuthenticated()
+        onAuthenticated(accountType)
     }
 }
