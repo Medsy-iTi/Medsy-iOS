@@ -20,11 +20,13 @@ final class SearchResultsViewModel: ObservableObject {
 	}
 
 
-	@Published var selectedCategory: String? = nil {
+	@Published var selectedCategory: Category? = nil {
 		didSet { guard oldValue != selectedCategory else { return }; load() }
 	}
+    @Published var categories: [Category] = []
 
 	private let useCase: SearchProductsUseCaseProtocol
+    private let getCategoriesUseCase: GetCategoriesUseCase
 	private let languageManager: LanguageManager
 
 	private let pageSize = 20
@@ -37,11 +39,19 @@ final class SearchResultsViewModel: ObservableObject {
 	init(
 		query: String,
 		useCase: SearchProductsUseCaseProtocol = DIContainer.shared.resolve(SearchProductsUseCaseProtocol.self),
+        getCategoriesUseCase: GetCategoriesUseCase = DIContainer.shared.resolve(GetCategoriesUseCase.self),
 		languageManager: LanguageManager = .shared
 	) {
 		self.query = query
 		self.useCase = useCase
+        self.getCategoriesUseCase = getCategoriesUseCase
 		self.languageManager = languageManager
+
+        Task {
+            if let result = try? await getCategoriesUseCase.execute(page: 0, size: 10) {
+                self.categories = result.items
+            }
+        }
 
 
 		$query
@@ -106,22 +116,24 @@ final class SearchResultsViewModel: ObservableObject {
 			let sort: [ProductSort] = selectedSort.map { [$0] } ?? []
 			let result = try await useCase.execute(
 				keyword: query,
+                categoryId: selectedCategory?.id,
 				page: currentPage,
 				size: pageSize,
-				sort: sort
+				sort: sort,
+				lang: languageManager.currentLanguage.rawValue
 			)
-
+			print(languageManager.currentLanguage.rawValue)
 			guard !Task.isCancelled else { return }
 
-			var mapped = result.items.map {
+			let mapped = result.items.map {
 				ProductPresentationMapper.map($0, isRTL: languageManager.isRTL)
 			}
 
-			if let category = selectedCategory {
-				mapped = mapped.filter { $0.categoryName.caseInsensitiveCompare(category) == .orderedSame }
+			let uniqueMapped = mapped.filter { newProduct in
+				!products.contains { $0.id == newProduct.id }
 			}
 
-			products = reset ? mapped : products + mapped
+			products = reset ? mapped : products + uniqueMapped
 			isLastPage = result.isLast ?? (mapped.count < pageSize)
 			currentPage += 1
 			state = products.isEmpty ? .empty : .loaded

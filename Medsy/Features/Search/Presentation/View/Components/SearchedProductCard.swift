@@ -107,7 +107,7 @@ struct SearchedProductCard: View {
 		}
 	}
 
-	private var badgeFallback: some View {
+	var badgeFallback: some View {
 		RoundedRectangle(cornerRadius: MedsyRadius.md)
 			.fill(product.badgeColor.opacity(0.15))
 			.frame(width: 72, height: 72)
@@ -116,6 +116,9 @@ struct SearchedProductCard: View {
 					.font(.system(size: 10, weight: .bold))
 					.multilineTextAlignment(.center)
 					.foregroundStyle(product.badgeColor)
+					.lineLimit(2)
+					.minimumScaleFactor(0.7)
+					.truncationMode(.tail)
 					.padding(4)
 			)
 	}

@@ -23,11 +23,34 @@ struct ImageCarousel: View {
         ZStack(alignment: isRTL ? .topLeading : .topTrailing) {
             TabView(selection: $selectedIndex) {
                 ForEach(images.indices, id: \.self) { index in
-                    Image(images[index])
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .padding(MedsySpacing.lg)
+                    if let url = URL(string: images[index]) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(MedsySpacing.lg)
+                            case .empty:
+                                ProgressView()
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            default:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(MedsySpacing.lg)
+                                    .foregroundColor(AppColor.textSec.opacity(0.3))
+                            }
+                        }
                         .tag(index)
+                    } else {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .padding(MedsySpacing.lg)
+                            .foregroundColor(AppColor.textSec.opacity(0.3))
+                            .tag(index)
+                    }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

@@ -93,22 +93,28 @@
 "categories.itemsCount" = "%d Products";
 
 /* Search */
-"search.title" = "Search Results";
-"search.placeholder" = "Enter medicine name to search";
-"search.result_count" = "%d results";
+"search.placeholder" = "Search for a product ...";
+"search.title" = "Search";
+"search.result_count" = "%d Results found";
 
-/* Filters & Sort */
-"filter.sort" = "Sort";
-"filter.sort_title" = "Sort & Filter";
-"filter.sort_by" = "Sort by";
-"filter.clear" = "Clear Sort";
+/* Sort */
+"sort.price_asc" = "Price: Low to High";
+"sort.price_desc" = "Price: High to Low";
+"sort.name_asc" = "Name(A to Z)";
+"sort.name_desc" = "Name(Z to A)";
+"sort.scientific_name_asc" = "Scientific Name";
+"sort.company_asc" = "Company";
+
+/* Filter */
+"filter.sort" = "Sort & Filter ";
+"filter.sort_title" = "Sort By & Filter";
+"filter.sort_by" = "Sort options";
+"filter.clear" = "Clear filters";
+"filter.apply" = "Apply";
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
-"sort.price_asc" = "Price ↑";
-"sort.price_desc" = "Price ↓";
-"sort.name_asc" = "Name A→Z";
-"sort.name_desc" = "Name Z→A";
+
 
 /* Empty state */
 "empty.title" = "No results found";
@@ -134,7 +140,10 @@
 "product.manufacturer" = "Manufacturer";
 "product.type" = "Type";
 "product.category" = "Drug Category";
+"product.scientific_name" = "Scientific Name";
+"product.route" = "Route of Administration";
 "product.dispense_method" = "Dispensing Method";
+"product.dispense_method_value" = "Dispensed after pharmacist review";
 "product.price_format" = "%@ %@";
 "product.not_found_title" = "Product Not Found";
 "product.not_found_subtitle" = "We couldn't find this product. It may have been removed or is temporarily unavailable.";

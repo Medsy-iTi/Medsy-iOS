@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-// MARK: - Sort Option definition used by the sheet
+
 
 struct SortOption: Identifiable, Equatable {
     let id: String
@@ -17,6 +17,8 @@ struct SortOption: Identifiable, Equatable {
         SortOption(id: "price_desc", labelKey: "sort.price_desc", sort: ProductSort(field: .price, direction: .desc)),
         SortOption(id: "name_asc",   labelKey: "sort.name_asc",   sort: ProductSort(field: .name,  direction: .asc)),
         SortOption(id: "name_desc",  labelKey: "sort.name_desc",  sort: ProductSort(field: .name,  direction: .desc)),
+        SortOption(id: "scientific_name_asc",   labelKey: "sort.scientific_name_asc",   sort: ProductSort(field: .scientificName,  direction: .asc)),
+        SortOption(id: "company_asc",   labelKey: "sort.company_asc",   sort: ProductSort(field: .company,  direction: .asc)),
     ]
 }
 
@@ -47,20 +49,44 @@ struct SortFilterSheet: View {
             Divider()
                 .padding(.vertical, MedsySpacing.sm)
 
-            // Sort options
-            Text("filter.sort_by".localized)
-                .font(MedsyFont.bodyMedium(13))
-                .foregroundStyle(AppColor.textSec)
-                .padding(.horizontal, MedsySpacing.md)
-                .padding(.bottom, MedsySpacing.xs)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    
 
-            ForEach(SortOption.all) { option in
-                sortRow(option)
+                    if !viewModel.categories.isEmpty {
+                        Text("categories.title".localized)
+                            .font(MedsyFont.bodyMedium(13))
+                            .foregroundStyle(AppColor.textSec)
+                            .padding(.horizontal, MedsySpacing.md)
+                            .padding(.bottom, MedsySpacing.xs)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: MedsySpacing.sm) {
+                                ForEach(viewModel.categories) { category in
+                                    categoryChip(category)
+                                }
+                            }
+                            .padding(.horizontal, MedsySpacing.md)
+                        }
+                        .padding(.bottom, MedsySpacing.md)
+                    }
+
+                    // Sort options
+                    Text("filter.sort_by".localized)
+                        .font(MedsyFont.bodyMedium(13))
+                        .foregroundStyle(AppColor.textSec)
+                        .padding(.horizontal, MedsySpacing.md)
+                        .padding(.bottom, MedsySpacing.xs)
+
+                    ForEach(SortOption.all) { option in
+                        sortRow(option)
+                    }
+                }
             }
 
             Spacer()
 
-            // Clear button
+
             if viewModel.selectedSort != nil {
                 Button {
                     viewModel.selectedSort = nil
@@ -71,14 +97,19 @@ struct SortFilterSheet: View {
                         .foregroundStyle(AppColor.danger)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, MedsySpacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: MedsyRadius.md)
+                                .stroke(AppColor.danger, lineWidth: 1)
+                        )
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, MedsySpacing.md)
-                .padding(.bottom, MedsySpacing.xs)
+                .padding(.bottom, MedsySpacing.md)
             }
         }
         .background(AppColor.bg)
-        .presentationDetents([.medium])
+        .localizedEnvironment()
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
     }
 
@@ -101,7 +132,42 @@ struct SortFilterSheet: View {
             }
             .padding(.horizontal, MedsySpacing.md)
             .padding(.vertical, MedsySpacing.sm)
-            .background(isActive ? AppColor.green.opacity(0.08) : Color.clear)
+            .background(
+                RoundedRectangle(cornerRadius: MedsyRadius.md)
+                    .fill(isActive ? AppColor.green.opacity(0.15) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: MedsyRadius.md)
+                    .stroke( AppColor.green , lineWidth: 1)
+            )
+            .padding(.horizontal, MedsySpacing.md)
+            .padding(.bottom, MedsySpacing.xs)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func categoryChip(_ category: Category) -> some View {
+        let isActive = viewModel.selectedCategory?.id == category.id
+        return Button {
+            viewModel.selectedCategory = isActive ? nil : category
+        } label: {
+            HStack(spacing: MedsySpacing.xxs) {
+                Image(systemName: category.iconName)
+                    .font(.system(size: 14))
+                Text(category.displayName)
+                    .font(MedsyFont.bodyMedium(14))
+            }
+            .padding(.horizontal, MedsySpacing.md)
+            .padding(.vertical, 8)
+            .foregroundStyle(isActive ? .white : AppColor.textPrim)
+            .background(
+                Capsule()
+                    .fill(isActive ? AppColor.green : AppColor.surface)
+            )
+            .overlay(
+                Capsule()
+                    .stroke(AppColor.green , lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
     }
