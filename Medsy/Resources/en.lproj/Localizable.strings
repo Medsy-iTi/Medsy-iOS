@@ -94,14 +94,21 @@
 
 /* Search */
 "search.title" = "Search Results";
-"search.placeholder" = "Panadol Extra";
+"search.placeholder" = "Enter medicine name to search";
 "search.result_count" = "%d results";
 
-/* Filters */
-"filter.sort" = "Filter";
+/* Filters & Sort */
+"filter.sort" = "Sort";
+"filter.sort_title" = "Sort & Filter";
+"filter.sort_by" = "Sort by";
+"filter.clear" = "Clear Sort";
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
+"sort.price_asc" = "Price ↑";
+"sort.price_desc" = "Price ↓";
+"sort.name_asc" = "Name A→Z";
+"sort.name_desc" = "Name Z→A";
 
 /* Empty state */
 "empty.title" = "No results found";
