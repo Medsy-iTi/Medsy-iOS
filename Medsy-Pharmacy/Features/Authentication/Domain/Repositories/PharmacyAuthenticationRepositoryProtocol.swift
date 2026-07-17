@@ -6,6 +6,7 @@
 //
 
 protocol PharmacyAuthenticationRepositoryProtocol {
+    func login(input: PharmacyLoginInput) async throws -> PharmacyAuthenticatedSession
     func register(input: PharmacyRegistrationInput) async throws
     func verify(input: PharmacyVerificationInput) async throws -> PharmacyAuthenticatedSession
 }

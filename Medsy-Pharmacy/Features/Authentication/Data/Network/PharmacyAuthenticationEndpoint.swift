@@ -9,6 +9,7 @@ import Alamofire
 import Foundation
 
 enum PharmacyAuthenticationEndpoint {
+    case login(PharmacyLoginRequestDTO)
     case register(PharmacyRegistrationRequestDTO)
     case verify(PharmacyVerificationRequestDTO)
 }
@@ -16,6 +17,8 @@ enum PharmacyAuthenticationEndpoint {
 extension PharmacyAuthenticationEndpoint: ApiEndpoint {
     var path: String {
         switch self {
+        case .login:
+            "auth/login"
         case .register:
             "auth/register"
         case .verify:
@@ -29,6 +32,8 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
+        case .login(let request):
+            try? JSONEncoder().encode(request)
         case .register(let request):
             try? JSONEncoder().encode(request)
         case .verify(let request):

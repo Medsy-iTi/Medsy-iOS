@@ -18,19 +18,39 @@ struct PharmacyRegistrationSubmission: Equatable {
 }
 
 struct PharmacyAuthenticationActions {
+    let login: (PharmacyLoginInput) async throws -> PharmacyAuthenticatedSession
     let register: (PharmacyRegistrationSubmission) async throws -> Void
     let verify: (String, String) async throws -> Void
 
     static let placeholder = PharmacyAuthenticationActions(
+        login: { _ in
+            PharmacyAuthenticatedSession(
+                accessToken: "",
+                refreshToken: "",
+                user: PharmacyAuthenticatedUser(
+                    id: 0,
+                    email: "",
+                    firstName: "",
+                    lastName: "",
+                    role: "",
+                    homeAddress: nil,
+                    dateOfBirth: nil
+                )
+            )
+        },
         register: { _ in },
         verify: { _, _ in }
     )
 
     static func live(
+        loginUseCase: PharmacyLoginUseCaseProtocol,
         registrationUseCase: PharmacyRegistrationUseCaseProtocol,
         verificationUseCase: PharmacyVerificationUseCaseProtocol
     ) -> PharmacyAuthenticationActions {
         PharmacyAuthenticationActions(
+            login: { input in
+                try await loginUseCase.execute(input: input)
+            },
             register: { submission in
                 try await registrationUseCase.execute(
                     input: PharmacyRegistrationInput(

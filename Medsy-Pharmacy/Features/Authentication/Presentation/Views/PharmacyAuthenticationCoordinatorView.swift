@@ -18,9 +18,10 @@ struct PharmacyAuthenticationCoordinatorView: View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            PharmacyRegistrationDetailsView(
-                viewModel: coordinator.registrationViewModel,
-                onContinue: coordinator.submitDetails
+            PharmacyLoginView(
+                viewModel: coordinator.loginViewModel,
+                onSignupTapped: coordinator.showSignup,
+                onAuthenticated: coordinator.finishVerification
             )
             .navigationDestination(for: PharmacyAuthenticationRoute.self) { route in
                 destination(for: route)
@@ -32,6 +33,17 @@ struct PharmacyAuthenticationCoordinatorView: View {
     @ViewBuilder
     private func destination(for route: PharmacyAuthenticationRoute) -> some View {
         switch route {
+        case .login:
+            PharmacyLoginView(
+                viewModel: coordinator.loginViewModel,
+                onSignupTapped: coordinator.showSignup,
+                onAuthenticated: coordinator.finishVerification
+            )
+        case .registrationDetails:
+            PharmacyRegistrationDetailsView(
+                viewModel: coordinator.registrationViewModel,
+                onContinue: coordinator.submitDetails
+            )
         case .accountSetup:
             PharmacyRegistrationAccountView(
                 viewModel: coordinator.registrationViewModel,
@@ -46,4 +58,5 @@ struct PharmacyAuthenticationCoordinatorView: View {
             }
         }
     }
+
 }
