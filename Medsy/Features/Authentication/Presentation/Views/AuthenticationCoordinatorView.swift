@@ -20,6 +20,7 @@ struct AuthenticationCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             LoginView(
+                viewModel: coordinator.makeLoginViewModel(),
                 onSignupTapped: coordinator.showSignup,
                 onAuthenticated: coordinator.finishAuthentication
             )
@@ -27,6 +28,7 @@ struct AuthenticationCoordinatorView: View {
                 switch route {
                 case .login:
                     LoginView(
+                        viewModel: coordinator.makeLoginViewModel(),
                         onSignupTapped: coordinator.showSignup,
                         onAuthenticated: coordinator.finishAuthentication
                     )
