@@ -1,4 +1,3 @@
-//
 //  PharmacyLoginView.swift
 //  Medsy-Pharmacy
 //
@@ -8,13 +7,19 @@
 import SwiftUI
 
 struct PharmacyLoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isLoading = false
-    @State private var validationMessage: String? = nil
-
+    @State private var viewModel: PharmacyLoginViewModel
     let onSignupTapped: () -> Void
     let onAuthenticated: () -> Void
+
+    init(
+        viewModel: PharmacyLoginViewModel,
+        onSignupTapped: @escaping () -> Void,
+        onAuthenticated: @escaping () -> Void
+    ) {
+        _viewModel = State(initialValue: viewModel)
+        self.onSignupTapped = onSignupTapped
+        self.onAuthenticated = onAuthenticated
+    }
 
     var body: some View {
         PharmacyAuthScreenContainer {
@@ -27,13 +32,13 @@ struct PharmacyLoginView: View {
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.email".localized,
                     kind: .email,
-                    text: $email
+                    text: $viewModel.email
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.password".localized,
                     kind: .password,
-                    text: $password
+                    text: $viewModel.password
                 )
             }
 
@@ -44,23 +49,15 @@ struct PharmacyLoginView: View {
                     .foregroundStyle(PharmacyColor.primary)
             }
 
-            PharmacyAuthValidationMessage(message: validationMessage)
+            PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 
             PharmacyPrimaryButton(
                 title: "pharmacy.auth.login.action".localized,
-                isLoading: isLoading,
-                isDisabled: isLoading
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.isLoading
             ) {
-                if email.isEmpty || password.isEmpty {
-                    validationMessage = "pharmacy.auth.validation.required".localized
-                } else if !email.contains("@") {
-                    validationMessage = "pharmacy.auth.validation.email".localized
-                } else {
-                    validationMessage = nil
-                    isLoading = true
-                    Task {
-                        try? await Task.sleep(for: .seconds(1))
-                        isLoading = false
+                Task {
+                    if await viewModel.submit() {
                         onAuthenticated()
                     }
                 }
@@ -87,11 +84,47 @@ struct PharmacyLoginView: View {
             )
         }
         .navigationBarBackButtonHidden()
+        .alert(
+            "common.error".localized,
+            isPresented: Binding(
+                get: { viewModel.alertMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.dismissError()
+                    }
+                }
+            )
+        ) {
+            Button("common.ok".localized) {
+                viewModel.dismissError()
+            }
+        } message: {
+            if let alertMessage = viewModel.alertMessage {
+                Text(alertMessage)
+            }
+        }
     }
 }
 
 #Preview {
     PharmacyLoginView(
+        viewModel: PharmacyLoginViewModel(
+            loginAction: { _ in
+                PharmacyAuthenticatedSession(
+                    accessToken: "",
+                    refreshToken: "",
+                    user: PharmacyAuthenticatedUser(
+                        id: 0,
+                        email: "",
+                        firstName: "",
+                        lastName: "",
+                        role: "",
+                        homeAddress: nil,
+                        dateOfBirth: nil
+                    )
+                )
+            }
+        ),
         onSignupTapped: {},
         onAuthenticated: {}
     )
