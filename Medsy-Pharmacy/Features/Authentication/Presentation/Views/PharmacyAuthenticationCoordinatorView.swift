@@ -45,13 +45,6 @@ struct PharmacyAuthenticationCoordinatorView: View {
                     onVerified: coordinator.finishVerification
                 )
             }
-        case .license:
-            if let viewModel = coordinator.licenseViewModel {
-                PharmacyLicenseUploadView(
-                    viewModel: viewModel,
-                    onCompleted: coordinator.finishAuthentication
-                )
-            }
         }
     }
 }

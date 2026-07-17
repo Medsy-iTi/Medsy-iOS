@@ -10,15 +10,23 @@ import SwiftUI
 @MainActor
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
+    let accountType: PharmacyAccountType
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
-    init(coordinator: PharmacyMainTabCoordinator) {
+    init(
+        coordinator: PharmacyMainTabCoordinator,
+        accountType: PharmacyAccountType
+    ) {
         _coordinator = State(initialValue: coordinator)
+        self.accountType = accountType
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+            PharmacySetupPlaceholderView(
+                tab: coordinator.selectedTab,
+                accountType: accountType
+            )
                 .padding(.bottom, 82)
 
             tabBar
@@ -68,6 +76,7 @@ struct PharmacyMainTabView: View {
 
 private struct PharmacySetupPlaceholderView: View {
     let tab: PharmacyTab
+    let accountType: PharmacyAccountType
 
     var body: some View {
         VStack(spacing: PharmacySpacing.md) {
@@ -75,11 +84,11 @@ private struct PharmacySetupPlaceholderView: View {
                 .font(.system(size: 42, weight: .semibold))
                 .foregroundStyle(PharmacyColor.primary)
 
-            Text(tab.titleKey.localized)
+            Text(titleKey.localized)
                 .font(PharmacyColor.sans(20, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
 
-            Text("pharmacy.setup.placeholder".localized)
+            Text(subtitleKey.localized)
                 .font(PharmacyColor.sans(14))
                 .foregroundStyle(PharmacyColor.textSecondary)
                 .multilineTextAlignment(.center)
@@ -87,5 +96,22 @@ private struct PharmacySetupPlaceholderView: View {
         .padding(PharmacySpacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PharmacyColor.bg)
+    }
+
+    private var titleKey: String {
+        guard tab == .home else { return tab.titleKey }
+
+        switch accountType {
+        case .owner:
+            return "pharmacy.dashboard.owner.title"
+        case .pharmacist:
+            return "pharmacy.dashboard.pharmacist.title"
+        }
+    }
+
+    private var subtitleKey: String {
+        tab == .home
+            ? "pharmacy.dashboard.placeholder"
+            : "pharmacy.setup.placeholder"
     }
 }
