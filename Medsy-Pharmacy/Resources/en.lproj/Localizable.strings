@@ -13,6 +13,8 @@
 "pharmacy.auth.last_name" = "Last name";
 "pharmacy.auth.phone" = "Phone number";
 "pharmacy.auth.email" = "Email address";
+"pharmacy.auth.home_address" = "Home address";
+"pharmacy.auth.date_of_birth" = "Date of birth";
 "pharmacy.auth.password" = "Password";
 "pharmacy.auth.confirm_password" = "Confirm password";
 "pharmacy.auth.password.show" = "Show password";

@@ -15,12 +15,16 @@ final class Medsy_PharmacyTests: XCTestCase {
             lastName: "Elkady",
             phoneNumber: "01012345678",
             email: "ahmed@example.com",
-            password: "Password123"
+            password: "Password123",
+            homeAddress: "Cairo",
+            dateOfBirth: Date(timeIntervalSince1970: 0)
         )
 
         let request = PharmacyRegistrationRequestDTO(input: input)
 
         XCTAssertEqual(request.role, "PHARMACIST")
+        XCTAssertEqual(request.homeAddress, "Cairo")
+        XCTAssertEqual(request.dob, "1970-01-01")
     }
 
     func testAuthenticationSessionDecodesNullableProfileFields() throws {

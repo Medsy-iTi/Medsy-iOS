@@ -46,6 +46,14 @@ struct PharmacyRegistrationDetailsView: View {
                 )
 
                 PharmacyAuthTextField(
+                    title: "pharmacy.auth.home_address".localized,
+                    kind: .address,
+                    text: $viewModel.homeAddress
+                )
+
+                PharmacyAuthDatePicker(dateOfBirth: $viewModel.dateOfBirth)
+
+                PharmacyAuthTextField(
                     title: "pharmacy.auth.password".localized,
                     kind: .password,
                     text: $viewModel.password

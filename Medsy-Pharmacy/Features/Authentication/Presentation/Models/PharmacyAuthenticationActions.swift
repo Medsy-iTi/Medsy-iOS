@@ -13,6 +13,8 @@ struct PharmacyRegistrationSubmission: Equatable {
     let phoneNumber: String
     let email: String
     let password: String
+    let homeAddress: String
+    let dateOfBirth: Date
 }
 
 struct PharmacyAuthenticationActions {
@@ -36,7 +38,9 @@ struct PharmacyAuthenticationActions {
                         lastName: submission.lastName,
                         phoneNumber: submission.phoneNumber,
                         email: submission.email,
-                        password: submission.password
+                        password: submission.password,
+                        homeAddress: submission.homeAddress,
+                        dateOfBirth: submission.dateOfBirth
                     )
                 )
             },

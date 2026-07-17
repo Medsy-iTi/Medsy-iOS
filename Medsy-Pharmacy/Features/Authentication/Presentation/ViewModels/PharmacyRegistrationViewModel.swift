@@ -31,6 +31,8 @@ final class PharmacyRegistrationViewModel {
     var email = ""
     var password = ""
     var confirmedPassword = ""
+    var homeAddress = ""
+    var dateOfBirth = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
     var accountType: PharmacyAccountType?
     private(set) var state: PharmacyRegistrationState = .idle
     private(set) var validationMessage: String?
@@ -62,7 +64,7 @@ final class PharmacyRegistrationViewModel {
     }
 
     private func validateDetails() -> Bool {
-        let fields = [firstName, lastName, phoneNumber, email, password, confirmedPassword]
+        let fields = [firstName, lastName, phoneNumber, email, password, confirmedPassword, homeAddress]
         guard fields.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
             validationMessage = "pharmacy.auth.validation.required".localized
             return false
@@ -104,7 +106,9 @@ final class PharmacyRegistrationViewModel {
                     lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines),
                     phoneNumber: phoneNumber,
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-                    password: password
+                    password: password,
+                    homeAddress: homeAddress.trimmingCharacters(in: .whitespacesAndNewlines),
+                    dateOfBirth: dateOfBirth
                 )
             )
             state = .success

@@ -11,6 +11,7 @@ enum PharmacyAuthFieldKind: Equatable {
     case name
     case phone
     case email
+    case address
     case password
     case confirmPassword
 
@@ -22,6 +23,8 @@ enum PharmacyAuthFieldKind: Equatable {
             "phone"
         case .email:
             "envelope"
+        case .address:
+            "location"
         case .password, .confirmPassword:
             "lock"
         }
@@ -46,6 +49,8 @@ enum PharmacyAuthFieldKind: Equatable {
             .telephoneNumber
         case .email:
             .emailAddress
+        case .address:
+            .fullStreetAddress
         case .password:
             .newPassword
         case .confirmPassword:
@@ -163,9 +168,32 @@ struct PharmacyAuthTextField: View {
             )
             .textContentType(kind.contentType)
             .keyboardType(kind.keyboardType)
-            .textInputAutocapitalization(kind == .name ? .words : .never)
+            .textInputAutocapitalization(kind == .name ? .words : kind == .address ? .sentences : .never)
             .autocorrectionDisabled(kind == .email)
             .foregroundStyle(PharmacyColor.textPrimary)
+        }
+    }
+}
+
+struct PharmacyAuthDatePicker: View {
+    @Binding var dateOfBirth: Date
+
+    var body: some View {
+        DatePicker(
+            "pharmacy.auth.date_of_birth".localized,
+            selection: $dateOfBirth,
+            in: ...Date(),
+            displayedComponents: .date
+        )
+        .font(PharmacyColor.sans(15))
+        .foregroundStyle(PharmacyColor.textPrimary)
+        .tint(PharmacyColor.primary)
+        .padding(.horizontal, PharmacySpacing.md)
+        .frame(height: 56)
+        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+                .stroke(PharmacyColor.border, lineWidth: 1)
         }
     }
 }

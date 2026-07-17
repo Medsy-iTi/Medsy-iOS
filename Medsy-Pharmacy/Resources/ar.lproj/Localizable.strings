@@ -13,6 +13,8 @@
 "pharmacy.auth.last_name" = "اسم العائلة";
 "pharmacy.auth.phone" = "رقم الهاتف";
 "pharmacy.auth.email" = "البريد الإلكتروني";
+"pharmacy.auth.home_address" = "عنوان السكن";
+"pharmacy.auth.date_of_birth" = "تاريخ الميلاد";
 "pharmacy.auth.password" = "كلمة المرور";
 "pharmacy.auth.confirm_password" = "تأكيد كلمة المرور";
 "pharmacy.auth.password.show" = "إظهار كلمة المرور";
