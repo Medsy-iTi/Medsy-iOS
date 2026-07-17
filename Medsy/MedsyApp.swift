@@ -20,6 +20,7 @@ struct MedsyApp: App {
             CoreAssembly(),
             OnboardingAssembly(),
             AuthenticationAssembly(),
+            CategoriesAssembly(),
 			ProductsAssembly()
         ])
 
