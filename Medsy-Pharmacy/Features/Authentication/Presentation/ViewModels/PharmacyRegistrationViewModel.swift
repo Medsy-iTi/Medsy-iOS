@@ -17,7 +17,6 @@ enum PharmacyRegistrationState: Equatable {
 
 enum PharmacyRegistrationEvent {
     case detailsSubmitted
-    case accountTypeSelected(PharmacyAccountType)
     case registrationSubmitted
     case errorDismissed
 }
@@ -31,7 +30,8 @@ final class PharmacyRegistrationViewModel {
     var email = ""
     var password = ""
     var confirmedPassword = ""
-    var accountType: PharmacyAccountType?
+    var homeAddress = ""
+    var dateOfBirth = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
     private(set) var state: PharmacyRegistrationState = .idle
     private(set) var validationMessage: String?
     private let registerAction: (PharmacyRegistrationSubmission) async throws -> Void
@@ -48,10 +48,6 @@ final class PharmacyRegistrationViewModel {
         switch event {
         case .detailsSubmitted:
             return validateDetails()
-        case let .accountTypeSelected(accountType):
-            self.accountType = accountType
-            validationMessage = nil
-            return true
         case .registrationSubmitted:
             return await submitRegistration()
         case .errorDismissed:
@@ -62,7 +58,7 @@ final class PharmacyRegistrationViewModel {
     }
 
     private func validateDetails() -> Bool {
-        let fields = [firstName, lastName, phoneNumber, email, password, confirmedPassword]
+        let fields = [firstName, lastName, phoneNumber, email]
         guard fields.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
             validationMessage = "pharmacy.auth.validation.required".localized
             return false
@@ -78,6 +74,17 @@ final class PharmacyRegistrationViewModel {
             return false
         }
 
+        validationMessage = nil
+        return true
+    }
+
+    private func validateAccountSetup() -> Bool {
+        let fields = [password, confirmedPassword, homeAddress]
+        guard fields.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
+            validationMessage = "pharmacy.auth.validation.required".localized
+            return false
+        }
+
         guard password == confirmedPassword else {
             validationMessage = "pharmacy.auth.validation.password_mismatch".localized
             return false
@@ -90,10 +97,7 @@ final class PharmacyRegistrationViewModel {
     private func submitRegistration() async -> Bool {
         guard !isLoading else { return false }
         guard validateDetails() else { return false }
-        guard accountType != nil else {
-            validationMessage = "pharmacy.auth.validation.account_type".localized
-            return false
-        }
+        guard validateAccountSetup() else { return false }
 
         state = .loading
 
@@ -104,7 +108,9 @@ final class PharmacyRegistrationViewModel {
                     lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines),
                     phoneNumber: phoneNumber,
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-                    password: password
+                    password: password,
+                    homeAddress: homeAddress.trimmingCharacters(in: .whitespacesAndNewlines),
+                    dateOfBirth: dateOfBirth
                 )
             )
             state = .success

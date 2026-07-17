@@ -36,7 +36,6 @@ private struct PharmacyAuthenticationRootView: View {
     ) {
         _coordinator = State(
             initialValue: factory.makeCoordinator(
-                onLoginRequested: {},
                 onAuthenticated: onAuthenticated
             )
         )
