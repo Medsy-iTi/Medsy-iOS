@@ -69,10 +69,12 @@ struct SearchedProductCard: View {
 				.font(MedsyFont.bodyMedium(16))
 				.foregroundStyle(AppColor.textPrim)
 				.multilineTextAlignment(.leading)
-			Text(product.subtitle)
-				.font(MedsyFont.caption())
-				.foregroundStyle(AppColor.textSec)
-				.multilineTextAlignment(.leading)
+			if !product.dosageInfo.isEmpty {
+				Text(product.dosageInfo)
+					.font(MedsyFont.caption())
+					.foregroundStyle(AppColor.textSec)
+					.multilineTextAlignment(.leading)
+			}
 			Spacer(minLength: MedsySpacing.xs)
 			Text("product.price_value".localized(product.price))
 				.font(MedsyFont.price())

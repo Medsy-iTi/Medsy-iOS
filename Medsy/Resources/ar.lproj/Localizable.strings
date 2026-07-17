@@ -94,14 +94,21 @@
 
 /* Search */
 "search.title" = "نتائج البحث";
-"search.placeholder" = "بانادول إكسترا";
+"search.placeholder" = " اكتب اسم الدواء للبحث";
 "search.result_count" = "%d نتيجة";
 
-/* Filters */
-"filter.sort" = "تصفية";
+/* Filters & Sort */
+"filter.sort" = "ترتيب";
+"filter.sort_title" = "ترتيب وتصفية";
+"filter.sort_by" = "رتب حسب";
+"filter.clear" = "مسح الترتيب";
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
+"sort.price_asc" = "السعر ↑";
+"sort.price_desc" = "السعر ↓";
+"sort.name_asc" = "الاسم أ→ي";
+"sort.name_desc" = "الاسم ي→أ";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";

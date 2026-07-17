@@ -12,8 +12,17 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var query: String
 	@Published var state: SearchResultsState = .loading
 	@Published var products: [MedsyProduct] = []
-	@Published var selectedFilter: String = "relevant"
 	@Published var errorMessage: String?
+
+
+	@Published var selectedSort: ProductSort? = nil {
+		didSet { guard oldValue != selectedSort else { return }; load() }
+	}
+
+
+	@Published var selectedCategory: String? = nil {
+		didSet { guard oldValue != selectedCategory else { return }; load() }
+	}
 
 	private let useCase: SearchProductsUseCaseProtocol
 	private let languageManager: LanguageManager
@@ -23,6 +32,7 @@ final class SearchResultsViewModel: ObservableObject {
 	private var isLastPage = false
 	private var isLoadingPage = false
 	private var loadTask: Task<Void, Never>?
+	private var cancellables = Set<AnyCancellable>()
 
 	init(
 		query: String,
@@ -32,6 +42,16 @@ final class SearchResultsViewModel: ObservableObject {
 		self.query = query
 		self.useCase = useCase
 		self.languageManager = languageManager
+
+
+		$query
+			.dropFirst()
+			.debounce(for: .milliseconds(400), scheduler: DispatchQueue.main)
+			.removeDuplicates()
+			.sink { [weak self] _ in
+				self?.load()
+			}
+			.store(in: &cancellables)
 	}
 
 
@@ -58,8 +78,24 @@ final class SearchResultsViewModel: ObservableObject {
 		loadTask?.cancel()
 		query = ""
 		products = []
+		selectedSort = nil
+		selectedCategory = nil
 		state = .empty
 	}
+
+	// MARK: – Helpers
+
+
+	func isSortActive(_ sort: ProductSort) -> Bool {
+		selectedSort == sort
+	}
+
+
+	func toggleSort(_ sort: ProductSort) {
+		selectedSort = (selectedSort == sort) ? nil : sort
+	}
+
+	// MARK: – Private
 
 	private func fetch(reset: Bool) async {
 		guard !isLoadingPage else { return }
@@ -67,17 +103,22 @@ final class SearchResultsViewModel: ObservableObject {
 		defer { isLoadingPage = false }
 
 		do {
+			let sort: [ProductSort] = selectedSort.map { [$0] } ?? []
 			let result = try await useCase.execute(
 				keyword: query,
 				page: currentPage,
 				size: pageSize,
-				sort: []
+				sort: sort
 			)
 
 			guard !Task.isCancelled else { return }
 
-			let mapped = result.items.map {
+			var mapped = result.items.map {
 				ProductPresentationMapper.map($0, isRTL: languageManager.isRTL)
+			}
+
+			if let category = selectedCategory {
+				mapped = mapped.filter { $0.categoryName.caseInsensitiveCompare(category) == .orderedSame }
 			}
 
 			products = reset ? mapped : products + mapped

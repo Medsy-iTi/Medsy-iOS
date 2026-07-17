@@ -14,6 +14,8 @@ struct SearchResultsView: View {
 	private let coordinator: SearchCoordinator
 	private let onBack: () -> Void
 
+	@State private var showSortSheet = false
+
 	init(query: String, onBack: @escaping () -> Void = {}, coordinator: SearchCoordinator) {
 		_viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
 		self.onBack = onBack
@@ -33,14 +35,37 @@ struct SearchResultsView: View {
 				}
 
 				ChipsRow {
-					FilterChip(title: "filter.sort".localized, systemIcon: "slider.horizontal.3") {}
-					FilterChip(title: "filter.type".localized) {}
-					FilterChip(title: "filter.price".localized) {}
+					
 					FilterChip(
-						title: "filter.most_relevant".localized,
-						isSelected: viewModel.selectedFilter == "relevant"
+						title: sortChipTitle,
+						systemIcon: "slider.horizontal.3",
+						isSelected: viewModel.selectedSort != nil
 					) {
-						viewModel.selectedFilter = "relevant"
+						showSortSheet = true
+					}
+
+
+					FilterChip(
+						title: "sort.price_asc".localized,
+						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .asc)
+					) {
+						viewModel.toggleSort(ProductSort(field: .price, direction: .asc))
+					}
+
+
+					FilterChip(
+						title: "sort.price_desc".localized,
+						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .desc)
+					) {
+						viewModel.toggleSort(ProductSort(field: .price, direction: .desc))
+					}
+
+
+					FilterChip(
+						title: "sort.name_asc".localized,
+						isSelected: viewModel.selectedSort == ProductSort(field: .name, direction: .asc)
+					) {
+						viewModel.toggleSort(ProductSort(field: .name, direction: .asc))
 					}
 				}
 
@@ -60,7 +85,22 @@ struct SearchResultsView: View {
 		.localizedEnvironment()
 		.id("\(languageManager.currentLanguage)-\(appSettings.isDarkMode)")
 		.onAppear { viewModel.load() }
+		.sheet(isPresented: $showSortSheet) {
+			SortFilterSheet(viewModel: viewModel, isPresented: $showSortSheet)
+		}
 	}
+
+	// MARK: – Computed
+
+	private var sortChipTitle: String {
+		guard let active = viewModel.selectedSort else {
+			return "filter.sort".localized
+		}
+		let match = SortOption.all.first { $0.sort == active }
+		return match?.labelKey.localized ?? "filter.sort".localized
+	}
+
+	// MARK: – Subviews
 
 	private var header: some View {
 		HStack {

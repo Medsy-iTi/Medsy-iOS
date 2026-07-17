@@ -17,17 +17,12 @@ struct SkeletonRow: View {
 
     var body: some View {
         HStack(spacing: MedsySpacing.sm) {
-            if isRTL {
+
                 
                 shimmerShape.frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
                 textShimmers
                 actionShimmers
-            } else {
-                // LTR: action circles | text blocks | image
-                actionShimmers
-                textShimmers
-                shimmerShape.frame(width: 72, height: 72).clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
-            }
+           
         }
         .padding(MedsySpacing.sm)
         .frame(height: 96)
