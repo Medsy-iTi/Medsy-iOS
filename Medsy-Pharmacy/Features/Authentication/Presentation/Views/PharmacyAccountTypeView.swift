@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct PharmacyAccountTypeView: View {
-    @Binding var selection: PharmacyAccountType?
-    let validationMessage: String?
-    let isLoading: Bool
+    @Bindable var viewModel: PharmacyRegistrationViewModel
     let onRegister: () -> Void
 
     var body: some View {
@@ -29,12 +27,12 @@ struct PharmacyAccountTypeView: View {
                 }
             }
 
-            PharmacyAuthValidationMessage(message: validationMessage)
+            PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 
             PharmacyPrimaryButton(
                 title: "pharmacy.auth.register".localized,
-                isLoading: isLoading,
-                isDisabled: selection == nil,
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.accountType == nil,
                 action: onRegister
             )
         }
@@ -43,10 +41,12 @@ struct PharmacyAccountTypeView: View {
     }
 
     private func accountTypeButton(_ accountType: PharmacyAccountType) -> some View {
-        let isSelected = selection == accountType
+        let isSelected = viewModel.accountType == accountType
 
         return Button {
-            selection = accountType
+            Task {
+                await viewModel.handle(.accountTypeSelected(accountType))
+            }
         } label: {
             HStack(spacing: PharmacySpacing.md) {
                 Image(systemName: accountType.systemImage)

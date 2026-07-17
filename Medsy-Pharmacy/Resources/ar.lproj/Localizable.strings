@@ -47,3 +47,10 @@
 "pharmacy.auth.license.error.size" = "يجب ألا يتجاوز حجم ترخيص الصيدلية 10 ميجابايت.";
 "pharmacy.auth.license.error.invalid" = "الملف المحدد ليس ملف PDF صالحًا.";
 "pharmacy.auth.license.error.read" = "تعذر قراءة الملف المحدد. اختر ملف PDF آخر.";
+"pharmacy.auth.license.error.required" = "اختر ترخيص الصيدلية قبل المتابعة.";
+"pharmacy.auth.validation.required" = "أكمل جميع الحقول المطلوبة.";
+"pharmacy.auth.validation.email" = "أدخل بريدًا إلكترونيًا صالحًا.";
+"pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
+"pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
+"pharmacy.auth.validation.account_type" = "اختر طريقة استخدامك لميدسي للصيدليات.";
+"pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";

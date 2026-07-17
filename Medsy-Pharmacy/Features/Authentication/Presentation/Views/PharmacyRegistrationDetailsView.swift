@@ -8,13 +8,7 @@
 import SwiftUI
 
 struct PharmacyRegistrationDetailsView: View {
-    @Binding var firstName: String
-    @Binding var lastName: String
-    @Binding var phoneNumber: String
-    @Binding var email: String
-    @Binding var password: String
-    @Binding var confirmedPassword: String
-    let validationMessage: String?
+    @Bindable var viewModel: PharmacyRegistrationViewModel
     let onContinue: () -> Void
     let onLoginTapped: () -> Void
 
@@ -31,41 +25,41 @@ struct PharmacyRegistrationDetailsView: View {
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.first_name".localized,
                     kind: .name,
-                    text: $firstName
+                    text: $viewModel.firstName
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.last_name".localized,
                     kind: .name,
-                    text: $lastName
+                    text: $viewModel.lastName
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.phone".localized,
                     kind: .phone,
-                    text: $phoneNumber
+                    text: $viewModel.phoneNumber
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.email".localized,
                     kind: .email,
-                    text: $email
+                    text: $viewModel.email
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.password".localized,
                     kind: .password,
-                    text: $password
+                    text: $viewModel.password
                 )
 
                 PharmacyAuthTextField(
                     title: "pharmacy.auth.confirm_password".localized,
                     kind: .confirmPassword,
-                    text: $confirmedPassword
+                    text: $viewModel.confirmedPassword
                 )
             }
 
-            PharmacyAuthValidationMessage(message: validationMessage)
+            PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 
             PharmacyPrimaryButton(
                 title: "pharmacy.auth.continue".localized,

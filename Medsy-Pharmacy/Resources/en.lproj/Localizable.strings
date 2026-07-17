@@ -47,3 +47,10 @@
 "pharmacy.auth.license.error.size" = "The pharmacy license must not exceed 10 MB.";
 "pharmacy.auth.license.error.invalid" = "The selected file is not a valid PDF.";
 "pharmacy.auth.license.error.read" = "The selected file could not be read. Please choose another PDF.";
+"pharmacy.auth.license.error.required" = "Select your pharmacy license before continuing.";
+"pharmacy.auth.validation.required" = "Complete all required fields.";
+"pharmacy.auth.validation.email" = "Enter a valid email address.";
+"pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
+"pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
+"pharmacy.auth.validation.account_type" = "Choose how you will use Medsy Pharmacy.";
+"pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";

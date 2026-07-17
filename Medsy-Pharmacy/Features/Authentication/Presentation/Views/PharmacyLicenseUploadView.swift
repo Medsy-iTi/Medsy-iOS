@@ -9,12 +9,9 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct PharmacyLicenseUploadView: View {
-    @Binding var document: PharmacyLicenseDocument?
-    let isLoading: Bool
-    let submissionMessage: String?
-    let onContinue: (PharmacyLicenseDocument) -> Void
+    @Bindable var viewModel: PharmacyLicenseViewModel
+    let onCompleted: () -> Void
     @State private var isImporterPresented = false
-    @State private var selectionMessage: String?
 
     var body: some View {
         PharmacyAuthScreenContainer {
@@ -26,18 +23,18 @@ struct PharmacyLicenseUploadView: View {
 
             requirementsCard
 
-            if let document {
+            if let document = viewModel.document {
                 selectedDocumentCard(document)
             } else {
                 documentPickerButton
             }
 
-            PharmacyAuthValidationMessage(message: selectionMessage ?? submissionMessage)
+            PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 
             PharmacyPrimaryButton(
                 title: "pharmacy.auth.license.action".localized,
-                isLoading: isLoading,
-                isDisabled: document == nil,
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.document == nil,
                 action: submit
             )
         }
@@ -132,8 +129,9 @@ struct PharmacyLicenseUploadView: View {
             Spacer(minLength: PharmacySpacing.xs)
 
             Button {
-                self.document = nil
-                selectionMessage = nil
+                Task {
+                    await viewModel.handle(.documentRemoved)
+                }
             } label: {
                 Image(systemName: "trash")
                     .font(.system(size: 16, weight: .semibold))
@@ -152,32 +150,25 @@ struct PharmacyLicenseUploadView: View {
     }
 
     private func selectDocument(_ result: Result<[URL], Error>) {
-        do {
-            guard let url = try result.get().first else { return }
-            document = try PharmacyLicenseDocument(url: url)
-            selectionMessage = nil
-        } catch let error as PharmacyLicenseDocumentError {
-            document = nil
-            selectionMessage = error.localizedMessage
-        } catch {
-            document = nil
-            selectionMessage = "pharmacy.auth.license.error.read".localized
+        Task {
+            await viewModel.handle(.documentSelected(result))
         }
     }
 
     private func submit() {
-        guard let document else { return }
-        onContinue(document)
+        Task {
+            if await viewModel.handle(.documentSubmitted) {
+                onCompleted()
+            }
+        }
     }
 }
 
 #Preview {
     NavigationStack {
         PharmacyLicenseUploadView(
-            document: .constant(nil),
-            isLoading: false,
-            submissionMessage: nil,
-            onContinue: { _ in }
+            viewModel: PharmacyLicenseViewModel(submitAction: { _ in }),
+            onCompleted: {}
         )
     }
     .environment(LanguageManager.shared)
