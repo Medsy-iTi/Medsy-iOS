@@ -24,6 +24,7 @@ struct CoreAssembly: ModuleAssembly {
 
         container.register(LogoutUseCaseProtocol.self) { container in
             LogoutUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self),
                 tokenStore: container.resolve(TokenStoreProtocol.self)
             )
         }

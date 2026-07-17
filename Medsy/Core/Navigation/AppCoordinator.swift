@@ -50,8 +50,10 @@ final class AppCoordinator {
     }
 
     func logout() {
-        logoutUseCase.execute()
-        selectedTab = .home
-        route = .authentication
+        Task {
+            await logoutUseCase.execute()
+            selectedTab = .home
+            route = .authentication
+        }
     }
 }
