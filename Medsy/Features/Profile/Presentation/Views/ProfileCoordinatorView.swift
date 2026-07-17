@@ -25,6 +25,11 @@ struct ProfileCoordinatorView: View {
         ProfileScreen(
             patientName: coordinator.patientName,
             phoneNumber: coordinator.phoneNumber,
+            email: coordinator.email,
+            homeAddress: coordinator.displayHomeAddress,
+            dateOfBirthText: coordinator.displayDateOfBirth,
+            state: coordinator.state,
+            onRetry: { Task { await coordinator.refreshProfile() } },
             onEditProfile: coordinator.showEditProfile,
             onLanguage: coordinator.showLanguagePicker,
             onTheme: coordinator.showThemePicker,
@@ -52,10 +57,15 @@ struct ProfileCoordinatorView: View {
         switch presentation {
         case .editProfile:
             EditProfileScreen(
-                name: .constant(coordinator.patientName),
+                name: coordinator.patientName,
                 phoneNumber: coordinator.phoneNumber,
+                email: coordinator.email,
+                homeAddress: coordinator.homeAddress,
+                dateOfBirth: coordinator.dateOfBirth,
+                isSaving: coordinator.isSaving,
+                errorMessage: coordinator.saveErrorMessage,
                 onCancel: coordinator.dismissPresentation,
-                onSave: coordinator.dismissPresentation
+                onSave: coordinator.updateProfile
             )
             .environment(languageManager)
             .localizedEnvironment()

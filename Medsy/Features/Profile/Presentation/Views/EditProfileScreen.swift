@@ -9,26 +9,40 @@ import SwiftUI
 
 struct EditProfileScreen: View {
 
-    @Binding var name: String
-
+    let name: String
     let phoneNumber: String
+    let email: String
+    let isSaving: Bool
+    let errorMessage: String?
     let onCancel: () -> Void
-    let onSave: () -> Void
+    let onSave: (String?, Date?) async -> Bool
 
-    @State private var draftName: String
-    @State private var nameError: String?
+    @State private var draftAddress: String
+    @State private var includesDateOfBirth: Bool
+    @State private var draftDateOfBirth: Date
+    @State private var addressError: String?
 
     init(
-        name: Binding<String>,
+        name: String,
         phoneNumber: String,
+        email: String,
+        homeAddress: String,
+        dateOfBirth: Date?,
+        isSaving: Bool = false,
+        errorMessage: String? = nil,
         onCancel: @escaping () -> Void = {},
-        onSave: @escaping () -> Void = {}
+        onSave: @escaping (String?, Date?) async -> Bool = { _, _ in true }
     ) {
-        _name = name
+        self.name = name
         self.phoneNumber = phoneNumber
+        self.email = email
+        self.isSaving = isSaving
+        self.errorMessage = errorMessage
         self.onCancel = onCancel
         self.onSave = onSave
-        _draftName = State(initialValue: name.wrappedValue)
+        _draftAddress = State(initialValue: homeAddress)
+        _includesDateOfBirth = State(initialValue: dateOfBirth != nil)
+        _draftDateOfBirth = State(initialValue: dateOfBirth ?? EditProfileScreen.defaultDateOfBirth)
     }
 
     var body: some View {
@@ -42,8 +56,12 @@ struct EditProfileScreen: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
                         avatarBlock
-                        nameField
-                        phoneBlock
+                        readonlyField(titleKey: "profile.full_name", value: name, iconName: "person")
+                        readonlyField(titleKey: "profile.email", value: email.isEmpty ? "profile.not_set".localized : email, iconName: "envelope")
+                        readonlyField(titleKey: "profile.phone", value: phoneNumber.isEmpty ? "profile.not_set".localized : phoneNumber, iconName: "phone", noteKey: "profile.phone_support_note")
+                        addressField
+                        dateOfBirthField
+                        errorBlock
                         saveButton
                     }
                     .padding(.horizontal, 20)
@@ -90,48 +108,18 @@ struct EditProfileScreen: View {
         .frame(maxWidth: .infinity)
     }
 
-    private var nameField: some View {
+    private func readonlyField(titleKey: String, value: String, iconName: String, noteKey: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("profile.full_name".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(ProfileStyle.primaryText)
-
-            TextField("profile.full_name.placeholder".localized, text: $draftName)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(ProfileStyle.primaryText)
-                .textInputAutocapitalization(.words)
-                .padding(.horizontal, 17)
-                .frame(height: 51)
-                .background(ProfileStyle.card)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(nameError == nil ? ProfileStyle.border : ProfileStyle.red, lineWidth: 1)
-                }
-                .onChange(of: draftName) {
-                    nameError = nil
-                }
-
-            if let nameError {
-                Text(nameError)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(ProfileStyle.red)
-            }
-        }
-    }
-
-    private var phoneBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("profile.phone".localized)
+            Text(titleKey.localized)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(ProfileStyle.primaryText)
 
             HStack(spacing: 10) {
-                Image(systemName: "phone")
+                Image(systemName: iconName)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(ProfileStyle.secondaryText)
 
-                Text(phoneNumber)
+                Text(value)
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(ProfileStyle.primaryText)
                     .lineLimit(1)
@@ -139,10 +127,9 @@ struct EditProfileScreen: View {
 
                 Spacer(minLength: 8)
 
-                Label("profile.verified".localized, systemImage: "checkmark.seal.fill")
+                Image(systemName: "lock.fill")
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(ProfileStyle.green)
-                    .lineLimit(1)
+                    .foregroundStyle(ProfileStyle.secondaryText.opacity(0.75))
             }
             .padding(.horizontal, 17)
             .frame(height: 51)
@@ -153,9 +140,84 @@ struct EditProfileScreen: View {
                     .stroke(ProfileStyle.border, lineWidth: 1)
             }
 
-            Text("profile.phone_support_note".localized)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(ProfileStyle.secondaryText)
+            if let noteKey {
+                Text(noteKey.localized)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(ProfileStyle.secondaryText)
+                    .padding(.horizontal, 4)
+            }
+        }
+    }
+
+    private var addressField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("profile.home_address".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(ProfileStyle.primaryText)
+
+            TextField("profile.home_address.placeholder".localized, text: $draftAddress, axis: .vertical)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(ProfileStyle.primaryText)
+                .textInputAutocapitalization(.words)
+                .lineLimit(2...4)
+                .padding(.horizontal, 17)
+                .padding(.vertical, 14)
+                .background(ProfileStyle.card)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(addressError == nil ? ProfileStyle.border : ProfileStyle.red, lineWidth: 1)
+                }
+                .onChange(of: draftAddress) {
+                    addressError = nil
+                }
+
+            if let addressError {
+                Text(addressError)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(ProfileStyle.red)
+            }
+        }
+    }
+
+    private var dateOfBirthField: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $includesDateOfBirth) {
+                Text("profile.date_of_birth".localized)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(ProfileStyle.primaryText)
+            }
+            .tint(ProfileStyle.green)
+
+            if includesDateOfBirth {
+                DatePicker(
+                    "profile.date_of_birth".localized,
+                    selection: $draftDateOfBirth,
+                    in: ...Date(),
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .labelsHidden()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 17)
+                .frame(height: 51)
+                .background(ProfileStyle.card)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(ProfileStyle.border, lineWidth: 1)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var errorBlock: some View {
+        if let errorMessage {
+            Text(errorMessage)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(ProfileStyle.red)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 4)
         }
     }
@@ -164,31 +226,53 @@ struct EditProfileScreen: View {
         Button {
             save()
         } label: {
-            Text("profile.save_changes".localized)
-                .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(ProfileStyle.green)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            Group {
+                if isSaving {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Text("profile.save_changes".localized)
+                        .font(.system(size: 15, weight: .bold))
+                }
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(isSaving ? ProfileStyle.green.opacity(0.72) : ProfileStyle.green)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(.plain)
+        .disabled(isSaving)
         .padding(.top, 8)
     }
 
     private func save() {
-        let trimmed = draftName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.count >= 2 else {
-            nameError = "profile.name_error".localized
+        let trimmedAddress = draftAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedAddress.isEmpty || trimmedAddress.count >= 4 else {
+            addressError = "profile.address_error".localized
             return
         }
 
-        name = trimmed
-        onSave()
+        Task {
+            let success = await onSave(trimmedAddress.isEmpty ? nil : trimmedAddress, includesDateOfBirth ? draftDateOfBirth : nil)
+            if success {
+                onCancel()
+            }
+        }
+    }
+
+    private static var defaultDateOfBirth: Date {
+        Calendar.current.date(from: DateComponents(year: 1995, month: 1, day: 1)) ?? Date()
     }
 }
 
 #Preview {
-    EditProfileScreen(name: .constant("profile.sample.name".localized), phoneNumber: "+20 10 1234 5678")
+    EditProfileScreen(
+        name: "profile.sample.name".localized,
+        phoneNumber: "+20 10 1234 5678",
+        email: "customer@dawanow.com",
+        homeAddress: "Cairo, Egypt",
+        dateOfBirth: Date()
+    )
         .environment(LanguageManager.shared)
 }

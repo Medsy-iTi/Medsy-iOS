@@ -214,6 +214,7 @@
 "profile.title" = "حسابي";
 "profile.sample.name" = "محمود الدمرداش";
 "profile.section.account" = "الحساب";
+"profile.section.details" = "بيانات الحساب";
 "profile.section.preferences" = "التفضيلات";
 "profile.section.support" = "المساعدة والدعم";
 "profile.section.about" = "حول Medsy";
@@ -258,11 +259,19 @@
 "profile.change_photo" = "تغيير الصورة";
 "profile.full_name" = "الاسم بالكامل";
 "profile.full_name.placeholder" = "اكتب الاسم بالكامل";
+"profile.email" = "البريد الإلكتروني";
 "profile.phone" = "رقم الهاتف";
+"profile.home_address" = "عنوان المنزل";
+"profile.home_address.placeholder" = "اكتب عنوان المنزل";
+"profile.date_of_birth" = "تاريخ الميلاد";
+"profile.not_set" = "غير محدد";
+"profile.loading" = "جاري تحميل البيانات...";
+"profile.load_failed" = "تعذر تحميل بيانات الحساب";
 "profile.verified" = "موثق";
 "profile.phone_support_note" = "لتغيير رقم الهاتف، يرجى التواصل مع الدعم";
 "profile.save_changes" = "حفظ التغييرات";
 "profile.name_error" = "يجب ألا يقل الاسم عن حرفين";
+"profile.address_error" = "يجب ألا يقل العنوان عن 4 أحرف";
 
 "prescription.upload.title" = "ارفع الروشتة";
 "prescription.upload.heading" = "ارفع روشتتك";
