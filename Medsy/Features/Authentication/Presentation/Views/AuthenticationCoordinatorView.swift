@@ -32,7 +32,14 @@ struct AuthenticationCoordinatorView: View {
                     )
                 case .signup:
                     SignupView(
+                        viewModel: coordinator.makeSignupViewModel(),
                         onLoginTapped: coordinator.showLogin,
+                        onVerificationRequested: coordinator.showVerification
+                    )
+                case let .verification(email):
+                    VerificationView(
+                        email: email,
+                        viewModel: coordinator.makeVerificationViewModel(),
                         onAuthenticated: coordinator.finishAuthentication
                     )
                 }
