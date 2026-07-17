@@ -21,8 +21,8 @@ struct Medsy_PharmacyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(languageManager)
                 .pharmacyLocalizedEnvironment()
+                .environment(languageManager)
                 .id(languageManager.currentLanguage)
         }
     }
