@@ -25,3 +25,10 @@
 "pharmacy.auth.account_type.pharmacist.title" = "Pharmacist";
 "pharmacy.auth.account_type.pharmacist.description" = "Join a pharmacy invitation and manage its requests and orders.";
 "pharmacy.auth.register" = "Create account";
+"pharmacy.auth.verification.title" = "Verify your account";
+"pharmacy.auth.verification.subtitle" = "Enter the six-digit verification code sent to your email.";
+"pharmacy.auth.verification.sent_to" = "We sent the code to %@";
+"pharmacy.auth.verification.code_accessibility" = "Six-digit verification code";
+"pharmacy.auth.verification.action" = "Verify account";
+"pharmacy.auth.verification.resend" = "Resend code";
+"pharmacy.auth.verification.resend_countdown" = "Resend code in %d seconds";

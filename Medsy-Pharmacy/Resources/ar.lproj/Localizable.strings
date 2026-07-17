@@ -25,3 +25,10 @@
 "pharmacy.auth.account_type.pharmacist.title" = "صيدلي";
 "pharmacy.auth.account_type.pharmacist.description" = "انضم إلى صيدلية عن طريق دعوة وتعامل مع الطلبات الواردة.";
 "pharmacy.auth.register" = "إنشاء الحساب";
+"pharmacy.auth.verification.title" = "تأكيد حسابك";
+"pharmacy.auth.verification.subtitle" = "أدخل رمز التأكيد المكون من ستة أرقام والمرسل إلى بريدك الإلكتروني.";
+"pharmacy.auth.verification.sent_to" = "أرسلنا الرمز إلى %@";
+"pharmacy.auth.verification.code_accessibility" = "رمز تأكيد مكون من ستة أرقام";
+"pharmacy.auth.verification.action" = "تأكيد الحساب";
+"pharmacy.auth.verification.resend" = "إعادة إرسال الرمز";
+"pharmacy.auth.verification.resend_countdown" = "إعادة الإرسال خلال %d ثانية";
