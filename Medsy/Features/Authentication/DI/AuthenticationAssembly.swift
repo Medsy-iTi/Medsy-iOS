@@ -38,6 +38,13 @@ struct AuthenticationAssembly: ModuleAssembly {
             )
         }
 
+        container.register(LoginUseCaseProtocol.self) { container in
+            LoginUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
         container.register(VerificationUseCaseProtocol.self) { container in
             VerificationUseCase(
                 repository: container.resolve(AuthRepositoryProtocol.self),
@@ -60,6 +67,7 @@ struct AuthenticationAssembly: ModuleAssembly {
 
         container.register(AuthenticationFactory.self) { container in
             AuthenticationFactory(
+                loginUseCase: container.resolve(LoginUseCaseProtocol.self),
                 signupUseCase: container.resolve(SignupUseCaseProtocol.self),
                 verificationUseCase: container.resolve(VerificationUseCaseProtocol.self)
             )
