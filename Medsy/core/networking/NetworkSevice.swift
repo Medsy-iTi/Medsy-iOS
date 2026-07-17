@@ -58,6 +58,10 @@ final class NetworkService: NetworkServiceProtocol {
             print("Response JSON:\n\(JsonHelper.prettyJSON(data))\n-----------------------------")
         }
 
+        if let apiError = Self.apiEnvelopeError(from: response.data, decoder: decoder) {
+            throw apiError
+        }
+
         switch response.result {
         case .success(let data):
             return data
@@ -70,4 +74,22 @@ final class NetworkService: NetworkServiceProtocol {
             )
         }
     }
+
+    static func apiEnvelopeError(
+        from data: Data?,
+        decoder: JSONDecoder = JSONDecoder()
+    ) -> NetworkError? {
+        guard let data,
+              let envelope = try? decoder.decode(APIStatusEnvelope.self, from: data),
+              !envelope.success else {
+            return nil
+        }
+
+        return .validationError(envelope.message)
+    }
+}
+
+private struct APIStatusEnvelope: Decodable {
+    let success: Bool
+    let message: String
 }
