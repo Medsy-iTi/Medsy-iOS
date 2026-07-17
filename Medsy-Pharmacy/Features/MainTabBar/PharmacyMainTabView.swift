@@ -75,11 +75,11 @@ private struct PharmacySetupPlaceholderView: View {
                 .font(.system(size: 42, weight: .semibold))
                 .foregroundStyle(PharmacyColor.primary)
 
-            Text(tab.titleKey.localized)
+            Text(titleKey.localized)
                 .font(PharmacyColor.sans(20, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
 
-            Text("pharmacy.setup.placeholder".localized)
+            Text(subtitleKey.localized)
                 .font(PharmacyColor.sans(14))
                 .foregroundStyle(PharmacyColor.textSecondary)
                 .multilineTextAlignment(.center)
@@ -87,5 +87,15 @@ private struct PharmacySetupPlaceholderView: View {
         .padding(PharmacySpacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PharmacyColor.bg)
+    }
+
+    private var titleKey: String {
+        tab == .home ? "pharmacy.dashboard.title" : tab.titleKey
+    }
+
+    private var subtitleKey: String {
+        tab == .home
+            ? "pharmacy.dashboard.placeholder"
+            : "pharmacy.setup.placeholder"
     }
 }

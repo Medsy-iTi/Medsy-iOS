@@ -10,17 +10,20 @@ import SwiftUI
 @main
 struct Medsy_PharmacyApp: App {
     private let languageManager: LanguageManager
+    private let authenticationFactory: PharmacyAuthenticationFactory
 
     init() {
         PharmacyAppAssembler.shared.assemble(modules: [
-            PharmacyCoreAssembly()
+            PharmacyCoreAssembly(),
+            PharmacyAuthenticationAssembly()
         ])
         languageManager = PharmacyAppAssembler.shared.container.resolve(LanguageManager.self)
+        authenticationFactory = PharmacyAppAssembler.shared.container.resolve(PharmacyAuthenticationFactory.self)
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(authenticationFactory: authenticationFactory)
                 .pharmacyLocalizedEnvironment()
                 .environment(languageManager)
                 .id(languageManager.currentLanguage)
