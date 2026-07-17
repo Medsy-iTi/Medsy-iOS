@@ -108,9 +108,10 @@ final class SearchResultsViewModel: ObservableObject {
 				keyword: query,
 				page: currentPage,
 				size: pageSize,
-				sort: sort
+				sort: sort,
+				lang: languageManager.currentLanguage.rawValue
 			)
-
+			print(languageManager.currentLanguage.rawValue)
 			guard !Task.isCancelled else { return }
 
 			var mapped = result.items.map {

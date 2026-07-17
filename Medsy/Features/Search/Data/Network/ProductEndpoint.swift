@@ -9,45 +9,55 @@ import Foundation
 import Alamofire
 
 enum ProductEndpoint {
-    case list(page: Int, size: Int, sort: [ProductSort])
-    case search(keyword: String, page: Int, size: Int, sort: [ProductSort])
+	case list(page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
+	case search(keyword: String, page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
 }
 
 extension ProductEndpoint: ApiEndpoint {
 
-    var baseURL: String? { Constants.baseURL }
+	var baseURL: String? { Constants.baseURL }
 
-    var method: HTTPMethod { .get }
+	var method: HTTPMethod { .get }
 
-    var queryParameters: Parameters? { nil }
+	var queryParameters: Parameters? { nil }
 
-    var body: Data? { nil }
+	var body: Data? { nil }
 
-    var path: String {
-        switch self {
-        case let .list(page, size, sort):
-            var items = [
-                URLQueryItem(name: "page", value: "\(page)"),
-                URLQueryItem(name: "size", value: "\(size)")
-            ]
-            items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
-            return "products" + Self.queryString(items)
+	var path: String {
+		switch self {
+			case let .list(page, size, sort, lang):
+				var items = [
+					URLQueryItem(name: "page", value: "\(page)"),
+					URLQueryItem(name: "size", value: "\(size)")
+				]
 
-        case let .search(keyword, page, size, sort):
-            var items = [
-                URLQueryItem(name: "keyword", value: keyword),
-                URLQueryItem(name: "page", value: "\(page)"),
-                URLQueryItem(name: "size", value: "\(size)")
-            ]
-            items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
-            return "products/search" + Self.queryString(items)
-        }
-    }
+				if let lang = lang {
+					items.append(URLQueryItem(name: "lang", value: lang))
+				}
 
-    private static func queryString(_ items: [URLQueryItem]) -> String {
-        var components = URLComponents()
-        components.queryItems = items
-        guard let query = components.percentEncodedQuery else { return "" }
-        return "?\(query)"
-    }
+				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
+				return "products" + Self.queryString(items)
+
+			case let .search(keyword, page, size, sort, lang):
+				var items = [
+					URLQueryItem(name: "keyword", value: keyword),
+					URLQueryItem(name: "page", value: "\(page)"),
+					URLQueryItem(name: "size", value: "\(size)")
+				]
+
+				if let lang = lang {
+					items.append(URLQueryItem(name: "lang", value: lang))
+				}
+
+				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
+				return "products/search" + Self.queryString(items)
+		}
+	}
+
+	private static func queryString(_ items: [URLQueryItem]) -> String {
+		var components = URLComponents()
+		components.queryItems = items
+		guard let query = components.percentEncodedQuery else { return "" }
+		return "?\(query)"
+	}
 }

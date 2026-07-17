@@ -134,7 +134,10 @@
 "product.manufacturer" = "Manufacturer";
 "product.type" = "Type";
 "product.category" = "Drug Category";
+"product.scientific_name" = "Scientific Name";
+"product.route" = "Route of Administration";
 "product.dispense_method" = "Dispensing Method";
+"product.dispense_method_value" = "Dispensed after pharmacist review";
 "product.price_format" = "%@ %@";
 "product.not_found_title" = "Product Not Found";
 "product.not_found_subtitle" = "We couldn't find this product. It may have been removed or is temporarily unavailable.";

@@ -1,6 +1,7 @@
 //
 //  ProductDetailView.swift
 //  Medsy
+//  Created by Shahudaa on 15/07/2026.
 //
 
 import SwiftUI
@@ -77,7 +78,7 @@ struct ProductDetailView: View {
     // MARK: - Loaded content
 
     @ViewBuilder
-    private func loadedContent(product: ProductDetail) -> some View {
+    private func loadedContent(product: ProductDetailDisplayModel) -> some View {
         ScrollView {
             VStack(spacing: MedsySpacing.md) {
 

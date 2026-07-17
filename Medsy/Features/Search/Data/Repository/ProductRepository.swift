@@ -2,8 +2,6 @@
 //  ProductRepository.swift
 //  Medsy
 //
-//  Created by Shahudaa on 16/07/2026.
-//
 
 
 import Foundation
@@ -19,9 +17,10 @@ final class ProductRepository: ProductRepositoryProtocol {
     func fetchProducts(
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+        lang: String? = nil
     ) async throws -> PagedResult<Product> {
-        let endpoint = ProductEndpoint.list(page: page, size: size, sort: sort)
+        let endpoint = ProductEndpoint.list(page: page, size: size, sort: sort, lang: lang)
         let response: APIResponseDTO<PageDTO<ProductDTO>> = try await networkService.request(endpoint: endpoint)
         return try Self.unwrap(response)
     }
@@ -30,9 +29,10 @@ final class ProductRepository: ProductRepositoryProtocol {
         keyword: String,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+        lang: String? = nil
     ) async throws -> PagedResult<Product> {
-        let endpoint = ProductEndpoint.search(keyword: keyword, page: page, size: size, sort: sort)
+        let endpoint = ProductEndpoint.search(keyword: keyword, page: page, size: size, sort: sort, lang: lang)
         let response: APIResponseDTO<PageDTO<ProductDTO>> = try await networkService.request(endpoint: endpoint)
         return try Self.unwrap(response)
     }

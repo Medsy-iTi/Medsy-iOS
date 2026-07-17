@@ -13,7 +13,8 @@ protocol SearchProductsUseCaseProtocol {
         keyword: String,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String?
     ) async throws -> PagedResult<Product>
 }
 
@@ -29,13 +30,15 @@ final class SearchProductsUseCase: SearchProductsUseCaseProtocol {
         keyword: String,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String? = nil
     ) async throws -> PagedResult<Product> {
         try await repository.searchProducts(
             keyword: keyword,
             page: page,
             size: size,
-            sort: sort
+            sort: sort,
+			lang: lang
         )
     }
 }

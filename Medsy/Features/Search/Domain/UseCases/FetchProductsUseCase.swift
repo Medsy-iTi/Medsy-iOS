@@ -12,7 +12,8 @@ protocol FetchProductsUseCaseProtocol {
     func execute(
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String?
     ) async throws -> PagedResult<Product>
 }
 
@@ -27,8 +28,10 @@ final class FetchProductsUseCase: FetchProductsUseCaseProtocol {
     func execute(
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String? = nil
     ) async throws -> PagedResult<Product> {
-        try await repository.fetchProducts(page: page, size: size, sort: sort)
+		try await repository
+			.fetchProducts(page: page, size: size, sort: sort, lang: lang)
     }
 }

@@ -134,7 +134,10 @@
 "product.manufacturer" = "الشركة المنتجة";
 "product.type" = "النوع";
 "product.category" = "فئة الدواء";
+"product.scientific_name" = "الاسم العلمي";
+"product.route" = "طريقة الاستخدام";
 "product.dispense_method" = "طريقة الصرف";
+"product.dispense_method_value" = "يُصرف بعد مراجعة الصيدلي";
 "product.price_format" = "%@ %@";
 "product.not_found_title" = "المنتج غير موجود";
 "product.not_found_subtitle" = "لم نتمكن من العثور على هذا المنتج. ربما تم حذفه أو أنه غير متاح مؤقتاً.";
