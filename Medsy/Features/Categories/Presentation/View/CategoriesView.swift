@@ -85,7 +85,6 @@ struct CategoriesView: View {
                                     iconName: category.iconName,
                                     iconColor: category.iconColor,
                                     bgColor: category.bgColor,
-                                    itemsCount: (category.id % 40) + 10
                                 )
                             }
                             .buttonStyle(.plain)

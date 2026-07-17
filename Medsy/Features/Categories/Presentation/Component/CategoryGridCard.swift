@@ -5,7 +5,6 @@ struct CategoryGridCard: View {
     let iconName: String
     let iconColor: Color
     let bgColor: Color
-    let itemsCount: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,9 +24,7 @@ struct CategoryGridCard: View {
                     .foregroundStyle(AppColor.textPrim)
                     .lineLimit(1)
                 
-                Text(String(format: "categories.itemsCount".localized, itemsCount))
-                    .font(AppColor.sans(11, .medium))
-                    .foregroundStyle(AppColor.textSec)
+              
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
