@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct SignupView: View {
-    @State private var viewModel = SignupViewModel()
+    @State private var viewModel: SignupViewModel
     let onLoginTapped: () -> Void
     let onVerificationRequested: (String) -> Void
+
+    init(
+        viewModel: SignupViewModel,
+        onLoginTapped: @escaping () -> Void,
+        onVerificationRequested: @escaping (String) -> Void
+    ) {
+        _viewModel = State(initialValue: viewModel)
+        self.onLoginTapped = onLoginTapped
+        self.onVerificationRequested = onVerificationRequested
+    }
 
     var body: some View {
         AuthScreenContainer {
@@ -46,10 +56,13 @@ struct SignupView: View {
 
             PrimaryButton(
                 title: "auth.signup.action".localized,
-                isDisabled: !viewModel.hasAcceptedTerms
+                isLoading: viewModel.isLoading,
+                isDisabled: !viewModel.hasAcceptedTerms || viewModel.isLoading
             ) {
-                if viewModel.submit() {
-                    onVerificationRequested(viewModel.email)
+                Task {
+                    if await viewModel.submit() {
+                        onVerificationRequested(viewModel.email)
+                    }
                 }
             }
 
@@ -61,13 +74,32 @@ struct SignupView: View {
         }
         .navigationTitle("auth.signup.title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .showCustomAlert(
+            title: "common.error".localized,
+            alertMessage: Binding(
+                get: { viewModel.alertMessage },
+                set: { value in
+                    if value == nil {
+                        viewModel.dismissError()
+                    }
+                }
+            )
+        )
     }
 
 }
 
 #Preview {
     NavigationStack {
-        SignupView(onLoginTapped: {}, onVerificationRequested: { _ in })
+        SignupView(
+            viewModel: SignupViewModel(signupUseCase: PreviewSignupUseCase()),
+            onLoginTapped: {},
+            onVerificationRequested: { _ in }
+        )
     }
     .environment(LanguageManager.shared)
+}
+
+private struct PreviewSignupUseCase: SignupUseCaseProtocol {
+    func execute(input: SignupInput) async throws {}
 }

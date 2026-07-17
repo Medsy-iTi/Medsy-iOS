@@ -12,10 +12,19 @@ import SwiftUI
 @Observable
 final class AuthenticationCoordinator {
     var path: [AuthenticationRoute] = []
+    private let signupUseCase: SignupUseCaseProtocol
     private let onAuthenticated: () -> Void
 
-    init(onAuthenticated: @escaping () -> Void) {
+    init(
+        signupUseCase: SignupUseCaseProtocol,
+        onAuthenticated: @escaping () -> Void
+    ) {
+        self.signupUseCase = signupUseCase
         self.onAuthenticated = onAuthenticated
+    }
+
+    func makeSignupViewModel() -> SignupViewModel {
+        SignupViewModel(signupUseCase: signupUseCase)
     }
 
     func showSignup() {

@@ -32,6 +32,7 @@ struct AuthenticationCoordinatorView: View {
                     )
                 case .signup:
                     SignupView(
+                        viewModel: coordinator.makeSignupViewModel(),
                         onLoginTapped: coordinator.showLogin,
                         onVerificationRequested: coordinator.showVerification
                     )
