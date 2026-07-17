@@ -159,18 +159,28 @@ Use the Observation framework for new iOS 18 view models unless an existing feat
 - Centralize authentication headers, refresh behavior, status-code handling, and decoding policy.
 - Do not expose `URLSession`, raw response dictionaries, or HTTP status codes through repository protocols.
 
-## Testing
+### Feature Networking Workflow
 
-Every feature change should include focused tests proportional to risk:
+Implement API-backed feature actions through this dependency chain:
 
-- Domain: use-case and business-rule unit tests.
-- Data: repository, mapper, decoding, and error-translation tests using stubbed transport/data sources.
-- Presentation: view-model state-transition tests with fake use cases.
-- UI: a small set of high-value journeys such as registration, login, request submission, and order tracking.
+```text
+View -> ViewModel -> UseCase -> Repository -> NetworkDataSource -> NetworkService -> Endpoint
+```
 
-Tests must not call live services. Avoid sleeps; use deterministic clocks, fakes, and async expectations.
+1. Define a domain input or entity containing only business and user-provided values. Do not include wire-only constants or JSON formatting in the domain layer.
+2. Define the repository protocol and use-case protocol in `Domain`. The use case represents one user action and delegates to the repository abstraction.
+3. Add request and response DTOs in the feature's `Data/DTOs` folder. Map domain values to exact API keys here, including fixed backend values and date/string formatting.
+4. Add an endpoint enum in the feature's `Data/Network` folder and conform it to `ApiEndpoint`. The endpoint owns the path, HTTP method, headers, query parameters, and encoded body.
+5. Add a network datasource protocol and implementation in `Data/DataSources`. It must receive `NetworkServiceProtocol` through its initializer, execute the endpoint, decode the response DTO, and never contain presentation behavior.
+6. Implement the domain repository protocol in `Data/Repositories`. The repository maps domain input into request DTOs and delegates remote work to the datasource; it must not call `NetworkService` directly.
+7. Register the datasource, repository, use case, and feature factory in the feature's assembly. Inject the use case into the view model through the factory/coordinator instead of resolving dependencies inside views or view models.
+8. In the `@MainActor` view model, validate local input before starting the request, expose explicit loading/success/error state, prevent duplicate submissions, propagate cancellation, and translate typed errors into displayable messages.
+9. In the view, start the async action from user intent, render loading through shared controls, navigate only after success, and present network failures through the shared alert modifier with localized text.
+10. Add tests for exact request encoding, endpoint path/method, datasource delegation, repository/use-case forwarding, backend error translation, local-validation short-circuiting, and view-model state transitions. Use fakes and spies; never call a live API.
 
-Before completing work, build the affected scheme and run the relevant test targets. Report any verification that could not be run.
+For APIs that return a shared `{ "success": Bool, "message": String, "data": ... }` envelope, `NetworkService` must inspect the raw envelope before normal status/result handling. A `success: false` response throws `NetworkError.validationError(message)` whether the HTTP status is successful or failing, so the backend message reaches presentation consistently. Responses that do not use this envelope continue through `NetworkErrorHandler` and the existing status-code mapping.
+
+Never log request bodies or sensitive response values. Passwords, OTPs, access tokens, personal details, and health data must not appear in console or analytics logs.
 
 ## Jira Workflow
 
