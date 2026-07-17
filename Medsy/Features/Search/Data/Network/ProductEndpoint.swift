@@ -15,7 +15,7 @@ enum ProductEndpoint {
 
 extension ProductEndpoint: ApiEndpoint {
 
-    var baseURL: String? { Constants.productsBaseURL }
+    var baseURL: String? { Constants.baseURL }
 
     var method: HTTPMethod { .get }
 
