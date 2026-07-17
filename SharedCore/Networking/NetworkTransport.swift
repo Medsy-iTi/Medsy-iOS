@@ -22,11 +22,11 @@ final class NetworkTransport: NetworkTransportProtocol {
         let response = await AF.request(request)
             .serializingData()
             .response
-        
+
         if let error = response.error, response.response == nil {
             throw error
         }
-        
+
         return NetworkResponse(
             data: response.data,
             statusCode: response.response?.statusCode

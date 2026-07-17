@@ -10,14 +10,14 @@ import Foundation
 final class NetworkService: NetworkServiceProtocol {
     private let transport: NetworkTransportProtocol
     private let requestBuilder: NetworkRequestBuilder
-    private let tokenStore: TokenStoreProtocol
-    private let tokenRefresher: TokenRefreshing
+    private let tokenStore: TokenStoreProtocol?
+    private let tokenRefresher: TokenRefreshing?
 
     init(
         transport: NetworkTransportProtocol,
         requestBuilder: NetworkRequestBuilder,
-        tokenStore: TokenStoreProtocol,
-        tokenRefresher: TokenRefreshing
+        tokenStore: TokenStoreProtocol? = nil,
+        tokenRefresher: TokenRefreshing? = nil
     ) {
         self.transport = transport
         self.requestBuilder = requestBuilder
@@ -35,7 +35,7 @@ final class NetworkService: NetworkServiceProtocol {
     ) async throws -> T {
         let request = try requestBuilder.makeRequest(
             for: endpoint,
-            accessToken: endpoint.requiresAuthentication ? tokenStore.accessToken() : nil
+            accessToken: endpoint.requiresAuthentication ? tokenStore?.accessToken() : nil
         )
 
         let response: NetworkResponse
@@ -48,6 +48,10 @@ final class NetworkService: NetworkServiceProtocol {
         logResponse(response.data, statusCode: response.statusCode, endpoint: endpoint)
 
         if response.statusCode == 401, endpoint.requiresAuthentication {
+            guard let tokenStore, let tokenRefresher else {
+                throw NetworkError.unauthorized
+            }
+
             guard !hasRetriedAfterRefresh else {
                 try? tokenStore.clearTokens()
                 throw NetworkError.unauthorized

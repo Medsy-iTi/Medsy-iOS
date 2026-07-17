@@ -8,13 +8,6 @@
 import Foundation
 import Security
 
-protocol TokenStoreProtocol {
-    func accessToken() -> String?
-    func refreshToken() -> String?
-    func save(accessToken: String, refreshToken: String) throws
-    func clearTokens() throws
-}
-
 final class KeychainTokenStore: TokenStoreProtocol {
     private let service: String
     private let accessTokenAccount = "access-token"
