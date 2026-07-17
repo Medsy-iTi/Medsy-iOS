@@ -2,7 +2,7 @@
 //  MedsyApp.swift
 //  Medsy
 //
-//  Created by Ahmed Elkady on 13/07/2026.
+//  Created by Ahmed Elkady on 17/07/2026.
 //
 
 import SwiftUI
@@ -21,7 +21,8 @@ struct MedsyApp: App {
             OnboardingAssembly(),
             AuthenticationAssembly(),
             CategoriesAssembly(),
-			ProductsAssembly()
+			ProductsAssembly(),
+            ProductsFeatureAssembly()
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)

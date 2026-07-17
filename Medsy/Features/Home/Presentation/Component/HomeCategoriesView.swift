@@ -1,7 +1,7 @@
 //  HomeCategoriesView.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 14/07/2026.
+//  Created by Antoneos Philip on 17/07/2026.
 
 import SwiftUI
 
@@ -47,24 +47,27 @@ struct HomeCategoriesView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 18) {
                         ForEach(viewModel.categories) { category in
-                            VStack(spacing: 8) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(category.bgColor)
-                                        .frame(width: 58, height: 58)
+                            NavigationLink(destination: ProductsView(category: category)) {
+                                VStack(spacing: 8) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(category.bgColor)
+                                            .frame(width: 58, height: 58)
 
-                                    Image(systemName: category.iconName)
-                                        .font(.system(size: 22, weight: .semibold))
-                                        .foregroundStyle(category.iconColor)
+                                        Image(systemName: category.iconName)
+                                            .font(.system(size: 22, weight: .semibold))
+                                            .foregroundStyle(category.iconColor)
+                                    }
+
+                                    Text(category.displayName)
+                                        .font(AppColor.sans(11, .medium))
+                                        .foregroundStyle(AppColor.textPrim)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: 76)
                                 }
-
-                                Text(category.displayName)
-                                    .font(AppColor.sans(11, .medium))
-                                    .foregroundStyle(AppColor.textPrim)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.center)
-                                    .frame(width: 76)
                             }
+                            .buttonStyle(.plain)
                             .frame(width: 80)
                         }
                     }
@@ -92,3 +95,4 @@ struct HomeCategoriesView: View {
         }
     }
 }
+
