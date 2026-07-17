@@ -33,8 +33,6 @@
 "pharmacy.auth.verification.sent_to" = "أرسلنا الرمز إلى %@";
 "pharmacy.auth.verification.code_accessibility" = "رمز تأكيد مكون من ستة أرقام";
 "pharmacy.auth.verification.action" = "تأكيد الحساب";
-"pharmacy.auth.verification.resend" = "إعادة إرسال الرمز";
-"pharmacy.auth.verification.resend_countdown" = "إعادة الإرسال خلال %d ثانية";
 "pharmacy.auth.validation.required" = "أكمل جميع الحقول المطلوبة.";
 "pharmacy.auth.validation.email" = "أدخل بريدًا إلكترونيًا صالحًا.";
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";

@@ -44,29 +44,9 @@ struct PharmacyVerificationView: View {
                 action: verify
             )
 
-            Button(resendTitle) {
-                Task {
-                    await viewModel.handle(.codeResendRequested)
-                }
-            }
-                .font(PharmacyColor.sans(14, .semibold))
-                .foregroundStyle(canResend ? PharmacyColor.primary : PharmacyColor.textSecondary)
-                .disabled(!canResend)
         }
         .navigationTitle("pharmacy.auth.verification.title".localized)
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var canResend: Bool {
-        viewModel.resendSecondsRemaining == 0 && !viewModel.isLoading
-    }
-
-    private var resendTitle: String {
-        guard viewModel.resendSecondsRemaining > 0 else {
-            return "pharmacy.auth.verification.resend".localized
-        }
-
-        return "pharmacy.auth.verification.resend_countdown".localized(viewModel.resendSecondsRemaining)
     }
 
     private func verify() {
@@ -83,8 +63,7 @@ struct PharmacyVerificationView: View {
         PharmacyVerificationView(
             viewModel: PharmacyVerificationViewModel(
                 email: "pharmacist@example.com",
-                verifyAction: { _, _ in },
-                resendAction: { _ in }
+                verifyAction: { _, _ in }
             ),
             onVerified: {}
         )

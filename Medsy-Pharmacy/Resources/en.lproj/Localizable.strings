@@ -33,8 +33,6 @@
 "pharmacy.auth.verification.sent_to" = "We sent the code to %@";
 "pharmacy.auth.verification.code_accessibility" = "Six-digit verification code";
 "pharmacy.auth.verification.action" = "Verify account";
-"pharmacy.auth.verification.resend" = "Resend code";
-"pharmacy.auth.verification.resend_countdown" = "Resend code in %d seconds";
 "pharmacy.auth.validation.required" = "Complete all required fields.";
 "pharmacy.auth.validation.email" = "Enter a valid email address.";
 "pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";

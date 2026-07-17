@@ -104,8 +104,7 @@ final class PharmacyRegistrationViewModel {
                     lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines),
                     phoneNumber: phoneNumber,
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-                    password: password,
-                    accountType: accountType
+                    password: password
                 )
             )
             state = .success

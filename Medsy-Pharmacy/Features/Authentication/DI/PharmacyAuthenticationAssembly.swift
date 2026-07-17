@@ -32,8 +32,11 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
-        container.register(PharmacyAuthenticationActions.self) { _ in
-            .placeholder
+        container.register(PharmacyAuthenticationActions.self) { container in
+            .live(
+                registrationUseCase: container.resolve(PharmacyRegistrationUseCaseProtocol.self),
+                verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self)
+            )
         }
 
         container.register(PharmacyAuthenticationFactory.self) { container in

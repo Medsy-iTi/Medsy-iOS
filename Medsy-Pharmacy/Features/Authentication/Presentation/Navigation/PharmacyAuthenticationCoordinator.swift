@@ -42,8 +42,7 @@ final class PharmacyAuthenticationCoordinator {
 
             verificationViewModel = PharmacyVerificationViewModel(
                 email: registrationViewModel.email,
-                verifyAction: actions.verify,
-                resendAction: actions.resendCode
+                verifyAction: actions.verify
             )
             path.append(.verification)
         }
