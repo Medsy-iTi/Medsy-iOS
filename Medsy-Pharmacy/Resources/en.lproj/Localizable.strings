@@ -33,3 +33,15 @@
 "pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
+"pharmacy.auth.login.title" = "Welcome back";
+"pharmacy.auth.login.subtitle" = "Sign in to manage your pharmacy.";
+"pharmacy.auth.login.action" = "Log In";
+"pharmacy.auth.forgot_password" = "Forgot password?";
+"pharmacy.auth.continue_google" = "Continue with Google";
+"pharmacy.auth.continue_apple" = "Continue with Apple";
+"pharmacy.auth.no_account" = "Don't have an account?";
+"pharmacy.auth.signup.link" = "Sign Up";
+"pharmacy.auth.login.link" = "Log In";
+"pharmacy.auth.brand.name" = "Medsy";
+"pharmacy.auth.brand.tagline" = "For Pharmacies";
+"pharmacy.auth.or" = "Or";
