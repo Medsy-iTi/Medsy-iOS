@@ -10,7 +10,7 @@ struct GetCategoriesUseCase {
         self.repository = repository
     }
 
-    func execute(page: Int = 0, size: Int = 20) async throws -> CategoryData {
+    func execute(page: Int = 0, size: Int = 20) async throws -> PagedResult<Category> {
         try await repository.getCategories(page: page, size: size)
     }
 }

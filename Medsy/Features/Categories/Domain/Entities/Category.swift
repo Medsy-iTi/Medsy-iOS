@@ -1,26 +1,13 @@
-//  CategoryEntity.swift
+//
+//  Category.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 14/07/2026.
+//  Created by Antoneos Philip on 17/07/2026.
+//
 
 import SwiftUI
 
-struct CategoryResponse: Decodable {
-    let success: Bool
-    let message: String
-    let data: CategoryData
-}
-
-struct CategoryData: Decodable {
-    let content: [CategoryEntity]
-    let pageNumber: Int
-    let pageSize: Int
-    let totalElements: Int
-    let totalPages: Int
-    let last: Bool
-}
-
-struct CategoryEntity: Decodable, Identifiable, Equatable {
+struct Category: Identifiable, Equatable {
     let id: Int
     let name: String
 

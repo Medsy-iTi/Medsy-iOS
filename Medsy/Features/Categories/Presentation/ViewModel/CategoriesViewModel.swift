@@ -9,7 +9,7 @@ import Observation
 @MainActor
 @Observable
 final class CategoriesViewModel {
-    private(set) var categories: [CategoryEntity] = []
+    private(set) var categories: [Category] = []
     private(set) var state: CategoriesUIState = .loading
     private(set) var isFetchingNextPage = false
 
@@ -28,8 +28,8 @@ final class CategoriesViewModel {
         isFetchingNextPage = false
         do {
             let data = try await getCategoriesUseCase.execute(page: currentPage)
-            categories = data.content
-            isLastPage = data.last
+            categories = data.items
+            isLastPage = data.isLast ?? true
             state = .success
         } catch {
             state = .error
@@ -42,8 +42,8 @@ final class CategoriesViewModel {
         do {
             let nextPage = currentPage + 1
             let data = try await getCategoriesUseCase.execute(page: nextPage)
-            categories.append(contentsOf: data.content)
-            isLastPage = data.last
+            categories.append(contentsOf: data.items)
+            isLastPage = data.isLast ?? true
             currentPage = nextPage
         } catch {
         }

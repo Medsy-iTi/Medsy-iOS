@@ -14,7 +14,7 @@ struct CategoriesView: View {
         _viewModel = State(initialValue: viewModel)
     }
 
-    private var filteredCategories: [CategoryEntity] {
+    private var filteredCategories: [Category] {
         if searchText.isEmpty {
             return viewModel.categories
         } else {

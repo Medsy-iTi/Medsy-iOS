@@ -4,5 +4,5 @@
 //  Created by Antoneos Philip on 14/07/2026.
 
 protocol CategoryRepository {
-    func getCategories(page: Int, size: Int) async throws -> CategoryData
+    func getCategories(page: Int, size: Int) async throws -> PagedResult<Category>
 }
