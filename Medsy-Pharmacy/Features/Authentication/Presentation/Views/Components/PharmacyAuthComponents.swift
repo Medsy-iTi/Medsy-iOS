@@ -347,7 +347,15 @@ struct PharmacyAuthSecondaryButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: PharmacySpacing.xs) {
-         
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .accessibilityHidden(true)
+
+                Text(title)
+                    .font(PharmacyColor.sans(15, .medium))
+                    .foregroundStyle(PharmacyColor.textPrimary)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
