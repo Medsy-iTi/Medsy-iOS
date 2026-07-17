@@ -15,12 +15,12 @@ final class PharmacyAuthenticationCoordinator {
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
     private let actions: PharmacyAuthenticationActions
     private let onLoginRequested: () -> Void
-    private let onAuthenticated: (PharmacyAccountType) -> Void
+    private let onAuthenticated: () -> Void
 
     init(
         actions: PharmacyAuthenticationActions,
         onLoginRequested: @escaping () -> Void,
-        onAuthenticated: @escaping (PharmacyAccountType) -> Void
+        onAuthenticated: @escaping () -> Void
     ) {
         self.actions = actions
         self.onLoginRequested = onLoginRequested
@@ -42,24 +42,18 @@ final class PharmacyAuthenticationCoordinator {
 
             verificationViewModel = PharmacyVerificationViewModel(
                 email: registrationViewModel.email,
-                verifyAction: actions.verify,
-                resendAction: actions.resendCode
+                verifyAction: actions.verify
             )
             path.append(.verification)
         }
     }
 
     func finishVerification() {
-        guard let accountType = registrationViewModel.accountType else { return }
-        finishAuthentication(accountType)
+        path.removeAll()
+        onAuthenticated()
     }
 
     func showLogin() {
         onLoginRequested()
-    }
-
-    private func finishAuthentication(_ accountType: PharmacyAccountType) {
-        path.removeAll()
-        onAuthenticated(accountType)
     }
 }

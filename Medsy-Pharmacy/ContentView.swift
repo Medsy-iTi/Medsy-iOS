@@ -9,20 +9,17 @@ import SwiftUI
 
 struct ContentView: View {
     let authenticationFactory: PharmacyAuthenticationFactory
-    @State private var authenticatedAccountType: PharmacyAccountType?
+    @State private var isAuthenticated = false
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
     var body: some View {
         Group {
-            if let authenticatedAccountType {
-                PharmacyMainTabView(
-                    coordinator: PharmacyMainTabCoordinator(),
-                    accountType: authenticatedAccountType
-                )
+            if isAuthenticated {
+                PharmacyMainTabView(coordinator: PharmacyMainTabCoordinator())
             } else {
                 PharmacyAuthenticationRootView(
                     factory: authenticationFactory,
-                    onAuthenticated: { authenticatedAccountType = $0 }
+                    onAuthenticated: { isAuthenticated = true }
                 )
             }
         }
@@ -35,7 +32,7 @@ private struct PharmacyAuthenticationRootView: View {
 
     init(
         factory: PharmacyAuthenticationFactory,
-        onAuthenticated: @escaping (PharmacyAccountType) -> Void
+        onAuthenticated: @escaping () -> Void
     ) {
         _coordinator = State(
             initialValue: factory.makeCoordinator(

@@ -18,7 +18,6 @@ enum PharmacyVerificationState: Equatable {
 enum PharmacyVerificationEvent {
     case codeChanged(String)
     case verificationSubmitted
-    case codeResendRequested
     case errorDismissed
 }
 
@@ -29,20 +28,14 @@ final class PharmacyVerificationViewModel {
     var code = ""
     private(set) var state: PharmacyVerificationState = .idle
     private(set) var validationMessage: String?
-    private(set) var resendSecondsRemaining = 60
     private let verifyAction: (String, String) async throws -> Void
-    private let resendAction: (String) async throws -> Void
-    private var countdownTask: Task<Void, Never>?
 
     init(
         email: String,
-        verifyAction: @escaping (String, String) async throws -> Void,
-        resendAction: @escaping (String) async throws -> Void
+        verifyAction: @escaping (String, String) async throws -> Void
     ) {
         self.email = email
         self.verifyAction = verifyAction
-        self.resendAction = resendAction
-        startCountdown()
     }
 
     var isLoading: Bool {
@@ -57,8 +50,6 @@ final class PharmacyVerificationViewModel {
             return true
         case .verificationSubmitted:
             return await verify()
-        case .codeResendRequested:
-            return await resendCode()
         case .errorDismissed:
             state = .idle
             validationMessage = nil
@@ -90,38 +81,4 @@ final class PharmacyVerificationViewModel {
         }
     }
 
-    private func resendCode() async -> Bool {
-        guard resendSecondsRemaining == 0, !isLoading else { return false }
-
-        state = .loading
-
-        do {
-            try await resendAction(email)
-            code = ""
-            validationMessage = nil
-            state = .idle
-            resendSecondsRemaining = 60
-            startCountdown()
-            return true
-        } catch is CancellationError {
-            state = .idle
-            return false
-        } catch {
-            let message = error.localizedDescription
-            state = .error(message)
-            validationMessage = message
-            return false
-        }
-    }
-
-    private func startCountdown() {
-        countdownTask?.cancel()
-        countdownTask = Task { @MainActor [weak self] in
-            while let self, resendSecondsRemaining > 0, !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled else { return }
-                resendSecondsRemaining -= 1
-            }
-        }
-    }
 }

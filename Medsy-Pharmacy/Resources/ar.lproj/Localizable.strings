@@ -4,8 +4,7 @@
 "pharmacy.tab.customers" = "العملاء";
 "pharmacy.tab.more" = "المزيد";
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
-"pharmacy.dashboard.owner.title" = "لوحة تحكم مالك الصيدلية";
-"pharmacy.dashboard.pharmacist.title" = "لوحة تحكم الصيدلي";
+"pharmacy.dashboard.title" = "لوحة تحكم الصيدلية";
 "pharmacy.dashboard.placeholder" = "لوحة التحكم جاهزة للميزات القادمة.";
 "pharmacy.auth.registration.title" = "إنشاء حسابك";
 "pharmacy.auth.registration.details.subtitle" = "أدخل بياناتك الشخصية للبدء في استخدام ميدسي للصيدليات.";
@@ -33,8 +32,6 @@
 "pharmacy.auth.verification.sent_to" = "أرسلنا الرمز إلى %@";
 "pharmacy.auth.verification.code_accessibility" = "رمز تأكيد مكون من ستة أرقام";
 "pharmacy.auth.verification.action" = "تأكيد الحساب";
-"pharmacy.auth.verification.resend" = "إعادة إرسال الرمز";
-"pharmacy.auth.verification.resend_countdown" = "إعادة الإرسال خلال %d ثانية";
 "pharmacy.auth.validation.required" = "أكمل جميع الحقول المطلوبة.";
 "pharmacy.auth.validation.email" = "أدخل بريدًا إلكترونيًا صالحًا.";
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";

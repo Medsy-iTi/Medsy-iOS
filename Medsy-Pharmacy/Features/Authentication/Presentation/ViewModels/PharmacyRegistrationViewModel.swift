@@ -90,7 +90,7 @@ final class PharmacyRegistrationViewModel {
     private func submitRegistration() async -> Bool {
         guard !isLoading else { return false }
         guard validateDetails() else { return false }
-        guard let accountType else {
+        guard accountType != nil else {
             validationMessage = "pharmacy.auth.validation.account_type".localized
             return false
         }
@@ -104,8 +104,7 @@ final class PharmacyRegistrationViewModel {
                     lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines),
                     phoneNumber: phoneNumber,
                     email: email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-                    password: password,
-                    accountType: accountType
+                    password: password
                 )
             )
             state = .success
