@@ -25,4 +25,8 @@ final class AuthRepository: AuthRepositoryProtocol {
         let session = try await networkDataSource.verify(request: VerificationRequestDTO(input: input))
         return session.toDomain()
     }
+
+    func logout(refreshToken: String) async throws {
+        try await networkDataSource.logout(request: LogoutRequestDTO(refreshToken: refreshToken))
+    }
 }

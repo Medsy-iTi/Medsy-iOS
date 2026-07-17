@@ -12,8 +12,11 @@ struct ProfileCoordinatorView: View {
     @ObservedObject private var appSettings = AppSettings.shared
     @State private var coordinator: ProfileCoordinator
 
-    init(onLogout: @escaping () -> Void) {
-        _coordinator = State(initialValue: ProfileCoordinator(onLogout: onLogout))
+    init(
+        onLogout: @escaping () -> Void,
+        viewModel: ProfileViewModel = DIContainer.shared.resolve(ProfileViewModel.self)
+    ) {
+        _coordinator = State(initialValue: ProfileCoordinator(viewModel: viewModel, onLogout: onLogout))
     }
 
     var body: some View {
@@ -22,11 +25,22 @@ struct ProfileCoordinatorView: View {
         ProfileScreen(
             patientName: coordinator.patientName,
             phoneNumber: coordinator.phoneNumber,
+            email: coordinator.email,
+            homeAddress: coordinator.displayHomeAddress,
+            dateOfBirthText: coordinator.displayDateOfBirth,
+            state: coordinator.state,
+            onRetry: { Task { await coordinator.refreshProfile() } },
             onEditProfile: coordinator.showEditProfile,
             onLanguage: coordinator.showLanguagePicker,
             onTheme: coordinator.showThemePicker,
             onLogout: coordinator.requestLogout
         )
+        .task {
+            await coordinator.loadProfile()
+        }
+        .refreshable {
+            await coordinator.refreshProfile()
+        }
         .sheet(item: $coordinator.activePresentation) { presentation in
             sheet(for: presentation, coordinator: coordinator)
         }
@@ -42,12 +56,16 @@ struct ProfileCoordinatorView: View {
     private func sheet(for presentation: ProfilePresentation, coordinator: ProfileCoordinator) -> some View {
         switch presentation {
         case .editProfile:
-            @Bindable var coordinator = coordinator
             EditProfileScreen(
-                name: $coordinator.patientName,
+                name: coordinator.patientName,
                 phoneNumber: coordinator.phoneNumber,
+                email: coordinator.email,
+                homeAddress: coordinator.homeAddress,
+                dateOfBirth: coordinator.dateOfBirth,
+                isSaving: coordinator.isSaving,
+                errorMessage: coordinator.saveErrorMessage,
                 onCancel: coordinator.dismissPresentation,
-                onSave: coordinator.dismissPresentation
+                onSave: coordinator.updateProfile
             )
             .environment(languageManager)
             .localizedEnvironment()

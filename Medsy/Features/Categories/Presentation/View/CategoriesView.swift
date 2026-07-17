@@ -1,86 +1,34 @@
+//  CategoriesView.swift
+//  Medsy
+//
+//  Created by Antoneos Philip on 17/07/2026.
+
 import SwiftUI
 
 struct CategoriesView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
-    
-    private let categories = [
-        CategoryItem(
-            titleKey: "home.category.medicines",
-            iconName: "pills.fill",
-            iconColor: Color(hex: "#3B82F6"),
-            bgColor: Color(hex: "#EFF6FF")
-        ),
-        CategoryItem(
-            titleKey: "home.category.vitamins",
-            iconName: "pills",
-            iconColor: Color(hex: "#F97316"),
-            bgColor: Color(hex: "#FFF7ED")
-        ),
-        CategoryItem(
-            titleKey: "home.category.personalCare",
-            iconName: "sparkles",
-            iconColor: Color(hex: "#EC4899"),
-            bgColor: Color(hex: "#FDF2F8")
-        ),
-        CategoryItem(
-            titleKey: "home.category.medicalDevices",
-            iconName: "waveform.path.ecg",
-            iconColor: Color(hex: "#06B6D4"),
-            bgColor: Color(hex: "#ECFEFF")
-        ),
-        CategoryItem(
-            titleKey: "home.category.babyCare",
-            iconName: "baby.carseat",
-            iconColor: Color(hex: "#8B5CF6"),
-            bgColor: Color(hex: "#F5F3FF")
-        ),
-        CategoryItem(
-            titleKey: "home.category.skinCare",
-            iconName: "face.smiling",
-            iconColor: Color(hex: "#10B981"),
-            bgColor: Color(hex: "#ECFDF5")
-        ),
-        CategoryItem(
-            titleKey: "home.category.hairCare",
-            iconName: "comb.fill",
-            iconColor: Color(hex: "#D97706"),
-            bgColor: Color(hex: "#FEF3C7")
-        ),
-        CategoryItem(
-            titleKey: "home.category.dailyEssentials",
-            iconName: "basket.fill",
-            iconColor: Color(hex: "#6B7280"),
-            bgColor: Color(hex: "#F3F4F6")
-        )
-    ]
-    
-    private let itemsCountMap: [String: Int] = [
-        "home.category.medicines": 350,
-        "home.category.vitamins": 120,
-        "home.category.personalCare": 280,
-        "home.category.medicalDevices": 45,
-        "home.category.babyCare": 95,
-        "home.category.skinCare": 160,
-        "home.category.hairCare": 110,
-        "home.category.dailyEssentials": 210
-    ]
-    
-    private var filteredCategories: [CategoryItem] {
+    @State private var viewModel: CategoriesViewModel
+
+    init(viewModel: CategoriesViewModel = DIContainer.shared.resolve(CategoriesViewModel.self)) {
+        _viewModel = State(initialValue: viewModel)
+    }
+
+    private var filteredCategories: [Category] {
         if searchText.isEmpty {
-            return categories
+            return viewModel.categories
         } else {
-            return categories.filter {
-                $0.titleKey.localized.localizedCaseInsensitiveContains(searchText)
+            return viewModel.categories.filter {
+                $0.displayName.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
-    
+
     private let columns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible(), spacing: 16)
     ]
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -91,7 +39,7 @@ struct CategoriesView: View {
                 .font(AppColor.sans(14))
                 .foregroundStyle(AppColor.textPrim)
                 .multilineTextAlignment(.leading)
-                
+
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(AppColor.textSec)
             }
@@ -103,21 +51,91 @@ struct CategoriesView: View {
                     .background(AppColor.card.cornerRadius(12))
             )
             .padding()
-            
-            ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns, spacing: 16) {
-                    ForEach(filteredCategories) { category in
-                        CategoryGridCard(
-                            titleKey: category.titleKey,
-                            iconName: category.iconName,
-                            iconColor: category.iconColor,
-                            bgColor: category.bgColor,
-                            itemsCount: itemsCountMap[category.titleKey] ?? 0
-                        )
+
+            switch viewModel.state {
+            case .loading:
+                ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(0..<8, id: \.self) { _ in
+                            VStack(alignment: .leading, spacing: 12) {
+                                MedsySkeletonBlock(cornerRadius: 16, height: 50, width: 50)
+                                MedsySkeletonBlock(cornerRadius: 4, height: 16, width: 100)
+                                MedsySkeletonBlock(cornerRadius: 4, height: 12, width: 60)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                            .background(AppColor.card)
+                            .cornerRadius(20)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(AppColor.border, lineWidth: 1)
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                }
+            case .success:
+                ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(filteredCategories) { category in
+                            NavigationLink(destination: ProductsView(category: category)) {
+                                CategoryGridCard(
+                                    titleKey: category.displayName,
+                                    iconName: category.iconName,
+                                    iconColor: category.iconColor,
+                                    bgColor: category.bgColor,
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .onAppear {
+                                if category == filteredCategories.last {
+                                    Task {
+                                        await viewModel.loadNextPage()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+
+
+                    if viewModel.isFetchingNextPage {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                                .tint(AppColor.green)
+                            Spacer()
+                        }
+                        .padding(.vertical, 16)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
+            case .error:
+                VStack(spacing: 16) {
+                    Spacer()
+                    Text("error.no_connection_title".localized)
+                        .font(AppColor.sans(16, .bold))
+                        .foregroundStyle(AppColor.textPrim)
+                    Text("error.no_connection_subtitle".localized)
+                        .font(AppColor.sans(14))
+                        .foregroundStyle(AppColor.textSec)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    Button(action: {
+                        Task {
+                            await viewModel.loadCategories()
+                        }
+                    }) {
+                        Text("error.retry".localized)
+                            .font(AppColor.sans(14, .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(AppColor.green.cornerRadius(12))
+                    }
+                    Spacer()
+                }
+                .padding(.bottom, 100)
             }
         }
         .background(AppColor.bg)
@@ -134,6 +152,9 @@ struct CategoriesView: View {
                         .foregroundStyle(AppColor.textPrim)
                 }
             }
+        }
+        .task {
+            await viewModel.loadCategories()
         }
     }
 }

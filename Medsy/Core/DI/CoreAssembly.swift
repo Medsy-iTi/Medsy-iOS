@@ -25,6 +25,12 @@ struct CoreAssembly: ModuleAssembly {
         container.register(UserDefaultsStatusStoreProtocol.self) { _ in
             UserDefaultsStatusStore()
         }
+        container.register(LogoutUseCaseProtocol.self) { container in
+            LogoutUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
 
         container.register(NetworkTransportProtocol.self) { _ in
             NetworkTransport()

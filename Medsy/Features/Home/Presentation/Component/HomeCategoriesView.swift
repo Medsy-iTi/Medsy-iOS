@@ -1,62 +1,26 @@
 //  HomeCategoriesView.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 14/07/2026.
-//
+//  Created by Antoneos Philip on 17/07/2026.
 
 import SwiftUI
 
-struct CategoryItem: Identifiable {
-    let id = UUID()
-    let titleKey: String
-    let iconName: String
-    let iconColor: Color
-    let bgColor: Color
-}
-
 struct HomeCategoriesView: View {
-    private let categories = [
-        CategoryItem(
-            titleKey: "home.category.medicines",
-            iconName: "pills.fill",
-            iconColor: Color(hex: "#3B82F6"),
-            bgColor: Color(hex: "#EFF6FF")
-        ),
-        CategoryItem(
-            titleKey: "home.category.vitamins",
-            iconName: "pills",
-            iconColor: Color(hex: "#F97316"),
-            bgColor: Color(hex: "#FFF7ED")
-        ),
-        CategoryItem(
-            titleKey: "home.category.personalCare",
-            iconName: "sparkles",
-            iconColor: Color(hex: "#EC4899"),
-            bgColor: Color(hex: "#FDF2F8")
-        ),
-        CategoryItem(
-            titleKey: "home.category.medicalDevices",
-            iconName: "waveform.path.ecg",
-            iconColor: Color(hex: "#06B6D4"),
-            bgColor: Color(hex: "#ECFEFF")
-        ),
-        CategoryItem(
-            titleKey: "home.category.more",
-            iconName: "ellipsis",
-            iconColor: Color(hex: "#6B7280"),
-            bgColor: Color(hex: "#F3F4F6")
-        )
-    ]
-    
+    @State private var viewModel: CategoriesViewModel
+
+    init(viewModel: CategoriesViewModel = DIContainer.shared.resolve(CategoriesViewModel.self)) {
+        _viewModel = State(initialValue: viewModel)
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
                 Text("home.shopByCategories".localized)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.textPrim)
-                
+
                 Spacer()
-                
+
                 NavigationLink(destination: CategoriesView()) {
                     Text("home.viewAll".localized)
                         .font(AppColor.sans(13, .bold))
@@ -64,30 +28,71 @@ struct HomeCategoriesView: View {
                 }
             }
             .padding(.horizontal)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 18) {
-                    ForEach(categories) { category in
-                        VStack(spacing: 8) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(category.bgColor)
-                                    .frame(width: 58, height: 58)
-                                
-                                Image(systemName: category.iconName)
-                                    .font(.system(size: 22, weight: .semibold))
-                                    .foregroundStyle(category.iconColor)
+
+            switch viewModel.state {
+            case .loading:
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 18) {
+                        ForEach(0..<5, id: \.self) { _ in
+                            VStack(spacing: 8) {
+                                MedsySkeletonBlock(cornerRadius: 16, height: 58, width: 58)
+                                MedsySkeletonBlock(cornerRadius: 4, height: 12, width: 50)
                             }
-                            
-                            Text(category.titleKey.localized)
-                                .font(AppColor.sans(12, .medium))
-                                .foregroundStyle(AppColor.textPrim)
-                                .lineLimit(1)
+                            .frame(width: 80)
                         }
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
+            case .success:
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 18) {
+                        ForEach(viewModel.categories) { category in
+                            NavigationLink(destination: ProductsView(category: category)) {
+                                VStack(spacing: 8) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(category.bgColor)
+                                            .frame(width: 58, height: 58)
+
+                                        Image(systemName: category.iconName)
+                                            .font(.system(size: 22, weight: .semibold))
+                                            .foregroundStyle(category.iconColor)
+                                    }
+
+                                    Text(category.displayName)
+                                        .font(AppColor.sans(11, .medium))
+                                        .foregroundStyle(AppColor.textPrim)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.center)
+                                        .frame(width: 76)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .frame(width: 80)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            case .error:
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        Task {
+                            await viewModel.loadCategories()
+                        }
+                    }) {
+                        Label("error.retry".localized, systemImage: "arrow.clockwise")
+                            .font(AppColor.sans(13, .bold))
+                            .foregroundStyle(AppColor.green)
+                    }
+                    Spacer()
+                }
+                .frame(height: 80)
             }
+        }
+        .task {
+            await viewModel.loadCategories()
         }
     }
 }
+
