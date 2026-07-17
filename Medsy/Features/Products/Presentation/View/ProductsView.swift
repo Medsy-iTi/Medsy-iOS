@@ -23,18 +23,21 @@ struct ProductsView: View {
                 }
             case .success:
                 if viewModel.products.isEmpty {
-                    VStack(spacing: 16) {
-                        Spacer()
-                        Text("products.empty_title".localized)
-                            .font(AppColor.sans(16, .bold))
-                            .foregroundStyle(AppColor.textPrim)
-                        Text("products.empty_subtitle".localized)
-                            .font(AppColor.sans(14))
-                            .foregroundStyle(AppColor.textSec)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                        Spacer()
-                    }
+                    MedsyStatusView(
+                        config: MedsyStatusConfig(
+                            systemIcon: "magnifyingglass",
+                            iconColor: { AppColor.textSec },
+                            iconBackground: { AppColor.surface },
+                            title: "empty.title".localized,
+                            subtitle: "empty.subtitle".localized,
+                            primaryButtonTitle: "error.retry".localized,
+                            primaryAction: {
+                                Task {
+                                    await viewModel.loadProducts()
+                                }
+                            }
+                        )
+                    )
                 } else {
                     @Bindable var viewModel = viewModel
                     ScrollView(showsIndicators: false) {
@@ -48,31 +51,36 @@ struct ProductsView: View {
                                     onToggleFavorite: {},
                                     onTap: {}
                                 )
+                                .onAppear {
+                                    if product.id == viewModel.products.last?.id {
+                                        Task {
+                                            await viewModel.loadNextPage()
+                                        }
+                                    }
+                                }
+                            }
+
+                            if viewModel.isFetchingNextPage {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .tint(AppColor.green)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 16)
                             }
                         }
                         .padding()
                     }
                 }
             case .error:
-                VStack(spacing: 16) {
-                    Spacer()
-                    Text("error.no_connection_title".localized)
-                        .font(AppColor.sans(16, .bold))
-                        .foregroundStyle(AppColor.textPrim)
-                    Button(action: {
+                MedsyStatusView(
+                    config: .noConnection {
                         Task {
                             await viewModel.loadProducts()
                         }
-                    }) {
-                        Text("error.retry".localized)
-                            .font(AppColor.sans(14, .bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                            .background(AppColor.green.cornerRadius(12))
                     }
-                    Spacer()
-                }
+                )
             }
         }
         .background(AppColor.bg)
