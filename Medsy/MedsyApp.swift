@@ -26,7 +26,10 @@ struct MedsyApp: App {
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
-        appCoordinator = AppCoordinator(shouldShowOnboarding: onboardingFactory.shouldShow())
+        appCoordinator = AppCoordinator(
+            shouldShowOnboarding: onboardingFactory.shouldShow(),
+            authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self)
+        )
     }
 
     var body: some Scene {

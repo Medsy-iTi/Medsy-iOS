@@ -22,6 +22,10 @@ struct CoreAssembly: ModuleAssembly {
             KeychainTokenStore()
         }
 
+        container.register(UserDefaultsStatusStoreProtocol.self) { _ in
+            UserDefaultsStatusStore()
+        }
+
         container.register(NetworkTransportProtocol.self) { _ in
             NetworkTransport()
         }
