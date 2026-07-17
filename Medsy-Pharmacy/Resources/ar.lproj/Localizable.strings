@@ -18,8 +18,6 @@
 "pharmacy.auth.password.show" = "إظهار كلمة المرور";
 "pharmacy.auth.password.hide" = "إخفاء كلمة المرور";
 "pharmacy.auth.continue" = "متابعة";
-"pharmacy.auth.has_account" = "لديك حساب بالفعل؟";
-"pharmacy.auth.login" = "تسجيل الدخول";
 "pharmacy.auth.account_type.title" = "كيف ستستخدم ميدسي؟";
 "pharmacy.auth.account_type.subtitle" = "اختر دورك لنجهز لك التجربة المناسبة.";
 "pharmacy.auth.account_type.owner.title" = "مالك صيدلية";

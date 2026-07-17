@@ -20,8 +20,7 @@ struct PharmacyAuthenticationCoordinatorView: View {
         NavigationStack(path: $coordinator.path) {
             PharmacyRegistrationDetailsView(
                 viewModel: coordinator.registrationViewModel,
-                onContinue: coordinator.submitDetails,
-                onLoginTapped: coordinator.showLogin
+                onContinue: coordinator.submitDetails
             )
             .navigationDestination(for: PharmacyAuthenticationRoute.self) { route in
                 destination(for: route)

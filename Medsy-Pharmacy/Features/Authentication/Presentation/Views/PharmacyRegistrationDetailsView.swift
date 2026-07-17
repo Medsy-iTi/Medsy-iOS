@@ -10,7 +10,6 @@ import SwiftUI
 struct PharmacyRegistrationDetailsView: View {
     @Bindable var viewModel: PharmacyRegistrationViewModel
     let onContinue: () -> Void
-    let onLoginTapped: () -> Void
 
     var body: some View {
         PharmacyAuthScreenContainer {
@@ -67,11 +66,6 @@ struct PharmacyRegistrationDetailsView: View {
                 action: onContinue
             )
 
-            PharmacyAuthPrompt(
-                leadingText: "pharmacy.auth.has_account".localized,
-                actionTitle: "pharmacy.auth.login".localized,
-                action: onLoginTapped
-            )
         }
         .navigationTitle("pharmacy.auth.registration.title".localized)
         .navigationBarTitleDisplayMode(.inline)

@@ -14,12 +14,10 @@ struct PharmacyAuthenticationFactory {
 
     @MainActor
     func makeCoordinator(
-        onLoginRequested: @escaping () -> Void,
         onAuthenticated: @escaping () -> Void
     ) -> PharmacyAuthenticationCoordinator {
         PharmacyAuthenticationCoordinator(
             actions: actions,
-            onLoginRequested: onLoginRequested,
             onAuthenticated: onAuthenticated
         )
     }

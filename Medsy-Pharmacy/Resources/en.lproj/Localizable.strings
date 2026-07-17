@@ -18,8 +18,6 @@
 "pharmacy.auth.password.show" = "Show password";
 "pharmacy.auth.password.hide" = "Hide password";
 "pharmacy.auth.continue" = "Continue";
-"pharmacy.auth.has_account" = "Already have an account?";
-"pharmacy.auth.login" = "Log in";
 "pharmacy.auth.account_type.title" = "How will you use Medsy?";
 "pharmacy.auth.account_type.subtitle" = "Choose your role so we can prepare the right experience for you.";
 "pharmacy.auth.account_type.owner.title" = "Pharmacy owner";

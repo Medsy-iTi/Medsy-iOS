@@ -14,16 +14,13 @@ final class PharmacyAuthenticationCoordinator {
     let registrationViewModel: PharmacyRegistrationViewModel
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
     private let actions: PharmacyAuthenticationActions
-    private let onLoginRequested: () -> Void
     private let onAuthenticated: () -> Void
 
     init(
         actions: PharmacyAuthenticationActions,
-        onLoginRequested: @escaping () -> Void,
         onAuthenticated: @escaping () -> Void
     ) {
         self.actions = actions
-        self.onLoginRequested = onLoginRequested
         self.onAuthenticated = onAuthenticated
         registrationViewModel = PharmacyRegistrationViewModel(registerAction: actions.register)
     }
@@ -53,7 +50,4 @@ final class PharmacyAuthenticationCoordinator {
         onAuthenticated()
     }
 
-    func showLogin() {
-        onLoginRequested()
-    }
 }
