@@ -129,6 +129,7 @@ Secrets.swift
 APIKeys.swift
 GoogleService-Info.plist
 Secrets.plist
+Medsy-Pharmacy/PharmacySecrets.plist
 Config.xcconfig
 *.p12
 *.mobileprovision
