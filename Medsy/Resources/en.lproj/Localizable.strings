@@ -1,6 +1,7 @@
 /* en.lproj/Localizable.strings */
 /* English — Medsy */
 
+/* Common */
 "common.ok"       = "OK";
 "common.cancel"   = "Cancel";
 "common.save"     = "Save";
@@ -15,18 +16,17 @@
 "language.english" = "English";
 "language.arabic"  = "Arabic";
 
+/* Home */
 "home.deliveryTo" = "Deliver to Nile Street, Maadi";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";
 "home.promoTarget" = "on selected group";
 "home.shopNow" = "Shop Now";
-
 "home.promo2.title" = "Vitamin Offers";
 "home.promo2.discount" = "Buy 1 Get 1 Free";
 "home.promo2.target" = "For a limited time";
 "home.promo2.button" = "Discover Now";
-
 "home.promo3.title" = "Free Fast Delivery";
 "home.promo3.discount" = "For orders above 200 EGP";
 "home.promo3.target" = "T&C Apply";
@@ -43,8 +43,54 @@
 "home.category.personalCare" = "Personal Care";
 "home.category.medicalDevices" = "Medical Devices";
 "home.category.more" = "More";
+"home.category.babyCare" = "Baby Care";
+"home.category.skinCare" = "Skin Care";
+"home.category.hairCare" = "Hair Care";
+"home.category.dailyEssentials" = "Daily Essentials";
 "home.fastDelivery" = "Fast Delivery";
 "home.toYourDoorstep" = "To your doorstep";
+
+/* Home Status */
+"home.status.home" = "Home";
+"home.status.searching" = "Searching";
+"home.status.firstOffer" = "First Offer";
+"home.status.multipleOffers" = "Multiple Offers";
+"home.status.expired" = "Search Ended";
+"home.status.searching.title" = "Searching for your medicines";
+"home.status.searching.subtitle" = "Matching your request with nearby pharmacies";
+"home.status.searching.time" = "Search Time";
+"home.status.searching.stage1" = "Stage 1";
+"home.status.searching.stage1Desc" = "Near Pharmacies";
+"home.status.searching.stage2" = "Stage 2";
+"home.status.searching.stage2Desc" = "Wider Range";
+"home.status.searching.stage3" = "Stage 3";
+"home.status.searching.stage3Desc" = "All Regions";
+"home.status.searching.notify" = "We will send you a notification as soon as a suitable offer arrives";
+"home.status.firstOffer.title" = "First offer arrived!";
+"home.status.firstOffer.subtitle" = "We are still receiving additional offers";
+"home.status.firstOffer.availableMeds" = "Available Medicines";
+"home.status.firstOffer.medsCount" = "2 / 3 medicines";
+"home.status.firstOffer.priceFrom" = "From";
+"home.status.firstOffer.priceValue" = "48 EGP";
+"home.status.firstOffer.showOffer" = "View Offer";
+"home.status.firstOffer.continueCompare" = "Continue & Compare Offers";
+"home.status.firstOffer.orderDetails" = "View Order Details";
+"home.status.multipleOffers.title" = "Multiple offers arrived";
+"home.status.multipleOffers.subtitle" = "You can now compare available offers";
+"home.status.multipleOffers.medsCount" = "3 / 3 medicines";
+"home.status.multipleOffers.priceValue" = "36 EGP";
+"home.status.multipleOffers.offersAvailableCount" = "3 offers available — you can compare";
+"home.status.multipleOffers.compareOffers" = "Compare Offers";
+"home.status.multipleOffers.stopSearchDesc" = "Search will automatically stop when you select an offer";
+"home.status.expired.title" = "Search time ended";
+"home.status.expired.subtitle" = "We haven't received a suitable offer yet";
+"home.status.expired.searchWider" = "Search in a wider range";
+"home.status.expired.cancelOrder" = "Cancel Order";
+
+/* Categories */
+"categories.title" = "Categories";
+"categories.searchPlaceholder" = "Search categories...";
+"categories.itemsCount" = "%d Products";
 
 /* Search */
 "search.title" = "Search Results";
@@ -63,7 +109,7 @@
 "empty.clear_search" = "Clear Search";
 "empty.request_prescription" = "Request with Prescription";
 
-/* No connection */
+/* Errors / No connection */
 "error.no_connection_title" = "Couldn't load results";
 "error.no_connection_subtitle" = "Check your internet connection and try again";
 "error.retry" = "Retry";
@@ -73,72 +119,173 @@
 "product.currency" = "EGP";
 "product.price_value" = "%.0f EGP";
 
+/* Product detail */
+"product.info_title" = "Product Information";
+"product.add_to_cart" = "Add to Cart";
+"product.consult_pharmacist" = "Consult a Pharmacist";
+"product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
+"product.manufacturer" = "Manufacturer";
+"product.type" = "Type";
+"product.category" = "Drug Category";
+"product.dispense_method" = "Dispensing Method";
+"product.price_format" = "%@ %@";
+"product.not_found_title" = "Product Not Found";
+"product.not_found_subtitle" = "We couldn't find this product. It may have been removed or is temporarily unavailable.";
+"product.try_search" = "Search Again";
+"product.error_title" = "Couldn't Load Product";
+"product.error_subtitle" = "There was a problem loading this product. Check your connection and try again.";
+
+/* Currency */
+"currency.egp" = "EGP";
+"currency.usd" = "USD";
+
+/* Accessibility */
+"accessibility.add_favorite" = "Add to favorites";
+"accessibility.remove_favorite" = "Remove from favorites";
+"accessibility.back" = "Back";
+"accessibility.share" = "Share";
+
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
 "tab.offers" = "Offers";
 "tab.orders" = "Orders";
-"tab.account" = "My Account";
-
-"categories.title" = "Categories";
-"categories.searchPlaceholder" = "Search categories...";
-"categories.itemsCount" = "%d Products";
-"home.category.babyCare" = "Baby Care";
-"home.category.skinCare" = "Skin Care";
-"home.category.hairCare" = "Hair Care";
-"home.category.dailyEssentials" = "Daily Essentials";
-
-
-// Home Status Keys
-"home.status.home" = "Home";
-"home.status.searching" = "Searching";
-"home.status.firstOffer" = "First Offer";
-"home.status.multipleOffers" = "Multiple Offers";
-"home.status.expired" = "Search Ended";
-
-"home.status.searching.title" = "Searching for your medicines";
-"home.status.searching.subtitle" = "Matching your request with nearby pharmacies";
-"home.status.searching.time" = "Search Time";
-"home.status.searching.stage1" = "Stage 1";
-"home.status.searching.stage1Desc" = "Near Pharmacies";
-"home.status.searching.stage2" = "Stage 2";
-"home.status.searching.stage2Desc" = "Wider Range";
-"home.status.searching.stage3" = "Stage 3";
-"home.status.searching.stage3Desc" = "All Regions";
-"home.status.searching.notify" = "We will send you a notification as soon as a suitable offer arrives";
-
-"home.status.firstOffer.title" = "First offer arrived!";
-"home.status.firstOffer.subtitle" = "We are still receiving additional offers";
-"home.status.firstOffer.availableMeds" = "Available Medicines";
-"home.status.firstOffer.medsCount" = "2 / 3 medicines";
-"home.status.firstOffer.priceFrom" = "From";
-"home.status.firstOffer.priceValue" = "48 EGP";
-"home.status.firstOffer.showOffer" = "View Offer";
-"home.status.firstOffer.continueCompare" = "Continue & Compare Offers";
-"home.status.firstOffer.orderDetails" = "View Order Details";
-
-"home.status.multipleOffers.title" = "Multiple offers arrived";
-"home.status.multipleOffers.subtitle" = "You can now compare available offers";
-"home.status.multipleOffers.medsCount" = "3 / 3 medicines";
-"home.status.multipleOffers.priceValue" = "36 EGP";
-"home.status.multipleOffers.offersAvailableCount" = "3 offers available — you can compare";
-"home.status.multipleOffers.compareOffers" = "Compare Offers";
-"home.status.multipleOffers.stopSearchDesc" = "Search will automatically stop when you select an offer";
-
-"home.status.expired.title" = "Search time ended";
-"home.status.expired.subtitle" = "We haven't received a suitable offer yet";
-"home.status.expired.searchWider" = "Search in a wider range";
-"home.status.expired.cancelOrder" = "Cancel Order";
-
 "tab.account" = "Account";
+
+/* Onboarding */
 "onboarding.skip" = "Skip";
 "onboarding.next" = "Next";
 "onboarding.get_started" = "Get Started";
 "onboarding.page_indicator" = "Page %d of %d";
-
 "onboarding.order.title" = "Order your medicines with ease";
 "onboarding.order.body" = "Order all your medicines and pharmacy essentials from one place.";
 "onboarding.delivery.title" = "Fast and secure delivery";
 "onboarding.delivery.body" = "We deliver your order quickly to your doorstep while keeping every product in excellent condition.";
 "onboarding.trust.title" = "Trusted and secure";
 "onboarding.trust.body" = "We select trusted pharmacies and quality products for a safe, reliable experience.";
+
+/* Authentication */
+"auth.login.title" = "Welcome back";
+"auth.login.subtitle" = "Sign in to continue caring for your health.";
+"auth.login.action" = "Log In";
+"auth.signup.title" = "Create account";
+"auth.signup.subtitle" = "Join Medsy and manage your health with ease.";
+"auth.signup.action" = "Create Account";
+"auth.full_name" = "Full name";
+"auth.phone" = "Phone number";
+"auth.email" = "Email address";
+"auth.password" = "Password";
+"auth.confirm_password" = "Confirm password";
+"auth.forgot_password" = "Forgot password?";
+"auth.or" = "or";
+"auth.continue_google" = "Continue with Google";
+"auth.continue_apple" = "Continue with Apple";
+"auth.no_account" = "Don't have an account?";
+"auth.has_account" = "Already have an account?";
+"auth.signup.link" = "Sign Up";
+"auth.login.link" = "Log In";
+"auth.terms.prefix" = "I agree to the";
+"auth.terms" = "Terms & Privacy Policy";
+"auth.validation.required" = "Please fill in all required fields.";
+"auth.validation.password_mismatch" = "Passwords do not match.";
+"auth.password.show" = "Show password";
+"auth.password.hide" = "Hide password";
+"auth.brand.name" = "Medesy";
+"auth.brand.tagline" = "Your health, our priority";
+
+/* Profile */
+"profile.title" = "My Account";
+"profile.sample.name" = "Mahmoud El Demerdash";
+"profile.section.account" = "Account";
+"profile.section.preferences" = "Preferences";
+"profile.section.support" = "Help and Support";
+"profile.section.about" = "About Medsy";
+"profile.personal_info" = "Personal Information";
+"profile.personal_info.subtitle" = "Edit name and basic details";
+"profile.notifications" = "Notifications";
+"profile.notifications.subtitle" = "Manage order and offer notifications";
+"profile.order_history" = "Order History";
+"profile.order_history.subtitle" = "View active and previous orders";
+"profile.language" = "Language";
+"profile.theme" = "Appearance";
+"profile.coming_soon" = "Coming soon";
+"profile.language.title" = "Choose language";
+"profile.language.message" = "The app direction and text update immediately.";
+"profile.language.arabic.subtitle" = "Arabic layout, right to left";
+"profile.language.english.subtitle" = "English layout, left to right";
+"profile.theme.title" = "Choose appearance";
+"profile.theme.message" = "Pick how Medsy should look on this device.";
+"profile.theme.light" = "Light";
+"profile.theme.light.subtitle" = "Bright interface";
+"profile.theme.dark" = "Dark";
+"profile.theme.dark.subtitle" = "Low-light interface";
+"profile.how_it_works" = "How it works";
+"profile.how_it_works.subtitle" = "Replay the Medsy tutorial";
+"profile.help_center" = "Help Center";
+"profile.help_center.subtitle" = "FAQs and assistance";
+"profile.report_issue" = "Report an issue";
+"profile.report_issue.subtitle" = "Tell us about any problem";
+"profile.about_medsy" = "About Medsy";
+"profile.terms" = "Terms and Conditions";
+"profile.privacy" = "Privacy Policy";
+"profile.logout" = "Log out";
+"profile.logout.title" = "Log out?";
+"profile.logout.message" = "You will return to the welcome screen and stop receiving account notifications.";
+"profile.version" = "Version %@";
+"profile.tab.home" = "Home";
+"profile.tab.favorites" = "Favorites";
+"profile.tab.offers" = "Offers";
+"profile.tab.orders" = "Orders";
+"profile.tab.profile" = "Profile";
+"profile.edit.title" = "Edit Profile";
+"profile.change_photo" = "Change photo";
+"profile.full_name" = "Full name";
+"profile.full_name.placeholder" = "Enter your full name";
+"profile.phone" = "Phone number";
+"profile.verified" = "Verified";
+"profile.phone_support_note" = "To change your phone number, please contact support";
+"profile.save_changes" = "Save changes";
+"profile.name_error" = "Name must be at least 2 characters";
+
+"prescription.upload.title" = "Upload Prescription";
+"prescription.upload.heading" = "Upload your prescription";
+"prescription.upload.message" = "Upload a clear photo and we'll extract the medicines for you.";
+"prescription.camera.title" = "Take a photo";
+"prescription.camera.message" = "Photograph the prescription with your camera";
+"prescription.gallery.title" = "Choose from gallery";
+"prescription.gallery.message" = "Select a saved image from your device";
+"prescription.tips.title" = "For best results";
+"prescription.tips.clear" = "Make sure medicine names are clear";
+"prescription.tips.shadows" = "Avoid shadows and reflections";
+"prescription.tips.full" = "Keep the full prescription in the image";
+"prescription.preview.title" = "Prescription preview";
+"prescription.preview.selected" = "Image selected successfully";
+"prescription.change" = "Change image";
+"prescription.continue" = "Continue";
+"prescription.reading.title" = "Reading Prescription";
+"prescription.reading.heading" = "Identifying your medicines";
+"prescription.reading.message" = "We're reading the prescription and extracting medicine names automatically.";
+"prescription.reading.stages" = "Reading stages";
+"prescription.reading.uploaded" = "Image uploaded";
+"prescription.reading.analysed" = "Image quality analysed";
+"prescription.reading.extracting" = "Extracting medicines";
+"prescription.review.title" = "Review Medicines";
+"prescription.review.message" = "Check your medicines before adding them to the cart";
+"prescription.review.found" = "found";
+"prescription.review.identified" = "identified";
+"prescription.review.needsReview" = "needs review";
+"prescription.review.addToCart" = "Add to cart";
+"prescription.needsReview" = "Needs review";
+"prescription.added.title" = "Added to cart!";
+"prescription.added.message" = "You can review quantities and set up your order from the cart.";
+"prescription.added.cart" = "View cart";
+"prescription.added.home" = "Back to home";
+"prescription.uploadFailed.title" = "Upload failed";
+"prescription.uploadFailed.message" = "Check your internet connection and try again.";
+"prescription.retry" = "Try again";
+"prescription.readingFailed.title" = "Couldn't read the prescription";
+"prescription.readingFailed.message" = "Try a clearer image, or continue so the pharmacist can review it.";
+"prescription.readingFailed.continue" = "Continue with prescription";
+"prescription.none.title" = "No medicines found";
+"prescription.none.message" = "Try a clearer photo or add medicines manually using the search.";
+"prescription.none.manual" = "Add medicine manually";

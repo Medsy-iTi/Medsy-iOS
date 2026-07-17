@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "splash-logo.png",
+      "filename" : "auth-logo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "splash-logo.png",
+      "filename" : "auth-logo 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "splash-logo.png",
+      "filename" : "auth-logo 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
