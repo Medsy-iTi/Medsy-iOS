@@ -53,13 +53,32 @@ final class ProfileViewModel {
         profile?.homeAddress ?? ""
     }
 
+    var displayHomeAddress: String {
+        homeAddress.isEmpty ? "profile.not_set".localized : homeAddress
+    }
+
     var dateOfBirth: Date? {
         profile?.dateOfBirth
+    }
+
+    var displayDateOfBirth: String {
+        guard let dateOfBirth else {
+            return "profile.not_set".localized
+        }
+
+        return ProfileViewModel.dateFormatter.string(from: dateOfBirth)
     }
 
     var canSave: Bool {
         !isSaving
     }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
 
     func loadProfile() async {
         guard state != .loading else { return }
