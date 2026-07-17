@@ -15,6 +15,7 @@ protocol ApiEndpoint {
     var queryParameters: Parameters? { get }
     var headers: HTTPHeaders? { get }
     var body: Data? { get }
+    var requiresAuthentication: Bool { get }
 }
 
 extension ApiEndpoint {
@@ -28,5 +29,9 @@ extension ApiEndpoint {
     
     var headers: HTTPHeaders? {
         return ["Content-Type": "application/json"]
+    }
+
+    var requiresAuthentication: Bool {
+        false
     }
 }

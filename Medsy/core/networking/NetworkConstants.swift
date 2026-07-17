@@ -8,8 +8,6 @@
 import Foundation
 
 struct Constants {
-    
-
 	static let baseURL = "http://localhost:8080/api/v1/"
     static let adminToken = SecretConstants.password
     static let apiKey = SecretConstants.apiKey
