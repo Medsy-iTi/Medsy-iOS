@@ -24,6 +24,7 @@ final class PharmacyLoginUseCase: PharmacyLoginUseCaseProtocol {
         let session = try await repository.login(input: input)
         try tokenStore.save(
             accessToken: session.accessToken,
+            
             refreshToken: session.refreshToken
         )
         return session
