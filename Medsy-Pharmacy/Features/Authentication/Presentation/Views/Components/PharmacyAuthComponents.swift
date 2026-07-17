@@ -93,7 +93,12 @@ struct PharmacyAuthHeader: View {
             if showsBrand {
                 PharmacyBrandMark()
             } else {
-           
+                Image(systemName: systemImage)
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 64, height: 64)
+                    .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+                    .accessibilityHidden(true)
 
                 VStack(spacing: PharmacySpacing.xs) {
                     Text(title)
