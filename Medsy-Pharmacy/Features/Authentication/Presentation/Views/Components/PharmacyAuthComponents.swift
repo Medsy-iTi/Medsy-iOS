@@ -86,28 +86,57 @@ struct PharmacyAuthHeader: View {
     let title: String
     let subtitle: String
     var systemImage = "cross.case.fill"
+    var showsBrand = false
 
     var body: some View {
         VStack(spacing: PharmacySpacing.md) {
-            Image(systemName: systemImage)
-                .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 64, height: 64)
-                .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-                .accessibilityHidden(true)
+            if showsBrand {
+                PharmacyBrandMark()
+            } else {
+                Image(systemName: systemImage)
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 64, height: 64)
+                    .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+                    .accessibilityHidden(true)
 
-            VStack(spacing: PharmacySpacing.xs) {
-                Text(title)
-                    .font(PharmacyColor.sans(24, .bold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
+                VStack(spacing: PharmacySpacing.xs) {
+                    Text(title)
+                        .font(PharmacyColor.sans(24, .bold))
+                        .foregroundStyle(PharmacyColor.textPrimary)
 
-                Text(subtitle)
-                    .font(PharmacyColor.sans(14))
-                    .foregroundStyle(PharmacyColor.textSecondary)
-                    .multilineTextAlignment(.center)
+                    Text(subtitle)
+                        .font(PharmacyColor.sans(14))
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+private struct PharmacyBrandMark: View {
+    var body: some View {
+        VStack(spacing: PharmacySpacing.xs) {
+            Image("AuthLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 108, height: 108)
+                .accessibilityHidden(true)
+
+            Text("pharmacy.auth.brand.name".localized)
+                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .foregroundStyle(PharmacyColor.primary)
+
+            Text("pharmacy.auth.brand.tagline".localized)
+                .font(PharmacyColor.sans(14, .medium))
+                .foregroundStyle(PharmacyColor.textPrimary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            "\("pharmacy.auth.brand.name".localized), \("pharmacy.auth.brand.tagline".localized)"
+        )
     }
 }
 
@@ -295,5 +324,48 @@ struct PharmacyRegistrationProgressView: View {
             }
             .frame(height: 6)
         }
+    }
+}
+
+struct PharmacyAuthDivider: View {
+    var body: some View {
+        HStack(spacing: PharmacySpacing.sm) {
+            Rectangle().fill(PharmacyColor.border).frame(height: 1)
+            Text("pharmacy.auth.or".localized)
+                .font(PharmacyColor.sans(13, .medium))
+                .foregroundStyle(PharmacyColor.textSecondary)
+            Rectangle().fill(PharmacyColor.border).frame(height: 1)
+        }
+    }
+}
+
+struct PharmacyAuthSecondaryButton: View {
+    let title: String
+    let imageName: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: PharmacySpacing.xs) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .accessibilityHidden(true)
+
+                Text(title)
+                    .font(PharmacyColor.sans(15, .medium))
+                    .foregroundStyle(PharmacyColor.textPrimary)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 54)
+            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+                    .stroke(PharmacyColor.border, lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 }

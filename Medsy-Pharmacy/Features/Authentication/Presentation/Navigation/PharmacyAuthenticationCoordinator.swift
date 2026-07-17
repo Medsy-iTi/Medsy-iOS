@@ -45,9 +45,19 @@ final class PharmacyAuthenticationCoordinator {
         }
     }
 
+    func showSignup() {
+        path.append(.registrationDetails)
+    }
+
+    func showLogin() {
+        guard !path.isEmpty else { return }
+        path.removeLast()
+    }
+
     func finishVerification() {
         path.removeAll()
         onAuthenticated()
     }
 
 }
+

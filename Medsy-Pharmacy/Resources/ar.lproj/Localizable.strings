@@ -33,3 +33,16 @@
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
+"pharmacy.auth.login.title" = "مرحباً بعودتك";
+"pharmacy.auth.login.subtitle" = "سجّل الدخول لإدارة صيدليتك.";
+"pharmacy.auth.login.action" = "تسجيل الدخول";
+"pharmacy.auth.forgot_password" = "هل نسيت كلمة المرور؟";
+"pharmacy.auth.continue_google" = "المتابعة باستخدام Google";
+"pharmacy.auth.continue_apple" = "المتابعة باستخدام Apple";
+"pharmacy.auth.no_account" = "ليس لديك حساب؟";
+"pharmacy.auth.signup.link" = "إنشاء حساب";
+"pharmacy.auth.login.link" = "تسجيل الدخول";
+"pharmacy.auth.brand.name" = "ميدسي";
+"pharmacy.auth.brand.tagline" = "للصيدليات";
+"pharmacy.auth.or" = "أو";
+
