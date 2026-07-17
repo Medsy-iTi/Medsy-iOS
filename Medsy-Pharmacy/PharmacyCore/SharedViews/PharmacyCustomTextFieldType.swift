@@ -1,0 +1,52 @@
+//  PharmacyCustomTextFieldType.swift
+//  Medsy
+//
+//  Created by Antoneos Philip on 17/07/2026.
+
+import SwiftUI
+
+enum PharmacyTextFieldType: Equatable {
+    case name
+    case address
+    case phone
+    case email
+    case password
+    case confirmPassword
+
+    var systemImage: String {
+        switch self {
+        case .name: "person"
+        case .address: "house"
+        case .phone: "phone"
+        case .email: "envelope"
+        case .password, .confirmPassword: "lock"
+        }
+    }
+
+    var keyboardType: UIKeyboardType {
+        switch self {
+        case .phone: .phonePad
+        case .email: .emailAddress
+        default: .default
+        }
+    }
+
+    var contentType: UITextContentType? {
+        switch self {
+        case .name: .name
+        case .address: .fullStreetAddress
+        case .phone: .telephoneNumber
+        case .email: .emailAddress
+        case .password: .password
+        case .confirmPassword: .newPassword
+        }
+    }
+
+    var isSecure: Bool {
+        self == .password || self == .confirmPassword
+    }
+
+    var usesWordCapitalization: Bool {
+        self == .name || self == .address
+    }
+}
