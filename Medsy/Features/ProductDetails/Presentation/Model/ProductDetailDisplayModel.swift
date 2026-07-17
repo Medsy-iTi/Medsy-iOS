@@ -13,7 +13,7 @@ struct ProductDetailDisplayModel: Identifiable {
     let subtitle: String
     let price: Double
     let currencyKey: String
-    let requiresPharmacistReview: Bool
+    let requiresPharmacistReview: Bool 
     let descriptionText: String
     let infoRows: [ProductInfoRow]
 }

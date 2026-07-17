@@ -56,11 +56,20 @@ enum ProductDetailPresentationMapper {
 
         let images: [String] = entity.imageUrl.map { [$0] } ?? []
 
+        let (englishShortName, dosage) = ProductNameParser.parseName(entity.name)
+
+        let displayName: String
+        if isRTL && !entity.arabicName.isEmpty && entity.arabicName != entity.name {
+            displayName = entity.arabicName
+        } else {
+            displayName = englishShortName
+        }
+
         return ProductDetailDisplayModel(
             id: String(entity.id),
             images: images,
-            title: entity.name,
-            subtitle: entity.scientificName,
+            title: displayName,
+            subtitle: dosage,
             price: entity.price,
             currencyKey: "currency.egp",
             requiresPharmacistReview: entity.isPrescription,

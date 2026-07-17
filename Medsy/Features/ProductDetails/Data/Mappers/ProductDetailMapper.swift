@@ -13,6 +13,7 @@ enum ProductDetailMapper {
         ProductDetailEntity(
             id: dto.id,
             name: dto.name,
+            arabicName: dto.arabicName ?? dto.name,
             scientificName: dto.scientificName ?? "",
             price: dto.price,
             imageUrl: dto.imageUrl,

@@ -10,6 +10,7 @@ import Foundation
 struct ProductDetailEntity: Identifiable, Equatable {
     let id: Int
     let name: String
+    let arabicName: String
     let scientificName: String
     let price: Double
     let imageUrl: String?

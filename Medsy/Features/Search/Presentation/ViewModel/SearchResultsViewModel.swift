@@ -122,7 +122,11 @@ final class SearchResultsViewModel: ObservableObject {
 				mapped = mapped.filter { $0.categoryName.caseInsensitiveCompare(category) == .orderedSame }
 			}
 
-			products = reset ? mapped : products + mapped
+			let uniqueMapped = mapped.filter { newProduct in
+				!products.contains { $0.id == newProduct.id }
+			}
+
+			products = reset ? mapped : products + uniqueMapped
 			isLastPage = result.isLast ?? (mapped.count < pageSize)
 			currentPage += 1
 			state = products.isEmpty ? .empty : .loaded

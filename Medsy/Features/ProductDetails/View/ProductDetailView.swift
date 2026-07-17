@@ -96,10 +96,10 @@ struct ProductDetailView: View {
                 )
                 .padding(.horizontal, MedsySpacing.md)
 
-                if product.requiresPharmacistReview {
+
                     WarningBanner(text: "product.pharmacist_review_notice".localized)
                         .padding(.horizontal, MedsySpacing.md)
-                }
+                
 
                 VStack(
                     alignment: .leading,
