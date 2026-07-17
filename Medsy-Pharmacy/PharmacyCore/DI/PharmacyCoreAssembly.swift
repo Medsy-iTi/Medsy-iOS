@@ -1,9 +1,7 @@
-//
 //  PharmacyCoreAssembly.swift
 //  Medsy-Pharmacy
 //
-//  Created by Ahmed Elkady on 17/07/2026.
-//
+//  Created by Antoneos Philip on 17/07/2026.
 
 import Foundation
 
@@ -15,6 +13,10 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
 
         container.register(PharmacyAppSettings.self) { _ in
             PharmacyAppSettings.shared
+        }
+
+        container.register(TokenStoreProtocol.self) { _ in
+            PharmacyKeychainTokenStore()
         }
 
         container.register(NetworkTransportProtocol.self) { _ in
@@ -30,7 +32,8 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
         container.register(NetworkServiceProtocol.self) { container in
             NetworkService(
                 transport: container.resolve(NetworkTransportProtocol.self),
-                requestBuilder: container.resolve(NetworkRequestBuilder.self)
+                requestBuilder: container.resolve(NetworkRequestBuilder.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
             )
         }
     }

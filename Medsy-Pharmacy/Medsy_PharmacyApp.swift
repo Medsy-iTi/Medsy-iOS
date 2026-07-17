@@ -1,9 +1,7 @@
-//
 //  Medsy_PharmacyApp.swift
 //  Medsy-Pharmacy
 //
 //  Created by Ahmed Elkady on 16/07/2026.
-//
 
 import SwiftUI
 
@@ -13,7 +11,8 @@ struct Medsy_PharmacyApp: App {
 
     init() {
         PharmacyAppAssembler.shared.assemble(modules: [
-            PharmacyCoreAssembly()
+            PharmacyCoreAssembly(),
+            PharmacyAuthenticationAssembly()
         ])
         languageManager = PharmacyAppAssembler.shared.container.resolve(LanguageManager.self)
     }

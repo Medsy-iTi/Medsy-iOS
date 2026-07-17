@@ -42,6 +42,7 @@
 "auth.terms" = "الشروط وسياسة الخصوصية";
 "auth.validation.required" = "يرجى ملء جميع الحقول المطلوبة.";
 "auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
+"auth.validation.invalid_email" = "يرجى إدخال بريد إلكتروني صحيح.";
 "auth.verification.title" = "تأكيد بريدك الإلكتروني";
 "auth.verification.subtitle" = "أدخل الرمز المكون من ٦ أرقام الذي أرسلناه إلى بريدك الإلكتروني.";
 "auth.verification.sent_to" = "تم إرسال الرمز إلى %@";

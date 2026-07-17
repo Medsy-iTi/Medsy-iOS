@@ -42,6 +42,7 @@
 "auth.terms" = "Terms & Privacy Policy";
 "auth.validation.required" = "Please fill in all required fields.";
 "auth.validation.password_mismatch" = "Passwords do not match.";
+"auth.validation.invalid_email" = "Please enter a valid email address.";
 "auth.verification.title" = "Verify your email";
 "auth.verification.subtitle" = "Enter the 6-digit code we sent to your email.";
 "auth.verification.sent_to" = "Code sent to %@";
