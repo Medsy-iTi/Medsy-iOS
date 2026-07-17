@@ -8,13 +8,8 @@
 import SwiftUI
 
 struct PharmacyVerificationView: View {
-    let email: String
-    @Binding var code: String
-    let validationMessage: String?
-    let isLoading: Bool
-    let resendSecondsRemaining: Int
-    let onVerify: () -> Void
-    let onResend: () -> Void
+    @Bindable var viewModel: PharmacyVerificationViewModel
+    let onVerified: () -> Void
 
     var body: some View {
         PharmacyAuthScreenContainer {
@@ -25,24 +20,35 @@ struct PharmacyVerificationView: View {
             )
 
             VStack(spacing: PharmacySpacing.lg) {
-                Text("pharmacy.auth.verification.sent_to".localized(email))
+                Text("pharmacy.auth.verification.sent_to".localized(viewModel.email))
                     .font(PharmacyColor.sans(14))
                     .foregroundStyle(PharmacyColor.textSecondary)
                     .multilineTextAlignment(.center)
 
-                PharmacyOTPInputView(code: $code)
+                PharmacyOTPInputView(code: Binding(
+                    get: { viewModel.code },
+                    set: { value in
+                        Task {
+                            await viewModel.handle(.codeChanged(value))
+                        }
+                    }
+                ))
 
-                PharmacyAuthValidationMessage(message: validationMessage)
+                PharmacyAuthValidationMessage(message: viewModel.validationMessage)
             }
 
             PharmacyPrimaryButton(
                 title: "pharmacy.auth.verification.action".localized,
-                isLoading: isLoading,
-                isDisabled: code.count != 6,
-                action: onVerify
+                isLoading: viewModel.isLoading,
+                isDisabled: viewModel.code.count != 6,
+                action: verify
             )
 
-            Button(resendTitle, action: onResend)
+            Button(resendTitle) {
+                Task {
+                    await viewModel.handle(.codeResendRequested)
+                }
+            }
                 .font(PharmacyColor.sans(14, .semibold))
                 .foregroundStyle(canResend ? PharmacyColor.primary : PharmacyColor.textSecondary)
                 .disabled(!canResend)
@@ -52,28 +58,35 @@ struct PharmacyVerificationView: View {
     }
 
     private var canResend: Bool {
-        resendSecondsRemaining == 0 && !isLoading
+        viewModel.resendSecondsRemaining == 0 && !viewModel.isLoading
     }
 
     private var resendTitle: String {
-        guard resendSecondsRemaining > 0 else {
+        guard viewModel.resendSecondsRemaining > 0 else {
             return "pharmacy.auth.verification.resend".localized
         }
 
-        return "pharmacy.auth.verification.resend_countdown".localized(resendSecondsRemaining)
+        return "pharmacy.auth.verification.resend_countdown".localized(viewModel.resendSecondsRemaining)
+    }
+
+    private func verify() {
+        Task {
+            if await viewModel.handle(.verificationSubmitted) {
+                onVerified()
+            }
+        }
     }
 }
 
 #Preview {
     NavigationStack {
         PharmacyVerificationView(
-            email: "pharmacist@example.com",
-            code: .constant("123"),
-            validationMessage: nil,
-            isLoading: false,
-            resendSecondsRemaining: 32,
-            onVerify: {},
-            onResend: {}
+            viewModel: PharmacyVerificationViewModel(
+                email: "pharmacist@example.com",
+                verifyAction: { _, _ in },
+                resendAction: { _ in }
+            ),
+            onVerified: {}
         )
     }
     .environment(LanguageManager.shared)
