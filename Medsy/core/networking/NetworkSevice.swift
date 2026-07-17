@@ -6,68 +6,86 @@
 //
 
 import Foundation
-import Alamofire
-
 
 final class NetworkService: NetworkServiceProtocol {
+    private let transport: NetworkTransportProtocol
+    private let requestBuilder: NetworkRequestBuilder
+    private let tokenStore: TokenStoreProtocol
+    private let tokenRefresher: TokenRefreshing
 
-
-    private let languageManager: LanguageManager
-
-
-    init(languageManager: LanguageManager) {
-        self.languageManager = languageManager
+    init(
+        transport: NetworkTransportProtocol,
+        requestBuilder: NetworkRequestBuilder,
+        tokenStore: TokenStoreProtocol,
+        tokenRefresher: TokenRefreshing
+    ) {
+        self.transport = transport
+        self.requestBuilder = requestBuilder
+        self.tokenStore = tokenStore
+        self.tokenRefresher = tokenRefresher
     }
-
-
-    private var decoder: JSONDecoder {
-        let decoder = JSONDecoder()
-        return decoder
-    }
-
 
     func request<T: Decodable>(endpoint: ApiEndpoint) async throws -> T {
+        try await execute(endpoint: endpoint, hasRetriedAfterRefresh: false)
+    }
 
-        let urlString = (endpoint.baseURL ?? Constants.baseURL) + endpoint.path
+    private func execute<T: Decodable>(
+        endpoint: ApiEndpoint,
+        hasRetriedAfterRefresh: Bool
+    ) async throws -> T {
+        let request = try requestBuilder.makeRequest(
+            for: endpoint,
+            accessToken: endpoint.requiresAuthentication ? tokenStore.accessToken() : nil
+        )
 
-        guard let url = URL(string: urlString) else {
-            throw NetworkError.invalidURL
+        let response: NetworkResponse
+        do {
+            response = try await transport.execute(request)
+        } catch {
+            throw NetworkErrorHandler.map(error: error, statusCode: nil, data: nil)
         }
 
-        var urlRequest = try URLRequest(url: url, method: endpoint.method, headers: endpoint.headers)
+        logResponse(response.data, statusCode: response.statusCode, endpoint: endpoint)
 
-        urlRequest.setValue(languageManager.languageCode, forHTTPHeaderField: "Accept-Language")
+        if response.statusCode == 401, endpoint.requiresAuthentication {
+            guard !hasRetriedAfterRefresh else {
+                try? tokenStore.clearTokens()
+                throw NetworkError.unauthorized
+            }
 
-        if let queryParameters = endpoint.queryParameters {
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: queryParameters)
+            do {
+                try await tokenRefresher.refreshTokens()
+            } catch {
+                try? tokenStore.clearTokens()
+                throw NetworkError.unauthorized
+            }
+
+            return try await execute(endpoint: endpoint, hasRetriedAfterRefresh: true)
         }
 
-        if let body = endpoint.body {
-            urlRequest.httpBody = body
+        if let apiError = NetworkErrorHandler.apiEnvelopeError(from: response.data) {
+            throw apiError
         }
 
-        let response = await AF.request(urlRequest)
-            .validate()
-            .serializingDecodable(T.self, decoder: decoder)
-            .response
-
-        if let data = response.data {
-            let method = endpoint.method.rawValue
-            let status = response.response?.statusCode ?? 0
-            print("[Network Log] \(method) \(urlString) [Status: \(status)] [Lang: \(languageManager.languageCode)]")
-            print("Response JSON:\n\(JsonHelper.prettyJSON(data))\n-----------------------------")
-        }
-
-        switch response.result {
-        case .success(let data):
-            return data
-
-        case .failure(let alamofireError):
+        guard let statusCode = response.statusCode, (200...299).contains(statusCode),
+              let data = response.data else {
             throw NetworkErrorHandler.map(
-                error: alamofireError,
-                statusCode: response.response?.statusCode,
+                error: NetworkError.unacceptableStatusCode(response.statusCode ?? 0),
+                statusCode: response.statusCode,
                 data: response.data
             )
         }
+
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            throw NetworkError.decodingFailed
+        }
+    }
+
+    private func logResponse(_ data: Data?, statusCode: Int?, endpoint: ApiEndpoint) {
+        guard let data else { return }
+        print("[Network] \(endpoint.method.rawValue) \(endpoint.path) [Status: \(statusCode ?? 0)]")
+        print(JsonHelper.prettyJSON(data))
     }
 }

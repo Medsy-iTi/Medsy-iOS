@@ -18,9 +18,26 @@ struct CoreAssembly: ModuleAssembly {
             AppSettings.shared
         }
 
+        container.register(TokenStoreProtocol.self) { _ in
+            KeychainTokenStore()
+        }
+
+        container.register(NetworkTransportProtocol.self) { _ in
+            NetworkTransport()
+        }
+
+        container.register(NetworkRequestBuilder.self) { container in
+            NetworkRequestBuilder(
+                languageManager: container.resolve(LanguageManager.self)
+            )
+        }
+
         container.register(NetworkServiceProtocol.self) { c in
             NetworkService(
-                languageManager: c.resolve(LanguageManager.self)
+                transport: c.resolve(NetworkTransportProtocol.self),
+                requestBuilder: c.resolve(NetworkRequestBuilder.self),
+                tokenStore: c.resolve(TokenStoreProtocol.self),
+                tokenRefresher: c.resolve(TokenRefreshing.self)
             )
         }
     }
