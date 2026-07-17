@@ -34,13 +34,65 @@ enum ProfilePresentation: Identifiable {
 final class ProfileCoordinator {
     var activePresentation: ProfilePresentation?
     var showsLogoutConfirmation = false
-    var patientName = "profile.sample.name".localized
-    let phoneNumber = "+20 10 1234 5678"
+    let viewModel: ProfileViewModel
 
     private let onLogout: () -> Void
 
-    init(onLogout: @escaping () -> Void) {
+    init(viewModel: ProfileViewModel, onLogout: @escaping () -> Void) {
+        self.viewModel = viewModel
         self.onLogout = onLogout
+    }
+
+    var patientName: String {
+        viewModel.displayName
+    }
+
+    var phoneNumber: String {
+        viewModel.phoneNumber
+    }
+
+    var email: String {
+        viewModel.email
+    }
+
+    var homeAddress: String {
+        viewModel.homeAddress
+    }
+
+    var displayHomeAddress: String {
+        viewModel.displayHomeAddress
+    }
+
+    var dateOfBirth: Date? {
+        viewModel.dateOfBirth
+    }
+
+    var displayDateOfBirth: String {
+        viewModel.displayDateOfBirth
+    }
+
+    var state: ProfileViewState {
+        viewModel.state
+    }
+
+    var isSaving: Bool {
+        viewModel.isSaving
+    }
+
+    var saveErrorMessage: String? {
+        viewModel.saveErrorMessage
+    }
+
+    func loadProfile() async {
+        await viewModel.loadProfile()
+    }
+
+    func refreshProfile() async {
+        await viewModel.refreshProfile()
+    }
+
+    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+        await viewModel.updateProfile(homeAddress: homeAddress, dateOfBirth: dateOfBirth)
     }
 
     func showEditProfile() { activePresentation = .editProfile }
@@ -56,4 +108,3 @@ final class ProfileCoordinator {
         onLogout()
     }
 }
-

@@ -22,6 +22,12 @@ struct CoreAssembly: ModuleAssembly {
             KeychainTokenStore()
         }
 
+        container.register(LogoutUseCaseProtocol.self) { container in
+            LogoutUseCase(
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
         container.register(NetworkTransportProtocol.self) { _ in
             NetworkTransport()
         }
