@@ -38,6 +38,7 @@ struct PharmacyAccountTypeView: View {
         }
         .navigationTitle("pharmacy.auth.account_type.title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(viewModel.isLoading)
     }
 
     private func accountTypeButton(_ accountType: PharmacyAccountType) -> some View {
@@ -84,6 +85,7 @@ struct PharmacyAccountTypeView: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(viewModel.isLoading)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

@@ -33,6 +33,7 @@ struct PharmacyVerificationView: View {
                         }
                     }
                 ))
+                .disabled(viewModel.isLoading)
 
                 PharmacyAuthValidationMessage(message: viewModel.validationMessage)
             }
@@ -47,6 +48,7 @@ struct PharmacyVerificationView: View {
         }
         .navigationTitle("pharmacy.auth.verification.title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(viewModel.isLoading)
     }
 
     private func verify() {
