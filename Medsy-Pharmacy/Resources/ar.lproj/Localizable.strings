@@ -4,8 +4,7 @@
 "pharmacy.tab.customers" = "العملاء";
 "pharmacy.tab.more" = "المزيد";
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
-"pharmacy.dashboard.owner.title" = "لوحة تحكم مالك الصيدلية";
-"pharmacy.dashboard.pharmacist.title" = "لوحة تحكم الصيدلي";
+"pharmacy.dashboard.title" = "لوحة تحكم الصيدلية";
 "pharmacy.dashboard.placeholder" = "لوحة التحكم جاهزة للميزات القادمة.";
 "pharmacy.auth.registration.title" = "إنشاء حسابك";
 "pharmacy.auth.registration.details.subtitle" = "أدخل بياناتك الشخصية للبدء في استخدام ميدسي للصيدليات.";

@@ -4,8 +4,7 @@
 "pharmacy.tab.customers" = "Customers";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
-"pharmacy.dashboard.owner.title" = "Pharmacy owner dashboard";
-"pharmacy.dashboard.pharmacist.title" = "Pharmacist dashboard";
+"pharmacy.dashboard.title" = "Pharmacy dashboard";
 "pharmacy.dashboard.placeholder" = "Your dashboard is ready for upcoming features.";
 "pharmacy.auth.registration.title" = "Create your account";
 "pharmacy.auth.registration.details.subtitle" = "Enter your personal details to start using Medsy Pharmacy.";

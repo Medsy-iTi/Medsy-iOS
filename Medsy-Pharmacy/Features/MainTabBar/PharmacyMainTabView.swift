@@ -10,23 +10,15 @@ import SwiftUI
 @MainActor
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
-    let accountType: PharmacyAccountType
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
-    init(
-        coordinator: PharmacyMainTabCoordinator,
-        accountType: PharmacyAccountType
-    ) {
+    init(coordinator: PharmacyMainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
-        self.accountType = accountType
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            PharmacySetupPlaceholderView(
-                tab: coordinator.selectedTab,
-                accountType: accountType
-            )
+            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
                 .padding(.bottom, 82)
 
             tabBar
@@ -76,7 +68,6 @@ struct PharmacyMainTabView: View {
 
 private struct PharmacySetupPlaceholderView: View {
     let tab: PharmacyTab
-    let accountType: PharmacyAccountType
 
     var body: some View {
         VStack(spacing: PharmacySpacing.md) {
@@ -99,14 +90,7 @@ private struct PharmacySetupPlaceholderView: View {
     }
 
     private var titleKey: String {
-        guard tab == .home else { return tab.titleKey }
-
-        switch accountType {
-        case .owner:
-            return "pharmacy.dashboard.owner.title"
-        case .pharmacist:
-            return "pharmacy.dashboard.pharmacist.title"
-        }
+        tab == .home ? "pharmacy.dashboard.title" : tab.titleKey
     }
 
     private var subtitleKey: String {
