@@ -19,6 +19,7 @@ struct PharmacyAuthenticationCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             PharmacyLoginView(
+                viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
                 onAuthenticated: coordinator.finishVerification
             )
@@ -34,6 +35,7 @@ struct PharmacyAuthenticationCoordinatorView: View {
         switch route {
         case .login:
             PharmacyLoginView(
+                viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
                 onAuthenticated: coordinator.finishVerification
             )
