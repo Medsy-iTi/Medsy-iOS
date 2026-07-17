@@ -10,3 +10,7 @@ import Foundation
 protocol NetworkServiceProtocol {
     func request<T: Decodable>(endpoint: ApiEndpoint) async throws -> T
 }
+
+protocol TokenRefreshing {
+    func refreshTokens() async throws
+}
