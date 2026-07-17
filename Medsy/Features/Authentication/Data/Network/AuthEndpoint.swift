@@ -53,4 +53,13 @@ extension AuthEndpoint: ApiEndpoint {
             return try? JSONEncoder().encode(request)
         }
     }
+
+    var requiresAuthentication: Bool {
+        switch self {
+        case .logout:
+            return true
+        case .login, .register, .verify, .refresh:
+            return false
+        }
+    }
 }
