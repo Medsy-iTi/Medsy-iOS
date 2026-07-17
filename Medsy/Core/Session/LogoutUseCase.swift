@@ -6,17 +6,25 @@
 //
 
 protocol LogoutUseCaseProtocol {
-    func execute()
+    func execute() async
 }
 
 final class LogoutUseCase: LogoutUseCaseProtocol {
+    private let repository: AuthRepositoryProtocol
     private let tokenStore: TokenStoreProtocol
 
-    init(tokenStore: TokenStoreProtocol) {
+    init(repository: AuthRepositoryProtocol, tokenStore: TokenStoreProtocol) {
+        self.repository = repository
         self.tokenStore = tokenStore
     }
 
-    func execute() {
+    func execute() async {
+        guard let refreshToken = tokenStore.refreshToken(), !refreshToken.isEmpty else {
+            try? tokenStore.clearTokens()
+            return
+        }
+
         try? tokenStore.clearTokens()
+        try? await repository.logout(refreshToken: refreshToken)
     }
 }
