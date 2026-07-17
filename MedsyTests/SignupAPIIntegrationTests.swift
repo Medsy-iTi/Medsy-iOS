@@ -219,6 +219,10 @@ private final class AuthNetworkDataSourceSpy: AuthNetworkDataSourceProtocol {
     func register(request: SignupRequestDTO) async throws {
         receivedRequest = request
     }
+
+    func verify(request: VerificationRequestDTO) async throws -> AuthSessionDTO {
+        throw SignupTestError.invalidResponseType
+    }
 }
 
 private final class SignupUseCaseSpy: SignupUseCaseProtocol {

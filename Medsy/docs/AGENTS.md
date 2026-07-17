@@ -182,6 +182,14 @@ For APIs that return a shared `{ "success": Bool, "message": String, "data": ...
 
 Never log request bodies or sensitive response values. Passwords, OTPs, access tokens, personal details, and health data must not appear in console or analytics logs.
 
+### Authenticated Requests and Sessions
+
+- Store access and refresh tokens only through the Core Keychain-backed `TokenStoreProtocol`; do not use `UserDefaults`.
+- Endpoints opt into bearer-token injection with `requiresAuthentication`. Authentication bootstrap endpoints, including verification and refresh, remain unauthenticated.
+- Keep raw HTTP execution in `NetworkTransportProtocol`. `NetworkService` owns bearer-header injection, response decoding, and protected-request retry policy.
+- Every endpoint marked `requiresAuthentication` refreshes once on its first HTTP 401, rotates both Keychain tokens, then retries the original request once.
+- Refresh requests must bypass `NetworkService`'s retry behavior to prevent recursion. If refresh fails or the retried request receives 401, clear stored tokens and return `NetworkError.unauthorized`.
+
 ## Jira Workflow
 
 - Product backlog: `https://dawanow.atlassian.net/jira/software/projects/DAWA/boards/1/backlog`
