@@ -10,7 +10,7 @@ import SwiftUI
 struct SignupView: View {
     @State private var viewModel = SignupViewModel()
     let onLoginTapped: () -> Void
-    let onAuthenticated: () -> Void
+    let onVerificationRequested: (String) -> Void
 
     var body: some View {
         AuthScreenContainer {
@@ -20,11 +20,15 @@ struct SignupView: View {
             )
 
             VStack(spacing: 12) {
-                CustomTextField(title: "auth.full_name".localized, type: .name, text: $viewModel.fullName)
+                CustomTextField(title: "auth.first_name".localized, type: .name, text: $viewModel.firstName)
+                CustomTextField(title: "auth.last_name".localized, type: .name, text: $viewModel.lastName)
                 CustomTextField(title: "auth.phone".localized, type: .phone, text: $viewModel.phoneNumber)
                 CustomTextField(title: "auth.email".localized, type: .email, text: $viewModel.email)
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
                 CustomTextField(title: "auth.confirm_password".localized, type: .confirmPassword, text: $viewModel.confirmedPassword)
+                CustomTextField(title: "auth.home_address".localized, type: .address, text: $viewModel.homeAddress)
+
+                SignupDatePicker(dateOfBirth: $viewModel.dateOfBirth)
             }
 
             Toggle(isOn: $viewModel.hasAcceptedTerms) {
@@ -38,14 +42,14 @@ struct SignupView: View {
             }
             .tint(AppColor.green)
 
-            validationMessage
+            AuthValidationMessage(message: viewModel.validationMessage)
 
             PrimaryButton(
                 title: "auth.signup.action".localized,
                 isDisabled: !viewModel.hasAcceptedTerms
             ) {
                 if viewModel.submit() {
-                    onAuthenticated()
+                    onVerificationRequested(viewModel.email)
                 }
             }
 
@@ -59,20 +63,11 @@ struct SignupView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    @ViewBuilder
-    private var validationMessage: some View {
-        if let message = viewModel.validationMessage {
-            Text(message)
-                .font(.footnote)
-                .foregroundStyle(.red)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
 #Preview {
     NavigationStack {
-        SignupView(onLoginTapped: {}, onAuthenticated: {})
+        SignupView(onLoginTapped: {}, onVerificationRequested: { _ in })
     }
     .environment(LanguageManager.shared)
 }

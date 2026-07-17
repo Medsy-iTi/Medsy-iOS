@@ -32,7 +32,7 @@ struct LoginView: View {
                     .foregroundStyle(AppColor.green)
             }
 
-            validationMessage
+            AuthValidationMessage(message: viewModel.validationMessage)
 
             PrimaryButton(title: "auth.login.action".localized) {
                 if viewModel.submit() {
@@ -56,15 +56,6 @@ struct LoginView: View {
         .navigationBarBackButtonHidden()
     }
 
-    @ViewBuilder
-    private var validationMessage: some View {
-        if let message = viewModel.validationMessage {
-            Text(message)
-                .font(.footnote)
-                .foregroundStyle(.red)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
 }
 
 #Preview {
