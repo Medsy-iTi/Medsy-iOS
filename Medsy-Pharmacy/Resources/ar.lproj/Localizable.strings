@@ -20,12 +20,8 @@
 "pharmacy.auth.password.show" = "إظهار كلمة المرور";
 "pharmacy.auth.password.hide" = "إخفاء كلمة المرور";
 "pharmacy.auth.continue" = "متابعة";
-"pharmacy.auth.account_type.title" = "كيف ستستخدم ميدسي؟";
-"pharmacy.auth.account_type.subtitle" = "اختر دورك لنجهز لك التجربة المناسبة.";
-"pharmacy.auth.account_type.owner.title" = "مالك صيدلية";
-"pharmacy.auth.account_type.owner.description" = "أنشئ صيدليتك وأدر فريق العمل والدعوات والطلبات والتقارير.";
-"pharmacy.auth.account_type.pharmacist.title" = "صيدلي";
-"pharmacy.auth.account_type.pharmacist.description" = "انضم إلى صيدلية عن طريق دعوة وتعامل مع الطلبات الواردة.";
+"pharmacy.auth.account_setup.title" = "أكمل بيانات حسابك";
+"pharmacy.auth.account_setup.subtitle" = "أضف عنوانك وتاريخ ميلادك وكلمة مرور آمنة.";
 "pharmacy.auth.register" = "إنشاء الحساب";
 "pharmacy.auth.verification.title" = "تأكيد حسابك";
 "pharmacy.auth.verification.subtitle" = "أدخل رمز التأكيد المكون من ستة أرقام والمرسل إلى بريدك الإلكتروني.";
@@ -36,5 +32,4 @@
 "pharmacy.auth.validation.email" = "أدخل بريدًا إلكترونيًا صالحًا.";
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
-"pharmacy.auth.validation.account_type" = "اختر طريقة استخدامك لميدسي للصيدليات.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";

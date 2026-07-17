@@ -45,25 +45,6 @@ struct PharmacyRegistrationDetailsView: View {
                     text: $viewModel.email
                 )
 
-                PharmacyAuthTextField(
-                    title: "pharmacy.auth.home_address".localized,
-                    kind: .address,
-                    text: $viewModel.homeAddress
-                )
-
-                PharmacyAuthDatePicker(dateOfBirth: $viewModel.dateOfBirth)
-
-                PharmacyAuthTextField(
-                    title: "pharmacy.auth.password".localized,
-                    kind: .password,
-                    text: $viewModel.password
-                )
-
-                PharmacyAuthTextField(
-                    title: "pharmacy.auth.confirm_password".localized,
-                    kind: .confirmPassword,
-                    text: $viewModel.confirmedPassword
-                )
             }
 
             PharmacyAuthValidationMessage(message: viewModel.validationMessage)

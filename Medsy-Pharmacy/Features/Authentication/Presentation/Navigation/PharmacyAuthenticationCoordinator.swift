@@ -28,7 +28,7 @@ final class PharmacyAuthenticationCoordinator {
     func submitDetails() {
         Task {
             if await registrationViewModel.handle(.detailsSubmitted) {
-                path.append(.accountType)
+                path.append(.accountSetup)
             }
         }
     }

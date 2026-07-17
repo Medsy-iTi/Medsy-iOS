@@ -32,8 +32,8 @@ struct PharmacyAuthenticationCoordinatorView: View {
     @ViewBuilder
     private func destination(for route: PharmacyAuthenticationRoute) -> some View {
         switch route {
-        case .accountType:
-            PharmacyAccountTypeView(
+        case .accountSetup:
+            PharmacyRegistrationAccountView(
                 viewModel: coordinator.registrationViewModel,
                 onRegister: coordinator.submitRegistration
             )
