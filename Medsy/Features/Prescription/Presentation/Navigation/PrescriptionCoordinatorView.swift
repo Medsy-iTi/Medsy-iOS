@@ -50,8 +50,8 @@ struct PrescriptionCoordinatorView: View {
                     onDelete: { send(.deleteImage) },
                     onBack: { send(.back) }
                 )
-            case .reading:
-                PrescriptionReadingView(onCancel: { send(.cancelReading) })
+            case let .reading(stage):
+                PrescriptionReadingView(stage: stage, onCancel: { send(.cancelReading) })
             case .review:
                 PrescriptionReviewView(
                     medicines: viewModel.medicines,

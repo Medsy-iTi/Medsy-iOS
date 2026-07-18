@@ -116,6 +116,7 @@ struct PrescriptionPreviewView: View {
 }
 
 struct PrescriptionReadingView: View {
+    let stage: PrescriptionReadingStage
     let onCancel: () -> Void
 
     var body: some View {
@@ -139,14 +140,23 @@ struct PrescriptionReadingView: View {
                     Text("prescription.reading.stages".localized)
                         .font(.headline)
 
-                    Label("prescription.reading.uploaded".localized, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(AppColor.successGreen)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.uploaded".localized,
+                        rowStage: .uploading,
+                        currentStage: stage
+                    )
 
-                    Label("prescription.reading.analysed".localized, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(AppColor.successGreen)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.analysed".localized,
+                        rowStage: .analysing,
+                        currentStage: stage
+                    )
 
-                    Label("prescription.reading.extracting".localized, systemImage: "circle.dotted")
-                        .foregroundStyle(AppColor.textSec)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.extracting".localized,
+                        rowStage: .extracting,
+                        currentStage: stage
+                    )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
@@ -157,6 +167,46 @@ struct PrescriptionReadingView: View {
             }
             .padding(.horizontal, MedsySpacing.xl)
             .padding(.top, 72)
+            .animation(.easeInOut(duration: 0.3), value: stage)
+        }
+    }
+}
+
+private struct PrescriptionReadingStageRow: View {
+    let title: String
+    let rowStage: PrescriptionReadingStage
+    let currentStage: PrescriptionReadingStage
+
+    private var isCompleted: Bool {
+        rowStage.rawValue < currentStage.rawValue
+    }
+
+    private var isActive: Bool {
+        rowStage == currentStage
+    }
+
+    var body: some View {
+        HStack(spacing: MedsySpacing.sm) {
+            Group {
+                if isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(AppColor.successGreen)
+                        .transition(.scale.combined(with: .opacity))
+                } else if isActive {
+                    ProgressView()
+                        .tint(AppColor.green)
+                        .transition(.scale.combined(with: .opacity))
+                } else {
+                    Image(systemName: "circle")
+                        .foregroundStyle(AppColor.textSec.opacity(0.45))
+                }
+            }
+            .frame(width: 24, height: 24)
+
+            Text(title)
+                .foregroundStyle(isCompleted || isActive ? AppColor.textPrim : AppColor.textSec)
+
+            Spacer()
         }
     }
 }
