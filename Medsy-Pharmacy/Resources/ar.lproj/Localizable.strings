@@ -87,3 +87,14 @@
 "pharmacy.auth.brand.name" = "ميدسي";
 "pharmacy.auth.brand.tagline" = "للصيدليات";
 "pharmacy.auth.or" = "أو";
+
+/* Request Details */
+"pharmacy.request.details.title" = "تفاصيل الطلب";
+"pharmacy.request.customer_info" = "معلومات العميل";
+"pharmacy.request.contact_customer" = "تواصل مع العميل";
+"pharmacy.request.order_items" = "تفاصيل الطلب";
+"pharmacy.request.customer_notes" = "ملاحظات العميل";
+"pharmacy.request.accept" = "قبول الطلب";
+"pharmacy.request.reject" = "رفض الطلب";
+"pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+
