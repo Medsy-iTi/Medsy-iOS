@@ -11,22 +11,36 @@ import SwiftUI
 struct Medsy_PharmacyApp: App {
     private let languageManager: LanguageManager
     private let authenticationFactory: PharmacyAuthenticationFactory
+    private let onboardingFactory: PharmacyOnboardingFactory
+    private let coordinator: RootCoordinator
 
     init() {
         PharmacyAppAssembler.shared.assemble(modules: [
             PharmacyCoreAssembly(),
-            PharmacyAuthenticationAssembly()
+            PharmacyAuthenticationAssembly(),
+            OnboardingModuleAssembly()
         ])
-        languageManager = PharmacyAppAssembler.shared.container.resolve(LanguageManager.self)
-        authenticationFactory = PharmacyAppAssembler.shared.container.resolve(PharmacyAuthenticationFactory.self)
+        
+        let container = PharmacyAppAssembler.shared.container
+        languageManager = container.resolve(LanguageManager.self)
+        authenticationFactory = container.resolve(PharmacyAuthenticationFactory.self)
+        
+        onboardingFactory = PharmacyOnboardingFactory(
+            getPagesUseCase: container.resolve(GetOnboardingPagesUseCaseProtocol.self)
+        )
+        coordinator = RootCoordinator(container: container)
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView(authenticationFactory: authenticationFactory)
-                .pharmacyLocalizedEnvironment()
-                .environment(languageManager)
-                .id(languageManager.currentLanguage)
+            ContentView(
+                onboardingFactory: onboardingFactory,
+                authenticationFactory: authenticationFactory,
+                coordinator: coordinator
+            )
+            .pharmacyLocalizedEnvironment()
+            .environment(languageManager)
+            .id(languageManager.currentLanguage)
         }
     }
 }
