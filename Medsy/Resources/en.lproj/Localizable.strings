@@ -164,9 +164,29 @@
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
+"tab.cart" = "Cart";
 "tab.offers" = "Offers";
 "tab.orders" = "Orders";
 "tab.account" = "Account";
+
+/* Cart */
+"cart.title" = "Cart";
+"cart.subtitle" = "Review your request cart";
+"cart.message" = "Adjust quantities before sending one request to nearby pharmacies.";
+"cart.currency" = "EGP";
+"cart.unit_price_format" = "%@ each";
+"cart.quantity" = "Quantity";
+"cart.remove" = "Remove item";
+"cart.estimated_total" = "Estimated total";
+"cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
+"cart.continue" = "Continue";
+"cart.empty.title" = "Your cart is empty";
+"cart.empty.message" = "Search for medicines or upload a prescription to start a request.";
+"cart.empty.search" = "Search medicines";
+"cart.empty.upload" = "Upload prescription";
+"cart.error.title" = "Couldn't Load Cart";
+"cart.removed_message" = "%@ removed";
+"cart.undo" = "Undo";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";

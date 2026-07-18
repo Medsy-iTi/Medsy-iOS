@@ -26,6 +26,12 @@ struct MainTabBarView: View {
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
                         .onAppear { isTabBarHidden = false }
+                case .cart:
+                    CartView(
+                        onSearch: { coordinator.select(.home) },
+                        onUploadPrescription: { coordinator.select(.home) }
+                    )
+                    .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
                     VStack {
                         Spacer()
@@ -49,6 +55,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: CartSampleData.items.reduce(0) { $0 + $1.quantity })
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
@@ -66,16 +73,29 @@ struct MainTabBarView: View {
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
     }
     
-    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {
+    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {
         let isActive = coordinator.selectedTab == tab
         return Button {
             isTabBarHidden = false
             coordinator.select(tab)
         } label: {
             VStack(spacing: 4) {
-                Image(systemName: isActive ? activeIcon : inactiveIcon)
-                    .font(.system(size: 20, weight: isActive ? .bold : .regular))
-                    .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: isActive ? activeIcon : inactiveIcon)
+                        .font(.system(size: 20, weight: isActive ? .bold : .regular))
+                        .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
+                        .frame(width: 28, height: 24)
+
+                    if let badgeCount, badgeCount > 0 {
+                        Text("\(min(badgeCount, 99))")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(minWidth: 16, minHeight: 16)
+                            .background(AppColor.danger)
+                            .clipShape(Capsule())
+                            .offset(x: 9, y: -7)
+                    }
+                }
                 
                 Text(labelKey.localized)
                     .font(AppColor.sans(10, isActive ? .bold : .medium))
