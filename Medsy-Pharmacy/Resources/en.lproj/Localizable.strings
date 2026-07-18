@@ -47,3 +47,15 @@
 "pharmacy.onboarding.page2.subtitle" = "Keep patient information safe and confidential, to the highest protection standards.";
 "pharmacy.onboarding.page3.title" = "Better performance, better care";
 "pharmacy.onboarding.page3.subtitle" = "Track your practice's performance, get detailed reports, and make better decisions for your patients.";
+"pharmacy.auth.login.title" = "Welcome back";
+"pharmacy.auth.login.subtitle" = "Sign in to manage your pharmacy.";
+"pharmacy.auth.login.action" = "Log In";
+"pharmacy.auth.forgot_password" = "Forgot password?";
+"pharmacy.auth.continue_google" = "Continue with Google";
+"pharmacy.auth.continue_apple" = "Continue with Apple";
+"pharmacy.auth.no_account" = "Don't have an account?";
+"pharmacy.auth.signup.link" = "Sign Up";
+"pharmacy.auth.login.link" = "Log In";
+"pharmacy.auth.brand.name" = "Medsy";
+"pharmacy.auth.brand.tagline" = "For Pharmacies";
+"pharmacy.auth.or" = "Or";
