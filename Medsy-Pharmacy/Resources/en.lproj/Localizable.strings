@@ -75,3 +75,14 @@
 "pharmacy.onboarding.page2.subtitle" = "Validate items against the prescription, suggest alternatives, and send your best offer.";
 "pharmacy.onboarding.page3.title" = "Track every order to completion";
 "pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";
+
+/* Request Details */
+"pharmacy.request.details.title" = "Request Details";
+"pharmacy.request.customer_info" = "Customer Information";
+"pharmacy.request.contact_customer" = "Contact Customer";
+"pharmacy.request.order_items" = "Order Items";
+"pharmacy.request.customer_notes" = "Customer Notes";
+"pharmacy.request.accept" = "Accept Request";
+"pharmacy.request.reject" = "Reject Request";
+"pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+
