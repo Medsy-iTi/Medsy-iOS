@@ -26,6 +26,11 @@ final class HomeCoordinator {
         path.append(HomeRoute.prescription)
     }
 
+    func showSearchFromPrescription() {
+        goBack()
+        openSearch()
+    }
+
     func goBack() {
         if !path.isEmpty {
             path.removeLast()
@@ -53,10 +58,10 @@ struct HomeCoordinatorView: View {
                             coordinator.path.append(dest)
                         }
                     case .prescription:
-                        PrescriptionUploadView(
-                            onCamera: {},
-                            onGallery: {},
-                            onBack: coordinator.goBack
+                        PrescriptionCoordinatorView(
+                            onExit: coordinator.goBack,
+                            onOpenSearch: coordinator.showSearchFromPrescription,
+                            onOpenCart: coordinator.goBack
                         )
                     }
                 }
