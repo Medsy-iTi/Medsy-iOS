@@ -18,13 +18,22 @@ struct PharmacyMainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+            tabContent
                 .padding(.bottom, 82)
 
             tabBar
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+    }
+
+    @ViewBuilder
+    private var tabContent: some View {
+        if coordinator.selectedTab == .home {
+            PharmacyHomeView()
+        } else {
+            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+        }
     }
 
     private var tabBar: some View {
