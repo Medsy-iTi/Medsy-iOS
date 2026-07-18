@@ -33,3 +33,17 @@
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
+/* Splash */
+"pharmacy.splash.subtitle" = "منصة الأطباء والصيادلة";
+"pharmacy.splash.tagline" = "كل ما تحتاجه لإدارة عملك الصحي في مكان واحد";
+
+/* Onboarding */
+"pharmacy.onboarding.skip" = "تخطي";
+"pharmacy.onboarding.next" = "التالي";
+"pharmacy.onboarding.get_started" = "ابدأ الآن";
+"pharmacy.onboarding.page1.title" = "إدارة مواعيدك بسهولة";
+"pharmacy.onboarding.page1.subtitle" = "نظم مواعيدك، وتابع جدولك ومواعيد المرضى بكل سهولة من مكان واحد.";
+"pharmacy.onboarding.page2.title" = "معلومات مرضاك بأمان";
+"pharmacy.onboarding.page2.subtitle" = "حافظ على بيانات مرضاك آمنة وسرية وفق أعلى معايير الحماية.";
+"pharmacy.onboarding.page3.title" = "أداء أفضل.. عناية أفضل";
+"pharmacy.onboarding.page3.subtitle" = "تتبع أداء عيادتك، واحصل على تقارير مفصلة، واتخذ قرارات أفضل لمرضاك.";

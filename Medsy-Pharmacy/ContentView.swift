@@ -8,21 +8,51 @@
 import SwiftUI
 
 struct ContentView: View {
+    let onboardingFactory: PharmacyOnboardingFactory
     let authenticationFactory: PharmacyAuthenticationFactory
-    @State private var isAuthenticated = false
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+    @State private var coordinator: RootCoordinator
+
+    init(
+        onboardingFactory: PharmacyOnboardingFactory,
+        authenticationFactory: PharmacyAuthenticationFactory,
+        coordinator: RootCoordinator
+    ) {
+        self.onboardingFactory = onboardingFactory
+        self.authenticationFactory = authenticationFactory
+        _coordinator = State(initialValue: coordinator)
+    }
 
     var body: some View {
         Group {
-            if isAuthenticated {
-                PharmacyMainTabView(coordinator: PharmacyMainTabCoordinator())
-            } else {
+            switch coordinator.flow {
+            case .splash:
+                SplashView {
+                    coordinator.finishSplash()
+                }
+                .transition(.opacity)
+
+            case .onboarding:
+                onboardingFactory.makeCoordinator(onComplete: coordinator.finishOnboarding)
+                    .makeView()
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .trailing)),
+                    removal: .opacity
+                ))
+
+            case .authentication:
                 PharmacyAuthenticationRootView(
                     factory: authenticationFactory,
-                    onAuthenticated: { isAuthenticated = true }
+                    onAuthenticated: coordinator.finishAuthentication
                 )
+                .transition(.opacity)
+
+            case .main:
+                PharmacyMainTabView(coordinator: PharmacyMainTabCoordinator())
+                .transition(.opacity.combined(with: .move(edge: .trailing)))
             }
         }
+        .animation(.easeInOut(duration: 0.45), value: coordinator.flow)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 }
@@ -48,7 +78,9 @@ private struct PharmacyAuthenticationRootView: View {
 
 #Preview {
     ContentView(
-        authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder)
+        onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
+        authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder),
+        coordinator: RootCoordinator(container: PharmacyDIContainer())
     )
-        .environment(LanguageManager.shared)
+    .environment(LanguageManager.shared)
 }

@@ -33,3 +33,17 @@
 "pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
+/* Splash */
+"pharmacy.splash.subtitle" = "Platform for doctors & pharmacies";
+"pharmacy.splash.tagline" = "Everything you need to manage your healthcare business, in one place.";
+
+/* Onboarding */
+"pharmacy.onboarding.skip" = "Skip";
+"pharmacy.onboarding.next" = "Next";
+"pharmacy.onboarding.get_started" = "Get Started";
+"pharmacy.onboarding.page1.title" = "Manage appointments with ease";
+"pharmacy.onboarding.page1.subtitle" = "Organize your schedule and follow up on patient appointments from one place.";
+"pharmacy.onboarding.page2.title" = "Your patients' data, secured";
+"pharmacy.onboarding.page2.subtitle" = "Keep patient information safe and confidential, to the highest protection standards.";
+"pharmacy.onboarding.page3.title" = "Better performance, better care";
+"pharmacy.onboarding.page3.subtitle" = "Track your practice's performance, get detailed reports, and make better decisions for your patients.";
