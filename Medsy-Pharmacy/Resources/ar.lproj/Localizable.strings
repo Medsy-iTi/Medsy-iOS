@@ -34,29 +34,16 @@
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
 /* Splash */
-"pharmacy.splash.subtitle" = "منصة الأطباء والصيادلة";
-"pharmacy.splash.tagline" = "كل ما تحتاجه لإدارة عملك الصحي في مكان واحد";
+"pharmacy.splash.subtitle" = "منصة شريكك الصيدلية";
+"pharmacy.splash.tagline" = "استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات — كل ذلك في مكان واحد.";
 
 /* Onboarding */
 "pharmacy.onboarding.skip" = "تخطي";
 "pharmacy.onboarding.next" = "التالي";
 "pharmacy.onboarding.get_started" = "ابدأ الآن";
-"pharmacy.onboarding.page1.title" = "إدارة مواعيدك بسهولة";
-"pharmacy.onboarding.page1.subtitle" = "نظم مواعيدك، وتابع جدولك ومواعيد المرضى بكل سهولة من مكان واحد.";
-"pharmacy.onboarding.page2.title" = "معلومات مرضاك بأمان";
-"pharmacy.onboarding.page2.subtitle" = "حافظ على بيانات مرضاك آمنة وسرية وفق أعلى معايير الحماية.";
-"pharmacy.onboarding.page3.title" = "أداء أفضل.. عناية أفضل";
-"pharmacy.onboarding.page3.subtitle" = "تتبع أداء عيادتك، واحصل على تقارير مفصلة، واتخذ قرارات أفضل لمرضاك.";
-"pharmacy.auth.login.title" = "مرحباً بعودتك";
-"pharmacy.auth.login.subtitle" = "سجّل الدخول لإدارة صيدليتك.";
-"pharmacy.auth.login.action" = "تسجيل الدخول";
-"pharmacy.auth.forgot_password" = "هل نسيت كلمة المرور؟";
-"pharmacy.auth.continue_google" = "المتابعة باستخدام Google";
-"pharmacy.auth.continue_apple" = "المتابعة باستخدام Apple";
-"pharmacy.auth.no_account" = "ليس لديك حساب؟";
-"pharmacy.auth.signup.link" = "إنشاء حساب";
-"pharmacy.auth.login.link" = "تسجيل الدخول";
-"pharmacy.auth.brand.name" = "ميدسي";
-"pharmacy.auth.brand.tagline" = "للصيدليات";
-"pharmacy.auth.or" = "أو";
-
+"pharmacy.onboarding.page1.title" = "طلبات قريبة منك، لحظة بلحظة";
+"pharmacy.onboarding.page1.subtitle" = "تابع الطلبات المفتوحة من المرضى القريبين مرتبة حسب المسافة، مع صور الروشتة المرفقة.";
+"pharmacy.onboarding.page2.title" = "أنشئ عروضًا دقيقة";
+"pharmacy.onboarding.page2.subtitle" = "تحقق من مطابقة الأصناف للروشتة، اقترح بدائل عند الحاجة، وأرسل أفضل عرض لمريضك.";
+"pharmacy.onboarding.page3.title" = "تابع كل طلب حتى اكتماله";
+"pharmacy.onboarding.page3.subtitle" = "حدّث حالة الطلب بضغطة واحدة، ويصل التحديث للمريض تلقائيًا في كل خطوة.";

@@ -34,28 +34,16 @@
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
 /* Splash */
-"pharmacy.splash.subtitle" = "Platform for doctors & pharmacies";
-"pharmacy.splash.tagline" = "Everything you need to manage your healthcare business, in one place.";
+"pharmacy.splash.subtitle" = "Pharmacy Partner Platform";
+"pharmacy.splash.tagline" = "Receive nearby requests, send offers, and fulfill orders — all in one place.";
 
 /* Onboarding */
 "pharmacy.onboarding.skip" = "Skip";
 "pharmacy.onboarding.next" = "Next";
 "pharmacy.onboarding.get_started" = "Get Started";
-"pharmacy.onboarding.page1.title" = "Manage appointments with ease";
-"pharmacy.onboarding.page1.subtitle" = "Organize your schedule and follow up on patient appointments from one place.";
-"pharmacy.onboarding.page2.title" = "Your patients' data, secured";
-"pharmacy.onboarding.page2.subtitle" = "Keep patient information safe and confidential, to the highest protection standards.";
-"pharmacy.onboarding.page3.title" = "Better performance, better care";
-"pharmacy.onboarding.page3.subtitle" = "Track your practice's performance, get detailed reports, and make better decisions for your patients.";
-"pharmacy.auth.login.title" = "Welcome back";
-"pharmacy.auth.login.subtitle" = "Sign in to manage your pharmacy.";
-"pharmacy.auth.login.action" = "Log In";
-"pharmacy.auth.forgot_password" = "Forgot password?";
-"pharmacy.auth.continue_google" = "Continue with Google";
-"pharmacy.auth.continue_apple" = "Continue with Apple";
-"pharmacy.auth.no_account" = "Don't have an account?";
-"pharmacy.auth.signup.link" = "Sign Up";
-"pharmacy.auth.login.link" = "Log In";
-"pharmacy.auth.brand.name" = "Medsy";
-"pharmacy.auth.brand.tagline" = "For Pharmacies";
-"pharmacy.auth.or" = "Or";
+"pharmacy.onboarding.page1.title" = "Nearby requests, in real time";
+"pharmacy.onboarding.page1.subtitle" = "See open requests from nearby patients sorted by distance, with prescriptions attached.";
+"pharmacy.onboarding.page2.title" = "Build accurate offers";
+"pharmacy.onboarding.page2.subtitle" = "Validate items against the prescription, suggest alternatives, and send your best offer.";
+"pharmacy.onboarding.page3.title" = "Track every order to completion";
+"pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";

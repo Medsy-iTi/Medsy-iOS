@@ -22,14 +22,14 @@ struct OnboardingRepository: OnboardingRepositoryProtocol {
             ),
             OnboardingPage(
                 id: 1,
-                imageName: "onboarding_patient_security",
+                imageName: "onboarding_offers",
                 titleKey: "pharmacy.onboarding.page2.title",
                 subtitleKey: "pharmacy.onboarding.page2.subtitle",
                 primaryActionKey: "pharmacy.onboarding.next"
             ),
             OnboardingPage(
                 id: 2,
-                imageName: "onboarding_performance",
+                imageName: "onboarding_orders",
                 titleKey: "pharmacy.onboarding.page3.title",
                 subtitleKey: "pharmacy.onboarding.page3.subtitle",
                 primaryActionKey: "pharmacy.onboarding.get_started"
