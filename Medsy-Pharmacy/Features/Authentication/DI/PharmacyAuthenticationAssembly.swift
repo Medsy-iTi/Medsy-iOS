@@ -25,6 +25,13 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(PharmacyLoginUseCaseProtocol.self) { container in
+            PharmacyLoginUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
         container.register(PharmacyVerificationUseCaseProtocol.self) { container in
             PharmacyVerificationUseCase(
                 repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self),
@@ -34,6 +41,7 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
 
         container.register(PharmacyAuthenticationActions.self) { container in
             .live(
+                loginUseCase: container.resolve(PharmacyLoginUseCaseProtocol.self),
                 registrationUseCase: container.resolve(PharmacyRegistrationUseCaseProtocol.self),
                 verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self)
             )

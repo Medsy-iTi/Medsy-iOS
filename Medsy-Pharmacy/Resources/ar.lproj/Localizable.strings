@@ -6,6 +6,34 @@
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
 "pharmacy.dashboard.title" = "لوحة تحكم الصيدلية";
 "pharmacy.dashboard.placeholder" = "لوحة التحكم جاهزة للميزات القادمة.";
+"pharmacy.home.title" = "صيدليتي";
+"pharmacy.home.language" = "English";
+"pharmacy.home.notifications" = "الإشعارات";
+"pharmacy.home.pharmacy_name" = "صيدلية الأمل";
+"pharmacy.home.address" = "شارع النيل، المعادي، القاهرة";
+"pharmacy.home.online" = "مفتوحة الآن";
+"pharmacy.home.pharmacy_number" = "رقم الصيدلية";
+"pharmacy.home.overview" = "نظرة عامة اليوم";
+"pharmacy.home.new_orders" = "طلبات جديدة";
+"pharmacy.home.preparing" = "قيد التجهيز";
+"pharmacy.home.delivered_today" = "تم التوصيل اليوم";
+"pharmacy.home.sales" = "إجمالي المبيعات";
+"pharmacy.home.recent_orders" = "أحدث الطلبات";
+"pharmacy.home.view_all" = "عرض الكل";
+"pharmacy.home.view_all_orders" = "عرض جميع الطلبات";
+"pharmacy.home.order_number" = "طلب #%@";
+"pharmacy.home.order_new" = "جديد";
+"pharmacy.home.order_preparing" = "قيد التجهيز";
+"pharmacy.home.order_delivered" = "تم التوصيل";
+"pharmacy.home.minutes_ago" = "منذ %d دقيقة";
+"pharmacy.home.rating" = "٤٫٨";
+"pharmacy.home.reviews" = "(%d تقييم)";
+"pharmacy.home.customer.ahmed" = "أحمد محمد";
+"pharmacy.home.customer.mona" = "منة الله محمود";
+"pharmacy.home.customer.youssef" = "يوسف علي";
+"pharmacy.home.address.maadi" = "المعادي، القاهرة";
+"pharmacy.home.address.nozha" = "شارع النيل، المعادي";
+"pharmacy.home.address.dar_elsalam" = "دار السلام، القاهرة";
 "pharmacy.auth.registration.title" = "إنشاء حسابك";
 "pharmacy.auth.registration.details.subtitle" = "أدخل بياناتك الشخصية للبدء في استخدام ميدسي للصيدليات.";
 "pharmacy.auth.registration.progress" = "الخطوة %d من %d";
@@ -33,3 +61,40 @@
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
+/* Splash */
+"pharmacy.splash.subtitle" = "منصة شريكك الصيدلية";
+"pharmacy.splash.tagline" = "استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات — كل ذلك في مكان واحد.";
+
+/* Onboarding */
+"pharmacy.onboarding.skip" = "تخطي";
+"pharmacy.onboarding.next" = "التالي";
+"pharmacy.onboarding.get_started" = "ابدأ الآن";
+"pharmacy.onboarding.page1.title" = "طلبات قريبة منك، لحظة بلحظة";
+"pharmacy.onboarding.page1.subtitle" = "تابع الطلبات المفتوحة من المرضى القريبين مرتبة حسب المسافة، مع صور الروشتة المرفقة.";
+"pharmacy.onboarding.page2.title" = "أنشئ عروضًا دقيقة";
+"pharmacy.onboarding.page2.subtitle" = "تحقق من مطابقة الأصناف للروشتة، اقترح بدائل عند الحاجة، وأرسل أفضل عرض لمريضك.";
+"pharmacy.onboarding.page3.title" = "تابع كل طلب حتى اكتماله";
+"pharmacy.onboarding.page3.subtitle" = "حدّث حالة الطلب بضغطة واحدة، ويصل التحديث للمريض تلقائيًا في كل خطوة.";
+"pharmacy.auth.login.title" = "مرحباً بعودتك";
+"pharmacy.auth.login.subtitle" = "سجّل الدخول لإدارة صيدليتك.";
+"pharmacy.auth.login.action" = "تسجيل الدخول";
+"pharmacy.auth.forgot_password" = "هل نسيت كلمة المرور؟";
+"pharmacy.auth.continue_google" = "المتابعة باستخدام Google";
+"pharmacy.auth.continue_apple" = "المتابعة باستخدام Apple";
+"pharmacy.auth.no_account" = "ليس لديك حساب؟";
+"pharmacy.auth.signup.link" = "إنشاء حساب";
+"pharmacy.auth.login.link" = "تسجيل الدخول";
+"pharmacy.auth.brand.name" = "ميدسي";
+"pharmacy.auth.brand.tagline" = "للصيدليات";
+"pharmacy.auth.or" = "أو";
+
+/* Request Details */
+"pharmacy.request.details.title" = "تفاصيل الطلب";
+"pharmacy.request.customer_info" = "معلومات العميل";
+"pharmacy.request.contact_customer" = "تواصل مع العميل";
+"pharmacy.request.order_items" = "تفاصيل الطلب";
+"pharmacy.request.customer_notes" = "ملاحظات العميل";
+"pharmacy.request.accept" = "قبول الطلب";
+"pharmacy.request.reject" = "رفض الطلب";
+"pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+

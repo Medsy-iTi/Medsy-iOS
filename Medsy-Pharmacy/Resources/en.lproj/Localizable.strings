@@ -6,6 +6,34 @@
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
 "pharmacy.dashboard.title" = "Pharmacy dashboard";
 "pharmacy.dashboard.placeholder" = "Your dashboard is ready for upcoming features.";
+"pharmacy.home.title" = "My Pharmacy";
+"pharmacy.home.language" = "العربية";
+"pharmacy.home.notifications" = "Notifications";
+"pharmacy.home.pharmacy_name" = "Al Amal Pharmacy";
+"pharmacy.home.address" = "El Nozha, Cairo";
+"pharmacy.home.online" = "Open now";
+"pharmacy.home.pharmacy_number" = "Pharmacy no.";
+"pharmacy.home.overview" = "Today's overview";
+"pharmacy.home.new_orders" = "New orders";
+"pharmacy.home.preparing" = "Preparing";
+"pharmacy.home.delivered_today" = "Delivered today";
+"pharmacy.home.sales" = "Total sales";
+"pharmacy.home.recent_orders" = "Recent orders";
+"pharmacy.home.view_all" = "View all";
+"pharmacy.home.view_all_orders" = "View all orders";
+"pharmacy.home.order_number" = "Order #%@";
+"pharmacy.home.order_new" = "New";
+"pharmacy.home.order_preparing" = "Preparing";
+"pharmacy.home.order_delivered" = "Delivered";
+"pharmacy.home.minutes_ago" = "%d min ago";
+"pharmacy.home.rating" = "4.8";
+"pharmacy.home.reviews" = "(%d reviews)";
+"pharmacy.home.customer.ahmed" = "Ahmed Mohamed";
+"pharmacy.home.customer.mona" = "Mona Mahmoud";
+"pharmacy.home.customer.youssef" = "Youssef Ali";
+"pharmacy.home.address.maadi" = "Maadi, Cairo";
+"pharmacy.home.address.nozha" = "El Nozha, Cairo";
+"pharmacy.home.address.dar_elsalam" = "Dar El Salam, Cairo";
 "pharmacy.auth.registration.title" = "Create your account";
 "pharmacy.auth.registration.details.subtitle" = "Enter your personal details to start using Medsy Pharmacy.";
 "pharmacy.auth.registration.progress" = "Step %d of %d";
@@ -33,3 +61,28 @@
 "pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
+/* Splash */
+"pharmacy.splash.subtitle" = "Pharmacy Partner Platform";
+"pharmacy.splash.tagline" = "Receive nearby requests, send offers, and fulfill orders — all in one place.";
+
+/* Onboarding */
+"pharmacy.onboarding.skip" = "Skip";
+"pharmacy.onboarding.next" = "Next";
+"pharmacy.onboarding.get_started" = "Get Started";
+"pharmacy.onboarding.page1.title" = "Nearby requests, in real time";
+"pharmacy.onboarding.page1.subtitle" = "See open requests from nearby patients sorted by distance, with prescriptions attached.";
+"pharmacy.onboarding.page2.title" = "Build accurate offers";
+"pharmacy.onboarding.page2.subtitle" = "Validate items against the prescription, suggest alternatives, and send your best offer.";
+"pharmacy.onboarding.page3.title" = "Track every order to completion";
+"pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";
+
+/* Request Details */
+"pharmacy.request.details.title" = "Request Details";
+"pharmacy.request.customer_info" = "Customer Information";
+"pharmacy.request.contact_customer" = "Contact Customer";
+"pharmacy.request.order_items" = "Order Items";
+"pharmacy.request.customer_notes" = "Customer Notes";
+"pharmacy.request.accept" = "Accept Request";
+"pharmacy.request.reject" = "Reject Request";
+"pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+

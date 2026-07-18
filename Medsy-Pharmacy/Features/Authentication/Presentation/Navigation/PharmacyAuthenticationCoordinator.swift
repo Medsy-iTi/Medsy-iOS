@@ -11,6 +11,7 @@ import Observation
 @Observable
 final class PharmacyAuthenticationCoordinator {
     var path: [PharmacyAuthenticationRoute] = []
+    let loginViewModel: PharmacyLoginViewModel
     let registrationViewModel: PharmacyRegistrationViewModel
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
     private let actions: PharmacyAuthenticationActions
@@ -22,6 +23,7 @@ final class PharmacyAuthenticationCoordinator {
     ) {
         self.actions = actions
         self.onAuthenticated = onAuthenticated
+        loginViewModel = PharmacyLoginViewModel(loginAction: actions.login)
         registrationViewModel = PharmacyRegistrationViewModel(registerAction: actions.register)
     }
 
@@ -45,9 +47,19 @@ final class PharmacyAuthenticationCoordinator {
         }
     }
 
+    func showSignup() {
+        path.append(.registrationDetails)
+    }
+
+    func showLogin() {
+        guard !path.isEmpty else { return }
+        path.removeLast()
+    }
+
     func finishVerification() {
         path.removeAll()
         onAuthenticated()
     }
 
 }
+

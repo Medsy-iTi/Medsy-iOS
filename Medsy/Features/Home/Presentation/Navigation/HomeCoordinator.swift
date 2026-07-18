@@ -49,14 +49,12 @@ struct HomeCoordinatorView: View {
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
+                        SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                             coordinator.path.append(dest)
-                        }
+                        })
                     case .prescription:
-                        PrescriptionUploadView(
-                            onCamera: {},
-                            onGallery: {},
-                            onBack: coordinator.goBack
+                        PrescriptionCoordinatorView(
+                            onExit: coordinator.goBack
                         )
                     }
                 }
