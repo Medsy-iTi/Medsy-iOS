@@ -97,11 +97,43 @@ struct PrescriptionEmptyState: View {
     var isPrimaryDisabled = false
     let secondaryTitle: String
     let secondaryAction: () -> Void
+
     var body: some View {
-        VStack(spacing: MedsySpacing.lg) {
-            Image(systemName: icon).font(.system(size: 42, weight: .semibold)).foregroundStyle(AppColor.green).frame(width: 96, height: 96).background(AppColor.lightGreen, in: Circle())
-            VStack(spacing: MedsySpacing.xs) { Text(title).font(.title3.weight(.bold)).foregroundStyle(AppColor.textPrim); Text(message).font(.body).foregroundStyle(AppColor.textSec).multilineTextAlignment(.center) }
-            VStack(spacing: MedsySpacing.sm) { PrimaryButton(title: primaryTitle, isDisabled: isPrimaryDisabled, action: primaryAction); Button(secondaryTitle, action: secondaryAction).font(.body.weight(.semibold)).foregroundStyle(AppColor.green) }
-        }.frame(maxWidth: .infinity).padding(.horizontal, MedsySpacing.xl).padding(.top, 56)
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(spacing: MedsySpacing.lg) {
+                    Image(systemName: icon)
+                        .font(.system(size: 42, weight: .semibold))
+                        .foregroundStyle(AppColor.green)
+                        .frame(width: 96, height: 96)
+                        .background(AppColor.lightGreen, in: Circle())
+
+                    VStack(spacing: MedsySpacing.xs) {
+                        Text(title)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(AppColor.textPrim)
+                        Text(message)
+                            .font(.body)
+                            .foregroundStyle(AppColor.textSec)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    VStack(spacing: MedsySpacing.sm) {
+                        PrimaryButton(
+                            title: primaryTitle,
+                            isDisabled: isPrimaryDisabled,
+                            action: primaryAction
+                        )
+                        Button(secondaryTitle, action: secondaryAction)
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(AppColor.green)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: proxy.size.height)
+                .padding(.horizontal, MedsySpacing.xl)
+                .padding(.vertical, MedsySpacing.lg)
+            }
+        }
     }
 }
