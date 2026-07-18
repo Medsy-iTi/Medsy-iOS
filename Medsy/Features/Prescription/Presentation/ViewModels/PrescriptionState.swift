@@ -19,21 +19,31 @@ enum PrescriptionFlowResult: Equatable {
     case noMedicines
 }
 
+enum PrescriptionReadingStage: Int, CaseIterable, Equatable {
+    case uploading
+    case analysing
+    case extracting
+}
+
 enum PrescriptionViewState: Equatable {
     case upload
-    case preview(PrescriptionImageSource)
-    case reading
-    case review([PrescriptionMedicineDisplay])
+    case preview
+    case reading(PrescriptionReadingStage)
+    case review
+    case medicineSearch(UUID)
     case result(PrescriptionFlowResult)
 }
 
 enum PrescriptionEvent {
-    case selectCamera
-    case selectGallery
+    case imageSelected(Data, PrescriptionImageSource)
     case continueFromPreview
     case changeImage
     case deleteImage
     case cancelReading
+    case confirmMedicine(UUID)
+    case chooseAlternative(UUID)
+    case replaceMedicine(UUID, MedsyProduct)
+    case cancelMedicineSearch
     case addToCart
     case retry
     case continueWithoutReading
@@ -45,7 +55,6 @@ enum PrescriptionEvent {
 
 enum PrescriptionEffect {
     case exit
-    case openSearch
     case openCart
 }
 

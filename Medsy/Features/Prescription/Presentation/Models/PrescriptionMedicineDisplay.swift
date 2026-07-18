@@ -7,17 +7,43 @@
 
 import Foundation
 
+enum PrescriptionMedicineConfidence: Equatable {
+    case identified
+    case needsReview
+}
+
 struct PrescriptionMedicineDisplay: Identifiable, Equatable {
-    let id = UUID()
-    let name: String
-    let details: String
-    let price: String
-    let needsReview: Bool
+    let id: UUID
+    var name: String
+    var details: String
+    var price: String
+    var confidence: PrescriptionMedicineConfidence
+    var isConfirmed: Bool
+
+    var needsReview: Bool {
+        confidence == .needsReview
+    }
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        details: String,
+        price: String,
+        confidence: PrescriptionMedicineConfidence,
+        isConfirmed: Bool = false
+    ) {
+        self.id = id
+        self.name = name
+        self.details = details
+        self.price = price
+        self.confidence = confidence
+        self.isConfirmed = isConfirmed
+    }
 
     static let samples = [
-        PrescriptionMedicineDisplay(name: "Panadol Extra", details: "20 tablets", price: "$4.50", needsReview: false),
-        PrescriptionMedicineDisplay(name: "Augmentin", details: "1 g · 14 tablets", price: "$8.00", needsReview: false),
-        PrescriptionMedicineDisplay(name: "Telfast", details: "120 mg · 10 tablets", price: "$5.50", needsReview: false),
-        PrescriptionMedicineDisplay(name: "Medicine name unclear", details: "Needs your review", price: "$2.50", needsReview: true)
+        PrescriptionMedicineDisplay(name: "Panadol Extra", details: "20 tablets", price: "45.00 EGP", confidence: .identified),
+        PrescriptionMedicineDisplay(name: "Augmentin", details: "1 g · 14 tablets", price: "180.00 EGP", confidence: .identified),
+        PrescriptionMedicineDisplay(name: "Telfast", details: "120 mg · 10 tablets", price: "95.00 EGP", confidence: .identified),
+        PrescriptionMedicineDisplay(name: "Medicine name unclear", details: "Needs your review", price: "--", confidence: .needsReview)
     ]
 }
