@@ -23,7 +23,7 @@ struct MedsyApp: App {
             AuthenticationAssembly(),
             CategoriesAssembly(),
 			ProductsAssembly(),
-            ProductDetailAssembly()
+            ProductDetailAssembly(),
             ProductsFeatureAssembly(),
             ProfileAssembly()
         ])
@@ -34,6 +34,7 @@ struct MedsyApp: App {
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
+            authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
             logoutUseCase: logoutUseCase
         )
     }

@@ -26,18 +26,29 @@ enum AppTab: Int, CaseIterable {
 @Observable
 final class AppCoordinator {
     private let shouldShowOnboarding: Bool
+    private let authenticationStatusStore: UserDefaultsStatusStoreProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
 
     var route: AppRoute = .splash
     var selectedTab: AppTab = .home
 
-    init(shouldShowOnboarding: Bool, logoutUseCase: LogoutUseCaseProtocol) {
+    init(
+        shouldShowOnboarding: Bool,
+        authenticationStatusStore: UserDefaultsStatusStoreProtocol,
+        logoutUseCase: LogoutUseCaseProtocol
+    ) {
         self.shouldShowOnboarding = shouldShowOnboarding
+        self.authenticationStatusStore = authenticationStatusStore
         self.logoutUseCase = logoutUseCase
     }
 
     func finishSplash() {
-        route = shouldShowOnboarding ? .onboarding : .authentication
+        if authenticationStatusStore.isLoggedIn {
+            selectedTab = .home
+            route = .main
+        } else {
+            route = shouldShowOnboarding ? .onboarding : .authentication
+        }
     }
 
     func finishOnboarding() {
@@ -45,6 +56,7 @@ final class AppCoordinator {
     }
 
     func finishAuthentication() {
+        authenticationStatusStore.setLoggedIn(true)
         selectedTab = .home
         route = .main
     }
@@ -52,6 +64,7 @@ final class AppCoordinator {
     func logout() {
         Task {
             await logoutUseCase.execute()
+            authenticationStatusStore.setLoggedIn(false)
             selectedTab = .home
             route = .authentication
         }
