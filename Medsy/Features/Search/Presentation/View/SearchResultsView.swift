@@ -35,7 +35,7 @@ struct SearchResultsView: View {
 				}
 
 				ChipsRow {
-					
+
 					FilterChip(
 						title: sortChipTitle,
 						systemIcon: "slider.horizontal.3",
@@ -45,28 +45,6 @@ struct SearchResultsView: View {
 					}
 
 
-					FilterChip(
-						title: "sort.price_asc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .asc)
-					) {
-						viewModel.toggleSort(ProductSort(field: .price, direction: .asc))
-					}
-
-
-					FilterChip(
-						title: "sort.price_desc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .desc)
-					) {
-						viewModel.toggleSort(ProductSort(field: .price, direction: .desc))
-					}
-
-
-					FilterChip(
-						title: "sort.name_asc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .name, direction: .asc)
-					) {
-						viewModel.toggleSort(ProductSort(field: .name, direction: .asc))
-					}
 				}
 
 				if viewModel.state == .loaded {

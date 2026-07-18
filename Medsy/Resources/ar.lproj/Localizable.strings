@@ -93,22 +93,27 @@
 "categories.itemsCount" = "%d منتج";
 
 /* Search */
-"search.title" = "نتائج البحث";
-"search.placeholder" = " اكتب اسم الدواء للبحث";
-"search.result_count" = "%d نتيجة";
+"search.placeholder" = "ابحث عن منتج ...";
+"search.title" = "البحث";
+"search.result_count" = "%d نتائج";
 
-/* Filters & Sort */
+/* Sort */
+"sort.price_asc" = "السعر: من الأقل للأعلى";
+"sort.price_desc" = "السعر: من الأعلى للأقل";
+"sort.name_asc" = "الاسم(أ إلى ي)";
+"sort.name_desc" = "الاسم(ي إلى أ)";
+"sort.scientific_name_asc" = "الاسم العلمي";
+"sort.company_asc" = "الشركة";
+
+/* Filter */
 "filter.sort" = "ترتيب";
-"filter.sort_title" = "ترتيب وتصفية";
-"filter.sort_by" = "رتب حسب";
-"filter.clear" = "مسح الترتيب";
+"filter.sort_title" = "رتب حسب";
+"filter.sort_by" = "خيارات الترتيب";
+"filter.clear" = "مسح التصفية";
+"filter.apply" = "تطبيق";
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
-"sort.price_asc" = "السعر ↑";
-"sort.price_desc" = "السعر ↓";
-"sort.name_asc" = "الاسم أ→ي";
-"sort.name_desc" = "الاسم ي→أ";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";

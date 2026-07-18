@@ -37,6 +37,18 @@ final class ProductRepository: ProductRepositoryProtocol {
         return try Self.unwrap(response)
     }
 
+    func fetchProductsByCategory(
+        categoryId: Int,
+        page: Int,
+        size: Int,
+        sort: [ProductSort],
+        lang: String? = nil
+    ) async throws -> PagedResult<Product> {
+        let endpoint = ProductEndpoint.category(id: categoryId, page: page, size: size, sort: sort, lang: lang)
+        let response: APIResponseDTO<PageDTO<ProductDTO>> = try await networkService.request(endpoint: endpoint)
+        return try Self.unwrap(response)
+    }
+
    
     private static func unwrap(
         _ response: APIResponseDTO<PageDTO<ProductDTO>>

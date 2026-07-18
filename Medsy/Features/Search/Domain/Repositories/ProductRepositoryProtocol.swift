@@ -22,4 +22,12 @@ protocol ProductRepositoryProtocol {
         sort: [ProductSort],
 		lang: String?
     ) async throws -> PagedResult<Product>
+
+    func fetchProductsByCategory(
+        categoryId: Int,
+        page: Int,
+        size: Int,
+        sort: [ProductSort],
+        lang: String?
+    ) async throws -> PagedResult<Product>
 }

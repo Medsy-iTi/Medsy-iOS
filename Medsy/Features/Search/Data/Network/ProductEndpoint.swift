@@ -11,6 +11,7 @@ import Alamofire
 enum ProductEndpoint {
 	case list(page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
 	case search(keyword: String, page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
+	case category(id: Int, page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
 }
 
 extension ProductEndpoint: ApiEndpoint {
@@ -51,6 +52,19 @@ extension ProductEndpoint: ApiEndpoint {
 
 				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
 				return "products/search" + Self.queryString(items)
+
+			case let .category(id, page, size, sort, lang):
+				var items = [
+					URLQueryItem(name: "page", value: "\(page)"),
+					URLQueryItem(name: "size", value: "\(size)")
+				]
+
+				if let lang = lang {
+					items.append(URLQueryItem(name: "lang", value: lang))
+				}
+
+				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
+				return "products/category/\(id)" + Self.queryString(items)
 		}
 	}
 
