@@ -55,7 +55,6 @@ enum PrescriptionEvent {
 
 enum PrescriptionEffect {
     case exit
-    case openCart
 }
 
 enum PrescriptionMockOutcome {

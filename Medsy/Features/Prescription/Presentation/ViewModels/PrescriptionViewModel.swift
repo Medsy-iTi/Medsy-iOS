@@ -55,11 +55,11 @@ final class PrescriptionViewModel {
             guard canAddToCart else { break }
             state = .result(.added)
         case .continueWithoutReading:
-            state = .result(.added)
+            break
         case .addMedicineManually:
             break
         case .viewCart:
-            return .openCart
+            break
         case .backHome:
             return .exit
         case .back:

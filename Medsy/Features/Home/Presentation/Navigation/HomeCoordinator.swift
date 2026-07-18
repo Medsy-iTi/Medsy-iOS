@@ -26,11 +26,6 @@ final class HomeCoordinator {
         path.append(HomeRoute.prescription)
     }
 
-    func showSearchFromPrescription() {
-        goBack()
-        openSearch()
-    }
-
     func goBack() {
         if !path.isEmpty {
             path.removeLast()
@@ -54,14 +49,12 @@ struct HomeCoordinatorView: View {
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
+                        SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                             coordinator.path.append(dest)
-                        }
+                        })
                     case .prescription:
                         PrescriptionCoordinatorView(
-                            onExit: coordinator.goBack,
-                            onOpenSearch: coordinator.showSearchFromPrescription,
-                            onOpenCart: coordinator.goBack
+                            onExit: coordinator.goBack
                         )
                     }
                 }

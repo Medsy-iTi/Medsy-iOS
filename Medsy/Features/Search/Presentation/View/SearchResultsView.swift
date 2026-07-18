@@ -13,13 +13,20 @@ struct SearchResultsView: View {
 	@ObservedObject private var appSettings = AppSettings.shared
 	private let coordinator: SearchCoordinator
 	private let onBack: () -> Void
+	private let onSelect: ((MedsyProduct) -> Void)?
 
 	@State private var showSortSheet = false
 
-	init(query: String, onBack: @escaping () -> Void = {}, coordinator: SearchCoordinator) {
+	init(
+		query: String,
+		onBack: @escaping () -> Void = {},
+		coordinator: SearchCoordinator,
+		onSelect: ((MedsyProduct) -> Void)? = nil
+	) {
 		_viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
 		self.onBack = onBack
 		self.coordinator = coordinator
+		self.onSelect = onSelect
 	}
 
 	var body: some View {
@@ -118,9 +125,17 @@ struct SearchResultsView: View {
 				ScrollView {
 					LazyVStack(spacing: MedsySpacing.sm) {
 						ForEach($viewModel.products) { $product in
-							SearchedProductCard(product: $product, onTap: {
-								coordinator.showProductDetail(productId: product.id)
-							})
+							SearchedProductCard(
+								product: $product,
+								isSelectionMode: onSelect != nil,
+								onTap: {
+									if let onSelect {
+										onSelect(product)
+									} else {
+										coordinator.showProductDetail(productId: product.id)
+									}
+								}
+							)
 							.onAppear {
 								viewModel.loadNextPageIfNeeded(currentItem: product)
 							}

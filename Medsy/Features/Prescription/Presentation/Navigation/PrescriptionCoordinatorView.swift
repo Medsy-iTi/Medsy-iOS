@@ -18,19 +18,13 @@ struct PrescriptionCoordinatorView: View {
     @State private var showsCameraUnavailable = false
 
     private let onExit: () -> Void
-    private let onOpenSearch: () -> Void
-    private let onOpenCart: () -> Void
 
     init(
         mockOutcome: PrescriptionMockOutcome = .success,
-        onExit: @escaping () -> Void,
-        onOpenSearch: @escaping () -> Void,
-        onOpenCart: @escaping () -> Void
+        onExit: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: PrescriptionViewModel(mockOutcome: mockOutcome))
         self.onExit = onExit
-        self.onOpenSearch = onOpenSearch
-        self.onOpenCart = onOpenCart
     }
 
     var body: some View {
@@ -55,16 +49,26 @@ struct PrescriptionCoordinatorView: View {
             case .review:
                 PrescriptionReviewView(
                     medicines: viewModel.medicines,
+                    confirmedCount: viewModel.confirmedMedicineCount,
+                    canAddToCart: viewModel.canAddToCart,
+                    onConfirm: { send(.confirmMedicine($0)) },
+                    onChooseAlternative: { send(.chooseAlternative($0)) },
                     onAddToCart: { send(.addToCart) },
                     onBack: { send(.back) }
                 )
-            case .medicineSearch:
-                EmptyView()
+            case let .medicineSearch(medicineID):
+                SearchCoordinatorView(
+                    query: "",
+                    onBack: { send(.cancelMedicineSearch) },
+                    onPush: { _ in },
+                    onSelect: { send(.replaceMedicine(medicineID, $0)) }
+                )
             case let .result(result):
                 PrescriptionResultView(
                     result: result,
                     primaryAction: { send(primaryEvent(for: result)) },
                     secondaryAction: { send(secondaryEvent(for: result)) },
+                    isPrimaryDisabled: result == .added,
                     onBack: { send(.back) }
                 )
             }
@@ -110,10 +114,6 @@ struct PrescriptionCoordinatorView: View {
         switch effect {
         case .exit:
             onExit()
-        case .openSearch:
-            onOpenSearch()
-        case .openCart:
-            onOpenCart()
         }
     }
 

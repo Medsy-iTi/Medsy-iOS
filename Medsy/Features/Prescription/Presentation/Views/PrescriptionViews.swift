@@ -213,6 +213,10 @@ private struct PrescriptionReadingStageRow: View {
 
 struct PrescriptionReviewView: View {
     let medicines: [PrescriptionMedicineDisplay]
+    let confirmedCount: Int
+    let canAddToCart: Bool
+    let onConfirm: (UUID) -> Void
+    let onChooseAlternative: (UUID) -> Void
     let onAddToCart: () -> Void
     let onBack: () -> Void
 
@@ -226,8 +230,11 @@ struct PrescriptionReviewView: View {
 
                     HStack {
                         PrescriptionCount(value: "\(medicines.count)", title: "prescription.review.found".localized)
-                        PrescriptionCount(value: "\(medicines.filter { !$0.needsReview }.count)", title: "prescription.review.identified".localized)
-                        PrescriptionCount(value: "\(medicines.filter(\.needsReview).count)", title: "prescription.review.needsReview".localized)
+                        PrescriptionCount(value: "\(confirmedCount)", title: "prescription.review.confirmed".localized)
+                        PrescriptionCount(
+                            value: "\(medicines.filter { $0.needsReview && !$0.isConfirmed }.count)",
+                            title: "prescription.review.needsReview".localized
+                        )
                     }
                 }
                 .padding(.horizontal)
@@ -235,13 +242,21 @@ struct PrescriptionReviewView: View {
                 ScrollView {
                     LazyVStack(spacing: MedsySpacing.sm) {
                         ForEach(medicines) { medicine in
-                            PrescriptionMedicineRow(medicine: medicine)
+                            PrescriptionMedicineRow(
+                                medicine: medicine,
+                                onConfirm: { onConfirm(medicine.id) },
+                                onChooseAlternative: { onChooseAlternative(medicine.id) }
+                            )
                         }
                     }
                     .padding(.horizontal)
                 }
 
-                PrimaryButton(title: "prescription.review.addToCart".localized, action: onAddToCart)
+                PrimaryButton(
+                    title: "prescription.review.addToCart".localized,
+                    isDisabled: !canAddToCart,
+                    action: onAddToCart
+                )
                     .padding()
             }
         }
@@ -252,6 +267,7 @@ struct PrescriptionResultView: View {
     let result: PrescriptionFlowResult
     let primaryAction: () -> Void
     let secondaryAction: () -> Void
+    let isPrimaryDisabled: Bool
     let onBack: () -> Void
 
     var body: some View {
@@ -262,6 +278,7 @@ struct PrescriptionResultView: View {
                 message: content.message.localized,
                 primaryTitle: content.primaryTitle.localized,
                 primaryAction: primaryAction,
+                isPrimaryDisabled: isPrimaryDisabled,
                 secondaryTitle: content.secondaryTitle.localized,
                 secondaryAction: secondaryAction
             )

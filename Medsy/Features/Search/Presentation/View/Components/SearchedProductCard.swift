@@ -13,6 +13,7 @@ struct SearchedProductCard: View {
 	var onIncrement: (() -> Void)? = nil
 	var onDecrement: (() -> Void)? = nil
 	var onToggleFavorite: (() -> Void)? = nil
+	var isSelectionMode = false
 	var onTap: (() -> Void)?
 
 	@Environment(\.layoutDirection) private var layoutDirection
@@ -24,7 +25,14 @@ struct SearchedProductCard: View {
 		HStack(alignment: .top, spacing: MedsySpacing.sm) {
 			productImage
 			textContent
-			actionColumn
+			if isSelectionMode {
+				Image(systemName: "chevron.forward")
+					.font(.footnote.weight(.semibold))
+					.foregroundStyle(AppColor.textSec)
+					.frame(maxHeight: .infinity)
+			} else {
+				actionColumn
+			}
 		}
 		.padding(MedsySpacing.sm)
 		.background(
