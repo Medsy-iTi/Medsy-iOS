@@ -65,9 +65,10 @@ struct PrescriptionPreviewView: View {
     let onContinue: () -> Void
     let onChangeImage: () -> Void
     let onDelete: () -> Void
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.preview.title".localized) {
+        PrescriptionPage(title: "prescription.preview.title".localized, onBack: onBack) {
             VStack(spacing: MedsySpacing.lg) {
                 RoundedRectangle(cornerRadius: MedsyRadius.lg)
                     .fill(Color(hex: "#EEF3F1"))
@@ -104,7 +105,7 @@ struct PrescriptionReadingView: View {
     let onCancel: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.reading.title".localized) {
+        PrescriptionPage(title: "prescription.reading.title".localized, onBack: onCancel) {
             VStack(spacing: MedsySpacing.xl) {
                 ProgressView()
                     .controlSize(.large)
@@ -149,9 +150,10 @@ struct PrescriptionReadingView: View {
 struct PrescriptionReviewView: View {
     let medicines: [PrescriptionMedicineDisplay]
     let onAddToCart: () -> Void
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.review.title".localized) {
+        PrescriptionPage(title: "prescription.review.title".localized, onBack: onBack) {
             VStack(spacing: MedsySpacing.md) {
                 VStack(spacing: MedsySpacing.xs) {
                     Text("prescription.review.message".localized)
@@ -183,19 +185,13 @@ struct PrescriptionReviewView: View {
 }
 
 struct PrescriptionResultView: View {
-    enum Result {
-        case added
-        case uploadFailed
-        case readingFailed
-        case noMedicines
-    }
-
-    let result: Result
+    let result: PrescriptionFlowResult
     let primaryAction: () -> Void
     let secondaryAction: () -> Void
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.review.title".localized) {
+        PrescriptionPage(title: "prescription.review.title".localized, onBack: onBack) {
             PrescriptionEmptyState(
                 icon: content.icon,
                 title: content.title.localized,
