@@ -26,12 +26,14 @@ enum AppTab: Int, CaseIterable {
 @Observable
 final class AppCoordinator {
     private let shouldShowOnboarding: Bool
+    private let logoutUseCase: LogoutUseCaseProtocol
 
     var route: AppRoute = .splash
     var selectedTab: AppTab = .home
 
-    init(shouldShowOnboarding: Bool) {
+    init(shouldShowOnboarding: Bool, logoutUseCase: LogoutUseCaseProtocol) {
         self.shouldShowOnboarding = shouldShowOnboarding
+        self.logoutUseCase = logoutUseCase
     }
 
     func finishSplash() {
@@ -48,7 +50,10 @@ final class AppCoordinator {
     }
 
     func logout() {
-        selectedTab = .home
-        route = .authentication
+        Task {
+            await logoutUseCase.execute()
+            selectedTab = .home
+            route = .authentication
+        }
     }
 }

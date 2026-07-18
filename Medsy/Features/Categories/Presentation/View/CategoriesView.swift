@@ -1,7 +1,7 @@
 //  CategoriesView.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 14/07/2026.
+//  Created by Antoneos Philip on 17/07/2026.
 
 import SwiftUI
 
@@ -79,13 +79,15 @@ struct CategoriesView: View {
                 ScrollView(showsIndicators: false) {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(filteredCategories) { category in
-                            CategoryGridCard(
-                                titleKey: category.displayName,
-                                iconName: category.iconName,
-                                iconColor: category.iconColor,
-                                bgColor: category.bgColor,
-                                itemsCount: (category.id % 40) + 10
-                            )
+                            NavigationLink(destination: ProductsView(category: category)) {
+                                CategoryGridCard(
+                                    titleKey: category.displayName,
+                                    iconName: category.iconName,
+                                    iconColor: category.iconColor,
+                                    bgColor: category.bgColor,
+                                )
+                            }
+                            .buttonStyle(.plain)
                             .onAppear {
                                 if category == filteredCategories.last {
                                     Task {
@@ -96,6 +98,7 @@ struct CategoriesView: View {
                         }
                     }
                     .padding(.horizontal)
+
 
                     if viewModel.isFetchingNextPage {
                         HStack {

@@ -23,14 +23,20 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
 
         container.register(NetworkRequestBuilder.self) { container in
             NetworkRequestBuilder(
-                languageManager: container.resolve(LanguageManager.self)
+                languageManager: container.resolve(LanguageManager.self),
+                defaultBaseURL: PharmacyConfiguration.apiBaseURL
             )
+        }
+
+        container.register(TokenStoreProtocol.self) { _ in
+            KeychainTokenStore(service: PharmacyConfiguration.keychainService)
         }
 
         container.register(NetworkServiceProtocol.self) { container in
             NetworkService(
                 transport: container.resolve(NetworkTransportProtocol.self),
-                requestBuilder: container.resolve(NetworkRequestBuilder.self)
+                requestBuilder: container.resolve(NetworkRequestBuilder.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
             )
         }
     }

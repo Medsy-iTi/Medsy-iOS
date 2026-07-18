@@ -13,6 +13,7 @@ enum AuthEndpoint {
     case register(SignupRequestDTO)
     case verify(VerificationRequestDTO)
     case refresh(RefreshTokenRequestDTO)
+    case logout(LogoutRequestDTO)
 }
 
 extension AuthEndpoint: ApiEndpoint {
@@ -26,12 +27,14 @@ extension AuthEndpoint: ApiEndpoint {
             return "auth/verify"
         case .refresh:
             return "auth/refresh"
+        case .logout:
+            return "auth/logout"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .login, .register, .verify, .refresh:
+        case .login, .register, .verify, .refresh, .logout:
             return .post
         }
     }
@@ -46,6 +49,17 @@ extension AuthEndpoint: ApiEndpoint {
             return try? JSONEncoder().encode(request)
         case .refresh(let request):
             return try? JSONEncoder().encode(request)
+        case .logout(let request):
+            return try? JSONEncoder().encode(request)
+        }
+    }
+
+    var requiresAuthentication: Bool {
+        switch self {
+        case .logout:
+            return true
+        case .login, .register, .verify, .refresh:
+            return false
         }
     }
 }

@@ -2,7 +2,7 @@
 //  MedsyApp.swift
 //  Medsy
 //
-//  Created by Ahmed Elkady on 13/07/2026.
+//  Created by Ahmed Elkady on 17/07/2026.
 //
 
 import SwiftUI
@@ -13,6 +13,7 @@ struct MedsyApp: App {
     private let languageManager: LanguageManager
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
+    private let logoutUseCase: LogoutUseCaseProtocol
     private let appCoordinator: AppCoordinator
 
     init() {
@@ -23,12 +24,18 @@ struct MedsyApp: App {
             CategoriesAssembly(),
 			ProductsAssembly(),
             ProductDetailAssembly()
+            ProductsFeatureAssembly(),
+            ProfileAssembly()
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
-        appCoordinator = AppCoordinator(shouldShowOnboarding: onboardingFactory.shouldShow())
+        logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
+        appCoordinator = AppCoordinator(
+            shouldShowOnboarding: onboardingFactory.shouldShow(),
+            logoutUseCase: logoutUseCase
+        )
     }
 
     var body: some Scene {
