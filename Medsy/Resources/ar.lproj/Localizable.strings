@@ -307,12 +307,15 @@
 "prescription.review.message" = "تحقق من أدويتك قبل إضافتها إلى السلة";
 "prescription.review.found" = "تم العثور";
 "prescription.review.identified" = "تم التعرف";
+"prescription.review.confirmed" = "تم التأكيد";
 "prescription.review.needsReview" = "تحتاج مراجعة";
 "prescription.review.addToCart" = "أضف إلى السلة";
+"prescription.review.confirm" = "تأكيد";
+"prescription.review.chooseAnother" = "اختيار دواء آخر";
 "prescription.needsReview" = "تحتاج مراجعة";
 "prescription.added.title" = "تمت الإضافة إلى السلة!";
 "prescription.added.message" = "يمكنك مراجعة الكميات وإتمام طلبك من السلة.";
-"prescription.added.cart" = "عرض السلة";
+"prescription.added.cart" = "عرض السلة وإرسال الطلب";
 "prescription.added.home" = "العودة للرئيسية";
 "prescription.uploadFailed.title" = "فشل الرفع";
 "prescription.uploadFailed.message" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
@@ -323,3 +326,5 @@
 "prescription.none.title" = "لم يُعثر على أدوية";
 "prescription.none.message" = "جرّب صورة أوضح أو أضف الأدوية يدوياً من البحث.";
 "prescription.none.manual" = "إضافة دواء يدوًا";
+"prescription.camera.unavailable.title" = "الكاميرا غير متاحة";
+"prescription.camera.unavailable.message" = "استخدم جهازًا مزودًا بكاميرا أو اختر روشتة من مكتبة الصور.";

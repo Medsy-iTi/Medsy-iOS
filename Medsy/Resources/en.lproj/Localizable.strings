@@ -308,12 +308,15 @@
 "prescription.review.message" = "Check your medicines before adding them to the cart";
 "prescription.review.found" = "found";
 "prescription.review.identified" = "identified";
+"prescription.review.confirmed" = "confirmed";
 "prescription.review.needsReview" = "needs review";
 "prescription.review.addToCart" = "Add to cart";
+"prescription.review.confirm" = "Confirm";
+"prescription.review.chooseAnother" = "Choose another";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";
-"prescription.added.cart" = "View cart";
+"prescription.added.cart" = "View cart and send request";
 "prescription.added.home" = "Back to home";
 "prescription.uploadFailed.title" = "Upload failed";
 "prescription.uploadFailed.message" = "Check your internet connection and try again.";
@@ -324,3 +327,5 @@
 "prescription.none.title" = "No medicines found";
 "prescription.none.message" = "Try a clearer photo or add medicines manually using the search.";
 "prescription.none.manual" = "Add medicine manually";
+"prescription.camera.unavailable.title" = "Camera unavailable";
+"prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";
