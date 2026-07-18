@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct PrescriptionUploadView: View {
     let onCamera: () -> Void
@@ -62,27 +63,16 @@ struct PrescriptionUploadView: View {
 }
 
 struct PrescriptionPreviewView: View {
+    let imageData: Data?
     let onContinue: () -> Void
     let onChangeImage: () -> Void
     let onDelete: () -> Void
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.preview.title".localized) {
+        PrescriptionPage(title: "prescription.preview.title".localized, onBack: onBack) {
             VStack(spacing: MedsySpacing.lg) {
-                RoundedRectangle(cornerRadius: MedsyRadius.lg)
-                    .fill(Color(hex: "#EEF3F1"))
-                    .frame(height: 310)
-                    .overlay {
-                        VStack(spacing: MedsySpacing.sm) {
-                            Image(systemName: "doc.text.image")
-                                .font(.system(size: 70))
-                                .foregroundStyle(AppColor.green)
-
-                            Text("prescription.preview.selected".localized)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(AppColor.textSec)
-                        }
-                    }
+                prescriptionImage
 
                 HStack {
                     Button("prescription.change".localized, action: onChangeImage)
@@ -98,13 +88,39 @@ struct PrescriptionPreviewView: View {
             .padding()
         }
     }
+
+    @ViewBuilder
+    private var prescriptionImage: some View {
+        if let imageData, let image = UIImage(data: imageData) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: 420)
+                .background(AppColor.card)
+                .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: MedsyRadius.lg)
+                        .stroke(AppColor.border)
+                )
+        } else {
+            RoundedRectangle(cornerRadius: MedsyRadius.lg)
+                .fill(AppColor.card)
+                .frame(height: 310)
+                .overlay {
+                    Image(systemName: "doc.text.image")
+                        .font(.system(size: 70))
+                        .foregroundStyle(AppColor.green)
+                }
+        }
+    }
 }
 
 struct PrescriptionReadingView: View {
+    let stage: PrescriptionReadingStage
     let onCancel: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.reading.title".localized) {
+        PrescriptionPage(title: "prescription.reading.title".localized, onBack: onCancel) {
             VStack(spacing: MedsySpacing.xl) {
                 ProgressView()
                     .controlSize(.large)
@@ -124,14 +140,23 @@ struct PrescriptionReadingView: View {
                     Text("prescription.reading.stages".localized)
                         .font(.headline)
 
-                    Label("prescription.reading.uploaded".localized, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(AppColor.successGreen)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.uploaded".localized,
+                        rowStage: .uploading,
+                        currentStage: stage
+                    )
 
-                    Label("prescription.reading.analysed".localized, systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(AppColor.successGreen)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.analysed".localized,
+                        rowStage: .analysing,
+                        currentStage: stage
+                    )
 
-                    Label("prescription.reading.extracting".localized, systemImage: "circle.dotted")
-                        .foregroundStyle(AppColor.textSec)
+                    PrescriptionReadingStageRow(
+                        title: "prescription.reading.extracting".localized,
+                        rowStage: .extracting,
+                        currentStage: stage
+                    )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
@@ -142,16 +167,61 @@ struct PrescriptionReadingView: View {
             }
             .padding(.horizontal, MedsySpacing.xl)
             .padding(.top, 72)
+            .animation(.easeInOut(duration: 0.3), value: stage)
+        }
+    }
+}
+
+private struct PrescriptionReadingStageRow: View {
+    let title: String
+    let rowStage: PrescriptionReadingStage
+    let currentStage: PrescriptionReadingStage
+
+    private var isCompleted: Bool {
+        rowStage.rawValue < currentStage.rawValue
+    }
+
+    private var isActive: Bool {
+        rowStage == currentStage
+    }
+
+    var body: some View {
+        HStack(spacing: MedsySpacing.sm) {
+            Group {
+                if isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(AppColor.successGreen)
+                        .transition(.scale.combined(with: .opacity))
+                } else if isActive {
+                    ProgressView()
+                        .tint(AppColor.green)
+                        .transition(.scale.combined(with: .opacity))
+                } else {
+                    Image(systemName: "circle")
+                        .foregroundStyle(AppColor.textSec.opacity(0.45))
+                }
+            }
+            .frame(width: 24, height: 24)
+
+            Text(title)
+                .foregroundStyle(isCompleted || isActive ? AppColor.textPrim : AppColor.textSec)
+
+            Spacer()
         }
     }
 }
 
 struct PrescriptionReviewView: View {
     let medicines: [PrescriptionMedicineDisplay]
+    let confirmedCount: Int
+    let canAddToCart: Bool
+    let onConfirm: (UUID) -> Void
+    let onChooseAlternative: (UUID) -> Void
     let onAddToCart: () -> Void
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.review.title".localized) {
+        PrescriptionPage(title: "prescription.review.title".localized, onBack: onBack) {
             VStack(spacing: MedsySpacing.md) {
                 VStack(spacing: MedsySpacing.xs) {
                     Text("prescription.review.message".localized)
@@ -160,8 +230,11 @@ struct PrescriptionReviewView: View {
 
                     HStack {
                         PrescriptionCount(value: "\(medicines.count)", title: "prescription.review.found".localized)
-                        PrescriptionCount(value: "\(medicines.filter { !$0.needsReview }.count)", title: "prescription.review.identified".localized)
-                        PrescriptionCount(value: "\(medicines.filter(\.needsReview).count)", title: "prescription.review.needsReview".localized)
+                        PrescriptionCount(value: "\(confirmedCount)", title: "prescription.review.confirmed".localized)
+                        PrescriptionCount(
+                            value: "\(medicines.filter { $0.needsReview && !$0.isConfirmed }.count)",
+                            title: "prescription.review.needsReview".localized
+                        )
                     }
                 }
                 .padding(.horizontal)
@@ -169,13 +242,21 @@ struct PrescriptionReviewView: View {
                 ScrollView {
                     LazyVStack(spacing: MedsySpacing.sm) {
                         ForEach(medicines) { medicine in
-                            PrescriptionMedicineRow(medicine: medicine)
+                            PrescriptionMedicineRow(
+                                medicine: medicine,
+                                onConfirm: { onConfirm(medicine.id) },
+                                onChooseAlternative: { onChooseAlternative(medicine.id) }
+                            )
                         }
                     }
                     .padding(.horizontal)
                 }
 
-                PrimaryButton(title: "prescription.review.addToCart".localized, action: onAddToCart)
+                PrimaryButton(
+                    title: "prescription.review.addToCart".localized,
+                    isDisabled: !canAddToCart,
+                    action: onAddToCart
+                )
                     .padding()
             }
         }
@@ -183,25 +264,21 @@ struct PrescriptionReviewView: View {
 }
 
 struct PrescriptionResultView: View {
-    enum Result {
-        case added
-        case uploadFailed
-        case readingFailed
-        case noMedicines
-    }
-
-    let result: Result
+    let result: PrescriptionFlowResult
     let primaryAction: () -> Void
     let secondaryAction: () -> Void
+    let isPrimaryDisabled: Bool
+    let onBack: () -> Void
 
     var body: some View {
-        PrescriptionPage(title: "prescription.review.title".localized) {
+        PrescriptionPage(title: "prescription.review.title".localized, onBack: onBack) {
             PrescriptionEmptyState(
                 icon: content.icon,
                 title: content.title.localized,
                 message: content.message.localized,
                 primaryTitle: content.primaryTitle.localized,
                 primaryAction: primaryAction,
+                isPrimaryDisabled: isPrimaryDisabled,
                 secondaryTitle: content.secondaryTitle.localized,
                 secondaryAction: secondaryAction
             )
@@ -240,6 +317,7 @@ private struct PrescriptionPage<Content: View>: View {
             }
             content
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(AppColor.bg)
         .toolbar(.hidden, for: .navigationBar)
         .navigationBarHidden(true)
