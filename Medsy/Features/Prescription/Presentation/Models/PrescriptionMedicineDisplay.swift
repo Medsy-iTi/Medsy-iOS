@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PrescriptionMedicineDisplay: Identifiable {
+struct PrescriptionMedicineDisplay: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let details: String
