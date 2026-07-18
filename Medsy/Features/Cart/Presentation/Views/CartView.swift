@@ -16,17 +16,20 @@ struct CartView: View {
     let onSearch: () -> Void
     let onUploadPrescription: () -> Void
     let onContinue: () -> Void
+    let onItemCountChange: (Int) -> Void
 
     init(
         state: CartViewState = .loaded(CartSampleData.items),
         onSearch: @escaping () -> Void = {},
         onUploadPrescription: @escaping () -> Void = {},
-        onContinue: @escaping () -> Void = {}
+        onContinue: @escaping () -> Void = {},
+        onItemCountChange: @escaping (Int) -> Void = { _ in }
     ) {
         _state = State(initialValue: state)
         self.onSearch = onSearch
         self.onUploadPrescription = onUploadPrescription
         self.onContinue = onContinue
+        self.onItemCountChange = onItemCountChange
     }
 
     var body: some View {
@@ -52,6 +55,7 @@ struct CartView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .onAppear { onItemCountChange(currentItemCount) }
         .animation(.easeInOut(duration: 0.2), value: removedItem)
     }
 
@@ -189,10 +193,16 @@ struct CartView: View {
         guard case var .loaded(items) = state else { return }
         update(&items)
         state = items.isEmpty ? .empty : .loaded(items)
+        onItemCountChange(items.reduce(0) { $0 + $1.quantity })
     }
 
     private func estimatedTotal(_ items: [CartDisplayItem]) -> Double {
         items.reduce(0) { $0 + $1.lineTotal }
+    }
+
+    private var currentItemCount: Int {
+        guard case let .loaded(items) = state else { return 0 }
+        return items.reduce(0) { $0 + $1.quantity }
     }
 }
 

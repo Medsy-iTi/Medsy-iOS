@@ -11,6 +11,7 @@ import Observation
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
+    @State private var cartBadgeCount = CartSampleData.items.reduce(0) { $0 + $1.quantity }
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -29,7 +30,8 @@ struct MainTabBarView: View {
                 case .cart:
                     CartView(
                         onSearch: { coordinator.select(.home) },
-                        onUploadPrescription: { coordinator.select(.home) }
+                        onUploadPrescription: { coordinator.select(.home) },
+                        onItemCountChange: { cartBadgeCount = $0 }
                     )
                     .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
@@ -55,7 +57,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: CartSampleData.items.reduce(0) { $0 + $1.quantity })
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartBadgeCount)
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
