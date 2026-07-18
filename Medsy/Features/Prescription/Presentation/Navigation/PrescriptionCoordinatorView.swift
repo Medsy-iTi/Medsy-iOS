@@ -5,11 +5,17 @@
 //  Created by Ahmed Elkady on 18/07/2026.
 //
 
+import PhotosUI
 import SwiftUI
+import UIKit
 
 @MainActor
 struct PrescriptionCoordinatorView: View {
     @State private var viewModel: PrescriptionViewModel
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var showsPhotoPicker = false
+    @State private var showsCamera = false
+    @State private var showsCameraUnavailable = false
 
     private let onExit: () -> Void
     private let onOpenSearch: () -> Void
@@ -32,12 +38,13 @@ struct PrescriptionCoordinatorView: View {
             switch viewModel.state {
             case .upload:
                 PrescriptionUploadView(
-                    onCamera: { send(.selectCamera) },
-                    onGallery: { send(.selectGallery) },
+                    onCamera: openCamera,
+                    onGallery: { showsPhotoPicker = true },
                     onBack: { send(.back) }
                 )
             case .preview:
                 PrescriptionPreviewView(
+                    imageData: viewModel.selectedImageData,
                     onContinue: { send(.continueFromPreview) },
                     onChangeImage: { send(.changeImage) },
                     onDelete: { send(.deleteImage) },
@@ -45,12 +52,14 @@ struct PrescriptionCoordinatorView: View {
                 )
             case .reading:
                 PrescriptionReadingView(onCancel: { send(.cancelReading) })
-            case let .review(medicines):
+            case .review:
                 PrescriptionReviewView(
-                    medicines: medicines,
+                    medicines: viewModel.medicines,
                     onAddToCart: { send(.addToCart) },
                     onBack: { send(.back) }
                 )
+            case .medicineSearch:
+                EmptyView()
             case let .result(result):
                 PrescriptionResultView(
                     result: result,
@@ -59,6 +68,39 @@ struct PrescriptionCoordinatorView: View {
                     onBack: { send(.back) }
                 )
             }
+        }
+        .photosPicker(isPresented: $showsPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .onChange(of: selectedPhotoItem) { _, item in
+            loadPhoto(item)
+        }
+        .sheet(isPresented: $showsCamera) {
+            PrescriptionCameraPicker { data in
+                send(.imageSelected(data, .camera))
+            }
+            .ignoresSafeArea()
+        }
+        .alert("prescription.camera.unavailable.title".localized, isPresented: $showsCameraUnavailable) {
+            Button("common.ok".localized, role: .cancel) {}
+        } message: {
+            Text("prescription.camera.unavailable.message".localized)
+        }
+    }
+
+    private func openCamera() {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            showsCamera = true
+        } else {
+            showsCameraUnavailable = true
+        }
+    }
+
+    private func loadPhoto(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+
+        Task {
+            guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+            send(.imageSelected(data, .gallery))
+            selectedPhotoItem = nil
         }
     }
 

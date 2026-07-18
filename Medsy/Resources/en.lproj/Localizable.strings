@@ -324,3 +324,5 @@
 "prescription.none.title" = "No medicines found";
 "prescription.none.message" = "Try a clearer photo or add medicines manually using the search.";
 "prescription.none.manual" = "Add medicine manually";
+"prescription.camera.unavailable.title" = "Camera unavailable";
+"prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";

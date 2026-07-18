@@ -323,3 +323,5 @@
 "prescription.none.title" = "لم يُعثر على أدوية";
 "prescription.none.message" = "جرّب صورة أوضح أو أضف الأدوية يدوياً من البحث.";
 "prescription.none.manual" = "إضافة دواء يدوًا";
+"prescription.camera.unavailable.title" = "الكاميرا غير متاحة";
+"prescription.camera.unavailable.message" = "استخدم جهازًا مزودًا بكاميرا أو اختر روشتة من مكتبة الصور.";
