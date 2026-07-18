@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "pharmacist-engaged-in-digital-world-using-tablet-computer-to-meticulously-manage-medication-inventory-in-well-organized-pharmacy-atmosphere-is-professional-and-focused-free-photo.jpeg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -32,7 +32,12 @@ enum PharmacyColor {
     static var border: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#20324F") : Color(hex: "#DDE8F6") }
     static var primary: Color { Color(hex: "#0B63E5") }
     static var primaryDark: Color { Color(hex: "#103F8F") }
+    static var secondary: Color { Color(hex: "#7956D8") }
     static var primarySoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#102A52") : Color(hex: "#EAF3FF") }
+    static var secondarySoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#24204D") : Color(hex: "#F0ECFF") }
+    static var successSoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#123D36") : Color(hex: "#E8F8F0") }
+    static var warningSoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#4A3015") : Color(hex: "#FFF1E5") }
+    static var mutedSurface: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#132238") : Color(hex: "#F3F7FD") }
     static var textPrimary: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#F8FBFF") : Color(hex: "#071833") }
     static var textSecondary: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#9DAEC8") : Color(hex: "#5C6D86") }
     static var success: Color { Color(hex: "#12B76A") }
