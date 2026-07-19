@@ -46,7 +46,7 @@
 "pharmacy.orders.minutes_ago" = "منذ %d دقيقة";
 "pharmacy.orders.payment" = "الدفع";
 "pharmacy.orders.payment.cash" = "كاش";
-"pharmacy.orders.payment.visa" = "فيزا •••• ٣٤٥٦";
+"pharmacy.orders.payment.visa" = "فيزا •••• %@";
 "pharmacy.orders.currency" = "%@ جنيه";
 "pharmacy.orders.action.accept" = "قبول الطلب";
 "pharmacy.orders.action.prepare" = "تجهيز الطلب";

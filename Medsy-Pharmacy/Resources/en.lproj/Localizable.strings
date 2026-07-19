@@ -46,7 +46,7 @@
 "pharmacy.orders.minutes_ago" = "%d min ago";
 "pharmacy.orders.payment" = "Payment";
 "pharmacy.orders.payment.cash" = "Cash";
-"pharmacy.orders.payment.visa" = "Visa •••• 3456";
+"pharmacy.orders.payment.visa" = "Visa •••• %@";
 "pharmacy.orders.currency" = "%@ EGP";
 "pharmacy.orders.action.accept" = "Accept order";
 "pharmacy.orders.action.prepare" = "Prepare order";
