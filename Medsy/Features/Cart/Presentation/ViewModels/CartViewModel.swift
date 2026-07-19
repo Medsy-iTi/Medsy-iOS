@@ -52,6 +52,11 @@ final class CartViewModel: CartViewModelProtocol {
         !items.isEmpty || prescription != nil
     }
 
+    func quantity(forProductID productID: Int64?) -> Int {
+        guard let productID else { return 0 }
+        return items.first(where: { $0.productID == productID })?.quantity ?? 0
+    }
+
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect? {
         switch event {
