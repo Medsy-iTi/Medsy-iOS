@@ -35,7 +35,16 @@ final class PharmacyOrdersViewModel {
     }
 
     private func matchesSelectedFilter(_ order: PharmacyOrderListItem) -> Bool {
-        selectedFilter == .all || order.status.filter == selectedFilter
+        switch selectedFilter {
+        case .all:
+            true
+        case .new:
+            order.status == .new
+        case .preparing:
+            order.status == .preparing
+        case .delivered:
+            order.status == .delivered
+        }
     }
 
     private func matchesSearchText(_ order: PharmacyOrderListItem) -> Bool {
@@ -43,7 +52,7 @@ final class PharmacyOrdersViewModel {
         guard !query.isEmpty else { return true }
 
         return order.id.localizedCaseInsensitiveContains(query)
-            || order.customerNameKey.localized.localizedCaseInsensitiveContains(query)
+            || order.customerName.localizedCaseInsensitiveContains(query)
             || order.phoneNumber.localizedCaseInsensitiveContains(query)
     }
 }
@@ -52,31 +61,31 @@ private extension PharmacyOrdersViewModel {
     static let sampleOrders = [
         PharmacyOrderListItem(
             id: "1258",
-            customerNameKey: "pharmacy.orders.customer.ahmed",
+            customerName: "pharmacy.orders.customer.ahmed".localized,
             phoneNumber: "010 1234 5678",
-            addressKey: "pharmacy.orders.address.maadi",
-            paymentKey: "pharmacy.orders.payment.cash",
-            amount: "165",
+            address: "pharmacy.orders.address.maadi".localized,
+            paymentMethod: .cash,
+            amount: 165,
             minutesAgo: 5,
             status: .new
         ),
         PharmacyOrderListItem(
             id: "1257",
-            customerNameKey: "pharmacy.orders.customer.menna",
+            customerName: "pharmacy.orders.customer.menna".localized,
             phoneNumber: "010 9876 5432",
-            addressKey: "pharmacy.orders.address.nozha",
-            paymentKey: "pharmacy.orders.payment.visa",
-            amount: "230",
+            address: "pharmacy.orders.address.nozha".localized,
+            paymentMethod: .visa(lastFourDigits: "3456"),
+            amount: 230,
             minutesAgo: 15,
             status: .preparing
         ),
         PharmacyOrderListItem(
             id: "1256",
-            customerNameKey: "pharmacy.orders.customer.youssef",
+            customerName: "pharmacy.orders.customer.youssef".localized,
             phoneNumber: "011 2345 6789",
-            addressKey: "pharmacy.orders.address.dar_elsalam",
-            paymentKey: "pharmacy.orders.payment.cash",
-            amount: "185",
+            address: "pharmacy.orders.address.dar_elsalam".localized,
+            paymentMethod: .cash,
+            amount: 185,
             minutesAgo: 35,
             status: .delivered
         )
