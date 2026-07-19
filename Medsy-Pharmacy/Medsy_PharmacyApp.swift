@@ -18,6 +18,7 @@ struct Medsy_PharmacyApp: App {
         PharmacyAppAssembler.shared.assemble(modules: [
             PharmacyCoreAssembly(),
             PharmacyAuthenticationAssembly(),
+            PharmacyManagementAssembly(),
             OnboardingModuleAssembly()
         ])
         

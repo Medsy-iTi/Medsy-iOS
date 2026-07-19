@@ -103,6 +103,13 @@
 "pharmacy.management.map.subtitle" = "Tap the map to place the pin at the pharmacy entrance.";
 "pharmacy.management.map.marker" = "Pharmacy";
 "pharmacy.management.map.confirm" = "Confirm location";
+"pharmacy.management.validation.name" = "Enter the pharmacy name.";
+"pharmacy.management.validation.phone" = "Enter a valid Egyptian phone number.";
+"pharmacy.management.validation.location" = "Select the pharmacy's exact location.";
+"pharmacy.management.validation.license.required" = "Upload the pharmacy license.";
+"pharmacy.management.validation.license.size" = "The license PDF must not exceed 10 MB.";
+"pharmacy.management.validation.license.pdf" = "Select a valid PDF license file.";
+"pharmacy.management.validation.license.read" = "The selected license file couldn't be read.";
 /* Splash */
 "pharmacy.splash.subtitle" = "Pharmacy Partner Platform";
 "pharmacy.splash.tagline" = "Receive nearby requests, send offers, and fulfill orders — all in one place.";
