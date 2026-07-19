@@ -11,6 +11,7 @@ import SwiftUI
 struct Medsy_PharmacyApp: App {
     private let languageManager: LanguageManager
     private let authenticationFactory: PharmacyAuthenticationFactory
+    private let pharmacyManagementFactory: PharmacyManagementFactory
     private let onboardingFactory: PharmacyOnboardingFactory
     private let coordinator: RootCoordinator
 
@@ -25,6 +26,7 @@ struct Medsy_PharmacyApp: App {
         let container = PharmacyAppAssembler.shared.container
         languageManager = container.resolve(LanguageManager.self)
         authenticationFactory = container.resolve(PharmacyAuthenticationFactory.self)
+        pharmacyManagementFactory = container.resolve(PharmacyManagementFactory.self)
         
         onboardingFactory = PharmacyOnboardingFactory(
             getPagesUseCase: container.resolve(GetOnboardingPagesUseCaseProtocol.self)
@@ -37,6 +39,7 @@ struct Medsy_PharmacyApp: App {
             ContentView(
                 onboardingFactory: onboardingFactory,
                 authenticationFactory: authenticationFactory,
+                pharmacyManagementFactory: pharmacyManagementFactory,
                 coordinator: coordinator
             )
             .pharmacyLocalizedEnvironment()

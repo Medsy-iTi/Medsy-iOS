@@ -10,30 +10,47 @@ import SwiftUI
 @MainActor
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
+    @State private var pharmacyManagementCoordinator: PharmacyManagementCoordinator
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
-    init(coordinator: PharmacyMainTabCoordinator) {
+    init(
+        coordinator: PharmacyMainTabCoordinator,
+        pharmacyManagementFactory: PharmacyManagementFactory
+    ) {
         _coordinator = State(initialValue: coordinator)
+        _pharmacyManagementCoordinator = State(
+            initialValue: pharmacyManagementFactory.makeCoordinator()
+        )
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             tabContent
-                .padding(.bottom, 82)
+                .padding(.bottom, showsTabBar ? 82 : 0)
 
-            tabBar
+            if showsTabBar {
+                tabBar
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .animation(.easeInOut(duration: 0.2), value: showsTabBar)
     }
 
     @ViewBuilder
     private var tabContent: some View {
         if coordinator.selectedTab == .home {
             PharmacyHomeView()
+        } else if coordinator.selectedTab == .more {
+            PharmacyManagementCoordinatorView(coordinator: pharmacyManagementCoordinator)
         } else {
             PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
         }
+    }
+
+    private var showsTabBar: Bool {
+        coordinator.selectedTab != .more || pharmacyManagementCoordinator.path.isEmpty
     }
 
     private var tabBar: some View {

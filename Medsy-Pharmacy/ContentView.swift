@@ -10,16 +10,19 @@ import SwiftUI
 struct ContentView: View {
     let onboardingFactory: PharmacyOnboardingFactory
     let authenticationFactory: PharmacyAuthenticationFactory
+    let pharmacyManagementFactory: PharmacyManagementFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     @State private var coordinator: RootCoordinator
 
     init(
         onboardingFactory: PharmacyOnboardingFactory,
         authenticationFactory: PharmacyAuthenticationFactory,
+        pharmacyManagementFactory: PharmacyManagementFactory,
         coordinator: RootCoordinator
     ) {
         self.onboardingFactory = onboardingFactory
         self.authenticationFactory = authenticationFactory
+        self.pharmacyManagementFactory = pharmacyManagementFactory
         _coordinator = State(initialValue: coordinator)
     }
 
@@ -48,7 +51,10 @@ struct ContentView: View {
                 .transition(.opacity)
 
             case .main:
-                PharmacyMainTabView(coordinator: PharmacyMainTabCoordinator())
+                PharmacyMainTabView(
+                    coordinator: PharmacyMainTabCoordinator(),
+                    pharmacyManagementFactory: pharmacyManagementFactory
+                )
                 .transition(.opacity.combined(with: .move(edge: .trailing)))
             }
         }
@@ -80,6 +86,7 @@ private struct PharmacyAuthenticationRootView: View {
     ContentView(
         onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
         authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder),
+        pharmacyManagementFactory: PharmacyManagementFactory(actions: .placeholder),
         coordinator: RootCoordinator(container: PharmacyDIContainer())
     )
     .environment(LanguageManager.shared)
