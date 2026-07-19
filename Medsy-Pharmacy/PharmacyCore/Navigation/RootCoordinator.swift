@@ -22,15 +22,19 @@ final class RootCoordinator {
         self.hasCompletedOnboardingUseCase = container.resolve(HasCompletedOnboardingUseCaseProtocol.self)
         self.completeOnboardingUseCase = container.resolve(CompleteOnboardingUseCaseProtocol.self)
         self.tokenStore = container.resolve(TokenStoreProtocol.self)
-        self.isAuthenticated = self.tokenStore.accessToken() != nil
+        self.isAuthenticated = self.tokenStore.accessToken()?.isEmpty == false
     }
 
     func finishSplash() {
-        if isAuthenticated {
-            flow = .main
-        } else {
-            flow = hasCompletedOnboardingUseCase.execute() ? .authentication : .onboarding
+        guard hasCompletedOnboardingUseCase.execute() else {
+            try? tokenStore.clearTokens()
+            isAuthenticated = false
+            flow = .onboarding
+            return
         }
+
+        refreshAuthenticationState()
+        flow = isAuthenticated ? .main : .authentication
     }
 
     func finishOnboarding() {
@@ -39,12 +43,19 @@ final class RootCoordinator {
     }
 
     func finishAuthentication() {
-        isAuthenticated = true
-        flow = .main
+        refreshAuthenticationState()
+        if isAuthenticated {
+            flow = .main
+        }
     }
 
     func logout() {
+        try? tokenStore.clearTokens()
         isAuthenticated = false
         flow = .authentication
+    }
+
+    private func refreshAuthenticationState() {
+        isAuthenticated = tokenStore.accessToken()?.isEmpty == false
     }
 }

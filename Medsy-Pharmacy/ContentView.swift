@@ -36,8 +36,10 @@ struct ContentView: View {
                 .transition(.opacity)
 
             case .onboarding:
-                onboardingFactory.makeCoordinator(onComplete: coordinator.finishOnboarding)
-                    .makeView()
+                PharmacyOnboardingRootView(
+                    factory: onboardingFactory,
+                    onComplete: coordinator.finishOnboarding
+                )
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .move(edge: .trailing)),
                     removal: .opacity
@@ -60,6 +62,23 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.45), value: coordinator.flow)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+    }
+}
+
+private struct PharmacyOnboardingRootView: View {
+    @State private var coordinator: PharmacyOnboardingCoordinator
+
+    init(
+        factory: PharmacyOnboardingFactory,
+        onComplete: @escaping () -> Void
+    ) {
+        _coordinator = State(
+            initialValue: factory.makeCoordinator(onComplete: onComplete)
+        )
+    }
+
+    var body: some View {
+        coordinator.makeView()
     }
 }
 
