@@ -197,6 +197,10 @@
 "cart.remove_confirmation.action" = "إزالة";
 "cart.prescription.remove_confirmation.title" = "إزالة الروشتة؟";
 "cart.prescription.remove_confirmation.message" = "سيتم حذف هذه الروشتة من السلة.";
+"cart.clear.accessibility" = "إفراغ السلة";
+"cart.clear_confirmation.title" = "إفراغ السلة؟";
+"cart.clear_confirmation.message" = "سيتم حذف جميع الأدوية والروشتة المرفقة.";
+"cart.clear_confirmation.action" = "إفراغ السلة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";
