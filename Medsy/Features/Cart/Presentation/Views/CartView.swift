@@ -12,7 +12,7 @@ import UIKit
 struct CartView: View {
     @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
-    @State private var viewModel: CartViewModel
+    private let viewModel: CartViewModel
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showsPrescriptionSources = false
     @State private var showsPhotoPicker = false
@@ -21,18 +21,15 @@ struct CartView: View {
 
     let onSearch: () -> Void
     let onContinue: (CartRequestDraft) -> Void
-    let onItemCountChange: (Int) -> Void
 
     init(
-        state: CartViewState = .loaded(CartSampleData.items),
+        viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
-        onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
-        onItemCountChange: @escaping (Int) -> Void = { _ in }
+        onContinue: @escaping (CartRequestDraft) -> Void = { _ in }
     ) {
-        _viewModel = State(initialValue: CartViewModel(state: state))
+        self.viewModel = viewModel
         self.onSearch = onSearch
         self.onContinue = onContinue
-        self.onItemCountChange = onItemCountChange
     }
 
     var body: some View {
@@ -58,7 +55,6 @@ struct CartView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
-        .onAppear { onItemCountChange(viewModel.itemCount) }
         .confirmationDialog(
             "cart.prescription.source_title".localized,
             isPresented: $showsPrescriptionSources,
@@ -222,17 +218,14 @@ struct CartView: View {
 
     private func handleItemEvent(_ event: CartEvent) {
         viewModel.handle(event)
-        onItemCountChange(viewModel.itemCount)
     }
 
     private func undoRemoval() {
         viewModel.handle(.undoRemoval)
-        onItemCountChange(viewModel.itemCount)
     }
 
     private func retry() {
-        viewModel.handle(.syncSucceeded(CartSampleData.items))
-        onItemCountChange(viewModel.itemCount)
+        viewModel.handle(.syncSucceeded([]))
     }
 
     private func continueRequest() {

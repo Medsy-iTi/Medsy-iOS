@@ -11,7 +11,7 @@ import Observation
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
-    @State private var cartBadgeCount = CartSampleData.items.reduce(0) { $0 + $1.quantity }
+    @State private var cartViewModel = CartViewModel()
     @State private var requestedHomeRoute: HomeRoute?
     @ObservedObject private var appSettings = AppSettings.shared
 
@@ -33,8 +33,8 @@ struct MainTabBarView: View {
                         .onAppear { isTabBarHidden = false }
                 case .cart:
                     CartView(
-                        onSearch: openSearchFromCart,
-                        onItemCountChange: { cartBadgeCount = $0 }
+                        viewModel: cartViewModel,
+                        onSearch: openSearchFromCart
                     )
                     .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
@@ -50,6 +50,7 @@ struct MainTabBarView: View {
                     .onAppear { isTabBarHidden = false }
                 }
             }
+            .environment(cartViewModel)
             .padding(.bottom, isTabBarHidden ? 0 : 80)
             
             if !isTabBarHidden {
@@ -60,7 +61,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartBadgeCount)
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.itemCount)
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
