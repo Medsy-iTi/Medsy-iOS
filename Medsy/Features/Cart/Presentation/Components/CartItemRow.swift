@@ -17,15 +17,7 @@ struct CartItemRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: MedsySpacing.md) {
-            ZStack {
-                Circle()
-                    .fill(AppColor.lightGreen)
-
-                Image(systemName: "pills.fill")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(AppColor.green)
-            }
-            .frame(width: 56, height: 56)
+            productImage
 
             VStack(alignment: .leading, spacing: MedsySpacing.sm) {
                 HStack(alignment: .top, spacing: MedsySpacing.sm) {
@@ -88,6 +80,45 @@ struct CartItemRow: View {
         } message: {
             Text("cart.remove_confirmation.message".localized(item.name))
         }
+    }
+
+    @ViewBuilder
+    private var productImage: some View {
+        if let imageUrl = item.imageUrl, let url = URL(string: imageUrl) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case let .success(image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                case .empty:
+                    ProgressView()
+                        .tint(AppColor.green)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(AppColor.lightGreen)
+                case .failure:
+                    productImageFallback
+                @unknown default:
+                    productImageFallback
+                }
+            }
+            .frame(width: 56, height: 56)
+            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+        } else {
+            productImageFallback
+        }
+    }
+
+    private var productImageFallback: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                .fill(AppColor.lightGreen)
+
+            Image(systemName: "pills.fill")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(AppColor.green)
+        }
+        .frame(width: 56, height: 56)
     }
 
     private var quantityStepper: some View {
