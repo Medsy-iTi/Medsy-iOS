@@ -11,9 +11,12 @@ import SwiftUI
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+	private let onLoggedOut: () -> Void
 
-    init(coordinator: PharmacyMainTabCoordinator) {
+
+	init(coordinator: PharmacyMainTabCoordinator, onLoggedOut : @escaping () -> Void) {
         _coordinator = State(initialValue: coordinator)
+		self.onLoggedOut = onLoggedOut
     }
 
     var body: some View {
@@ -27,14 +30,20 @@ struct PharmacyMainTabView: View {
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 
-    @ViewBuilder
-    private var tabContent: some View {
-        if coordinator.selectedTab == .home {
-            PharmacyHomeView()
-        } else {
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
-        }
-    }
+	@ViewBuilder
+	private var tabContent: some View {
+		switch coordinator.selectedTab {
+			case .home:
+				PharmacyHomeView()
+			case .more:
+				ProfileTabRootView(
+					container: PharmacyAppAssembler.shared.container,
+					onLoggedOut: onLoggedOut
+				)
+			default:
+				PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+		}
+	}
 
     private var tabBar: some View {
         VStack(spacing: 0) {

@@ -75,3 +75,44 @@
 "pharmacy.onboarding.page2.subtitle" = "Validate items against the prescription, suggest alternatives, and send your best offer.";
 "pharmacy.onboarding.page3.title" = "Track every order to completion";
 "pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";
+
+/* profile */
+"profile_title" = "Profile";
+"settings_title" = "Settings";
+
+"verified_pharmacy" = "Verified Pharmacy";
+"unverified_pharmacy" = "Under Review";
+"rating_count_suffix" = "ratings";
+"pharmacy_details_title" = "Pharmacy Details";
+
+"phone_number_title" = "Phone Number";
+"change_action" = "Change";
+"change_phone_title" = "Change Phone Number";
+
+"license_title" = "License";
+"registered_location_title" = "Registered Location";
+"edit_data_request_title" = "Data Edit Request";
+"edit_data_request_subtitle" = "Request a data change from admin";
+
+"order_receiving_status_title" = "Order Receiving Status";
+"status_open" = "Open";
+"status_closed" = "Closed";
+
+"language_title" = "Language";
+"arabic" = "Arabic";
+"english" = "English";
+
+"theme_title" = "Appearance";
+"theme_light" = "Light";
+"theme_dark" = "Dark";
+
+"logout_title" = "Log Out";
+"logout_confirmation_title" = "Log Out";
+"logout_confirmation_message" = "Are you sure you want to log out?";
+"logout_confirm_action" = "Log Out";
+"cancel" = "Cancel";
+
+"loading" = "Loading...";
+"retry" = "Retry";
+"profile_generic_error" = "Couldn't load your data. Please try again";
+"coming_soon" = "Coming soon";

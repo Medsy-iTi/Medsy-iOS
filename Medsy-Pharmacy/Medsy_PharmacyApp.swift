@@ -18,7 +18,8 @@ struct Medsy_PharmacyApp: App {
         PharmacyAppAssembler.shared.assemble(modules: [
             PharmacyCoreAssembly(),
             PharmacyAuthenticationAssembly(),
-            OnboardingModuleAssembly()
+            OnboardingModuleAssembly(),
+			ProfileAssembly()
         ])
         
         let container = PharmacyAppAssembler.shared.container

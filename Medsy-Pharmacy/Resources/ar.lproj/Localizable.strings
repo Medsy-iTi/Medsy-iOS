@@ -87,3 +87,46 @@
 "pharmacy.auth.brand.name" = "ميدسي";
 "pharmacy.auth.brand.tagline" = "للصيدليات";
 "pharmacy.auth.or" = "أو";
+
+
+/*Profile*/
+"profile_title" = "الملف الشخصي";
+"settings_title" = "الإعدادات";
+
+"verified_pharmacy" = "صيدلية معتمدة";
+"unverified_pharmacy" = "قيد المراجعة";
+"rating_count_suffix" = "تقييم";
+"pharmacy_details_title" = "بيانات الصيدلية";
+
+"phone_number_title" = "رقم الهاتف";
+"change_action" = "تغيير";
+"change_phone_title" = "تغيير رقم الهاتف";
+
+"license_title" = "الترخيص";
+"registered_location_title" = "الموقع المسجل";
+"edit_data_request_title" = "طلب تعديل بيانات";
+"edit_data_request_subtitle" = "طلب تعديل البيانات من الإدارة";
+
+"order_receiving_status_title" = "حالة استقبال الطلبات";
+"status_open" = "مفتوح";
+"status_closed" = "مغلق";
+
+"language_title" = "اللغة";
+"arabic" = "العربية";
+"english" = "الإنجليزية";
+
+"theme_title" = "المظهر";
+"theme_light" = "فاتح";
+"theme_dark" = "داكن";
+
+"logout_title" = "تسجيل الخروج";
+"logout_confirmation_title" = "تسجيل الخروج";
+"logout_confirmation_message" = "هل أنت متأكد أنك تريد تسجيل الخروج؟";
+"logout_confirm_action" = "تسجيل الخروج";
+"cancel" = "إلغاء";
+
+"loading" = "جارِ التحميل...";
+"retry" = "إعادة المحاولة";
+"profile_generic_error" = "تعذر تحميل البيانات، حاول مرة أخرى";
+"coming_soon" = "قريباً";
+
