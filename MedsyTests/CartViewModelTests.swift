@@ -119,6 +119,22 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertNotNil(viewModel.handle(.continueRequest))
     }
 
+    func testClearingCartRemovesItemsAndPrescription() {
+        let attachment = CartPrescriptionAttachment(
+            imageData: Data([1, 2, 3]),
+            source: .camera
+        )
+        let viewModel = CartViewModel(
+            items: [item(id: "first", productID: 10, quantity: 2)],
+            prescription: attachment
+        )
+
+        XCTAssertEqual(viewModel.handle(.clear), .sync)
+        XCTAssertEqual(viewModel.state, .empty)
+        XCTAssertNil(viewModel.prescription)
+        XCTAssertFalse(viewModel.hasContent)
+    }
+
     func testRealProductMappingAddsProductDataAndSynchronizesQuantity() {
         let product = MedsyProduct(
             id: "42",

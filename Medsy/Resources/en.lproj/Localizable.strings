@@ -198,6 +198,10 @@
 "cart.remove_confirmation.action" = "Remove";
 "cart.prescription.remove_confirmation.title" = "Remove prescription?";
 "cart.prescription.remove_confirmation.message" = "This prescription will be removed from your cart.";
+"cart.clear.accessibility" = "Clear cart";
+"cart.clear_confirmation.title" = "Clear your cart?";
+"cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
+"cart.clear_confirmation.action" = "Clear cart";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";

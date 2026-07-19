@@ -18,6 +18,7 @@ struct CartView: View {
     @State private var showsPhotoPicker = false
     @State private var showsCamera = false
     @State private var showsCameraUnavailable = false
+    @State private var showsClearConfirmation = false
 
     let onSearch: () -> Void
     let onContinue: (CartRequestDraft) -> Void
@@ -35,7 +36,18 @@ struct CartView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                MedsyNavBar(title: "cart.title".localized)
+                MedsyNavBar(title: "cart.title".localized) {
+                    Button {
+                        showsClearConfirmation = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(AppColor.danger)
+                    }
+                    .accessibilityLabel("cart.clear.accessibility".localized)
+                    .disabled(!viewModel.hasContent)
+                    .opacity(viewModel.hasContent ? 1 : 0.35)
+                }
 
                 content
             }
@@ -88,6 +100,14 @@ struct CartView: View {
             Button("common.ok".localized, role: .cancel) {}
         } message: {
             Text("prescription.camera.unavailable.message".localized)
+        }
+        .alert("cart.clear_confirmation.title".localized, isPresented: $showsClearConfirmation) {
+            Button("common.cancel".localized, role: .cancel) {}
+            Button("cart.clear_confirmation.action".localized, role: .destructive) {
+                viewModel.handle(.clear)
+            }
+        } message: {
+            Text("cart.clear_confirmation.message".localized)
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.removedItem)
     }
