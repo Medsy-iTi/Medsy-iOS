@@ -35,6 +35,22 @@ struct PharmacyFormDraft: Equatable {
     var licenseFileName: String?
 }
 
+struct PharmacyLicenseDocument: Equatable {
+    let fileName: String
+    let data: Data
+    let mimeType: String
+}
+
+struct PharmacyFormSubmission: Equatable {
+    let pharmacyID: Int?
+    let name: String
+    let phoneNumber: String?
+    let address: String?
+    let latitude: Double
+    let longitude: Double
+    let license: PharmacyLicenseDocument?
+}
+
 enum PharmacyManagementViewState: Equatable {
     case loading
     case unassigned
@@ -42,7 +58,7 @@ enum PharmacyManagementViewState: Equatable {
     case failure
 }
 
-enum PharmacyFormMode: Equatable {
+enum PharmacyFormMode: Hashable {
     case create
     case edit
 }
