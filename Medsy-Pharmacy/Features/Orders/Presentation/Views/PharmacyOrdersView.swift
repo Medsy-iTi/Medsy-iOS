@@ -29,7 +29,7 @@ struct PharmacyOrdersView: View {
                     PharmacyOrdersEmptyView()
                 } else {
                     ForEach(viewModel.visibleOrders) { order in
-                        PharmacyOrderItem(
+                        PharmacyOrderCard(
                             order: order,
                             onAction: { viewModel.handleAction(for: order) }
                         )
