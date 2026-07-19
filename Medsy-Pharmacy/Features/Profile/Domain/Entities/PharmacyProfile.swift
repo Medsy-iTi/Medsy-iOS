@@ -10,23 +10,20 @@ import Foundation
 
 struct PharmacyProfile: Equatable, Identifiable {
     let id: String
-    let name: String
-    let isVerified: Bool
-    let rating: Double
-    let ratingCount: Int
-    let avatarURL: URL?
-
+    let firstName: String
+    let lastName: String
+    let email: String
     let phoneNumber: String
-    let licenseSummary: String
-    let registeredAddress: String
+    let pharmacyId: Int?
+    let isPharmacyAdmin: Bool
 
-    let isAcceptingOrders: Bool
-    let language: PharmacyAppLanguage
-    let isDarkModeEnabled: Bool
+    
+    let pharmacyName: String?
+    let pharmacyAddress: String?
+    let pharmacyPhoneNumber: String?
 
-   
-    var formattedRating: String {
-        String(format: "%.1f", rating)
+    var fullName: String {
+        "\(firstName) \(lastName)"
     }
 }
 
@@ -34,17 +31,15 @@ struct PharmacyProfile: Equatable, Identifiable {
 extension PharmacyProfile {
     static let preview = PharmacyProfile(
         id: "1",
-        name: "صيدلية النهضية",
-        isVerified: true,
-        rating: 4.8,
-        ratingCount: 128,
-        avatarURL: nil,
+        firstName: "أحمد",
+        lastName: "محمود",
+        email: "ahmed@pharmacy.com",
         phoneNumber: "010 1234 5678",
-        licenseSummary: "عرض رخصة مزاولة المهنة",
-        registeredAddress: "شارع النيل، المعادي، القاهرة",
-        isAcceptingOrders: true,
-        language: .arabic,
-        isDarkModeEnabled: false
+        pharmacyId: 1,
+        isPharmacyAdmin: true,
+        pharmacyName: "صيدلية النهضية",
+        pharmacyAddress: "شارع النيل، المعادي، القاهرة",
+        pharmacyPhoneNumber: "010 9876 5432"
     )
 }
 #endif

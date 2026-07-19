@@ -97,16 +97,9 @@ struct ProfileView: View {
 
             ProfileSectionContainer {
                 ProfileNavigationRow(
-                    icon: "doc.text.fill",
-                    title: "license_title".localized,
-                    subtitle: profile.licenseSummary,
-                    action: viewModel.didTapLicense
-                )
-                ProfileRowDivider()
-                ProfileNavigationRow(
                     icon: "mappin.circle.fill",
                     title: "registered_location_title".localized,
-                    subtitle: profile.registeredAddress,
+                    subtitle: profile.pharmacyAddress ?? "Not Available".localized,
                     action: viewModel.didTapRegisteredLocation
                 )
                 ProfileRowDivider()
@@ -115,19 +108,6 @@ struct ProfileView: View {
                     title: "edit_data_request_title".localized,
                     subtitle: "edit_data_request_subtitle".localized,
                     action: viewModel.didTapEditDataRequest
-                )
-            }
-
-            ProfileSectionContainer {
-                ProfileToggleRow(
-                    icon: "clock.badge.checkmark.fill",
-                    title: "order_receiving_status_title".localized,
-                    badgeText: viewModel.orderStatusBadgeText,
-                    isLoading: viewModel.isTogglingStatus,
-                    isOn: Binding(
-                        get: { viewModel.isAcceptingOrders },
-                        set: { viewModel.toggleOrderReceivingStatus(to: $0) }
-                    )
                 )
             }
 
@@ -159,4 +139,3 @@ struct ProfileView: View {
         }
     }
 }
-

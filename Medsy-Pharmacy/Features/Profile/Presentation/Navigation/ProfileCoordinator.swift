@@ -35,7 +35,6 @@ final class ProfileCoordinator: Coordinator {
     private func makeProfileViewModel() -> ProfileViewModel {
         let viewModel = ProfileViewModel(
             getProfileUseCase: GetPharmacyProfileUseCase(repository: container.resolve(ProfileRepositoryProtocol.self)),
-            toggleStatusUseCase: ToggleOrderReceivingStatusUseCase(repository: container.resolve(ProfileRepositoryProtocol.self)),
             logoutUseCase: LogoutUseCase(
                 repository: container.resolve(ProfileRepositoryProtocol.self),
                 tokenStore: container.resolve(TokenStoreProtocol.self)

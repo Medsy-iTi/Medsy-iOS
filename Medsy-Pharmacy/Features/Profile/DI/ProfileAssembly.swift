@@ -11,7 +11,10 @@ import Foundation
 struct ProfileAssembly: PharmacyModuleAssembly {
 	func register(in container: PharmacyDIContainer) {
 		container.register(ProfileRepositoryProtocol.self) { container in
-			ProfileRepository(networkService: container.resolve(NetworkServiceProtocol.self))
+			ProfileRepository(
+                networkService: container.resolve(NetworkServiceProtocol.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
 		}
 	}
 }

@@ -9,9 +9,7 @@
 protocol ProfileRepositoryProtocol {
     func fetchProfile() async throws -> PharmacyProfile
 
-    
-    @discardableResult
-    func updateOrderReceivingStatus(isOpen: Bool) async throws -> Bool
+
 
     func logout() async throws
 }

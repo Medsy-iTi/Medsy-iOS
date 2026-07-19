@@ -10,16 +10,18 @@ import Alamofire
 import Foundation
 
 enum ProfileEndpoint: ApiEndpoint {
-    case fetchProfile
-    case updateOrderReceivingStatus(isOpen: Bool)
-    case logout
+    case fetchPharmacistMe
+    case fetchPharmacyMine
+
+    case logout(refreshToken: String)
 
     var path: String {
         switch self {
-        case .fetchProfile:
-            return "pharmacy/profile"
-        case .updateOrderReceivingStatus:
-            return "pharmacy/profile/order-receiving-status"
+        case .fetchPharmacistMe:
+            return "pharmacists/me"
+        case .fetchPharmacyMine:
+            return "pharmacies/mine"
+
         case .logout:
             return "auth/logout"
         }
@@ -27,10 +29,9 @@ enum ProfileEndpoint: ApiEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .fetchProfile:
+        case .fetchPharmacistMe, .fetchPharmacyMine:
             return .get
-        case .updateOrderReceivingStatus:
-            return .patch
+
         case .logout:
             return .post
         }
@@ -38,9 +39,10 @@ enum ProfileEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .updateOrderReceivingStatus(let isOpen):
-            return try? JSONEncoder().encode(["is_accepting_orders": isOpen])
-        case .fetchProfile, .logout:
+
+        case .logout(let refreshToken):
+            return try? JSONEncoder().encode(["refreshToken": refreshToken])
+        case .fetchPharmacistMe, .fetchPharmacyMine:
             return nil
         }
     }

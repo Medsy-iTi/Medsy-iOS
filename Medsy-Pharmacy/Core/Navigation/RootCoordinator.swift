@@ -22,7 +22,14 @@ final class RootCoordinator {
         self.hasCompletedOnboardingUseCase = container.resolve(HasCompletedOnboardingUseCaseProtocol.self)
         self.completeOnboardingUseCase = container.resolve(CompleteOnboardingUseCaseProtocol.self)
         self.tokenStore = container.resolve(TokenStoreProtocol.self)
-        self.isAuthenticated = self.tokenStore.accessToken() != nil
+
+        
+        let isFreshInstall = !container.resolve(HasCompletedOnboardingUseCaseProtocol.self).execute()
+        if isFreshInstall {
+            try? container.resolve(TokenStoreProtocol.self).clearTokens()
+        }
+
+        self.isAuthenticated = isFreshInstall ? false : (self.tokenStore.accessToken() != nil)
     }
 
     func finishSplash() {
@@ -45,6 +52,7 @@ final class RootCoordinator {
 
     func logout() {
         isAuthenticated = false
+        try? tokenStore.clearTokens()
         flow = .authentication
     }
 }

@@ -10,27 +10,37 @@ import Foundation
 
 final class ProfileRepository: ProfileRepositoryProtocol {
 	private let networkService: NetworkServiceProtocol
+    private let tokenStore: TokenStoreProtocol
 
-	init(networkService: NetworkServiceProtocol) {
+	init(networkService: NetworkServiceProtocol, tokenStore: TokenStoreProtocol) {
 		self.networkService = networkService
+        self.tokenStore = tokenStore
 	}
 
 	func fetchProfile() async throws -> PharmacyProfile {
-		let dto: PharmacyProfileDTO = try await networkService.request(endpoint: ProfileEndpoint.fetchProfile)
-		return PharmacyProfileMapper.toDomain(dto)
+		let pharmacistEnvelope: PharmacistMeResponseEnvelope = try await networkService.request(endpoint: ProfileEndpoint.fetchPharmacistMe)
+        
+        var pharmacyData: PharmacyMineResponseDTO?
+        do {
+            let pharmacyEnvelope: PharmacyMineEnvelope = try await networkService.request(endpoint: ProfileEndpoint.fetchPharmacyMine)
+            pharmacyData = pharmacyEnvelope.data
+        } catch {
+           
+            if case NetworkError.notFound = error {
+                pharmacyData = nil
+            } else {
+                throw error
+            }
+        }
+        
+		return PharmacyProfileMapper.toDomain(pharmacist: pharmacistEnvelope.data, pharmacy: pharmacyData)
 	}
 
-	@discardableResult
-	func updateOrderReceivingStatus(isOpen: Bool) async throws -> Bool {
-		let response: UpdateOrderReceivingStatusResponseDTO = try await networkService.request(
-			endpoint: ProfileEndpoint.updateOrderReceivingStatus(isOpen: isOpen)
-		)
-		return response.isAcceptingOrders
-	}
+
 
 	func logout() async throws {
-			
-		let _: EmptyResponse = try await networkService.request(endpoint: ProfileEndpoint.logout)
+        guard let refreshToken = tokenStore.refreshToken() else { return }
+		let _: EmptyResponse = try await networkService.request(endpoint: ProfileEndpoint.logout(refreshToken: refreshToken))
 	}
 }
 

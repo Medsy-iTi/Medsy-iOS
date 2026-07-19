@@ -8,36 +8,51 @@
 
 import Foundation
 
-struct PharmacyProfileDTO: Decodable {
-    let id: String
-    let name: String
-    let isVerified: Bool
-    let rating: Double
-    let ratingCount: Int
-    let avatarURL: String?
 
+struct PharmacistResponseDTO: Decodable {
+    let id: Int
+    let email: String
+    let firstName: String
+    let lastName: String
     let phoneNumber: String
-    let licenseSummary: String
-    let registeredAddress: String
-
-    let isAcceptingOrders: Bool
-    let language: String
-    let isDarkModeEnabled: Bool
+    let pharmacyId: Int?
+    let pharmacyAdmin: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
-        case name
-        case isVerified = "is_verified"
-        case rating
-        case ratingCount = "rating_count"
-        case avatarURL = "avatar_url"
-        case phoneNumber = "phone_number"
-        case licenseSummary = "license_summary"
-        case registeredAddress = "registered_address"
-        case isAcceptingOrders = "is_accepting_orders"
-        case language
-        case isDarkModeEnabled = "is_dark_mode_enabled"
+        case email
+        case firstName
+        case lastName
+        case phoneNumber
+        case pharmacyId
+        case pharmacyAdmin
     }
+}
+
+
+struct PharmacistMeResponseEnvelope: Decodable {
+    let success: Bool
+    let message: String
+    let data: PharmacistResponseDTO
+}
+
+
+struct PharmacyMineResponseDTO: Decodable {
+    let id: Int
+    let name: String
+    let address: String?
+    let phoneNumber: String?
+    let isAdmin: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, address, phoneNumber, isAdmin
+    }
+}
+
+struct PharmacyMineEnvelope: Decodable {
+    let success: Bool
+    let message: String
+    let data: PharmacyMineResponseDTO
 }
 
 struct UpdateOrderReceivingStatusResponseDTO: Decodable {

@@ -15,25 +15,27 @@ struct PharmacyInfoCardView: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: PharmacySpacing.sm) {
-                PharmacyAvatarView(url: profile.avatarURL, systemFallback: "cross.case.fill")
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .foregroundStyle(PharmacyColor.primary)
                     .frame(width: 52, height: 52)
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
-                        Text(profile.name)
+                        Text(profile.fullName)
                             .font(PharmacyColor.sans(16, .bold))
                             .foregroundStyle(PharmacyColor.textPrimary)
                             .lineLimit(1)
-                        if profile.isVerified {
-                            PharmacyBadgeView(systemImage: "checkmark.seal.fill", tint: PharmacyColor.primary)
+                        if profile.isPharmacyAdmin {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 12))
+                                .foregroundStyle(PharmacyColor.primary)
                         }
                     }
 
-                    Text(profile.isVerified ? "verified_pharmacy".localized : "unverified_pharmacy".localized)
+                    Text(profile.pharmacyName ?? "No Pharmacy Assigned".localized)
                         .font(PharmacyColor.sans(13))
                         .foregroundStyle(PharmacyColor.textSecondary)
-
-                    RatingStarsView(rating: profile.rating, ratingCount: profile.ratingCount)
                 }
 
                 Spacer(minLength: PharmacySpacing.xs)
