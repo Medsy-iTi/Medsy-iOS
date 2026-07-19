@@ -8,7 +8,11 @@
 struct PharmacyOrdersAssembly: PharmacyModuleAssembly {
     func register(in container: PharmacyDIContainer) {
         container.register(PharmacyOrdersFactory.self) { _ in
-            PharmacyOrdersFactory()
+            PharmacyOrdersFactory(
+                makeViewModel: {
+                    PharmacyOrdersViewModel()
+                }
+            )
         }
     }
 }

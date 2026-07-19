@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct PharmacyOrdersFactory {
+    private let makeViewModel: @MainActor () -> PharmacyOrdersViewModel
+
+    init(makeViewModel: @escaping @MainActor () -> PharmacyOrdersViewModel) {
+        self.makeViewModel = makeViewModel
+    }
+
     @MainActor
     func makeView() -> PharmacyOrdersView {
-        PharmacyOrdersView()
+        PharmacyOrdersView(viewModel: makeViewModel())
     }
 }

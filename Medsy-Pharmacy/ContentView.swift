@@ -91,7 +91,9 @@ private struct PharmacyAuthenticationRootView: View {
         onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
         authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder),
         homeFactory: PharmacyHomeFactory(),
-        ordersFactory: PharmacyOrdersFactory(),
+        ordersFactory: PharmacyOrdersFactory(
+            makeViewModel: { PharmacyOrdersViewModel() }
+        ),
         coordinator: RootCoordinator(container: PharmacyDIContainer())
     )
     .environment(LanguageManager.shared)
