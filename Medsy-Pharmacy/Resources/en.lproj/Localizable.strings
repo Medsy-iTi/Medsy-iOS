@@ -61,6 +61,24 @@
 "pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
+"pharmacy.management.title" = "My pharmacy";
+"pharmacy.management.admin.subtitle" = "Review and manage your registered pharmacy.";
+"pharmacy.management.member.subtitle" = "Review the pharmacy where you currently work.";
+"pharmacy.management.loading" = "Loading your pharmacy...";
+"pharmacy.management.empty.title" = "Add your pharmacy";
+"pharmacy.management.empty.message" = "Register your pharmacy to manage its information and start receiving requests.";
+"pharmacy.management.error.title" = "Couldn't load your pharmacy";
+"pharmacy.management.error.message" = "Check your connection and try again.";
+"pharmacy.management.retry" = "Try again";
+"pharmacy.management.add" = "Add pharmacy";
+"pharmacy.management.edit" = "Edit pharmacy";
+"pharmacy.management.delete" = "Delete pharmacy";
+"pharmacy.management.phone" = "Phone number";
+"pharmacy.management.address" = "Registered address";
+"pharmacy.management.location" = "Map location";
+"pharmacy.management.role.admin" = "Admin";
+"pharmacy.management.role.member" = "Pharmacist";
+"pharmacy.management.team.title" = "Pharmacy team";
 /* Splash */
 "pharmacy.splash.subtitle" = "Pharmacy Partner Platform";
 "pharmacy.splash.tagline" = "Receive nearby requests, send offers, and fulfill orders — all in one place.";

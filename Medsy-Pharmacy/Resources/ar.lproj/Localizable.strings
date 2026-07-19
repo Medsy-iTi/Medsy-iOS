@@ -61,6 +61,24 @@
 "pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
+"pharmacy.management.title" = "صيدليتي";
+"pharmacy.management.admin.subtitle" = "راجع بيانات صيدليتك المسجلة وقم بإدارتها.";
+"pharmacy.management.member.subtitle" = "راجع بيانات الصيدلية التي تعمل بها حاليًا.";
+"pharmacy.management.loading" = "جارٍ تحميل بيانات الصيدلية...";
+"pharmacy.management.empty.title" = "أضف صيدليتك";
+"pharmacy.management.empty.message" = "سجّل صيدليتك لإدارة بياناتها والبدء في استقبال الطلبات.";
+"pharmacy.management.error.title" = "تعذر تحميل بيانات الصيدلية";
+"pharmacy.management.error.message" = "تحقق من اتصالك وحاول مرة أخرى.";
+"pharmacy.management.retry" = "إعادة المحاولة";
+"pharmacy.management.add" = "إضافة صيدلية";
+"pharmacy.management.edit" = "تعديل الصيدلية";
+"pharmacy.management.delete" = "حذف الصيدلية";
+"pharmacy.management.phone" = "رقم الهاتف";
+"pharmacy.management.address" = "العنوان المسجل";
+"pharmacy.management.location" = "الموقع على الخريطة";
+"pharmacy.management.role.admin" = "المدير";
+"pharmacy.management.role.member" = "صيدلي";
+"pharmacy.management.team.title" = "فريق الصيدلية";
 /* Splash */
 "pharmacy.splash.subtitle" = "منصة شريكك الصيدلية";
 "pharmacy.splash.tagline" = "استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات — كل ذلك في مكان واحد.";
