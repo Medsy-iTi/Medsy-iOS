@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PharmacyManagementDisplayModel: Equatable {
+struct PharmacyManagementDisplayModel: Identifiable, Equatable {
     let id: Int
     let name: String
     let address: String
@@ -40,4 +40,9 @@ enum PharmacyManagementViewState: Equatable {
     case unassigned
     case assigned(PharmacyManagementDisplayModel)
     case failure
+}
+
+enum PharmacyFormMode: Equatable {
+    case create
+    case edit
 }

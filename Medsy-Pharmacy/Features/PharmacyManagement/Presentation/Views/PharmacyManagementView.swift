@@ -13,6 +13,7 @@ struct PharmacyManagementView: View {
     let onEditPharmacy: (PharmacyManagementDisplayModel) -> Void
     let onDeletePharmacy: (PharmacyManagementDisplayModel) -> Void
     let onRetry: () -> Void
+    @State private var pharmacyPendingDeletion: PharmacyManagementDisplayModel?
 
     var body: some View {
         Group {
@@ -40,6 +41,21 @@ struct PharmacyManagementView: View {
             }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
+        .alert(
+            "pharmacy.management.delete.confirm.title".localized,
+            isPresented: deletionAlertBinding,
+            presenting: pharmacyPendingDeletion
+        ) { pharmacy in
+            Button("pharmacy.management.delete.confirm.action".localized, role: .destructive) {
+                onDeletePharmacy(pharmacy)
+                pharmacyPendingDeletion = nil
+            }
+            Button("pharmacy.management.delete.confirm.cancel".localized, role: .cancel) {
+                pharmacyPendingDeletion = nil
+            }
+        } message: { _ in
+            Text("pharmacy.management.delete.confirm.message".localized)
+        }
     }
 
     private var loadingView: some View {
@@ -76,7 +92,7 @@ struct PharmacyManagementView: View {
                     )
 
                     Button {
-                        onDeletePharmacy(pharmacy)
+                        pharmacyPendingDeletion = pharmacy
                     } label: {
                         Label("pharmacy.management.delete".localized, systemImage: "trash")
                             .font(PharmacyColor.sans(15, .bold))
@@ -92,6 +108,17 @@ struct PharmacyManagementView: View {
             .padding(.top, PharmacySpacing.md)
             .padding(.bottom, PharmacySpacing.xl)
         }
+    }
+
+    private var deletionAlertBinding: Binding<Bool> {
+        Binding(
+            get: { pharmacyPendingDeletion != nil },
+            set: { isPresented in
+                if !isPresented {
+                    pharmacyPendingDeletion = nil
+                }
+            }
+        )
     }
 }
 
