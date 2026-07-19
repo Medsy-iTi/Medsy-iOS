@@ -12,6 +12,7 @@ struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
     @State private var cartBadgeCount = CartSampleData.items.reduce(0) { $0 + $1.quantity }
+    @State private var requestedHomeRoute: HomeRoute?
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -23,14 +24,16 @@ struct MainTabBarView: View {
             Group {
                 switch coordinator.selectedTab {
                 case .home:
-                    HomeCoordinatorView { isTabBarHidden = $0 }
+                    HomeCoordinatorView(
+                        requestedRoute: $requestedHomeRoute,
+                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                    )
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
                         .onAppear { isTabBarHidden = false }
                 case .cart:
                     CartView(
-                        onSearch: { coordinator.select(.home) },
-                        onUploadPrescription: { coordinator.select(.home) },
+                        onSearch: openSearchFromCart,
                         onItemCountChange: { cartBadgeCount = $0 }
                     )
                     .onAppear { isTabBarHidden = false }
@@ -73,6 +76,11 @@ struct MainTabBarView: View {
         .ignoresSafeArea(edges: .bottom)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+    }
+
+    private func openSearchFromCart() {
+        requestedHomeRoute = .search("")
+        coordinator.select(.home)
     }
     
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {

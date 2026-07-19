@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CartTotalSummaryView: View {
     let estimatedTotal: Double
-    let itemCount: Int
+    let canContinue: Bool
     let onContinue: () -> Void
 
     var body: some View {
@@ -49,7 +49,7 @@ struct CartTotalSummaryView: View {
             PrimaryButton(
                 title: "cart.continue".localized,
                 systemImage: "arrow.forward",
-                isDisabled: itemCount == 0,
+                isDisabled: !canContinue,
                 action: onContinue
             )
         }
