@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ProfileView: View {
     @Bindable var viewModel: ProfileViewModel
+    @ObservedObject private var appSettings = PharmacyAppSettings.shared
+    @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
         ScrollView {
@@ -24,13 +26,25 @@ struct ProfileView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.didTapSettings()
-                } label: {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(PharmacyColor.textPrimary)
+                HStack(spacing: PharmacySpacing.md) {
+                    if let profile = viewModel.profile, profile.pharmacyId != nil {
+                        Button {
+                            viewModel.didTapPharmacyCard()
+                        } label: {
+                            Image(systemName: "building.2")
+                                .foregroundStyle(PharmacyColor.textPrimary)
+                        }
+                        .accessibilityLabel("pharmacy_profile_title".localized)
+                    }
+                    
+                    Button {
+                        viewModel.didTapSettings()
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundStyle(PharmacyColor.textPrimary)
+                    }
+                    .accessibilityLabel("settings_title".localized)
                 }
-                .accessibilityLabel("settings_title".localized)
             }
         }
         .task { await viewModel.onAppear() }
@@ -81,51 +95,71 @@ struct ProfileView: View {
     @ViewBuilder
     private func loadedContent(profile: PharmacyProfile) -> some View {
         VStack(spacing: PharmacySpacing.md) {
-            PharmacyInfoCardView(profile: profile) {
-                viewModel.didTapPharmacyCard()
-            }
+            PharmacyInfoCardView(profile: profile)
+
+
 
             ProfileSectionContainer {
-                ProfileValueRow(
-                    icon: "phone.fill",
-                    title: "phone_number_title".localized,
-                    value: profile.phoneNumber,
-                    actionTitle: "change_action".localized,
-                    action: viewModel.didTapChangePhoneNumber
-                )
-            }
+                Menu {
+                    Button {
+                        viewModel.setLanguage(.english)
+                    } label: {
+                        HStack {
+                            Text("english".localized)
+                            if languageManager.currentLanguage == .english {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    Button {
+                        viewModel.setLanguage(.arabic)
+                    } label: {
+                        HStack {
+                            Text("arabic".localized)
+                            if languageManager.currentLanguage == .arabic {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                } label: {
+                    ProfileMenuRow(
+                        icon: "globe",
+                        title: "language_title".localized,
+                        subtitle: languageManager.currentLanguage == .arabic ? "arabic".localized : "english".localized
+                    )
+                }
 
-            ProfileSectionContainer {
-                ProfileNavigationRow(
-                    icon: "mappin.circle.fill",
-                    title: "registered_location_title".localized,
-                    subtitle: profile.pharmacyAddress ?? "Not Available".localized,
-                    action: viewModel.didTapRegisteredLocation
-                )
                 ProfileRowDivider()
-                ProfileNavigationRow(
-                    icon: "square.and.pencil",
-                    title: "edit_data_request_title".localized,
-                    subtitle: "edit_data_request_subtitle".localized,
-                    action: viewModel.didTapEditDataRequest
-                )
-            }
 
-            ProfileSectionContainer {
-                ProfileNavigationRow(
-                    icon: "globe",
-                    title: "language_title".localized,
-                    subtitle: viewModel.languageDisplayName,
-                    action: viewModel.didTapLanguage
-                )
-                ProfileRowDivider()
-                ProfileNavigationRow(
-                    icon: "moon.stars.fill",
-                    iconTint: PharmacyColor.secondary,
-                    title: "theme_title".localized,
-                    subtitle: viewModel.themeDisplayName,
-                    action: viewModel.didTapTheme
-                )
+                Menu {
+                    Button {
+                        viewModel.setTheme(isDark: false)
+                    } label: {
+                        HStack {
+                            Text("theme_light".localized)
+                            if !appSettings.isDarkMode {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    Button {
+                        viewModel.setTheme(isDark: true)
+                    } label: {
+                        HStack {
+                            Text("theme_dark".localized)
+                            if appSettings.isDarkMode {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                } label: {
+                    ProfileMenuRow(
+                        icon: "moon.stars.fill",
+                        iconTint: PharmacyColor.secondary,
+                        title: "theme_title".localized,
+                        subtitle: appSettings.isDarkMode ? "theme_dark".localized : "theme_light".localized
+                    )
+                }
             }
 
             ProfileSectionContainer {

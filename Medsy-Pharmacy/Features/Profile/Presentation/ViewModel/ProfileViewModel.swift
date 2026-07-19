@@ -45,12 +45,28 @@ final class ProfileViewModel {
         self.appSettings = appSettings
     }
 
+    var currentLanguage: PharmacyAppLanguage {
+        languageManager.currentLanguage
+    }
+
     var languageDisplayName: String {
-        languageManager.currentLanguage == .arabic ? "arabic".localized : "english".localized
+        currentLanguage == .arabic ? "arabic".localized : "english".localized
+    }
+
+    var isDarkMode: Bool {
+        appSettings.isDarkMode
     }
 
     var themeDisplayName: String {
-        appSettings.isDarkMode ? "theme_dark".localized : "theme_light".localized
+        isDarkMode ? "theme_dark".localized : "theme_light".localized
+    }
+
+    func setLanguage(_ language: PharmacyAppLanguage) {
+        languageManager.set(language)
+    }
+
+    func setTheme(isDark: Bool) {
+        appSettings.isDarkMode = isDark
     }
 
     func onAppear() async {
@@ -81,25 +97,9 @@ final class ProfileViewModel {
         onNavigate?(.settings)
     }
 
-    func didTapChangePhoneNumber() {
-        onNavigate?(.changePhoneNumber)
-    }
 
-    func didTapRegisteredLocation() {
-        onNavigate?(.registeredLocation)
-    }
 
-    func didTapEditDataRequest() {
-        onNavigate?(.editDataRequest)
-    }
 
-    func didTapLanguage() {
-        onNavigate?(.languageSelection)
-    }
-
-    func didTapTheme() {
-        onNavigate?(.themeSelection)
-    }
 
     func didTapPharmacyCard() {
         onNavigate?(.pharmacyDetails)

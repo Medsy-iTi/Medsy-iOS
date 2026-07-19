@@ -71,18 +71,8 @@ final class ProfileCoordinator: Coordinator {
             PlaceholderDestinationView(titleKey: "settings_title")
         case .pharmacyDetails:
             PlaceholderDestinationView(titleKey: "pharmacy_details_title")
-        case .changePhoneNumber:
-            PlaceholderDestinationView(titleKey: "change_phone_title")
-        case .license:
-            PlaceholderDestinationView(titleKey: "license_title")
-        case .registeredLocation:
-            PlaceholderDestinationView(titleKey: "registered_location_title")
-        case .editDataRequest:
-            PlaceholderDestinationView(titleKey: "edit_data_request_title")
-        case .languageSelection:
-            LanguageSelectionView(languageManager: container.resolve(LanguageManager.self))
-        case .themeSelection:
-            ThemeSelectionView(appSettings: container.resolve(PharmacyAppSettings.self))
+
+
         }
     }
 }

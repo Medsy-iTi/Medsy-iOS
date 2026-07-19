@@ -13,6 +13,7 @@ struct Medsy_PharmacyApp: App {
     private let authenticationFactory: PharmacyAuthenticationFactory
     private let onboardingFactory: PharmacyOnboardingFactory
     private let coordinator: RootCoordinator
+    @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
     init() {
         PharmacyAppAssembler.shared.assemble(modules: [
@@ -41,7 +42,7 @@ struct Medsy_PharmacyApp: App {
             )
             .pharmacyLocalizedEnvironment()
             .environment(languageManager)
-            .id(languageManager.currentLanguage)
+            .id("\(languageManager.currentLanguage.rawValue)-\(PharmacyAppSettings.shared.isDarkMode)")
         }
     }
 }

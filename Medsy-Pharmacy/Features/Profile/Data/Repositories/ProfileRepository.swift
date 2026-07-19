@@ -25,10 +25,11 @@ final class ProfileRepository: ProfileRepositoryProtocol {
             let pharmacyEnvelope: PharmacyMineEnvelope = try await networkService.request(endpoint: ProfileEndpoint.fetchPharmacyMine)
             pharmacyData = pharmacyEnvelope.data
         } catch {
-           
-            if case NetworkError.notFound = error {
+            // Ignore 404 or validation errors if the pharmacist is not assigned to a pharmacy yet
+            switch error {
+            case NetworkError.notFound, NetworkError.validationError:
                 pharmacyData = nil
-            } else {
+            default:
                 throw error
             }
         }

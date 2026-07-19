@@ -49,7 +49,7 @@ struct ContentView: View {
 
             case .main:
 					PharmacyMainTabView(
-						coordinator: PharmacyMainTabCoordinator(),
+						coordinator: coordinator.mainTabCoordinator,
 						onLoggedOut: coordinator.logout
 					)
                 .transition(.opacity.combined(with: .move(edge: .trailing)))

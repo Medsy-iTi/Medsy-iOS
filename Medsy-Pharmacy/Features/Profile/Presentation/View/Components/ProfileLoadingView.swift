@@ -11,14 +11,13 @@ import SwiftUI
 struct ProfileLoadingView: View {
     var body: some View {
         VStack(spacing: PharmacySpacing.md) {
-            skeletonBlock(height: 88)
-            skeletonBlock(height: 140)
-            skeletonBlock(height: 96)
-            skeletonBlock(height: 140)
+            skeletonBlock(height: 70)
+            skeletonBlock(height: 80)
+            skeletonBlock(height: 80)
+            skeletonBlock(height: 70)
         }
         .padding(PharmacySpacing.md)
         .redacted(reason: .placeholder)
-        .shimmering()
         .accessibilityLabel("loading".localized)
     }
 

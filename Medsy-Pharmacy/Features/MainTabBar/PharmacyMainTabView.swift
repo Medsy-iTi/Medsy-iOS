@@ -9,13 +9,13 @@ import SwiftUI
 
 @MainActor
 struct PharmacyMainTabView: View {
-    @State private var coordinator: PharmacyMainTabCoordinator
+    var coordinator: PharmacyMainTabCoordinator
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 	private let onLoggedOut: () -> Void
 
 
 	init(coordinator: PharmacyMainTabCoordinator, onLoggedOut : @escaping () -> Void) {
-        _coordinator = State(initialValue: coordinator)
+        self.coordinator = coordinator
 		self.onLoggedOut = onLoggedOut
     }
 

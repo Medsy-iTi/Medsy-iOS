@@ -11,6 +11,7 @@ import Observation
 @MainActor
 final class RootCoordinator {
     private(set) var flow: RootFlow = .splash
+    let mainTabCoordinator = PharmacyMainTabCoordinator()
     
     private let hasCompletedOnboardingUseCase: HasCompletedOnboardingUseCaseProtocol
     private let completeOnboardingUseCase: CompleteOnboardingUseCaseProtocol

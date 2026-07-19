@@ -10,11 +10,8 @@ import SwiftUI
 
 struct PharmacyInfoCardView: View {
     let profile: PharmacyProfile
-    let action: () -> Void
-
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: PharmacySpacing.sm) {
+        HStack(spacing: PharmacySpacing.sm) {
                 Image(systemName: "person.circle.fill")
                     .resizable()
                     .foregroundStyle(PharmacyColor.primary)
@@ -37,12 +34,8 @@ struct PharmacyInfoCardView: View {
                         .font(PharmacyColor.sans(13))
                         .foregroundStyle(PharmacyColor.textSecondary)
                 }
-
-                Spacer(minLength: PharmacySpacing.xs)
-
-                Image(systemName: "chevron.forward")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textSecondary.opacity(0.6))
+                
+                Spacer(minLength: 0)
             }
             .padding(PharmacySpacing.md)
             .background(PharmacyColor.card)
@@ -51,10 +44,6 @@ struct PharmacyInfoCardView: View {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                     .stroke(PharmacyColor.border, lineWidth: 1)
             )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
+            .accessibilityElement(children: .combine)
     }
 }
