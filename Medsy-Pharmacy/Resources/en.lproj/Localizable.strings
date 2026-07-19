@@ -150,7 +150,7 @@
 "pharmacy_card.edit" = "Edit Pharmacy";
 "pharmacy_card.leave" = "Leave Pharmacy";
 "pharmacy_card.leave_confirm_title" = "Leave Pharmacy";
-"pharmacy_card.leave_confirm_message" = "Are you sure you want to leave this pharmacy? You will lose access to all pharmacy-related features.";
+"pharmacy_card.leave_confirm_message" = "Are you sure you want to leave this pharmacy? You will be signed out and lose access to all pharmacy-related features.";
 "pharmacy_card.leave_confirm_action" = "Leave";
 "pharmacy_card.not_assigned" = "Not Assigned to a Pharmacy";
 "pharmacy_card.not_assigned_subtitle" = "Contact your pharmacy administrator to be added.";
@@ -163,3 +163,24 @@
 "pharmacy_edit.address.placeholder" = "Enter pharmacy address";
 "pharmacy_edit.phone" = "Phone Number";
 "pharmacy_edit.phone.placeholder" = "Enter pharmacy phone number";
+
+// Pharmacy Team (admin)
+"pharmacy_team.title" = "Pharmacy Team";
+"pharmacy_team.empty" = "No other pharmacists to manage.";
+"pharmacy_team.edit" = "Edit pharmacist";
+"pharmacy_team.remove" = "Remove pharmacist";
+"pharmacy_team.edit_title" = "Edit Pharmacist";
+"pharmacy_team.validation_name" = "First and last name are required.";
+"pharmacy_team.validation_email" = "Enter a valid email address.";
+"pharmacy_team.remove_confirm_title" = "Remove Pharmacist";
+"pharmacy_team.remove_confirm_message" = "Remove %@ from your pharmacy? They will lose access to this pharmacy.";
+"pharmacy_team.remove_confirm_action" = "Remove";
+
+"profile.first_name" = "First Name";
+"profile.last_name" = "Last Name";
+
+// Delete Pharmacy (admin)
+"pharmacy_card.delete" = "Delete Pharmacy";
+"pharmacy_card.delete_confirm_title" = "Delete Pharmacy";
+"pharmacy_card.delete_confirm_message" = "This permanently deletes the pharmacy and removes all pharmacists. You will be signed out.";
+"pharmacy_card.delete_confirm_action" = "Delete";

@@ -23,6 +23,7 @@ struct PharmacyProfile: Equatable, Identifiable {
     let pharmacyName: String?
     let pharmacyAddress: String?
     let pharmacyPhoneNumber: String?
+    let pharmacyMembers: [PharmacistMember]
 
     var fullName: String {
         "\(firstName) \(lastName)"
@@ -43,7 +44,8 @@ extension PharmacyProfile {
         dateOfBirth: Date(),
         pharmacyName: "صيدلية النهضية",
         pharmacyAddress: "شارع النيل، المعادي، القاهرة",
-        pharmacyPhoneNumber: "010 9876 5432"
+        pharmacyPhoneNumber: "010 9876 5432",
+        pharmacyMembers: []
     )
 }
 #endif

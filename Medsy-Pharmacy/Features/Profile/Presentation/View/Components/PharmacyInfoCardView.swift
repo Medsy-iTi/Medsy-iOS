@@ -32,7 +32,7 @@ struct PharmacyInfoCardView: View {
                         }
                     }
 
-                    Text(profile.pharmacyName ?? "No Pharmacy Assigned".localized)
+                    Text(profile.pharmacyName ?? "pharmacy_card.not_assigned".localized)
                         .font(PharmacyColor.sans(13))
                         .foregroundStyle(PharmacyColor.textSecondary)
                 }

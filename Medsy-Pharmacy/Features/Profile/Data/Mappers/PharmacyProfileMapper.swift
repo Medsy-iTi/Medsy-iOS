@@ -32,7 +32,17 @@ enum PharmacyProfileMapper {
             }(),
             pharmacyName: pharmacy?.name,
             pharmacyAddress: pharmacy?.address,
-            pharmacyPhoneNumber: pharmacy?.phoneNumber
+            pharmacyPhoneNumber: pharmacy?.phoneNumber,
+            pharmacyMembers: (pharmacy?.pharmacists ?? []).map {
+                PharmacistMember(
+                    id: $0.id,
+                    firstName: $0.firstName,
+                    lastName: $0.lastName,
+                    email: $0.email,
+                    phoneNumber: $0.phoneNumber,
+                    isAdmin: $0.isAdmin
+                )
+            }
         )
     }
 }

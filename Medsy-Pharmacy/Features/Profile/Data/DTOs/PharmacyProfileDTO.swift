@@ -41,15 +41,25 @@ struct PharmacistMeResponseEnvelope: Decodable {
 }
 
 
+struct PharmacistMemberDTO: Decodable {
+    let id: Int
+    let firstName: String
+    let lastName: String
+    let phoneNumber: String
+    let email: String
+    let isAdmin: Bool
+}
+
 struct PharmacyMineResponseDTO: Decodable {
     let id: Int
     let name: String
     let address: String?
     let phoneNumber: String?
     let isAdmin: Bool
+    let pharmacists: [PharmacistMemberDTO]?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, address, phoneNumber, isAdmin
+        case id, name, address, phoneNumber, isAdmin, pharmacists
     }
 }
 

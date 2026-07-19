@@ -60,15 +60,15 @@ final class ProfileRepository: ProfileRepositoryProtocol {
         let dobString = dateOfBirth.map { formatter.string(from: $0) }
 
         let request = UpdatePharmacyProfileRequestDTO(
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
+            email: nil,
+            firstName: nil,
+            lastName: nil,
             homeAddress: homeAddress,
             dob: dobString
         )
 
         let _: EmptyResponse = try await networkService.request(
-            endpoint: ProfileEndpoint.updateProfile(id: id, request: request)
+            endpoint: ProfileEndpoint.updateMyProfile(request: request)
         )
     }
 
@@ -93,6 +93,43 @@ final class ProfileRepository: ProfileRepositoryProtocol {
         )
         let _: EmptyResponse = try await networkService.request(
             endpoint: ProfileEndpoint.updatePharmacy(id: id, request: request)
+        )
+    }
+
+    func deletePharmacy(id: Int) async throws {
+        let _: EmptyResponse = try await networkService.request(
+            endpoint: ProfileEndpoint.deletePharmacy(id: id)
+        )
+    }
+
+    func removePharmacist(pharmacistId: Int, pharmacyId: Int) async throws {
+        let _: EmptyResponse = try await networkService.request(
+            endpoint: ProfileEndpoint.removePharmacist(pharmacistId: pharmacistId, pharmacyId: pharmacyId)
+        )
+    }
+
+    func updatePharmacist(
+        id: Int,
+        email: String?,
+        firstName: String?,
+        lastName: String?,
+        homeAddress: String?,
+        dateOfBirth: Date?
+    ) async throws {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dobString = dateOfBirth.map { formatter.string(from: $0) }
+
+        let request = UpdatePharmacyProfileRequestDTO(
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            homeAddress: homeAddress,
+            dob: dobString
+        )
+
+        let _: EmptyResponse = try await networkService.request(
+            endpoint: ProfileEndpoint.updateUser(id: id, request: request)
         )
     }
 

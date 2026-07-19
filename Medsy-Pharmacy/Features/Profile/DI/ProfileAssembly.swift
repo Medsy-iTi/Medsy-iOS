@@ -30,6 +30,18 @@ struct ProfileAssembly: PharmacyModuleAssembly {
             UpdatePharmacyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
         }
 
+        container.register(DeletePharmacyUseCaseProtocol.self) { container in
+            DeletePharmacyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
+        container.register(RemovePharmacistUseCaseProtocol.self) { container in
+            RemovePharmacistUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
+        container.register(UpdatePharmacistUseCaseProtocol.self) { container in
+            UpdatePharmacistUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
         container.register(LogoutUseCaseProtocol.self) { container in
             LogoutUseCase(
                 repository: container.resolve(ProfileRepositoryProtocol.self),

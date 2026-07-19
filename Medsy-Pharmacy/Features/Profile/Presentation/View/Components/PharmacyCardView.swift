@@ -11,6 +11,19 @@ struct PharmacyCardView: View {
     let profile: PharmacyProfile
     let onEdit: (() -> Void)?
     let onLeave: () -> Void
+    let onDelete: (() -> Void)?
+
+    init(
+        profile: PharmacyProfile,
+        onEdit: (() -> Void)? = nil,
+        onLeave: @escaping () -> Void,
+        onDelete: (() -> Void)? = nil
+    ) {
+        self.profile = profile
+        self.onEdit = onEdit
+        self.onLeave = onLeave
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
@@ -79,6 +92,23 @@ struct PharmacyCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
             }
             .buttonStyle(.plain)
+
+            if let onDelete {
+                Button(role: .destructive, action: onDelete) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("pharmacy_card.delete".localized)
+                            .font(PharmacyColor.sans(13, .semibold))
+                    }
+                    .foregroundStyle(PharmacyColor.danger)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 38)
+                    .background(PharmacyColor.danger.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(PharmacySpacing.md)
         .background(PharmacyColor.card)

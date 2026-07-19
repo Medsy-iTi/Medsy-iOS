@@ -11,12 +11,15 @@ enum ProfileEndpoint: ApiEndpoint {
     case fetchPharmacistMe
     case fetchPharmacyMine
 
-    // MARK: Update Personal Profile
-    case updateProfile(id: Int, request: UpdatePharmacyProfileRequestDTO)
+    // MARK: Update Profile
+    case updateMyProfile(request: UpdatePharmacyProfileRequestDTO)
+    case updateUser(id: Int, request: UpdatePharmacyProfileRequestDTO)
 
     // MARK: Pharmacy Actions
     case leavePharmacy(pharmacyId: Int)
     case updatePharmacy(id: Int, request: UpdatePharmacyRequestDTO)
+    case deletePharmacy(id: Int)
+    case removePharmacist(pharmacistId: Int, pharmacyId: Int)
 
     // MARK: Auth
     case logout(refreshToken: String)
@@ -28,12 +31,16 @@ enum ProfileEndpoint: ApiEndpoint {
             return "pharmacists/me"
         case .fetchPharmacyMine:
             return "pharmacies/mine"
-        case let .updateProfile(id, _):
+        case .updateMyProfile:
+            return "pharmacists/me"
+        case let .updateUser(id, _):
             return "users/\(id)"
         case let .leavePharmacy(pharmacyId):
             return "pharmacists/me/pharmacy/\(pharmacyId)"
-        case let .updatePharmacy(id, _):
+        case let .updatePharmacy(id, _), let .deletePharmacy(id):
             return "pharmacies/\(id)"
+        case let .removePharmacist(pharmacistId, pharmacyId):
+            return "pharmacists/\(pharmacistId)/pharmacy/\(pharmacyId)"
         case .logout:
             return "auth/logout"
         }
@@ -44,9 +51,9 @@ enum ProfileEndpoint: ApiEndpoint {
         switch self {
         case .fetchPharmacistMe, .fetchPharmacyMine:
             return .get
-        case .updateProfile, .updatePharmacy:
-            return .patch
-        case .leavePharmacy:
+        case .updateMyProfile, .updateUser, .updatePharmacy:
+            return .put
+        case .leavePharmacy, .deletePharmacy, .removePharmacist:
             return .delete
         case .logout:
             return .post
@@ -56,11 +63,11 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: - Body
     var body: Data? {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy:
+        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy, .removePharmacist:
             return nil
         case let .logout(refreshToken):
             return try? JSONEncoder().encode(["refreshToken": refreshToken])
-        case let .updateProfile(_, request):
+        case let .updateMyProfile(request), let .updateUser(_, request):
             return try? JSONEncoder().encode(request)
         case let .updatePharmacy(_, request):
             return try? JSONEncoder().encode(request)

@@ -6,16 +6,18 @@
 import SwiftUI
 import Observation
 
-// MARK: - Presentations
+
 
 enum PharmacyProfilePresentation: Identifiable {
     case editProfile
     case editPharmacy
+    case editPharmacist(PharmacistMember)
 
     var id: String {
         switch self {
         case .editProfile: return "editProfile"
         case .editPharmacy: return "editPharmacy"
+        case let .editPharmacist(member): return "editPharmacist-\(member.id)"
         }
     }
 }
@@ -86,22 +88,41 @@ final class ProfileCoordinator: Coordinator {
                 .environment(viewModel.languageManager)
                 .pharmacyLocalizedEnvironment()
             }
+
+        case let .editPharmacist(member):
+            EditPharmacistScreen(
+                member: member,
+                isSaving: viewModel.isUpdatingPharmacist,
+                errorMessage: viewModel.updatePharmacistErrorMessage,
+                onCancel: { self.activePresentation = nil },
+                onSave: { email, firstName, lastName, homeAddress, dateOfBirth in
+                    await viewModel.updatePharmacist(
+                        id: member.id,
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        homeAddress: homeAddress,
+                        dateOfBirth: dateOfBirth
+                    )
+                }
+            )
+            .environment(viewModel.languageManager)
+            .pharmacyLocalizedEnvironment()
         }
     }
 
-    // MARK: - ViewModel Factory
+
 
     func makeProfileViewModel() -> ProfileViewModel {
-        let repo = container.resolve(ProfileRepositoryProtocol.self)
         let viewModel = ProfileViewModel(
-            getProfileUseCase: GetPharmacyProfileUseCase(repository: repo),
-            updateProfileUseCase: PharmacyUpdateProfileUseCase(repository: repo),
-            leavePharmacyUseCase: LeavePharmacyUseCase(repository: repo),
-            updatePharmacyUseCase: UpdatePharmacyUseCase(repository: repo),
-            logoutUseCase: LogoutUseCase(
-                repository: repo,
-                tokenStore: container.resolve(TokenStoreProtocol.self)
-            ),
+            getProfileUseCase: container.resolve(GetPharmacyProfileUseCaseProtocol.self),
+            updateProfileUseCase: container.resolve(PharmacyUpdateProfileUseCaseProtocol.self),
+            leavePharmacyUseCase: container.resolve(LeavePharmacyUseCaseProtocol.self),
+            updatePharmacyUseCase: container.resolve(UpdatePharmacyUseCaseProtocol.self),
+            deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
+            removePharmacistUseCase: container.resolve(RemovePharmacistUseCaseProtocol.self),
+            updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
+            logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
             languageManager: container.resolve(LanguageManager.self),
             appSettings: container.resolve(PharmacyAppSettings.self)
         )
@@ -111,6 +132,8 @@ final class ProfileCoordinator: Coordinator {
                 self?.activePresentation = .editProfile
             case .editPharmacy:
                 self?.activePresentation = .editPharmacy
+            case let .editPharmacist(member):
+                self?.activePresentation = .editPharmacist(member)
             }
         }
         viewModel.onLoggedOut = { [weak self] in self?.onLoggedOut?() }
@@ -138,7 +161,7 @@ final class ProfileCoordinator: Coordinator {
     }
 }
 
-// MARK: - Wrapper View (needed to capture viewModel for sheet binding)
+
 
 private struct NavigationView: View {
     @State var viewModel: ProfileViewModel

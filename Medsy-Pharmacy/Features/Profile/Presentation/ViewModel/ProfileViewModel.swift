@@ -36,9 +36,22 @@ final class ProfileViewModel {
     var isLeavingPharmacy = false
     var leavePharmacyErrorMessage: String?
 
+    // Delete pharmacy
+    var showDeletePharmacyConfirmation = false
+    var isDeletingPharmacy = false
+    var deletePharmacyErrorMessage: String?
+
     // Edit pharmacy
     var isUpdatingPharmacy = false
     var updatePharmacyErrorMessage: String?
+
+    // Pharmacist team management (admin)
+    var selectedPharmacist: PharmacistMember?
+    var showRemovePharmacistConfirmation = false
+    var isRemovingPharmacist = false
+    var removePharmacistErrorMessage: String?
+    var isUpdatingPharmacist = false
+    var updatePharmacistErrorMessage: String?
 
     // MARK: - Dependencies
 
@@ -46,6 +59,9 @@ final class ProfileViewModel {
     private let updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol
     private let leavePharmacyUseCase: LeavePharmacyUseCaseProtocol
     private let updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol
+    private let deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
+    private let removePharmacistUseCase: RemovePharmacistUseCaseProtocol
+    private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
@@ -62,6 +78,9 @@ final class ProfileViewModel {
         updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol,
         leavePharmacyUseCase: LeavePharmacyUseCaseProtocol,
         updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol,
+        deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
+        removePharmacistUseCase: RemovePharmacistUseCaseProtocol,
+        updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
@@ -70,6 +89,9 @@ final class ProfileViewModel {
         self.updateProfileUseCase = updateProfileUseCase
         self.leavePharmacyUseCase = leavePharmacyUseCase
         self.updatePharmacyUseCase = updatePharmacyUseCase
+        self.deletePharmacyUseCase = deletePharmacyUseCase
+        self.removePharmacistUseCase = removePharmacistUseCase
+        self.updatePharmacistUseCase = updatePharmacistUseCase
         self.logoutUseCase = logoutUseCase
         self.languageManager = languageManager
         self.appSettings = appSettings
@@ -79,6 +101,13 @@ final class ProfileViewModel {
 
     var currentLanguage: PharmacyAppLanguage { languageManager.currentLanguage }
     var isDarkMode: Bool { appSettings.isDarkMode }
+
+    var manageablePharmacists: [PharmacistMember] {
+        guard let profile, profile.isPharmacyAdmin else { return [] }
+        return profile.pharmacyMembers.filter { member in
+            member.id != Int(profile.id) && !member.isAdmin
+        }
+    }
 
     // MARK: - Lifecycle
 
@@ -148,11 +177,32 @@ final class ProfileViewModel {
         leavePharmacyErrorMessage = nil
         do {
             try await leavePharmacyUseCase.execute(pharmacyId: pharmacyId)
-            isLeavingPharmacy = false
-            await loadProfile(showsSpinner: false)
+            await logoutAndNotify()
         } catch {
             isLeavingPharmacy = false
             leavePharmacyErrorMessage = Self.userFacingMessage(for: error)
+        }
+    }
+
+    func requestDeletePharmacy() {
+        showDeletePharmacyConfirmation = true
+    }
+
+    func cancelDeletePharmacy() {
+        showDeletePharmacyConfirmation = false
+    }
+
+    func confirmDeletePharmacy() async {
+        guard let pharmacyId = profile?.pharmacyId else { return }
+        isDeletingPharmacy = true
+        showDeletePharmacyConfirmation = false
+        deletePharmacyErrorMessage = nil
+        do {
+            try await deletePharmacyUseCase.execute(id: pharmacyId)
+            await logoutAndNotify()
+        } catch {
+            isDeletingPharmacy = false
+            deletePharmacyErrorMessage = Self.userFacingMessage(for: error)
         }
     }
 
@@ -173,6 +223,76 @@ final class ProfileViewModel {
         } catch {
             isUpdatingPharmacy = false
             updatePharmacyErrorMessage = Self.userFacingMessage(for: error)
+            return false
+        }
+    }
+
+    // MARK: - Pharmacist Team (Admin)
+
+    func didTapEditPharmacist(_ member: PharmacistMember) {
+        selectedPharmacist = member
+        onNavigate?(.editPharmacist(member))
+    }
+
+    func requestRemovePharmacist(_ member: PharmacistMember) {
+        selectedPharmacist = member
+        showRemovePharmacistConfirmation = true
+    }
+
+    func cancelRemovePharmacist() {
+        showRemovePharmacistConfirmation = false
+        selectedPharmacist = nil
+    }
+
+    func confirmRemovePharmacist() async {
+        guard
+            let member = selectedPharmacist,
+            let pharmacyId = profile?.pharmacyId
+        else { return }
+
+        isRemovingPharmacist = true
+        showRemovePharmacistConfirmation = false
+        removePharmacistErrorMessage = nil
+        do {
+            try await removePharmacistUseCase.execute(
+                pharmacistId: member.id,
+                pharmacyId: pharmacyId
+            )
+            isRemovingPharmacist = false
+            selectedPharmacist = nil
+            await loadProfile(showsSpinner: false)
+        } catch {
+            isRemovingPharmacist = false
+            removePharmacistErrorMessage = Self.userFacingMessage(for: error)
+        }
+    }
+
+    func updatePharmacist(
+        id: Int,
+        email: String,
+        firstName: String,
+        lastName: String,
+        homeAddress: String?,
+        dateOfBirth: Date?
+    ) async -> Bool {
+        isUpdatingPharmacist = true
+        updatePharmacistErrorMessage = nil
+        do {
+            try await updatePharmacistUseCase.execute(
+                id: id,
+                email: email.isEmpty ? nil : email,
+                firstName: firstName.isEmpty ? nil : firstName,
+                lastName: lastName.isEmpty ? nil : lastName,
+                homeAddress: homeAddress,
+                dateOfBirth: dateOfBirth
+            )
+            isUpdatingPharmacist = false
+            selectedPharmacist = nil
+            await loadProfile(showsSpinner: false)
+            return true
+        } catch {
+            isUpdatingPharmacist = false
+            updatePharmacistErrorMessage = Self.userFacingMessage(for: error)
             return false
         }
     }
@@ -204,8 +324,14 @@ final class ProfileViewModel {
 
     func confirmLogout() async {
         isLoggingOut = true
+        await logoutAndNotify()
+    }
+
+    private func logoutAndNotify() async {
         await logoutUseCase.execute()
         isLoggingOut = false
+        isLeavingPharmacy = false
+        isDeletingPharmacy = false
         showLogoutConfirmation = false
         onLoggedOut?()
     }
