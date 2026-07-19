@@ -7,11 +7,18 @@
 
 import SwiftUI
 
+enum PharmacyPrimaryButtonStyle {
+    case filled
+    case soft
+}
+
 struct PharmacyPrimaryButton: View {
     let title: String
     var systemImage: String?
     var isLoading = false
     var isDisabled = false
+    var style: PharmacyPrimaryButtonStyle = .filled
+    var height: CGFloat = 54
     let action: () -> Void
 
     var body: some View {
@@ -33,11 +40,14 @@ struct PharmacyPrimaryButton: View {
                     }
                 }
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(style == .filled ? .white : PharmacyColor.primary)
             .frame(maxWidth: .infinity)
-            .frame(height: 54)
+            .frame(height: height)
             .padding(.horizontal, 18)
-            .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+            .background(
+                style == .filled ? PharmacyColor.primary : PharmacyColor.primarySoft,
+                in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+            )
         }
         .buttonStyle(.plain)
         .disabled(isDisabled || isLoading)
