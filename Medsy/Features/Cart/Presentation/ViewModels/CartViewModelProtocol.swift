@@ -16,7 +16,6 @@ enum CartEvent: Equatable {
     case undoRemoval
     case setPrescription(Data, CartPrescriptionSource)
     case replacePrescription(id: UUID, data: Data, source: CartPrescriptionSource)
-    case removePrescription
     case removePrescriptionByID(UUID)
     case clear
     case retry
@@ -55,7 +54,6 @@ protocol CartViewModelProtocol: AnyObject {
     var feedbackSequence: Int { get }
     var syncState: CartSyncState { get }
     var prescriptions: [CartPrescriptionAttachment] { get }
-    var prescription: CartPrescriptionAttachment? { get }
     var itemCount: Int { get }
     var estimatedTotal: Double { get }
     var hasContent: Bool { get }
