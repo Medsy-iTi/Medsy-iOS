@@ -32,4 +32,13 @@ struct Cart: Equatable {
     var hasContent: Bool {
         !items.isEmpty || !prescriptions.isEmpty
     }
+
+    func withPrescriptions(_ prescriptions: [CartPrescription]) -> Cart {
+        Cart(
+            id: id,
+            items: items,
+            prescriptions: prescriptions,
+            totalPrice: totalPrice
+        )
+    }
 }
