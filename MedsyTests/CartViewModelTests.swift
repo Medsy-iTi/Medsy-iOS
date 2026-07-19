@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import SwiftUI
 @testable import Medsy
 
 @MainActor
@@ -18,6 +19,8 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.itemCount, 3)
         XCTAssertEqual(loadedItems(from: viewModel).count, 1)
         XCTAssertEqual(effect, .sync)
+        XCTAssertEqual(viewModel.feedback, .itemAdded("Medicine"))
+        XCTAssertEqual(viewModel.feedbackSequence, 1)
     }
 
     func testDecreasingLastQuantityRemovesItemAndUndoRestoresIt() {
@@ -114,6 +117,31 @@ final class CartViewModelTests: XCTestCase {
         let viewModel = CartViewModel(prescription: attachment)
 
         XCTAssertNotNil(viewModel.handle(.continueRequest))
+    }
+
+    func testRealProductMappingAddsProductDataAndSynchronizesQuantity() {
+        let product = MedsyProduct(
+            id: "42",
+            name: "Real Product",
+            dosageInfo: "500 mg",
+            price: 75,
+            imageUrl: "https://example.com/product.png",
+            badgeText: "Company",
+            badgeColor: .green,
+            categoryName: "Category"
+        )
+        let viewModel = CartViewModel()
+
+        viewModel.handle(.addItem(CartItemPresentationMapper.map(product)))
+        viewModel.handle(.addItem(CartItemPresentationMapper.map(product)))
+
+        let cartItem = loadedItems(from: viewModel).first
+        XCTAssertEqual(cartItem?.productID, 42)
+        XCTAssertEqual(cartItem?.name, "Real Product")
+        XCTAssertEqual(cartItem?.dosageInfo, "500 mg")
+        XCTAssertEqual(cartItem?.unitPrice, 75)
+        XCTAssertEqual(cartItem?.imageUrl, "https://example.com/product.png")
+        XCTAssertEqual(viewModel.quantity(forProductID: 42), 2)
     }
 
     private func item(id: String, productID: Int64, quantity: Int) -> CartDisplayItem {

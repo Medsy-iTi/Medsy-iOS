@@ -9,6 +9,8 @@ import SwiftUI
 import UIKit
 
 struct CartPrescriptionAttachmentView: View {
+    @State private var showsRemovalConfirmation = false
+
     let attachment: CartPrescriptionAttachment
     let onChange: () -> Void
     let onRemove: () -> Void
@@ -22,7 +24,9 @@ struct CartPrescriptionAttachmentView: View {
 
                 Spacer()
 
-                Button(action: onRemove) {
+                Button {
+                    showsRemovalConfirmation = true
+                } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(AppColor.danger)
@@ -60,5 +64,11 @@ struct CartPrescriptionAttachmentView: View {
                 .stroke(AppColor.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .alert("cart.prescription.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
+            Button("common.cancel".localized, role: .cancel) {}
+            Button("cart.remove_confirmation.action".localized, role: .destructive, action: onRemove)
+        } message: {
+            Text("cart.prescription.remove_confirmation.message".localized)
+        }
     }
 }

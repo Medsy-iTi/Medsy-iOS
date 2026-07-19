@@ -14,6 +14,7 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var state: CartViewState
     private(set) var removedItem: CartDisplayItem?
     private(set) var feedback: CartFeedback?
+    private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
     private(set) var prescription: CartPrescriptionAttachment?
 
@@ -50,6 +51,11 @@ final class CartViewModel: CartViewModelProtocol {
 
     var hasContent: Bool {
         !items.isEmpty || prescription != nil
+    }
+
+    func quantity(forProductID productID: Int64?) -> Int {
+        guard let productID else { return 0 }
+        return items.first(where: { $0.productID == productID })?.quantity ?? 0
     }
 
     @discardableResult
@@ -128,7 +134,8 @@ final class CartViewModel: CartViewModelProtocol {
             updatedItems.append(item)
         }
 
-        feedback = nil
+        feedback = .itemAdded(item.name)
+        feedbackSequence += 1
         replaceItems(updatedItems)
         return true
     }

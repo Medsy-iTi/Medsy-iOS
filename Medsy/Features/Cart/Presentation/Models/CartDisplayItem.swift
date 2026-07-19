@@ -65,38 +65,3 @@ enum CartViewState: Equatable {
     case loaded([CartDisplayItem])
     case error(String)
 }
-
-enum CartSampleData {
-    static let items: [CartDisplayItem] = [
-        CartDisplayItem(
-            id: "1",
-            productID: 1,
-            cartItemID: nil,
-            name: "Panadol Extra",
-            dosageInfo: "20 tablets",
-            unitPrice: 45,
-            quantity: 2,
-            imageUrl: nil
-        ),
-        CartDisplayItem(
-            id: "2",
-            productID: 2,
-            cartItemID: nil,
-            name: "Augmentin",
-            dosageInfo: "1 g • 14 tablets",
-            unitPrice: 180,
-            quantity: 1,
-            imageUrl: nil
-        ),
-        CartDisplayItem(
-            id: "3",
-            productID: 3,
-            cartItemID: nil,
-            name: "Telfast",
-            dosageInfo: "120 mg • 10 tablets",
-            unitPrice: 95,
-            quantity: 1,
-            imageUrl: nil
-        )
-    ]
-}

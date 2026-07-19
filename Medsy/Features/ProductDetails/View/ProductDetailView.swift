@@ -9,6 +9,7 @@ import SwiftUI
 struct ProductDetailView: View {
     @StateObject private var viewModel: ProductDetailViewModel
     @Environment(LanguageManager.self) private var languageManager
+    @Environment(CartViewModel.self) private var cartViewModel
     @ObservedObject private var appSettings = AppSettings.shared
     @Environment(\.dismiss) private var dismiss
 
@@ -124,7 +125,9 @@ struct ProductDetailView: View {
                         systemImage: "cart",
                         style: .primary
                     ) {
-                        viewModel.addToCart()
+                        cartViewModel.handle(
+                            .addItem(CartItemPresentationMapper.map(product))
+                        )
                     }
 
                     PrimaryButton(

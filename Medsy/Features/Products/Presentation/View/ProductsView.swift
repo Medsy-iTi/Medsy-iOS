@@ -7,7 +7,9 @@ import SwiftUI
 
 struct ProductsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(CartViewModel.self) private var cartViewModel
     @State private var viewModel: ProductsViewModel
+    @State private var selectedProductID: String?
 
     init(category: Category) {
         _viewModel = State(initialValue: ProductsViewModel(category: category))
@@ -45,13 +47,23 @@ struct ProductsView: View {
                             ForEach($viewModel.products) { $product in
                                 SearchedProductCard(
                                     product: $product,
-                                    onAdd: {},
-                                    onIncrement: {},
-                                    onDecrement: {},
+                                    onAdd: {
+                                        addOneToCart(product)
+                                        product.quantity = cartQuantity(for: product)
+                                    },
+                                    onIncrement: {
+                                        addOneToCart(product)
+                                        product.quantity = cartQuantity(for: product)
+                                    },
+                                    onDecrement: {
+                                        cartViewModel.handle(.decreaseQuantity(itemID: product.id))
+                                        product.quantity = cartQuantity(for: product)
+                                    },
                                     onToggleFavorite: {},
-                                    onTap: {}
+                                    onTap: { selectedProductID = product.id }
                                 )
                                 .onAppear {
+                                    product.quantity = cartQuantity(for: product)
                                     if product.id == viewModel.products.last?.id {
                                         Task {
                                             await viewModel.loadNextPage()
@@ -87,6 +99,9 @@ struct ProductsView: View {
         .navigationTitle(viewModel.category.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .navigationDestination(item: $selectedProductID) { productID in
+            ProductDetailView(productId: productID)
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
@@ -101,5 +116,13 @@ struct ProductsView: View {
         .task {
             await viewModel.loadProducts()
         }
+    }
+
+    private func addOneToCart(_ product: MedsyProduct) {
+        cartViewModel.handle(.addItem(CartItemPresentationMapper.map(product)))
+    }
+
+    private func cartQuantity(for product: MedsyProduct) -> Int {
+        cartViewModel.quantity(forProductID: Int64(product.id))
     }
 }
