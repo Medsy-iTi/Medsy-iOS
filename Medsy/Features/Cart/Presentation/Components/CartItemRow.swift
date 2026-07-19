@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CartItemRow: View {
+    @State private var showsRemovalConfirmation = false
+
     let item: CartDisplayItem
     let onDecrease: () -> Void
     let onIncrease: () -> Void
@@ -59,7 +61,9 @@ struct CartItemRow: View {
 
                     Spacer()
 
-                    Button(action: onRemove) {
+                    Button {
+                        showsRemovalConfirmation = true
+                    } label: {
                         Image(systemName: "trash")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(AppColor.danger)
@@ -78,11 +82,23 @@ struct CartItemRow: View {
                 .stroke(AppColor.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .alert("cart.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
+            Button("common.cancel".localized, role: .cancel) {}
+            Button("cart.remove_confirmation.action".localized, role: .destructive, action: onRemove)
+        } message: {
+            Text("cart.remove_confirmation.message".localized(item.name))
+        }
     }
 
     private var quantityStepper: some View {
         HStack(spacing: MedsySpacing.sm) {
-            Button(action: onDecrease) {
+            Button {
+                if item.quantity <= 1 {
+                    showsRemovalConfirmation = true
+                } else {
+                    onDecrease()
+                }
+            } label: {
                 Image(systemName: "minus")
                     .font(.system(size: 13, weight: .bold))
                     .frame(width: 32, height: 32)
