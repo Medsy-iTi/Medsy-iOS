@@ -29,7 +29,7 @@ final class CartViewModel: CartViewModelProtocol {
     private var loadTask: Task<Void, Never>?
     private var operationTask: Task<Void, Never>?
 
-    nonisolated init(
+    init(
         loadCartUseCase: LoadCartUseCaseProtocol,
         addCartItemUseCase: AddCartItemUseCaseProtocol,
         updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCaseProtocol,
