@@ -205,8 +205,3 @@ struct CartView: View {
         return items.reduce(0) { $0 + $1.quantity }
     }
 }
-
-#Preview {
-    CartView()
-        .environment(LanguageManager())
-}
