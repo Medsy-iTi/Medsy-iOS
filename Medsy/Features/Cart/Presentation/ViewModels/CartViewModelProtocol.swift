@@ -14,6 +14,8 @@ enum CartEvent: Equatable {
     case decreaseQuantity(itemID: String)
     case removeItem(itemID: String)
     case undoRemoval
+    case setPrescription(Data, CartPrescriptionSource)
+    case removePrescription
     case clear
     case retry
     case dismissFeedback
@@ -26,7 +28,8 @@ enum CartEvent: Equatable {
 enum CartEffect: Equatable {
     case load
     case sync
-    case continueRequest
+    case persistPrescription
+    case continueRequest(CartRequestDraft)
 }
 
 enum CartFeedback: Equatable {
@@ -47,8 +50,10 @@ protocol CartViewModelProtocol: AnyObject {
     var removedItem: CartDisplayItem? { get }
     var feedback: CartFeedback? { get }
     var syncState: CartSyncState { get }
+    var prescription: CartPrescriptionAttachment? { get }
     var itemCount: Int { get }
     var estimatedTotal: Double { get }
+    var hasContent: Bool { get }
 
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect?

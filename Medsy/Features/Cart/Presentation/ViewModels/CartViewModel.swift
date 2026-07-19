@@ -15,15 +15,18 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var removedItem: CartDisplayItem?
     private(set) var feedback: CartFeedback?
     private(set) var syncState: CartSyncState = .idle
+    private(set) var prescription: CartPrescriptionAttachment?
 
     private let maximumItemCount: Int
     private var removedItemIndex: Int?
 
     init(
         items: [CartDisplayItem] = [],
+        prescription: CartPrescriptionAttachment? = nil,
         maximumItemCount: Int = 20
     ) {
         state = items.isEmpty ? .empty : .loaded(items)
+        self.prescription = prescription
         self.maximumItemCount = maximumItemCount
     }
 
@@ -33,6 +36,10 @@ final class CartViewModel: CartViewModelProtocol {
 
     var estimatedTotal: Double {
         items.reduce(0) { $0 + $1.lineTotal }
+    }
+
+    var hasContent: Bool {
+        !items.isEmpty || prescription != nil
     }
 
     @discardableResult
@@ -53,8 +60,18 @@ final class CartViewModel: CartViewModelProtocol {
             return removeItem(itemID: itemID) ? .sync : nil
         case .undoRemoval:
             return undoRemoval() ? .sync : nil
+        case let .setPrescription(data, source):
+            guard !data.isEmpty else { return nil }
+            prescription = CartPrescriptionAttachment(imageData: data, source: source)
+            feedback = nil
+            return .persistPrescription
+        case .removePrescription:
+            guard prescription != nil else { return nil }
+            prescription = nil
+            return .persistPrescription
         case .clear:
             replaceItems([])
+            prescription = nil
             clearRemoval()
             return .sync
         case .dismissFeedback:
@@ -69,8 +86,13 @@ final class CartViewModel: CartViewModelProtocol {
             syncState = .failed(message)
             feedback = .operationFailed(message)
         case .continueRequest:
-            guard !items.isEmpty else { return nil }
-            return .continueRequest
+            guard hasContent else { return nil }
+            return .continueRequest(
+                CartRequestDraft(
+                    items: items,
+                    prescription: prescription
+                )
+            )
         }
 
         return nil

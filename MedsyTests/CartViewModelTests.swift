@@ -66,6 +66,56 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.estimatedTotal, 30)
     }
 
+    func testPrescriptionCanBeAddedReplacedAndRemoved() {
+        let viewModel = CartViewModel()
+        let firstData = Data([1, 2, 3])
+        let replacementData = Data([4, 5, 6])
+
+        XCTAssertEqual(viewModel.handle(.setPrescription(firstData, .camera)), .persistPrescription)
+        XCTAssertEqual(viewModel.prescription?.imageData, firstData)
+        XCTAssertEqual(viewModel.prescription?.source, .camera)
+        XCTAssertTrue(viewModel.hasContent)
+
+        XCTAssertEqual(viewModel.handle(.setPrescription(replacementData, .photoLibrary)), .persistPrescription)
+        XCTAssertEqual(viewModel.prescription?.imageData, replacementData)
+        XCTAssertEqual(viewModel.prescription?.source, .photoLibrary)
+
+        XCTAssertEqual(viewModel.handle(.removePrescription), .persistPrescription)
+        XCTAssertNil(viewModel.prescription)
+        XCTAssertFalse(viewModel.hasContent)
+    }
+
+    func testContinueRequestIncludesItemsAndPrescription() {
+        let cartItem = item(id: "first", productID: 10, quantity: 2)
+        let attachment = CartPrescriptionAttachment(
+            imageData: Data([1, 2, 3]),
+            source: .camera
+        )
+        let viewModel = CartViewModel(items: [cartItem], prescription: attachment)
+
+        let effect = viewModel.handle(.continueRequest)
+
+        XCTAssertEqual(
+            effect,
+            .continueRequest(
+                CartRequestDraft(
+                    items: [cartItem],
+                    prescription: attachment
+                )
+            )
+        )
+    }
+
+    func testPrescriptionOnlyCartCanContinue() {
+        let attachment = CartPrescriptionAttachment(
+            imageData: Data([1, 2, 3]),
+            source: .photoLibrary
+        )
+        let viewModel = CartViewModel(prescription: attachment)
+
+        XCTAssertNotNil(viewModel.handle(.continueRequest))
+    }
+
     private func item(id: String, productID: Int64, quantity: Int) -> CartDisplayItem {
         CartDisplayItem(
             id: id,
