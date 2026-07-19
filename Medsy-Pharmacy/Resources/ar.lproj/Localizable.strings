@@ -103,6 +103,13 @@
 "pharmacy.management.map.subtitle" = "اضغط على الخريطة لوضع العلامة عند مدخل الصيدلية.";
 "pharmacy.management.map.marker" = "الصيدلية";
 "pharmacy.management.map.confirm" = "تأكيد الموقع";
+"pharmacy.management.validation.name" = "أدخل اسم الصيدلية.";
+"pharmacy.management.validation.phone" = "أدخل رقم هاتف مصري صالحًا.";
+"pharmacy.management.validation.location" = "حدد موقع الصيدلية بدقة.";
+"pharmacy.management.validation.license.required" = "ارفع ترخيص الصيدلية.";
+"pharmacy.management.validation.license.size" = "يجب ألا يتجاوز ملف الترخيص 10 ميجابايت.";
+"pharmacy.management.validation.license.pdf" = "اختر ملف ترخيص PDF صالحًا.";
+"pharmacy.management.validation.license.read" = "تعذر قراءة ملف الترخيص المحدد.";
 /* Splash */
 "pharmacy.splash.subtitle" = "منصة شريكك الصيدلية";
 "pharmacy.splash.tagline" = "استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات — كل ذلك في مكان واحد.";
