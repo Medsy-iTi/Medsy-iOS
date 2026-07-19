@@ -186,6 +186,11 @@
 "cart.error.title" = "تعذر تحميل السلة";
 "cart.removed_message" = "تم حذف %@";
 "cart.undo" = "تراجع";
+"cart.prescription.add" = "إضافة روشتة";
+"cart.prescription.title" = "الروشتة المرفقة";
+"cart.prescription.change" = "تغيير الروشتة";
+"cart.prescription.remove" = "حذف الروشتة";
+"cart.prescription.source_title" = "إضافة روشتة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";

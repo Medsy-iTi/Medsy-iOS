@@ -187,6 +187,11 @@
 "cart.error.title" = "Couldn't Load Cart";
 "cart.removed_message" = "%@ removed";
 "cart.undo" = "Undo";
+"cart.prescription.add" = "Add prescription";
+"cart.prescription.title" = "Attached prescription";
+"cart.prescription.change" = "Change prescription";
+"cart.prescription.remove" = "Remove prescription";
+"cart.prescription.source_title" = "Add a prescription";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
