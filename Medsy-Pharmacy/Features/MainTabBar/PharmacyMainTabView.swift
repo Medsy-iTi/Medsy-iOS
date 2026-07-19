@@ -42,7 +42,7 @@ struct PharmacyMainTabView: View {
     private var tabContent: some View {
         if coordinator.selectedTab == .home {
             PharmacyHomeView()
-        } else if coordinator.selectedTab == .more {
+        } else if coordinator.selectedTab == .pharmacy {
             PharmacyManagementCoordinatorView(coordinator: pharmacyManagementCoordinator)
         } else {
             PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
@@ -50,7 +50,7 @@ struct PharmacyMainTabView: View {
     }
 
     private var showsTabBar: Bool {
-        coordinator.selectedTab != .more || pharmacyManagementCoordinator.path.isEmpty
+        coordinator.selectedTab != .pharmacy || pharmacyManagementCoordinator.path.isEmpty
     }
 
     private var tabBar: some View {
