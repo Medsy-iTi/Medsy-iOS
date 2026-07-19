@@ -163,9 +163,44 @@
 /* Tab bar */
 "tab.home" = "الرئيسية";
 "tab.favorites" = "المفضلة";
+"tab.cart" = "السلة";
 "tab.offers" = "العروض";
 "tab.orders" = "الطلبات";
 "tab.account" = "حسابي";
+
+/* Cart */
+"cart.title" = "السلة";
+"cart.subtitle" = "راجع سلة الطلب";
+"cart.message" = "عدّل الكميات قبل إرسال طلب واحد للصيدليات القريبة.";
+"cart.currency" = "جنيه";
+"cart.unit_price_format" = "%@ للقطعة";
+"cart.quantity" = "الكمية";
+"cart.remove" = "حذف العنصر";
+"cart.estimated_total" = "الإجمالي التقديري";
+"cart.estimated_total_disclaimer" = "الأسعار تقريبية. السعر النهائي يتم تأكيده من الصيدلية.";
+"cart.continue" = "متابعة";
+"cart.empty.title" = "السلة فارغة";
+"cart.empty.message" = "ابحث عن الأدوية أو ارفع روشتة لبدء طلب.";
+"cart.empty.search" = "ابحث عن أدوية";
+"cart.empty.upload" = "رفع روشتة";
+"cart.error.title" = "تعذر تحميل السلة";
+"cart.removed_message" = "تم حذف %@";
+"cart.undo" = "تراجع";
+"cart.prescription.add" = "إضافة روشتة";
+"cart.prescription.title" = "الروشتة المرفقة";
+"cart.prescription.change" = "تغيير الروشتة";
+"cart.prescription.remove" = "حذف الروشتة";
+"cart.prescription.source_title" = "إضافة روشتة";
+"cart.added_message" = "تمت إضافة %@ إلى السلة";
+"cart.remove_confirmation.title" = "إزالة من السلة؟";
+"cart.remove_confirmation.message" = "هل تريد إزالة %@ من السلة؟";
+"cart.remove_confirmation.action" = "إزالة";
+"cart.prescription.remove_confirmation.title" = "إزالة الروشتة؟";
+"cart.prescription.remove_confirmation.message" = "سيتم حذف هذه الروشتة من السلة.";
+"cart.clear.accessibility" = "إفراغ السلة";
+"cart.clear_confirmation.title" = "إفراغ السلة؟";
+"cart.clear_confirmation.message" = "سيتم حذف جميع الأدوية والروشتة المرفقة.";
+"cart.clear_confirmation.action" = "إفراغ السلة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";
