@@ -44,7 +44,7 @@ struct PharmacyLocationPickerView: View {
                     Marker("pharmacy.management.map.marker".localized, coordinate: selectedCoordinate)
                         .tint(PharmacyColor.primary)
                 }
-                .mapStyle(.standard(pointsOfInterest: .excludingAll))
+                .mapStyle(.standard(pointsOfInterest: .all))
                 .mapControls {
                     MapUserLocationButton()
                     MapCompass()
