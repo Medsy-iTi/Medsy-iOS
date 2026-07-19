@@ -192,6 +192,12 @@
 "cart.prescription.change" = "Change prescription";
 "cart.prescription.remove" = "Remove prescription";
 "cart.prescription.source_title" = "Add a prescription";
+"cart.added_message" = "%@ added to cart";
+"cart.remove_confirmation.title" = "Remove from cart?";
+"cart.remove_confirmation.message" = "Remove %@ from your cart?";
+"cart.remove_confirmation.action" = "Remove";
+"cart.prescription.remove_confirmation.title" = "Remove prescription?";
+"cart.prescription.remove_confirmation.message" = "This prescription will be removed from your cart.";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";

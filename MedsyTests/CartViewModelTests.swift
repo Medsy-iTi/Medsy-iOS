@@ -19,6 +19,8 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.itemCount, 3)
         XCTAssertEqual(loadedItems(from: viewModel).count, 1)
         XCTAssertEqual(effect, .sync)
+        XCTAssertEqual(viewModel.feedback, .itemAdded("Medicine"))
+        XCTAssertEqual(viewModel.feedbackSequence, 1)
     }
 
     func testDecreasingLastQuantityRemovesItemAndUndoRestoresIt() {

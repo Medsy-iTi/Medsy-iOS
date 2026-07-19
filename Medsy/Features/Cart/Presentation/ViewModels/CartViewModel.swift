@@ -14,6 +14,7 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var state: CartViewState
     private(set) var removedItem: CartDisplayItem?
     private(set) var feedback: CartFeedback?
+    private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
     private(set) var prescription: CartPrescriptionAttachment?
 
@@ -133,7 +134,8 @@ final class CartViewModel: CartViewModelProtocol {
             updatedItems.append(item)
         }
 
-        feedback = nil
+        feedback = .itemAdded(item.name)
+        feedbackSequence += 1
         replaceItems(updatedItems)
         return true
     }

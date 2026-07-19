@@ -13,6 +13,7 @@ struct MainTabBarView: View {
     @State private var isTabBarHidden = false
     @State private var cartViewModel = CartViewModel()
     @State private var requestedHomeRoute: HomeRoute?
+    @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -77,11 +78,42 @@ struct MainTabBarView: View {
         .ignoresSafeArea(edges: .bottom)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .overlay(alignment: .top) {
+            if let productName = addedProductName {
+                CartAddedBanner(productName: productName)
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.top, MedsySpacing.sm)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .onChange(of: cartViewModel.feedbackSequence) { _, _ in
+            scheduleFeedbackDismissal()
+        }
+        .onDisappear {
+            cartFeedbackTask?.cancel()
+        }
+        .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
     }
 
     private func openSearchFromCart() {
         requestedHomeRoute = .search("")
         coordinator.select(.home)
+    }
+
+    private var addedProductName: String? {
+        guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
+        return productName
+    }
+
+    private func scheduleFeedbackDismissal() {
+        cartFeedbackTask?.cancel()
+        guard case .itemAdded = cartViewModel.feedback else { return }
+
+        cartFeedbackTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            cartViewModel.handle(.dismissFeedback)
+        }
     }
     
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {

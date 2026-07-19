@@ -33,6 +33,7 @@ enum CartEffect: Equatable {
 }
 
 enum CartFeedback: Equatable {
+    case itemAdded(String)
     case maximumItemCountReached(Int)
     case operationFailed(String)
 }
@@ -49,6 +50,7 @@ protocol CartViewModelProtocol: AnyObject {
     var state: CartViewState { get }
     var removedItem: CartDisplayItem? { get }
     var feedback: CartFeedback? { get }
+    var feedbackSequence: Int { get }
     var syncState: CartSyncState { get }
     var prescription: CartPrescriptionAttachment? { get }
     var itemCount: Int { get }
