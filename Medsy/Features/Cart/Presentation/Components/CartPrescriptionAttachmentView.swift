@@ -12,13 +12,17 @@ struct CartPrescriptionAttachmentView: View {
     @State private var showsRemovalConfirmation = false
 
     let attachment: CartPrescriptionAttachment
+    let position: Int
     let onChange: () -> Void
     let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: MedsySpacing.md) {
             HStack {
-                Label("cart.prescription.title".localized, systemImage: "doc.text.image")
+                Label(
+                    "cart.prescription.number".localized(position),
+                    systemImage: "doc.text.image"
+                )
                     .font(MedsyFont.title(17))
                     .foregroundStyle(AppColor.textPrim)
 
