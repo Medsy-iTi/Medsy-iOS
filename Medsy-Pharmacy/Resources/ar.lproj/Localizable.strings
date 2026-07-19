@@ -2,6 +2,7 @@
 "pharmacy.tab.orders" = "الطلبات";
 "pharmacy.tab.products" = "المنتجات";
 "pharmacy.tab.customers" = "العملاء";
+"pharmacy.tab.pharmacy" = "صيدليتي";
 "pharmacy.tab.more" = "المزيد";
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
 "pharmacy.dashboard.title" = "لوحة تحكم الصيدلية";
@@ -106,6 +107,7 @@
 "pharmacy.management.validation.name" = "أدخل اسم الصيدلية.";
 "pharmacy.management.validation.phone" = "أدخل رقم هاتف مصري صالحًا.";
 "pharmacy.management.validation.location" = "حدد موقع الصيدلية بدقة.";
+"pharmacy.management.validation.location.resolve" = "تعذر تحديد المحافظة والمدينة لهذا الموقع. اختر نقطة أخرى.";
 "pharmacy.management.validation.license.required" = "ارفع ترخيص الصيدلية.";
 "pharmacy.management.validation.license.size" = "يجب ألا يتجاوز ملف الترخيص 10 ميجابايت.";
 "pharmacy.management.validation.license.pdf" = "اختر ملف ترخيص PDF صالحًا.";

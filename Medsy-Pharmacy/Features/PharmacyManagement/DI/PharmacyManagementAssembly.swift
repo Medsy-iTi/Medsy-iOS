@@ -7,6 +7,12 @@
 
 struct PharmacyManagementAssembly: PharmacyModuleAssembly {
     func register(in container: PharmacyDIContainer) {
+        container.register(PharmacyLocationResolving.self) { container in
+            PharmacyLocationResolver(
+                languageManager: container.resolve(LanguageManager.self)
+            )
+        }
+
         container.register(PharmacyManagementRemoteDataSourceProtocol.self) { container in
             PharmacyManagementRemoteDataSource(
                 networkService: container.resolve(NetworkServiceProtocol.self)
@@ -48,7 +54,8 @@ struct PharmacyManagementAssembly: PharmacyModuleAssembly {
                 getMyPharmacyUseCase: container.resolve(GetMyPharmacyUseCaseProtocol.self),
                 createPharmacyUseCase: container.resolve(CreatePharmacyUseCaseProtocol.self),
                 updatePharmacyUseCase: container.resolve(UpdatePharmacyUseCaseProtocol.self),
-                deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self)
+                deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
+                locationResolver: container.resolve(PharmacyLocationResolving.self)
             )
         }
 

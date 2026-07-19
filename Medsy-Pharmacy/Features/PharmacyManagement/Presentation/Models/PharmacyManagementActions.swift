@@ -12,6 +12,7 @@ struct PharmacyManagementActions {
     let createPharmacy: (PharmacyFormSubmission) async throws -> PharmacyManagementDisplayModel
     let updatePharmacy: (PharmacyFormSubmission) async throws -> PharmacyManagementDisplayModel
     let deletePharmacy: (Int) async throws -> Void
+    let resolveLocation: (Double, Double) async throws -> String
 
     static let placeholder = PharmacyManagementActions(
         loadMyPharmacy: { nil },
@@ -39,14 +40,18 @@ struct PharmacyManagementActions {
                 pharmacists: []
             )
         },
-        deletePharmacy: { _ in }
+        deletePharmacy: { _ in },
+        resolveLocation: { latitude, longitude in
+            String(format: "%.5f, %.5f", latitude, longitude)
+        }
     )
 
     static func live(
         getMyPharmacyUseCase: GetMyPharmacyUseCaseProtocol,
         createPharmacyUseCase: CreatePharmacyUseCaseProtocol,
         updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol,
-        deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
+        deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
+        locationResolver: PharmacyLocationResolving
     ) -> PharmacyManagementActions {
         PharmacyManagementActions(
             loadMyPharmacy: {
@@ -91,6 +96,9 @@ struct PharmacyManagementActions {
             },
             deletePharmacy: { id in
                 try await deletePharmacyUseCase.execute(id: id)
+            },
+            resolveLocation: { latitude, longitude in
+                try await locationResolver.resolve(latitude: latitude, longitude: longitude)
             }
         )
     }

@@ -39,6 +39,7 @@ struct PharmacyManagementCoordinatorView: View {
                         draft: $viewModel.draft,
                         validationMessage: viewModel.validationMessage,
                         isSubmitting: viewModel.isSubmitting,
+                        isSubmitDisabled: viewModel.isFormSubmissionDisabled,
                         onBack: coordinator.pop,
                         onSelectLicense: {
                             isLicenseImporterPresented = true

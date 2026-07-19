@@ -12,6 +12,7 @@ struct PharmacyFormView: View {
     @Binding var draft: PharmacyFormDraft
     var validationMessage: String?
     var isSubmitting = false
+    var isSubmitDisabled = false
     let onBack: () -> Void
     let onSelectLicense: () -> Void
     let onSelectLocation: () -> Void
@@ -39,19 +40,11 @@ struct PharmacyFormView: View {
                         text: $draft.phoneNumber
                     )
 
-                    PharmacyAuthTextField(
-                        title: "pharmacy.management.form.address".localized,
-                        kind: .address,
-                        text: $draft.address
+                    PharmacyReadOnlyLocationField(
+                        location: draft.address,
+                        action: onSelectLocation
                     )
                 }
-
-                sectionTitle("pharmacy.management.form.location.title".localized)
-                PharmacyLocationSelectionCard(
-                    latitude: draft.latitude,
-                    longitude: draft.longitude,
-                    onSelect: onSelectLocation
-                )
 
                 if mode == .create {
                     sectionTitle("pharmacy.management.form.license.title".localized)
@@ -67,6 +60,7 @@ struct PharmacyFormView: View {
                     title: submitTitle,
                     systemImage: mode == .create ? "plus" : "checkmark",
                     isLoading: isSubmitting,
+                    isDisabled: isSubmitDisabled,
                     action: onSubmit
                 )
             }

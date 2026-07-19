@@ -47,8 +47,10 @@ final class PharmacyManagementCoordinator {
     }
 
     func confirmLocation(latitude: Double, longitude: Double) {
-        viewModel.updateLocation(latitude: latitude, longitude: longitude)
-        pop()
+        Task {
+            _ = await viewModel.updateLocation(latitude: latitude, longitude: longitude)
+            pop()
+        }
     }
 
     func selectLicense(at url: URL) {

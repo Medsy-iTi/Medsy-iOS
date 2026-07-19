@@ -33,6 +33,15 @@ final class PharmacyManagementViewModel {
         self.actions = actions
     }
 
+    var isFormSubmissionDisabled: Bool {
+        let nameIsEmpty = draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let phoneIsEmpty = draft.phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let addressIsEmpty = draft.address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let locationIsMissing = draft.latitude == nil || draft.longitude == nil || addressIsEmpty
+        let licenseIsMissing = formMode == .create && selectedLicense == nil
+        return isSubmitting || nameIsEmpty || phoneIsEmpty || locationIsMissing || licenseIsMissing
+    }
+
     func handle(_ event: PharmacyManagementEvent) async -> Bool {
         switch event {
         case .load, .retry:
@@ -70,10 +79,18 @@ final class PharmacyManagementViewModel {
         validationMessage = nil
     }
 
-    func updateLocation(latitude: Double, longitude: Double) {
-        draft.latitude = latitude
-        draft.longitude = longitude
-        validationMessage = nil
+    func updateLocation(latitude: Double, longitude: Double) async -> Bool {
+        do {
+            let address = try await actions.resolveLocation(latitude, longitude)
+            draft.latitude = latitude
+            draft.longitude = longitude
+            draft.address = address
+            validationMessage = nil
+            return true
+        } catch {
+            validationMessage = "pharmacy.management.validation.location.resolve".localized
+            return false
+        }
     }
 
     func selectLicense(at url: URL) {
@@ -208,13 +225,14 @@ final class PharmacyManagementViewModel {
         }
 
         let phone = draft.phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !phone.isEmpty,
-           phone.range(of: "^01[0125][0-9]{8}$", options: .regularExpression) == nil {
+        guard !phone.isEmpty,
+              phone.range(of: "^01[0125][0-9]{8}$", options: .regularExpression) != nil else {
             validationMessage = "pharmacy.management.validation.phone".localized
             return nil
         }
 
-        guard let latitude = draft.latitude, let longitude = draft.longitude else {
+        let address = draft.address.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let latitude = draft.latitude, let longitude = draft.longitude, !address.isEmpty else {
             validationMessage = "pharmacy.management.validation.location".localized
             return nil
         }
@@ -225,12 +243,11 @@ final class PharmacyManagementViewModel {
         }
 
         validationMessage = nil
-        let address = draft.address.trimmingCharacters(in: .whitespacesAndNewlines)
         return PharmacyFormSubmission(
             pharmacyID: editingPharmacy?.id,
             name: name,
-            phoneNumber: phone.isEmpty ? nil : phone,
-            address: address.isEmpty ? nil : address,
+            phoneNumber: phone,
+            address: address,
             latitude: latitude,
             longitude: longitude,
             license: requiresLicense ? selectedLicense : nil

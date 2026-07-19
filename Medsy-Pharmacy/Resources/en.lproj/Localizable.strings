@@ -2,6 +2,7 @@
 "pharmacy.tab.orders" = "Orders";
 "pharmacy.tab.products" = "Products";
 "pharmacy.tab.customers" = "Customers";
+"pharmacy.tab.pharmacy" = "My Pharmacy";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
 "pharmacy.dashboard.title" = "Pharmacy dashboard";
@@ -106,6 +107,7 @@
 "pharmacy.management.validation.name" = "Enter the pharmacy name.";
 "pharmacy.management.validation.phone" = "Enter a valid Egyptian phone number.";
 "pharmacy.management.validation.location" = "Select the pharmacy's exact location.";
+"pharmacy.management.validation.location.resolve" = "The province and city couldn't be found for this location. Try another point.";
 "pharmacy.management.validation.license.required" = "Upload the pharmacy license.";
 "pharmacy.management.validation.license.size" = "The license PDF must not exceed 10 MB.";
 "pharmacy.management.validation.license.pdf" = "Select a valid PDF license file.";
