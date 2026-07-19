@@ -30,6 +30,16 @@ final class CartViewModel: CartViewModelProtocol {
         self.maximumItemCount = maximumItemCount
     }
 
+    init(
+        state: CartViewState,
+        prescription: CartPrescriptionAttachment? = nil,
+        maximumItemCount: Int = 20
+    ) {
+        self.state = state
+        self.prescription = prescription
+        self.maximumItemCount = maximumItemCount
+    }
+
     var itemCount: Int {
         items.reduce(0) { $0 + $1.quantity }
     }

@@ -5,29 +5,32 @@
 //  Created by Ahmed Elkady on 18/07/2026.
 //
 
+import PhotosUI
 import SwiftUI
+import UIKit
 
 struct CartView: View {
     @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
-    @State private var state: CartViewState
-    @State private var removedItem: CartDisplayItem?
+    @State private var viewModel: CartViewModel
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var showsPrescriptionSources = false
+    @State private var showsPhotoPicker = false
+    @State private var showsCamera = false
+    @State private var showsCameraUnavailable = false
 
     let onSearch: () -> Void
-    let onUploadPrescription: () -> Void
-    let onContinue: () -> Void
+    let onContinue: (CartRequestDraft) -> Void
     let onItemCountChange: (Int) -> Void
 
     init(
         state: CartViewState = .loaded(CartSampleData.items),
         onSearch: @escaping () -> Void = {},
-        onUploadPrescription: @escaping () -> Void = {},
-        onContinue: @escaping () -> Void = {},
+        onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
         onItemCountChange: @escaping (Int) -> Void = { _ in }
     ) {
-        _state = State(initialValue: state)
+        _viewModel = State(initialValue: CartViewModel(state: state))
         self.onSearch = onSearch
-        self.onUploadPrescription = onUploadPrescription
         self.onContinue = onContinue
         self.onItemCountChange = onItemCountChange
     }
@@ -42,10 +45,10 @@ struct CartView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(AppColor.bg.ignoresSafeArea())
 
-            if let removedItem {
+            if let removedItem = viewModel.removedItem {
                 CartUndoBanner(
                     message: "cart.removed_message".localized(removedItem.name),
-                    onUndo: restoreRemovedItem
+                    onUndo: undoRemoval
                 )
                 .padding(.horizontal, MedsySpacing.md)
                 .padding(.bottom, MedsySpacing.md)
@@ -55,22 +58,60 @@ struct CartView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
-        .onAppear { onItemCountChange(currentItemCount) }
-        .animation(.easeInOut(duration: 0.2), value: removedItem)
+        .onAppear { onItemCountChange(viewModel.itemCount) }
+        .confirmationDialog(
+            "cart.prescription.source_title".localized,
+            isPresented: $showsPrescriptionSources,
+            titleVisibility: .visible
+        ) {
+            Button("prescription.camera.title".localized) {
+                openCamera()
+            }
+
+            Button("prescription.gallery.title".localized) {
+                showsPhotoPicker = true
+            }
+
+            Button("common.cancel".localized, role: .cancel) {}
+        }
+        .photosPicker(
+            isPresented: $showsPhotoPicker,
+            selection: $selectedPhotoItem,
+            matching: .images
+        )
+        .onChange(of: selectedPhotoItem) { _, item in
+            loadPhoto(item)
+        }
+        .sheet(isPresented: $showsCamera) {
+            PrescriptionCameraPicker { data in
+                setPrescription(data, source: .camera)
+            }
+            .ignoresSafeArea()
+        }
+        .alert("prescription.camera.unavailable.title".localized, isPresented: $showsCameraUnavailable) {
+            Button("common.ok".localized, role: .cancel) {}
+        } message: {
+            Text("prescription.camera.unavailable.message".localized)
+        }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.removedItem)
     }
 
     @ViewBuilder
     private var content: some View {
-        switch state {
+        switch viewModel.state {
         case .loading:
             LoadingView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
         case .empty:
-            CartEmptyStateView(
-                onSearch: onSearch,
-                onUploadPrescription: onUploadPrescription
-            )
+            if viewModel.prescription == nil {
+                CartEmptyStateView(
+                    onSearch: onSearch,
+                    onUploadPrescription: presentPrescriptionSources
+                )
+            } else {
+                cartContent(items: [])
+            }
 
         case let .error(message):
             MedsyStatusView(
@@ -81,7 +122,7 @@ struct CartView: View {
                     title: "cart.error.title".localized,
                     subtitle: message,
                     primaryButtonTitle: "error.retry".localized,
-                    primaryAction: restoreSampleCart
+                    primaryAction: retry
                 )
             )
 
@@ -89,15 +130,15 @@ struct CartView: View {
             if items.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: onUploadPrescription
+                    onUploadPrescription: presentPrescriptionSources
                 )
             } else {
-                loadedContent(items: items)
+                cartContent(items: items)
             }
         }
     }
 
-    private func loadedContent(items: [CartDisplayItem]) -> some View {
+    private func cartContent(items: [CartDisplayItem]) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: MedsySpacing.lg) {
                 VStack(alignment: .leading, spacing: MedsySpacing.xs) {
@@ -110,21 +151,36 @@ struct CartView: View {
                         .foregroundStyle(AppColor.textSec)
                 }
 
+                if let prescription = viewModel.prescription {
+                    CartPrescriptionAttachmentView(
+                        attachment: prescription,
+                        onChange: presentPrescriptionSources,
+                        onRemove: removePrescription
+                    )
+                } else {
+                    PrimaryButton(
+                        title: "cart.prescription.add".localized,
+                        systemImage: "camera",
+                        style: .secondary,
+                        action: presentPrescriptionSources
+                    )
+                }
+
                 VStack(spacing: MedsySpacing.sm) {
                     ForEach(items) { item in
                         CartItemRow(
                             item: item,
-                            onDecrease: { decreaseQuantity(for: item.id) },
-                            onIncrease: { increaseQuantity(for: item.id) },
-                            onRemove: { removeItem(id: item.id) }
+                            onDecrease: { handleItemEvent(.decreaseQuantity(itemID: item.id)) },
+                            onIncrease: { handleItemEvent(.increaseQuantity(itemID: item.id)) },
+                            onRemove: { handleItemEvent(.removeItem(itemID: item.id)) }
                         )
                     }
                 }
 
                 CartTotalSummaryView(
-                    estimatedTotal: estimatedTotal(items),
-                    itemCount: items.count,
-                    onContinue: onContinue
+                    estimatedTotal: viewModel.estimatedTotal,
+                    canContinue: viewModel.hasContent,
+                    onContinue: continueRequest
                 )
                 .padding(.top, MedsySpacing.xs)
             }
@@ -134,74 +190,54 @@ struct CartView: View {
         }
     }
 
-    private func increaseQuantity(for id: String) {
-        updateLoadedItems { items in
-            guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-            let item = items[index]
-            items[index] = CartDisplayItem(
-                id: item.id,
-                name: item.name,
-                dosageInfo: item.dosageInfo,
-                unitPrice: item.unitPrice,
-                quantity: item.quantity + 1,
-                imageUrl: item.imageUrl
-            )
-        }
+    private func presentPrescriptionSources() {
+        showsPrescriptionSources = true
     }
 
-    private func decreaseQuantity(for id: String) {
-        guard case let .loaded(items) = state,
-              let item = items.first(where: { $0.id == id }) else { return }
-
-        if item.quantity <= 1 {
-            removeItem(id: id)
+    private func openCamera() {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            showsCamera = true
         } else {
-            updateLoadedItems { items in
-                guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-                items[index] = CartDisplayItem(
-                    id: item.id,
-                    name: item.name,
-                    dosageInfo: item.dosageInfo,
-                    unitPrice: item.unitPrice,
-                    quantity: item.quantity - 1,
-                    imageUrl: item.imageUrl
-                )
-            }
+            showsCameraUnavailable = true
         }
     }
 
-    private func removeItem(id: String) {
-        updateLoadedItems { items in
-            guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-            removedItem = items.remove(at: index)
+    private func loadPhoto(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+
+        Task {
+            guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+            setPrescription(data, source: .photoLibrary)
+            selectedPhotoItem = nil
         }
     }
 
-    private func restoreRemovedItem() {
-        guard let removedItem else { return }
-        updateLoadedItems { items in
-            items.append(removedItem)
-        }
-        self.removedItem = nil
+    private func setPrescription(_ data: Data, source: CartPrescriptionSource) {
+        viewModel.handle(.setPrescription(data, source))
     }
 
-    private func restoreSampleCart() {
-        state = .loaded(CartSampleData.items)
+    private func removePrescription() {
+        viewModel.handle(.removePrescription)
     }
 
-    private func updateLoadedItems(_ update: (inout [CartDisplayItem]) -> Void) {
-        guard case var .loaded(items) = state else { return }
-        update(&items)
-        state = items.isEmpty ? .empty : .loaded(items)
-        onItemCountChange(items.reduce(0) { $0 + $1.quantity })
+    private func handleItemEvent(_ event: CartEvent) {
+        viewModel.handle(event)
+        onItemCountChange(viewModel.itemCount)
     }
 
-    private func estimatedTotal(_ items: [CartDisplayItem]) -> Double {
-        items.reduce(0) { $0 + $1.lineTotal }
+    private func undoRemoval() {
+        viewModel.handle(.undoRemoval)
+        onItemCountChange(viewModel.itemCount)
     }
 
-    private var currentItemCount: Int {
-        guard case let .loaded(items) = state else { return 0 }
-        return items.reduce(0) { $0 + $1.quantity }
+    private func retry() {
+        viewModel.handle(.syncSucceeded(CartSampleData.items))
+        onItemCountChange(viewModel.itemCount)
     }
+
+    private func continueRequest() {
+        guard case let .continueRequest(draft) = viewModel.handle(.continueRequest) else { return }
+        onContinue(draft)
+    }
+
 }

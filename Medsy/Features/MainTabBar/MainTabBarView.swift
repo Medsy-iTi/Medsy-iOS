@@ -30,7 +30,6 @@ struct MainTabBarView: View {
                 case .cart:
                     CartView(
                         onSearch: { coordinator.select(.home) },
-                        onUploadPrescription: { coordinator.select(.home) },
                         onItemCountChange: { cartBadgeCount = $0 }
                     )
                     .onAppear { isTabBarHidden = false }
