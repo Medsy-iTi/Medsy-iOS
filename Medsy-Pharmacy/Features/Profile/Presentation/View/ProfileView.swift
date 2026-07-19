@@ -1,10 +1,7 @@
 //
 //  ProfileView.swift
-//  Medsy
+//  Medsy-Pharmacy
 //
-//  Created by Shahudaa on 18/07/2026.
-//
-
 
 import SwiftUI
 
@@ -24,30 +21,22 @@ struct ProfileView: View {
         .refreshable { await viewModel.refresh() }
         .navigationTitle("profile_title".localized)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: PharmacySpacing.md) {
-                    if let profile = viewModel.profile, profile.pharmacyId != nil {
-                        Button {
-                            viewModel.didTapPharmacyCard()
-                        } label: {
-                            Image(systemName: "building.2")
-                                .foregroundStyle(PharmacyColor.textPrimary)
-                        }
-                        .accessibilityLabel("pharmacy_profile_title".localized)
-                    }
-                    
-                    Button {
-                        viewModel.didTapSettings()
-                    } label: {
-                        Image(systemName: "gearshape")
-                            .foregroundStyle(PharmacyColor.textPrimary)
-                    }
-                    .accessibilityLabel("settings_title".localized)
-                }
+        // Leave pharmacy confirmation
+        .confirmationDialog(
+            "pharmacy_card.leave_confirm_title".localized,
+            isPresented: $viewModel.showLeavePharmacyConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("pharmacy_card.leave_confirm_action".localized, role: .destructive) {
+                Task { await viewModel.confirmLeavePharmacy() }
             }
+            Button("cancel".localized, role: .cancel) {
+                viewModel.cancelLeavePharmacy()
+            }
+        } message: {
+            Text("pharmacy_card.leave_confirm_message".localized)
         }
-        .task { await viewModel.onAppear() }
+        // Logout confirmation
         .confirmationDialog(
             "logout_confirmation_title".localized,
             isPresented: $viewModel.showLogoutConfirmation,
@@ -63,7 +52,7 @@ struct ProfileView: View {
             Text("logout_confirmation_message".localized)
         }
         .overlay {
-            if viewModel.isLoggingOut {
+            if viewModel.isLoggingOut || viewModel.isLeavingPharmacy {
                 ZStack {
                     Color.black.opacity(0.15).ignoresSafeArea()
                     ProgressView()
@@ -72,7 +61,10 @@ struct ProfileView: View {
                 }
             }
         }
+        .task { await viewModel.onAppear() }
     }
+
+    // MARK: - Content
 
     @ViewBuilder
     private var content: some View {
@@ -92,14 +84,23 @@ struct ProfileView: View {
         }
     }
 
+    // MARK: - Loaded
+
     @ViewBuilder
     private func loadedContent(profile: PharmacyProfile) -> some View {
         VStack(spacing: PharmacySpacing.md) {
+
+            // Pharmacist Info Card
             PharmacyInfoCardView(profile: profile) {
                 viewModel.didTapEditProfile()
             }
 
+            // Pharmacy Card
+            pharmacySection(profile: profile)
+
+            // Settings Section (Language + Theme)
             ProfileSectionContainer {
+                // Language
                 Menu {
                     Button {
                         viewModel.setLanguage(.english)
@@ -125,21 +126,22 @@ struct ProfileView: View {
                     ProfileMenuRow(
                         icon: "globe",
                         title: "language_title".localized,
-                        subtitle: languageManager.currentLanguage == .arabic ? "arabic".localized : "english".localized
+                        subtitle: languageManager.currentLanguage == .arabic
+                            ? "arabic".localized
+                            : "english".localized
                     )
                 }
 
                 ProfileRowDivider()
 
+                // Theme
                 Menu {
                     Button {
                         viewModel.setTheme(isDark: false)
                     } label: {
                         HStack {
                             Text("theme_light".localized)
-                            if !appSettings.isDarkMode {
-                                Image(systemName: "checkmark")
-                            }
+                            if !appSettings.isDarkMode { Image(systemName: "checkmark") }
                         }
                     }
                     Button {
@@ -147,9 +149,7 @@ struct ProfileView: View {
                     } label: {
                         HStack {
                             Text("theme_dark".localized)
-                            if appSettings.isDarkMode {
-                                Image(systemName: "checkmark")
-                            }
+                            if appSettings.isDarkMode { Image(systemName: "checkmark") }
                         }
                     }
                 } label: {
@@ -157,11 +157,14 @@ struct ProfileView: View {
                         icon: "moon.stars.fill",
                         iconTint: PharmacyColor.secondary,
                         title: "theme_title".localized,
-                        subtitle: appSettings.isDarkMode ? "theme_dark".localized : "theme_light".localized
+                        subtitle: appSettings.isDarkMode
+                            ? "theme_dark".localized
+                            : "theme_light".localized
                     )
                 }
             }
 
+            // Logout Section
             ProfileSectionContainer {
                 ProfileNavigationRow(
                     icon: "rectangle.portrait.and.arrow.right",
@@ -170,6 +173,30 @@ struct ProfileView: View {
                     action: viewModel.requestLogout
                 )
             }
+        }
+    }
+
+    // MARK: - Pharmacy Section
+
+    @ViewBuilder
+    private func pharmacySection(profile: PharmacyProfile) -> some View {
+        if profile.pharmacyId != nil {
+            PharmacyCardView(
+                profile: profile,
+                onEdit: profile.isPharmacyAdmin ? { viewModel.didTapEditPharmacy() } : nil,
+                onLeave: { viewModel.requestLeavePharmacy() }
+            )
+
+            // Error when leaving pharmacy
+            if let err = viewModel.leavePharmacyErrorMessage {
+                Text(err)
+                    .font(PharmacyColor.sans(12, .medium))
+                    .foregroundStyle(PharmacyColor.danger)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
+            }
+        } else {
+            NoPharmacyCardView()
         }
     }
 }

@@ -4,12 +4,12 @@
 //
 
 actor PharmacyAuthTokenRefresher: TokenRefreshing {
-    private let refreshSessionUseCase: PharmacyRefreshSessionUseCaseProtocol
+    private let refreshSessionUseCaseFactory: @Sendable () async -> PharmacyRefreshSessionUseCaseProtocol
     private let tokenStore: TokenStoreProtocol
     private var activeRefresh: Task<Void, Error>?
 
-    init(refreshSessionUseCase: PharmacyRefreshSessionUseCaseProtocol, tokenStore: TokenStoreProtocol) {
-        self.refreshSessionUseCase = refreshSessionUseCase
+    init(refreshSessionUseCaseFactory: @escaping @Sendable () async -> PharmacyRefreshSessionUseCaseProtocol, tokenStore: TokenStoreProtocol) {
+        self.refreshSessionUseCaseFactory = refreshSessionUseCaseFactory
         self.tokenStore = tokenStore
     }
 
@@ -23,7 +23,8 @@ actor PharmacyAuthTokenRefresher: TokenRefreshing {
                 throw NetworkError.unauthorized
             }
 
-            let session = try await refreshSessionUseCase.execute(refreshToken: refreshToken)
+            let useCase = await refreshSessionUseCaseFactory()
+            let session = try await useCase.execute(refreshToken: refreshToken)
             try tokenStore.save(accessToken: session.accessToken, refreshToken: session.refreshToken)
         }
         activeRefresh = task

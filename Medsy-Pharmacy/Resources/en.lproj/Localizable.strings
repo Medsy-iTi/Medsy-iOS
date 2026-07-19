@@ -143,3 +143,23 @@
 "profile.address_error" = "Please enter a valid address.";
 "profile.date_of_birth" = "Date of Birth";
 "profile.save_changes" = "Save Changes";
+
+// Pharmacy Card
+"pharmacy_card.your_pharmacy" = "Your Pharmacy";
+"pharmacy_card.unknown" = "Unnamed Pharmacy";
+"pharmacy_card.edit" = "Edit Pharmacy";
+"pharmacy_card.leave" = "Leave Pharmacy";
+"pharmacy_card.leave_confirm_title" = "Leave Pharmacy";
+"pharmacy_card.leave_confirm_message" = "Are you sure you want to leave this pharmacy? You will lose access to all pharmacy-related features.";
+"pharmacy_card.leave_confirm_action" = "Leave";
+"pharmacy_card.not_assigned" = "Not Assigned to a Pharmacy";
+"pharmacy_card.not_assigned_subtitle" = "Contact your pharmacy administrator to be added.";
+
+// Edit Pharmacy
+"pharmacy_edit.title" = "Edit Pharmacy";
+"pharmacy_edit.name" = "Pharmacy Name";
+"pharmacy_edit.name.placeholder" = "Enter pharmacy name";
+"pharmacy_edit.address" = "Address";
+"pharmacy_edit.address.placeholder" = "Enter pharmacy address";
+"pharmacy_edit.phone" = "Phone Number";
+"pharmacy_edit.phone.placeholder" = "Enter pharmacy phone number";

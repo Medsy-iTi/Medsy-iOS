@@ -143,3 +143,23 @@
 "profile.address_error" = "يرجى إدخال عنوان صحيح.";
 "profile.date_of_birth" = "تاريخ الميلاد";
 "profile.save_changes" = "حفظ التغييرات";
+
+// Pharmacy Card
+"pharmacy_card.your_pharmacy" = "صيدليتك";
+"pharmacy_card.unknown" = "صيدلية بدون اسم";
+"pharmacy_card.edit" = "تعديل بيانات الصيدلية";
+"pharmacy_card.leave" = "مغادرة الصيدلية";
+"pharmacy_card.leave_confirm_title" = "مغادرة الصيدلية";
+"pharmacy_card.leave_confirm_message" = "هل أنت متأكد من رغبتك في مغادرة هذه الصيدلية؟ ستفقد الوصول إلى جميع ميزات الصيدلية.";
+"pharmacy_card.leave_confirm_action" = "مغادرة";
+"pharmacy_card.not_assigned" = "غير مسجّل في صيدلية";
+"pharmacy_card.not_assigned_subtitle" = "تواصل مع مدير الصيدلية لإضافتك.";
+
+// Edit Pharmacy
+"pharmacy_edit.title" = "تعديل بيانات الصيدلية";
+"pharmacy_edit.name" = "اسم الصيدلية";
+"pharmacy_edit.name.placeholder" = "أدخل اسم الصيدلية";
+"pharmacy_edit.address" = "العنوان";
+"pharmacy_edit.address.placeholder" = "أدخل عنوان الصيدلية";
+"pharmacy_edit.phone" = "رقم الهاتف";
+"pharmacy_edit.phone.placeholder" = "أدخل رقم هاتف الصيدلية";

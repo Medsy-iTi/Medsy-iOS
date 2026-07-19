@@ -1,18 +1,28 @@
 //
 //  ProfileRepositoryProtocol.swift
-//  Medsy
-//
-//  Created by Shahudaa on 18/07/2026.
+//  Medsy-Pharmacy
 //
 
 import Foundation
 
-
 protocol ProfileRepositoryProtocol {
+    // Fetch
     func fetchProfile() async throws -> PharmacyProfile
-    func updateProfile(id: Int, email: String, firstName: String, lastName: String, homeAddress: String?, dateOfBirth: Date?) async throws
 
+    // Personal Profile
+    func updateProfile(
+        id: Int,
+        email: String,
+        firstName: String,
+        lastName: String,
+        homeAddress: String?,
+        dateOfBirth: Date?
+    ) async throws
 
+    // Pharmacy
+    func leavePharmacy(pharmacyId: Int) async throws
+    func updatePharmacy(id: Int, name: String?, address: String?, phoneNumber: String?) async throws
 
+    // Auth
     func logout() async throws
 }
