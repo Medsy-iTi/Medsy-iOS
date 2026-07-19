@@ -7,11 +7,6 @@
 
 import Foundation
 
-enum CartPrescriptionSource: Equatable {
-    case camera
-    case photoLibrary
-}
-
 struct CartPrescriptionAttachment: Identifiable, Equatable {
     let id: UUID
     let imageData: Data
