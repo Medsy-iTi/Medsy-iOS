@@ -88,8 +88,8 @@ final class CartViewModelTests: XCTestCase {
             ),
             .persistPrescription
         )
-        XCTAssertEqual(viewModel.prescription?.imageData, replacementData)
-        XCTAssertEqual(viewModel.prescription?.source, .photoLibrary)
+        XCTAssertEqual(viewModel.prescriptions[0].imageData, replacementData)
+        XCTAssertEqual(viewModel.prescriptions[0].source, .photoLibrary)
 
         XCTAssertEqual(viewModel.handle(.removePrescriptionByID(secondID)), .persistPrescription)
         XCTAssertEqual(viewModel.prescriptions.count, 1)
@@ -102,7 +102,7 @@ final class CartViewModelTests: XCTestCase {
             imageData: Data([1, 2, 3]),
             source: .camera
         )
-        let viewModel = CartViewModel(items: [cartItem], prescription: attachment)
+        let viewModel = CartViewModel(items: [cartItem], prescriptions: [attachment])
 
         let effect = viewModel.handle(.continueRequest)
 
@@ -122,7 +122,7 @@ final class CartViewModelTests: XCTestCase {
             imageData: Data([1, 2, 3]),
             source: .photoLibrary
         )
-        let viewModel = CartViewModel(prescription: attachment)
+        let viewModel = CartViewModel(prescriptions: [attachment])
 
         XCTAssertNotNil(viewModel.handle(.continueRequest))
     }
@@ -134,7 +134,7 @@ final class CartViewModelTests: XCTestCase {
         )
         let viewModel = CartViewModel(
             items: [item(id: "first", productID: 10, quantity: 2)],
-            prescription: attachment
+            prescriptions: [attachment]
         )
 
         XCTAssertEqual(viewModel.handle(.clear), .sync)

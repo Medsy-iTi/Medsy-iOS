@@ -51,12 +51,11 @@ final class CartViewModel: CartViewModelProtocol {
 
     init(
         items: [CartDisplayItem] = [],
-        prescription: CartPrescriptionAttachment? = nil,
-        prescriptions: [CartPrescriptionAttachment]? = nil,
+        prescriptions: [CartPrescriptionAttachment] = [],
         maximumItemCount: Int = 20
     ) {
         state = items.isEmpty ? .empty : .loaded(items)
-        self.prescriptions = prescriptions ?? prescription.map { [$0] } ?? []
+        self.prescriptions = prescriptions
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
@@ -68,12 +67,11 @@ final class CartViewModel: CartViewModelProtocol {
 
     init(
         state: CartViewState,
-        prescription: CartPrescriptionAttachment? = nil,
-        prescriptions: [CartPrescriptionAttachment]? = nil,
+        prescriptions: [CartPrescriptionAttachment] = [],
         maximumItemCount: Int = 20
     ) {
         self.state = state
-        self.prescriptions = prescriptions ?? prescription.map { [$0] } ?? []
+        self.prescriptions = prescriptions
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
@@ -81,10 +79,6 @@ final class CartViewModel: CartViewModelProtocol {
         clearCartUseCase = nil
         manageCartPrescriptionsUseCase = nil
         self.maximumItemCount = maximumItemCount
-    }
-
-    var prescription: CartPrescriptionAttachment? {
-        prescriptions.first
     }
 
     var itemCount: Int {
@@ -124,9 +118,6 @@ final class CartViewModel: CartViewModelProtocol {
             return handleAddPrescription(data: data, source: source)
         case let .replacePrescription(id, data, source):
             return handleReplacePrescription(id: id, data: data, source: source)
-        case .removePrescription:
-            guard let id = prescriptions.first?.id else { return nil }
-            return handleRemovePrescription(id: id)
         case let .removePrescriptionByID(id):
             return handleRemovePrescription(id: id)
         case .clear:
