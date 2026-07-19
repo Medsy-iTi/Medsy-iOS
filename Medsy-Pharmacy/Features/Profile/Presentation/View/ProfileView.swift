@@ -95,9 +95,9 @@ struct ProfileView: View {
     @ViewBuilder
     private func loadedContent(profile: PharmacyProfile) -> some View {
         VStack(spacing: PharmacySpacing.md) {
-            PharmacyInfoCardView(profile: profile)
-
-
+            PharmacyInfoCardView(profile: profile) {
+                viewModel.didTapEditProfile()
+            }
 
             ProfileSectionContainer {
                 Menu {

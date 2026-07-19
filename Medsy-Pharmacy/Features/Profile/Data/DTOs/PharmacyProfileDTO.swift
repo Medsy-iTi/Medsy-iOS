@@ -17,6 +17,8 @@ struct PharmacistResponseDTO: Decodable {
     let phoneNumber: String
     let pharmacyId: Int?
     let pharmacyAdmin: Bool
+    let homeAddress: String?
+    let dob: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -26,6 +28,8 @@ struct PharmacistResponseDTO: Decodable {
         case phoneNumber
         case pharmacyId
         case pharmacyAdmin
+        case homeAddress
+        case dob
     }
 }
 

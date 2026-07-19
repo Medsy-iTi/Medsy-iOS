@@ -9,10 +9,21 @@
 import SwiftUI
 import Observation
 
+enum PharmacyProfilePresentation: Identifiable {
+    case editProfile
+
+    var id: String {
+        switch self {
+        case .editProfile: return "editProfile"
+        }
+    }
+}
+
 @Observable
 @MainActor
 final class ProfileCoordinator: Coordinator {
     var path = NavigationPath()
+    var activePresentation: PharmacyProfilePresentation?
 
     private let container: PharmacyDIContainer
 
@@ -30,11 +41,42 @@ final class ProfileCoordinator: Coordinator {
     func start() -> some View {
         let viewModel = makeProfileViewModel()
         ProfileView(viewModel: viewModel)
+            .sheet(item: Binding(
+                get: { self.activePresentation },
+                set: { self.activePresentation = $0 }
+            )) { presentation in
+				self.sheet(for: presentation, viewModel: viewModel)
+            }
+    }
+
+    @ViewBuilder
+    private func sheet(for presentation: PharmacyProfilePresentation, viewModel: ProfileViewModel) -> some View {
+        switch presentation {
+        case .editProfile:
+            if let profile = viewModel.profile {
+                PharmacyEditProfileScreen(
+                    name: profile.fullName,
+                    phoneNumber: profile.phoneNumber,
+                    email: profile.email,
+                    homeAddress: profile.homeAddress ?? "",
+                    dateOfBirth: profile.dateOfBirth,
+                    isSaving: viewModel.isSaving,
+                    errorMessage: viewModel.saveErrorMessage,
+                    onCancel: { self.activePresentation = nil },
+                    onSave: { homeAddress, dateOfBirth in
+                        let success = await viewModel.updateProfile(homeAddress: homeAddress, dateOfBirth: dateOfBirth)
+                        return success
+                    }
+                )
+
+            }
+        }
     }
 
     private func makeProfileViewModel() -> ProfileViewModel {
         let viewModel = ProfileViewModel(
             getProfileUseCase: GetPharmacyProfileUseCase(repository: container.resolve(ProfileRepositoryProtocol.self)),
+            updateProfileUseCase: PharmacyUpdateProfileUseCase(repository: container.resolve(ProfileRepositoryProtocol.self)),
             logoutUseCase: LogoutUseCase(
                 repository: container.resolve(ProfileRepositoryProtocol.self),
                 tokenStore: container.resolve(TokenStoreProtocol.self)
@@ -42,7 +84,13 @@ final class ProfileCoordinator: Coordinator {
             languageManager: container.resolve(LanguageManager.self),
             appSettings: container.resolve(PharmacyAppSettings.self)
         )
-        viewModel.onNavigate = { [weak self] route in self?.navigate(to: route) }
+        viewModel.onNavigate = { [weak self] route in
+            if route == .editProfile {
+                self?.activePresentation = .editProfile
+            } else {
+                self?.navigate(to: route)
+            }
+        }
         viewModel.onLoggedOut = { [weak self] in self?.onLoggedOut?() }
         return viewModel
     }
@@ -72,7 +120,8 @@ final class ProfileCoordinator: Coordinator {
         case .pharmacyDetails:
             PlaceholderDestinationView(titleKey: "pharmacy_details_title")
 
-
-        }
+			case .editProfile:
+				PlaceholderDestinationView(titleKey: "")
+		}
     }
 }

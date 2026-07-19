@@ -130,3 +130,16 @@
 "profile_generic_error" = "تعذر تحميل البيانات، حاول مرة أخرى";
 "coming_soon" = "قريباً";
 
+// Edit Profile
+"profile.edit.title" = "تعديل الملف الشخصي";
+"profile.change_photo" = "تغيير الصورة";
+"profile.full_name" = "الاسم الكامل";
+"profile.email" = "البريد الإلكتروني";
+"profile.not_set" = "غير محدد";
+"profile.phone" = "رقم الهاتف";
+"profile.phone_support_note" = "لتغيير رقم هاتفك، يرجى التواصل مع الدعم.";
+"profile.home_address" = "عنوان المنزل";
+"profile.home_address.placeholder" = "أدخل عنوانك بالكامل";
+"profile.address_error" = "يرجى إدخال عنوان صحيح.";
+"profile.date_of_birth" = "تاريخ الميلاد";
+"profile.save_changes" = "حفظ التغييرات";

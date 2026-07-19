@@ -24,8 +24,11 @@ final class ProfileViewModel {
     private(set) var profile: PharmacyProfile?
     var showLogoutConfirmation: Bool = false
     var isLoggingOut: Bool = false
+    var isSaving: Bool = false
+    var saveErrorMessage: String?
 
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
+    private let updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
     private let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
@@ -35,11 +38,13 @@ final class ProfileViewModel {
 
     init(
         getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
+        updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
         self.getProfileUseCase = getProfileUseCase
+        self.updateProfileUseCase = updateProfileUseCase
         self.logoutUseCase = logoutUseCase
         self.languageManager = languageManager
         self.appSettings = appSettings
@@ -93,6 +98,29 @@ final class ProfileViewModel {
         }
     }
 
+    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+        guard let profile, let id = Int(profile.id) else { return false }
+        isSaving = true
+        saveErrorMessage = nil
+        do {
+            try await updateProfileUseCase.execute(
+                id: id,
+                email: profile.email,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                homeAddress: homeAddress,
+                dateOfBirth: dateOfBirth
+            )
+            isSaving = false
+            await loadProfile(showsSpinner: false)
+            return true
+        } catch {
+            isSaving = false
+            saveErrorMessage = Self.userFacingMessage(for: error)
+            return false
+        }
+    }
+
     func didTapSettings() {
         onNavigate?(.settings)
     }
@@ -103,6 +131,10 @@ final class ProfileViewModel {
 
     func didTapPharmacyCard() {
         onNavigate?(.pharmacyDetails)
+    }
+
+    func didTapEditProfile() {
+        onNavigate?(.editProfile)
     }
 
     func requestLogout() {

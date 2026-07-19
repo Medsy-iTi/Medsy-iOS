@@ -38,7 +38,21 @@ final class ProfileRepository: ProfileRepositoryProtocol {
 	}
 
 
+    func updateProfile(id: Int, email: String, firstName: String, lastName: String, homeAddress: String?, dateOfBirth: Date?) async throws {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dobString = dateOfBirth != nil ? formatter.string(from: dateOfBirth!) : nil
 
+        let request = UpdatePharmacyProfileRequestDTO(
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            homeAddress: homeAddress,
+            dob: dobString
+        )
+        
+        let _: EmptyResponse = try await networkService.request(endpoint: ProfileEndpoint.updateProfile(id: id, request: request))
+    }
 	func logout() async throws {
         guard let refreshToken = tokenStore.refreshToken() else { return }
 		let _: EmptyResponse = try await networkService.request(endpoint: ProfileEndpoint.logout(refreshToken: refreshToken))

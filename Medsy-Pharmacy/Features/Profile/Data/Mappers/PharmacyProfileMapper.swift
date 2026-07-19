@@ -21,6 +21,15 @@ enum PharmacyProfileMapper {
             phoneNumber: pharmacist.phoneNumber,
             pharmacyId: pharmacist.pharmacyId,
             isPharmacyAdmin: pharmacist.pharmacyAdmin,
+            homeAddress: pharmacist.homeAddress,
+            dateOfBirth: {
+                if let dobString = pharmacist.dob {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd"
+                    return formatter.date(from: dobString)
+                }
+                return nil
+            }(),
             pharmacyName: pharmacy?.name,
             pharmacyAddress: pharmacy?.address,
             pharmacyPhoneNumber: pharmacy?.phoneNumber

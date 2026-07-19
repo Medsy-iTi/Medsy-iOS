@@ -18,3 +18,4 @@ struct ProfileAssembly: PharmacyModuleAssembly {
 		}
 	}
 }
+

@@ -10,6 +10,6 @@ import Foundation
 enum ProfileRoute: Hashable {
 	case settings
 	case pharmacyDetails
-
+	case editProfile
 
 }

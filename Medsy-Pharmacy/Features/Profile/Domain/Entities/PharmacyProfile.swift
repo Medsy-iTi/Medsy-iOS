@@ -16,6 +16,8 @@ struct PharmacyProfile: Equatable, Identifiable {
     let phoneNumber: String
     let pharmacyId: Int?
     let isPharmacyAdmin: Bool
+    let homeAddress: String?
+    let dateOfBirth: Date?
 
     
     let pharmacyName: String?
@@ -37,6 +39,8 @@ extension PharmacyProfile {
         phoneNumber: "010 1234 5678",
         pharmacyId: 1,
         isPharmacyAdmin: true,
+        homeAddress: "شارع النيل، المعادي، القاهرة",
+        dateOfBirth: Date(),
         pharmacyName: "صيدلية النهضية",
         pharmacyAddress: "شارع النيل، المعادي، القاهرة",
         pharmacyPhoneNumber: "010 9876 5432"

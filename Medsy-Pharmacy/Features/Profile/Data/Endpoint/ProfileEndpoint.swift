@@ -12,6 +12,7 @@ import Foundation
 enum ProfileEndpoint: ApiEndpoint {
     case fetchPharmacistMe
     case fetchPharmacyMine
+    case updateProfile(id: Int, request: UpdatePharmacyProfileRequestDTO)
 
     case logout(refreshToken: String)
 
@@ -21,6 +22,8 @@ enum ProfileEndpoint: ApiEndpoint {
             return "pharmacists/me"
         case .fetchPharmacyMine:
             return "pharmacies/mine"
+        case let .updateProfile(id, _):
+            return "users/\(id)"
 
         case .logout:
             return "auth/logout"
@@ -31,6 +34,8 @@ enum ProfileEndpoint: ApiEndpoint {
         switch self {
         case .fetchPharmacistMe, .fetchPharmacyMine:
             return .get
+        case .updateProfile:
+            return .put
 
         case .logout:
             return .post
@@ -44,6 +49,8 @@ enum ProfileEndpoint: ApiEndpoint {
             return try? JSONEncoder().encode(["refreshToken": refreshToken])
         case .fetchPharmacistMe, .fetchPharmacyMine:
             return nil
+        case let .updateProfile(_, request):
+            return try? JSONEncoder().encode(request)
         }
     }
 

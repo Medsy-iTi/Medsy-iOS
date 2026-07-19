@@ -76,6 +76,19 @@
 "pharmacy.onboarding.page3.title" = "Track every order to completion";
 "pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";
 
+"pharmacy.auth.login.title" = "Welcome back";
+"pharmacy.auth.login.subtitle" = "Log in to manage your pharmacy.";
+"pharmacy.auth.login.action" = "Log In";
+"pharmacy.auth.forgot_password" = "Forgot Password?";
+"pharmacy.auth.continue_google" = "Continue with Google";
+"pharmacy.auth.continue_apple" = "Continue with Apple";
+"pharmacy.auth.no_account" = "Don't have an account?";
+"pharmacy.auth.signup.link" = "Sign Up";
+"pharmacy.auth.login.link" = "Log In";
+"pharmacy.auth.brand.name" = "Medsy";
+"pharmacy.auth.brand.tagline" = "for Pharmacies";
+"pharmacy.auth.or" = "or";
+
 /* profile */
 "profile_title" = "Profile";
 "settings_title" = "Settings";
@@ -116,3 +129,17 @@
 "retry" = "Retry";
 "profile_generic_error" = "Couldn't load your data. Please try again";
 "coming_soon" = "Coming soon";
+
+// Edit Profile
+"profile.edit.title" = "Edit Profile";
+"profile.change_photo" = "Change Photo";
+"profile.full_name" = "Full Name";
+"profile.email" = "Email Address";
+"profile.not_set" = "Not set";
+"profile.phone" = "Phone Number";
+"profile.phone_support_note" = "To change your phone number, please contact support.";
+"profile.home_address" = "Home Address";
+"profile.home_address.placeholder" = "Enter your full address";
+"profile.address_error" = "Please enter a valid address.";
+"profile.date_of_birth" = "Date of Birth";
+"profile.save_changes" = "Save Changes";
