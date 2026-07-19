@@ -11,13 +11,16 @@ import Observation
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
-    @State private var cartViewModel = CartViewModel()
+    @State private var cartViewModel: CartViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
+        _cartViewModel = State(
+            initialValue: DIContainer.shared.resolve(CartViewModel.self)
+        )
     }
     
     var body: some View {
@@ -91,6 +94,9 @@ struct MainTabBarView: View {
         }
         .onDisappear {
             cartFeedbackTask?.cancel()
+        }
+        .task {
+            cartViewModel.handle(.load)
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
     }

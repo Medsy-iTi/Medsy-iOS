@@ -187,6 +187,8 @@
 "cart.removed_message" = "تم حذف %@";
 "cart.undo" = "تراجع";
 "cart.prescription.add" = "إضافة روشتة";
+"cart.prescription.add_another" = "إضافة روشتة أخرى";
+"cart.prescription.number" = "الروشتة %d";
 "cart.prescription.title" = "الروشتة المرفقة";
 "cart.prescription.change" = "تغيير الروشتة";
 "cart.prescription.remove" = "حذف الروشتة";

@@ -69,23 +69,31 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.estimatedTotal, 30)
     }
 
-    func testPrescriptionCanBeAddedReplacedAndRemoved() {
+    func testPrescriptionsCanBeAddedReplacedAndRemovedIndependently() {
         let viewModel = CartViewModel()
         let firstData = Data([1, 2, 3])
-        let replacementData = Data([4, 5, 6])
+        let secondData = Data([4, 5, 6])
+        let replacementData = Data([7, 8, 9])
 
         XCTAssertEqual(viewModel.handle(.setPrescription(firstData, .camera)), .persistPrescription)
-        XCTAssertEqual(viewModel.prescription?.imageData, firstData)
-        XCTAssertEqual(viewModel.prescription?.source, .camera)
+        XCTAssertEqual(viewModel.handle(.setPrescription(secondData, .photoLibrary)), .persistPrescription)
+        XCTAssertEqual(viewModel.prescriptions.map(\.imageData), [firstData, secondData])
         XCTAssertTrue(viewModel.hasContent)
 
-        XCTAssertEqual(viewModel.handle(.setPrescription(replacementData, .photoLibrary)), .persistPrescription)
-        XCTAssertEqual(viewModel.prescription?.imageData, replacementData)
-        XCTAssertEqual(viewModel.prescription?.source, .photoLibrary)
+        let firstID = viewModel.prescriptions[0].id
+        let secondID = viewModel.prescriptions[1].id
+        XCTAssertEqual(
+            viewModel.handle(
+                .replacePrescription(id: firstID, data: replacementData, source: .photoLibrary)
+            ),
+            .persistPrescription
+        )
+        XCTAssertEqual(viewModel.prescriptions[0].imageData, replacementData)
+        XCTAssertEqual(viewModel.prescriptions[0].source, .photoLibrary)
 
-        XCTAssertEqual(viewModel.handle(.removePrescription), .persistPrescription)
-        XCTAssertNil(viewModel.prescription)
-        XCTAssertFalse(viewModel.hasContent)
+        XCTAssertEqual(viewModel.handle(.removePrescriptionByID(secondID)), .persistPrescription)
+        XCTAssertEqual(viewModel.prescriptions.count, 1)
+        XCTAssertTrue(viewModel.hasContent)
     }
 
     func testContinueRequestIncludesItemsAndPrescription() {
@@ -94,7 +102,7 @@ final class CartViewModelTests: XCTestCase {
             imageData: Data([1, 2, 3]),
             source: .camera
         )
-        let viewModel = CartViewModel(items: [cartItem], prescription: attachment)
+        let viewModel = CartViewModel(items: [cartItem], prescriptions: [attachment])
 
         let effect = viewModel.handle(.continueRequest)
 
@@ -103,7 +111,7 @@ final class CartViewModelTests: XCTestCase {
             .continueRequest(
                 CartRequestDraft(
                     items: [cartItem],
-                    prescription: attachment
+                    prescriptions: [attachment]
                 )
             )
         )
@@ -114,7 +122,7 @@ final class CartViewModelTests: XCTestCase {
             imageData: Data([1, 2, 3]),
             source: .photoLibrary
         )
-        let viewModel = CartViewModel(prescription: attachment)
+        let viewModel = CartViewModel(prescriptions: [attachment])
 
         XCTAssertNotNil(viewModel.handle(.continueRequest))
     }
@@ -126,12 +134,12 @@ final class CartViewModelTests: XCTestCase {
         )
         let viewModel = CartViewModel(
             items: [item(id: "first", productID: 10, quantity: 2)],
-            prescription: attachment
+            prescriptions: [attachment]
         )
 
         XCTAssertEqual(viewModel.handle(.clear), .sync)
         XCTAssertEqual(viewModel.state, .empty)
-        XCTAssertNil(viewModel.prescription)
+        XCTAssertTrue(viewModel.prescriptions.isEmpty)
         XCTAssertFalse(viewModel.hasContent)
     }
 

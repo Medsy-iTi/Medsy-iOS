@@ -188,6 +188,8 @@
 "cart.removed_message" = "%@ removed";
 "cart.undo" = "Undo";
 "cart.prescription.add" = "Add prescription";
+"cart.prescription.add_another" = "Add another prescription";
+"cart.prescription.number" = "Prescription %d";
 "cart.prescription.title" = "Attached prescription";
 "cart.prescription.change" = "Change prescription";
 "cart.prescription.remove" = "Remove prescription";
