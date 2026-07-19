@@ -33,3 +33,27 @@ struct AddCartItemRequestDTO: Encodable, Equatable {
 }
 
 struct EmptyCartResponseDTO: Decodable, Equatable {}
+
+struct CachedCartPrescriptionDTO: Equatable {
+    let id: UUID
+    let data: Data
+    let source: CartPrescriptionSource
+    let createdAt: Date
+}
+
+struct CachedCartDTO: Equatable {
+    let id: Int64
+    let items: [CachedCartItemDTO]
+    let totalPrice: Double
+}
+
+struct CachedCartItemDTO: Equatable {
+    let id: Int64
+    let productId: Int64
+    let productName: String
+    let dosageInfo: String
+    let imageUrl: String?
+    let unitPrice: Double
+    let quantity: Int
+    let subtotal: Double
+}
