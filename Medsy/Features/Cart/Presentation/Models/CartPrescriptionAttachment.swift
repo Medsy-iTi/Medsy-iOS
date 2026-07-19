@@ -11,19 +11,36 @@ struct CartPrescriptionAttachment: Identifiable, Equatable {
     let id: UUID
     let imageData: Data
     let source: CartPrescriptionSource
+    let createdAt: Date
 
     init(
         id: UUID = UUID(),
         imageData: Data,
-        source: CartPrescriptionSource
+        source: CartPrescriptionSource,
+        createdAt: Date = Date()
     ) {
         self.id = id
         self.imageData = imageData
         self.source = source
+        self.createdAt = createdAt
     }
 }
 
 struct CartRequestDraft: Equatable {
     let items: [CartDisplayItem]
-    let prescription: CartPrescriptionAttachment?
+    let prescriptions: [CartPrescriptionAttachment]
+
+    init(items: [CartDisplayItem], prescriptions: [CartPrescriptionAttachment]) {
+        self.items = items
+        self.prescriptions = prescriptions
+    }
+
+    init(items: [CartDisplayItem], prescription: CartPrescriptionAttachment?) {
+        self.items = items
+        prescriptions = prescription.map { [$0] } ?? []
+    }
+
+    var prescription: CartPrescriptionAttachment? {
+        prescriptions.first
+    }
 }

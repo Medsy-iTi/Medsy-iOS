@@ -16,29 +16,75 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var feedback: CartFeedback?
     private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
-    private(set) var prescription: CartPrescriptionAttachment?
+    private(set) var prescriptions: [CartPrescriptionAttachment]
 
+    private let loadCartUseCase: LoadCartUseCaseProtocol?
+    private let addCartItemUseCase: AddCartItemUseCaseProtocol?
+    private let updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCaseProtocol?
+    private let removeCartItemUseCase: RemoveCartItemUseCaseProtocol?
+    private let clearCartUseCase: ClearCartUseCaseProtocol?
+    private let manageCartPrescriptionsUseCase: ManageCartPrescriptionsUseCaseProtocol?
     private let maximumItemCount: Int
     private var removedItemIndex: Int?
+    private var loadTask: Task<Void, Never>?
+    private var operationTask: Task<Void, Never>?
+
+    init(
+        loadCartUseCase: LoadCartUseCaseProtocol,
+        addCartItemUseCase: AddCartItemUseCaseProtocol,
+        updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCaseProtocol,
+        removeCartItemUseCase: RemoveCartItemUseCaseProtocol,
+        clearCartUseCase: ClearCartUseCaseProtocol,
+        manageCartPrescriptionsUseCase: ManageCartPrescriptionsUseCaseProtocol,
+        maximumItemCount: Int = 20
+    ) {
+        state = .loading
+        prescriptions = []
+        self.loadCartUseCase = loadCartUseCase
+        self.addCartItemUseCase = addCartItemUseCase
+        self.updateCartItemQuantityUseCase = updateCartItemQuantityUseCase
+        self.removeCartItemUseCase = removeCartItemUseCase
+        self.clearCartUseCase = clearCartUseCase
+        self.manageCartPrescriptionsUseCase = manageCartPrescriptionsUseCase
+        self.maximumItemCount = maximumItemCount
+    }
 
     init(
         items: [CartDisplayItem] = [],
         prescription: CartPrescriptionAttachment? = nil,
+        prescriptions: [CartPrescriptionAttachment]? = nil,
         maximumItemCount: Int = 20
     ) {
         state = items.isEmpty ? .empty : .loaded(items)
-        self.prescription = prescription
+        self.prescriptions = prescriptions ?? prescription.map { [$0] } ?? []
+        loadCartUseCase = nil
+        addCartItemUseCase = nil
+        updateCartItemQuantityUseCase = nil
+        removeCartItemUseCase = nil
+        clearCartUseCase = nil
+        manageCartPrescriptionsUseCase = nil
         self.maximumItemCount = maximumItemCount
     }
 
     init(
         state: CartViewState,
         prescription: CartPrescriptionAttachment? = nil,
+        prescriptions: [CartPrescriptionAttachment]? = nil,
         maximumItemCount: Int = 20
     ) {
         self.state = state
-        self.prescription = prescription
+        self.prescriptions = prescriptions ?? prescription.map { [$0] } ?? []
+        loadCartUseCase = nil
+        addCartItemUseCase = nil
+        updateCartItemQuantityUseCase = nil
+        removeCartItemUseCase = nil
+        clearCartUseCase = nil
+        manageCartPrescriptionsUseCase = nil
         self.maximumItemCount = maximumItemCount
+    }
+
+    var prescription: CartPrescriptionAttachment? {
+        prescriptions.first
     }
 
     var itemCount: Int {
@@ -50,7 +96,7 @@ final class CartViewModel: CartViewModelProtocol {
     }
 
     var hasContent: Bool {
-        !items.isEmpty || prescription != nil
+        !items.isEmpty || !prescriptions.isEmpty
     }
 
     func quantity(forProductID productID: Int64?) -> Int {
@@ -62,34 +108,29 @@ final class CartViewModel: CartViewModelProtocol {
     func handle(_ event: CartEvent) -> CartEffect? {
         switch event {
         case .load, .retry:
-            if items.isEmpty {
-                state = .loading
-            }
+            load()
             return .load
         case let .addItem(item):
-            return add(item) ? .sync : nil
+            return handleAdd(item)
         case let .increaseQuantity(itemID):
-            return increaseQuantity(itemID: itemID) ? .sync : nil
+            return handleIncrease(itemID: itemID)
         case let .decreaseQuantity(itemID):
-            return decreaseQuantity(itemID: itemID) ? .sync : nil
+            return handleDecrease(itemID: itemID)
         case let .removeItem(itemID):
-            return removeItem(itemID: itemID) ? .sync : nil
+            return handleRemove(itemID: itemID)
         case .undoRemoval:
-            return undoRemoval() ? .sync : nil
+            return handleUndoRemoval()
         case let .setPrescription(data, source):
-            guard !data.isEmpty else { return nil }
-            prescription = CartPrescriptionAttachment(imageData: data, source: source)
-            feedback = nil
-            return .persistPrescription
+            return handleAddPrescription(data: data, source: source)
+        case let .replacePrescription(id, data, source):
+            return handleReplacePrescription(id: id, data: data, source: source)
         case .removePrescription:
-            guard prescription != nil else { return nil }
-            prescription = nil
-            return .persistPrescription
+            guard let id = prescriptions.first?.id else { return nil }
+            return handleRemovePrescription(id: id)
+        case let .removePrescriptionByID(id):
+            return handleRemovePrescription(id: id)
         case .clear:
-            replaceItems([])
-            prescription = nil
-            clearRemoval()
-            return .sync
+            return handleClear()
         case .dismissFeedback:
             feedback = nil
         case .syncStarted:
@@ -104,10 +145,7 @@ final class CartViewModel: CartViewModelProtocol {
         case .continueRequest:
             guard hasContent else { return nil }
             return .continueRequest(
-                CartRequestDraft(
-                    items: items,
-                    prescription: prescription
-                )
+                CartRequestDraft(items: items, prescriptions: prescriptions)
             )
         }
 
@@ -117,6 +155,289 @@ final class CartViewModel: CartViewModelProtocol {
     private var items: [CartDisplayItem] {
         guard case let .loaded(items) = state else { return [] }
         return items
+    }
+
+    private var canMutate: Bool {
+        syncState != .syncing
+    }
+
+    private func load() {
+        guard let loadCartUseCase else {
+            if items.isEmpty {
+                state = .loading
+            }
+            return
+        }
+
+        loadTask?.cancel()
+        if items.isEmpty && prescriptions.isEmpty {
+            state = .loading
+        }
+        loadTask = Task {
+            var hasCachedCart = false
+            do {
+                let cachedCart = try await loadCartUseCase.cached()
+                guard !Task.isCancelled else { return }
+                hasCachedCart = cachedCart.id != nil || cachedCart.hasContent
+                apply(cachedCart)
+            } catch is CancellationError {
+                return
+            } catch {
+                hasCachedCart = false
+            }
+
+            syncState = .syncing
+            do {
+                let cart = try await loadCartUseCase.refresh()
+                guard !Task.isCancelled else { return }
+                apply(cart)
+                syncState = .synced
+                feedback = nil
+            } catch is CancellationError {
+                return
+            } catch {
+                let message = error.localizedDescription
+                syncState = .failed(message)
+                if !hasCachedCart {
+                    state = .error(message)
+                } else {
+                    feedback = .operationFailed(message)
+                }
+            }
+        }
+    }
+
+    private func handleAdd(_ item: CartDisplayItem) -> CartEffect? {
+        guard canMutate else { return nil }
+        guard addCartItemUseCase == nil || item.productID != nil else {
+            feedback = .operationFailed("Unable to add this medicine to the cart.")
+            return nil
+        }
+
+        let previousItems = items
+        guard add(item) else { return nil }
+        guard let addCartItemUseCase, let productID = item.productID else { return .sync }
+
+        startCartMutation(previousItems: previousItems) {
+            try await addCartItemUseCase.execute(
+                input: AddCartItemInput(
+                    productID: productID,
+                    quantity: item.quantity,
+                    dosageInfo: item.dosageInfo
+                )
+            )
+        }
+        return .sync
+    }
+
+    private func handleIncrease(itemID: String) -> CartEffect? {
+        guard canMutate else { return nil }
+        let previousItems = items
+        guard let item = items.first(where: { $0.id == itemID }),
+              increaseQuantity(itemID: itemID) else {
+            return nil
+        }
+        guard let useCase = updateCartItemQuantityUseCase,
+              let cartItemID = item.cartItemID else {
+            return .sync
+        }
+
+        startCartMutation(previousItems: previousItems) {
+            try await useCase.execute(itemID: cartItemID, quantity: item.quantity + 1)
+        }
+        return .sync
+    }
+
+    private func handleDecrease(itemID: String) -> CartEffect? {
+        guard canMutate else { return nil }
+        guard let item = items.first(where: { $0.id == itemID }) else { return nil }
+        if item.quantity <= 1 {
+            return handleRemove(itemID: itemID)
+        }
+
+        let previousItems = items
+        guard decreaseQuantity(itemID: itemID) else { return nil }
+        guard let useCase = updateCartItemQuantityUseCase,
+              let cartItemID = item.cartItemID else {
+            return .sync
+        }
+
+        startCartMutation(previousItems: previousItems) {
+            try await useCase.execute(itemID: cartItemID, quantity: item.quantity - 1)
+        }
+        return .sync
+    }
+
+    private func handleRemove(itemID: String) -> CartEffect? {
+        guard canMutate else { return nil }
+        let previousItems = items
+        guard let item = items.first(where: { $0.id == itemID }),
+              removeItem(itemID: itemID) else {
+            return nil
+        }
+        guard let useCase = removeCartItemUseCase,
+              let cartItemID = item.cartItemID else {
+            return .sync
+        }
+
+        startCartMutation(previousItems: previousItems) {
+            try await useCase.execute(itemID: cartItemID)
+        }
+        return .sync
+    }
+
+    private func handleUndoRemoval() -> CartEffect? {
+        guard canMutate, let item = removedItem else { return nil }
+        let previousItems = items
+        guard undoRemoval() else { return nil }
+        guard let useCase = addCartItemUseCase,
+              let productID = item.productID else {
+            return .sync
+        }
+
+        startCartMutation(previousItems: previousItems) {
+            try await useCase.execute(
+                input: AddCartItemInput(
+                    productID: productID,
+                    quantity: item.quantity,
+                    dosageInfo: item.dosageInfo
+                )
+            )
+        }
+        return .sync
+    }
+
+    private func handleAddPrescription(
+        data: Data,
+        source: CartPrescriptionSource
+    ) -> CartEffect? {
+        guard canMutate, !data.isEmpty else { return nil }
+        let previousPrescriptions = prescriptions
+        let attachment = CartPrescriptionAttachment(imageData: data, source: source)
+        prescriptions.append(attachment)
+        feedback = nil
+        guard let useCase = manageCartPrescriptionsUseCase else { return .persistPrescription }
+
+        startPrescriptionMutation(previousPrescriptions: previousPrescriptions) {
+            try await useCase.add(CartPrescriptionPresentationMapper.map(attachment))
+        }
+        return .persistPrescription
+    }
+
+    private func handleReplacePrescription(
+        id: UUID,
+        data: Data,
+        source: CartPrescriptionSource
+    ) -> CartEffect? {
+        guard canMutate, !data.isEmpty,
+              let index = prescriptions.firstIndex(where: { $0.id == id }) else {
+            return nil
+        }
+
+        let previousPrescriptions = prescriptions
+        let attachment = CartPrescriptionAttachment(
+            id: id,
+            imageData: data,
+            source: source,
+            createdAt: prescriptions[index].createdAt
+        )
+        prescriptions[index] = attachment
+        guard let useCase = manageCartPrescriptionsUseCase else { return .persistPrescription }
+
+        startPrescriptionMutation(previousPrescriptions: previousPrescriptions) {
+            try await useCase.replace(
+                id: id,
+                with: CartPrescriptionPresentationMapper.map(attachment)
+            )
+        }
+        return .persistPrescription
+    }
+
+    private func handleRemovePrescription(id: UUID) -> CartEffect? {
+        guard canMutate,
+              prescriptions.contains(where: { $0.id == id }) else {
+            return nil
+        }
+
+        let previousPrescriptions = prescriptions
+        prescriptions.removeAll { $0.id == id }
+        guard let useCase = manageCartPrescriptionsUseCase else { return .persistPrescription }
+
+        startPrescriptionMutation(previousPrescriptions: previousPrescriptions) {
+            try await useCase.remove(id: id)
+        }
+        return .persistPrescription
+    }
+
+    private func handleClear() -> CartEffect? {
+        guard canMutate, hasContent else { return nil }
+        guard let clearCartUseCase else {
+            replaceItems([])
+            prescriptions = []
+            clearRemoval()
+            return .sync
+        }
+
+        syncState = .syncing
+        operationTask = Task {
+            do {
+                try await clearCartUseCase.execute()
+                replaceItems([])
+                prescriptions = []
+                clearRemoval()
+                syncState = .synced
+                feedback = nil
+            } catch {
+                let message = error.localizedDescription
+                syncState = .failed(message)
+                feedback = .operationFailed(message)
+            }
+        }
+        return .sync
+    }
+
+    private func startCartMutation(
+        previousItems: [CartDisplayItem],
+        operation: @escaping () async throws -> Cart
+    ) {
+        let previousPrescriptions = prescriptions
+        syncState = .syncing
+        operationTask = Task {
+            do {
+                let cart = try await operation()
+                apply(cart)
+                syncState = .synced
+            } catch {
+                replaceItems(previousItems)
+                prescriptions = previousPrescriptions
+                let message = error.localizedDescription
+                syncState = .failed(message)
+                feedback = .operationFailed(message)
+            }
+        }
+    }
+
+    private func startPrescriptionMutation(
+        previousPrescriptions: [CartPrescriptionAttachment],
+        operation: @escaping () async throws -> [CartPrescription]
+    ) {
+        syncState = .syncing
+        operationTask = Task {
+            do {
+                prescriptions = try await operation().map(CartPrescriptionPresentationMapper.map)
+                syncState = .synced
+            } catch {
+                prescriptions = previousPrescriptions
+                let message = error.localizedDescription
+                syncState = .failed(message)
+                feedback = .operationFailed(message)
+            }
+        }
+    }
+
+    private func apply(_ cart: Cart) {
+        replaceItems(cart.items.map(CartItemPresentationMapper.map))
+        prescriptions = cart.prescriptions.map(CartPrescriptionPresentationMapper.map)
     }
 
     private func add(_ item: CartDisplayItem) -> Bool {
@@ -155,13 +476,9 @@ final class CartViewModel: CartViewModelProtocol {
     }
 
     private func decreaseQuantity(itemID: String) -> Bool {
-        guard let item = items.first(where: { $0.id == itemID }) else { return false }
-        if item.quantity <= 1 {
-            return removeItem(itemID: itemID)
-        }
-
         var updatedItems = items
         guard let index = updatedItems.firstIndex(where: { $0.id == itemID }) else { return false }
+        let item = updatedItems[index]
         updatedItems[index] = item.updating(quantity: item.quantity - 1)
         feedback = nil
         replaceItems(updatedItems)
