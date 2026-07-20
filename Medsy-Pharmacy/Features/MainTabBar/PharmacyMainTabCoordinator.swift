@@ -19,4 +19,8 @@ final class PharmacyMainTabCoordinator {
     func select(_ tab: PharmacyTab) {
         selectedTab = tab
     }
+
+    func showOrders() {
+        select(.orders)
+    }
 }
