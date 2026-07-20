@@ -13,15 +13,18 @@ struct PharmacyMainTabView: View {
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+	private let onLoggedOut: () -> Void
 
     init(
         coordinator: PharmacyMainTabCoordinator,
         homeFactory: PharmacyHomeFactory,
-        ordersFactory: PharmacyOrdersFactory
+        ordersFactory: PharmacyOrdersFactory,
+        onLoggedOut : @escaping () -> Void
     ) {
         _coordinator = State(initialValue: coordinator)
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
+        self.onLoggedOut = onLoggedOut
     }
 
     var body: some View {
@@ -42,7 +45,12 @@ struct PharmacyMainTabView: View {
             homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
         case .orders:
             ordersFactory.makeView()
-        case .products, .customers, .more:
+        case .more:
+				ProfileTabRootView(
+					container: PharmacyAppAssembler.shared.container,
+					onLoggedOut: onLoggedOut
+				)
+        case .products, .customers:
             PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
         }
     }

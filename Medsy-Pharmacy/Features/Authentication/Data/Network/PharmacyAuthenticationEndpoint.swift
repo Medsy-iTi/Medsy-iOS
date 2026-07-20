@@ -12,6 +12,7 @@ enum PharmacyAuthenticationEndpoint {
     case login(PharmacyLoginRequestDTO)
     case register(PharmacyRegistrationRequestDTO)
     case verify(PharmacyVerificationRequestDTO)
+    case refresh(PharmacyRefreshTokenRequestDTO)
 }
 
 extension PharmacyAuthenticationEndpoint: ApiEndpoint {
@@ -23,6 +24,8 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             "auth/register"
         case .verify:
             "auth/verify"
+        case .refresh:
+            "auth/refresh"
         }
     }
 
@@ -37,6 +40,8 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
         case .register(let request):
             try? JSONEncoder().encode(request)
         case .verify(let request):
+            try? JSONEncoder().encode(request)
+        case .refresh(let request):
             try? JSONEncoder().encode(request)
         }
     }
