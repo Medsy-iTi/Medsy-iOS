@@ -108,6 +108,26 @@ final class ProfileRepository: ProfileRepositoryProtocol {
         )
     }
 
+    func invitePharmacist(pharmacyId: Int, email: String) async throws -> PharmacyInvitation {
+        let envelope: PharmacyInvitationEnvelope = try await networkService.request(
+            endpoint: ProfileEndpoint.invitePharmacist(
+                pharmacyId: pharmacyId,
+                request: InvitePharmacistRequestDTO(email: email)
+            )
+        )
+        let data = envelope.data
+        return PharmacyInvitation(
+            id: data.id,
+            pharmacyId: data.pharmacyId,
+            pharmacyName: data.pharmacyName,
+            pharmacistId: data.pharmacistId,
+            pharmacistFirstName: data.pharmacistFirstName,
+            pharmacistLastName: data.pharmacistLastName,
+            status: data.status,
+            invitedEmail: email
+        )
+    }
+
     func updatePharmacist(
         id: Int,
         email: String?,

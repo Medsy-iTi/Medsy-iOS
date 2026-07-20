@@ -184,3 +184,24 @@
 "pharmacy_card.delete_confirm_title" = "Delete Pharmacy";
 "pharmacy_card.delete_confirm_message" = "This permanently deletes the pharmacy and removes all pharmacists. You will be signed out.";
 "pharmacy_card.delete_confirm_action" = "Delete";
+
+// User Profile
+"profile.user_profile" = "User Profile";
+"profile.pharmacy_profile" = "Pharmacy Profile";
+"profile.pharmacists_count" = "%d pharmacists";
+
+// Invite Pharmacist
+"pharmacy_team.invite" = "Invite Pharmacist";
+"pharmacy_team.invite_header" = "Invite Pharmacist";
+"pharmacy_team.invite_title" = "Invite a pharmacist";
+"pharmacy_team.invite_subtitle" = "Send an invitation to join %@";
+"pharmacy_team.invite_email" = "Email Address";
+"pharmacy_team.invite_email_placeholder" = "Enter pharmacist's email";
+"pharmacy_team.invite_button" = "Send Invitation";
+
+// Remove Pharmacist
+"pharmacy_team.remove_header" = "Remove Pharmacist";
+"pharmacy_team.remove_title" = "Remove pharmacist";
+"pharmacy_team.remove_message" = "Are you sure you want to remove %@ from the pharmacy?";
+"pharmacy_team.remove_warning" = "This action cannot be undone. The pharmacist will lose access to the pharmacy immediately.";
+"pharmacy_team.remove_button" = "Remove Pharmacist";

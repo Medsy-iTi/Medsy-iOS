@@ -119,16 +119,15 @@ struct ProfileView: View {
     @ViewBuilder
     private func loadedContent(profile: PharmacyProfile) -> some View {
         VStack(spacing: PharmacySpacing.md) {
-
-
-            PharmacyInfoCardView(profile: profile) {
+            // User Profile Section
+            UserProfileView(profile: profile) {
                 viewModel.didTapEditProfile()
             }
 
-
+            // Pharmacy Profile Section
             pharmacySection(profile: profile)
 
-
+            // Settings Section
             ProfileSectionContainer {
                 // Language
                 Menu {
@@ -211,10 +210,11 @@ struct ProfileView: View {
     @ViewBuilder
     private func pharmacySection(profile: PharmacyProfile) -> some View {
         if profile.pharmacyId != nil {
-            PharmacyCardView(
+            PharmacyProfileView(
                 profile: profile,
                 onEdit: profile.isPharmacyAdmin ? { viewModel.didTapEditPharmacy() } : nil,
-                onLeave: { viewModel.requestLeavePharmacy() },
+                onInvite: profile.isPharmacyAdmin ? { viewModel.didTapInvitePharmacist() } : nil,
+                onLeave: profile.isPharmacyAdmin ? nil : { viewModel.requestLeavePharmacy() },
                 onDelete: profile.isPharmacyAdmin ? { viewModel.requestDeletePharmacy() } : nil
             )
 

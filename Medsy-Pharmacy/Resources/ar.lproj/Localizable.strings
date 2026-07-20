@@ -184,3 +184,24 @@
 "pharmacy_card.delete_confirm_title" = "حذف الصيدلية";
 "pharmacy_card.delete_confirm_message" = "سيؤدي هذا إلى حذف الصيدلية نهائياً وإزالة جميع الصيادلة. سيتم تسجيل خروجك.";
 "pharmacy_card.delete_confirm_action" = "حذف";
+
+// User Profile
+"profile.user_profile" = "الملف الشخصي";
+"profile.pharmacy_profile" = "ملف الصيدلية";
+"profile.pharmacists_count" = "%d صيدلي";
+
+// Invite Pharmacist
+"pharmacy_team.invite" = "دعوة صيدلي";
+"pharmacy_team.invite_header" = "دعوة صيدلي";
+"pharmacy_team.invite_title" = "دعوة صيدلي للانضمام";
+"pharmacy_team.invite_subtitle" = "أرسل دعوة للانضمام إلى %@";
+"pharmacy_team.invite_email" = "البريد الإلكتروني";
+"pharmacy_team.invite_email_placeholder" = "أدخل بريد الصيدلي الإلكتروني";
+"pharmacy_team.invite_button" = "إرسال الدعوة";
+
+// Remove Pharmacist
+"pharmacy_team.remove_header" = "إزالة الصيدلي";
+"pharmacy_team.remove_title" = "إزالة الصيدلي";
+"pharmacy_team.remove_message" = "هل أنت متأكد من رغبتك في إزالة %@ من الصيدلية؟";
+"pharmacy_team.remove_warning" = "لا يمكن التراجع عن هذا الإجراء. سيفقد الصيدلي الوصول إلى الصيدلية فوراً.";
+"pharmacy_team.remove_button" = "إزالة الصيدلي";

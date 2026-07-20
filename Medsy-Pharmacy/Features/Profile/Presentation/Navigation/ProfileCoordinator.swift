@@ -12,12 +12,16 @@ enum PharmacyProfilePresentation: Identifiable {
     case editProfile
     case editPharmacy
     case editPharmacist(PharmacistMember)
+    case invitePharmacist
+    case removePharmacist(PharmacistMember)
 
     var id: String {
         switch self {
         case .editProfile: return "editProfile"
         case .editPharmacy: return "editPharmacy"
         case let .editPharmacist(member): return "editPharmacist-\(member.id)"
+        case .invitePharmacist: return "invitePharmacist"
+        case let .removePharmacist(member): return "removePharmacist-\(member.id)"
         }
     }
 }
@@ -108,6 +112,42 @@ final class ProfileCoordinator: Coordinator {
             )
             .environment(viewModel.languageManager)
             .pharmacyLocalizedEnvironment()
+
+        case .invitePharmacist:
+            if let profile = viewModel.profile, let pharmacyName = profile.pharmacyName {
+                InvitePharmacistView(
+                    pharmacyName: pharmacyName,
+                    isInviting: viewModel.isInvitingPharmacist,
+                    errorMessage: viewModel.inviteErrorMessage,
+                    onCancel: { 
+                        self.activePresentation = nil
+                        viewModel.resetInviteForm()
+                    },
+                    onInvite: { email in
+                        viewModel.inviteEmail = email
+                        let success = await viewModel.sendInvitation()
+                        if success {
+                            self.activePresentation = nil
+                        }
+                        return success
+                    }
+                )
+                .environment(viewModel.languageManager)
+                .pharmacyLocalizedEnvironment()
+            }
+
+        case let .removePharmacist(member):
+            RemovePharmacistView(
+                member: member,
+                isRemoving: viewModel.isRemovingPharmacist,
+                errorMessage: viewModel.removePharmacistErrorMessage,
+                onCancel: { self.activePresentation = nil },
+                onRemove: {
+                    await viewModel.confirmRemovePharmacist()
+                }
+            )
+            .environment(viewModel.languageManager)
+            .pharmacyLocalizedEnvironment()
         }
     }
 
@@ -120,7 +160,12 @@ final class ProfileCoordinator: Coordinator {
             leavePharmacyUseCase: container.resolve(LeavePharmacyUseCaseProtocol.self),
             updatePharmacyUseCase: container.resolve(UpdatePharmacyUseCaseProtocol.self),
             deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
-            removePharmacistUseCase: container.resolve(RemovePharmacistUseCaseProtocol.self),
+			removePharmacistUseCase: container
+				.resolve(
+					RemovePharmacistUseCaseProtocol.self
+				),
+			invitePharmacistUseCase: container
+				.resolve(InvitePharmacistUseCaseProtocol.self),
             updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
             logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
             languageManager: container.resolve(LanguageManager.self),
@@ -134,6 +179,24 @@ final class ProfileCoordinator: Coordinator {
                 self?.activePresentation = .editPharmacy
             case let .editPharmacist(member):
                 self?.activePresentation = .editPharmacist(member)
+            case .invitePharmacist:
+                self?.activePresentation = .invitePharmacist
+            default:
+                break
+            }
+        }
+        viewModel.onPresentSheet = { [weak self] sheet in
+            switch sheet {
+            case .editProfile:
+                self?.activePresentation = .editProfile
+            case .editPharmacy:
+                self?.activePresentation = .editPharmacy
+            case let .editPharmacist(member):
+                self?.activePresentation = .editPharmacist(member)
+            case let .removePharmacist(member):
+                self?.activePresentation = .removePharmacist(member)
+            default:
+                break
             }
         }
         viewModel.onLoggedOut = { [weak self] in self?.onLoggedOut?() }

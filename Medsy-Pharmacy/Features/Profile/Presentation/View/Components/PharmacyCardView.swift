@@ -10,13 +10,13 @@ import SwiftUI
 struct PharmacyCardView: View {
     let profile: PharmacyProfile
     let onEdit: (() -> Void)?
-    let onLeave: () -> Void
+    let onLeave: (() -> Void)?
     let onDelete: (() -> Void)?
 
     init(
         profile: PharmacyProfile,
         onEdit: (() -> Void)? = nil,
-        onLeave: @escaping () -> Void,
+        onLeave: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
         self.profile = profile
@@ -77,21 +77,22 @@ struct PharmacyCardView: View {
                 pharmacyDetailRow(icon: "phone", text: phone)
             }
 
-            // Leave Button
-            Button(role: .destructive, action: onLeave) {
-                HStack(spacing: 6) {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
-                        .font(.system(size: 13, weight: .semibold))
-                    Text("pharmacy_card.leave".localized)
-                        .font(PharmacyColor.sans(13, .semibold))
+            if let onLeave {
+                Button(role: .destructive, action: onLeave) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("pharmacy_card.leave".localized)
+                            .font(PharmacyColor.sans(13, .semibold))
+                    }
+                    .foregroundStyle(PharmacyColor.danger)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 38)
+                    .background(PharmacyColor.danger.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
                 }
-                .foregroundStyle(PharmacyColor.danger)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .frame(height: 38)
-                .background(PharmacyColor.danger.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             if let onDelete {
                 Button(role: .destructive, action: onDelete) {
