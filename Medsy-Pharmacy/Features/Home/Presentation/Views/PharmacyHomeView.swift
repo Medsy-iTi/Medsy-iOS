@@ -1,13 +1,13 @@
-//
 //  PharmacyHomeView.swift
 //  Medsy-Pharmacy
 //
-//  Created by Ehab Salah on 18/07/2026.
+//  Created by Antoneos Philip on 19/07/2026.
 //
 
 import SwiftUI
 
 struct PharmacyHomeView: View {
+    @State private var selectedOrder: PharmacyHomeOrder? = nil
     let onViewAllOrders: () -> Void
 
     private let metrics = [
@@ -31,6 +31,9 @@ struct PharmacyHomeView: View {
                 PharmacyMetricsGrid(metrics: metrics)
                 PharmacyRecentOrdersView(
                     orders: orders,
+                    onSelectOrder: { order in
+                        selectedOrder = order
+                    },
                     onViewAllOrders: onViewAllOrders
                 )
                 PharmacyPrimaryButton(
@@ -43,6 +46,9 @@ struct PharmacyHomeView: View {
             .padding(.bottom, PharmacySpacing.md)
         }
         .background(PharmacyColor.bg)
+        .fullScreenCover(item: $selectedOrder) { _ in
+            PharmacyRequestDetailsView()
+        }
     }
 }
 
