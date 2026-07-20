@@ -12,6 +12,8 @@ enum PharmacyAuthenticationEndpoint {
     case login(PharmacyLoginRequestDTO)
     case register(PharmacyRegistrationRequestDTO)
     case verify(PharmacyVerificationRequestDTO)
+    case currentPharmacist
+    case createPharmacy(PharmacyMultipartFormData)
 }
 
 extension PharmacyAuthenticationEndpoint: ApiEndpoint {
@@ -23,11 +25,20 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             "auth/register"
         case .verify:
             "auth/verify"
+        case .currentPharmacist:
+            "pharmacists/me"
+        case .createPharmacy:
+            "pharmacies"
         }
     }
 
     var method: HTTPMethod {
-        .post
+        switch self {
+        case .currentPharmacist:
+            .get
+        default:
+            .post
+        }
     }
 
     var body: Data? {
@@ -38,6 +49,28 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             try? JSONEncoder().encode(request)
         case .verify(let request):
             try? JSONEncoder().encode(request)
+        case .currentPharmacist:
+            nil
+        case let .createPharmacy(form):
+            form.body
+        }
+    }
+
+    var headers: HTTPHeaders? {
+        switch self {
+        case let .createPharmacy(form):
+            return ["Content-Type": "multipart/form-data; boundary=\(form.boundary)"]
+        default:
+            return ["Content-Type": "application/json"]
+        }
+    }
+
+    var requiresAuthentication: Bool {
+        switch self {
+        case .currentPharmacist, .createPharmacy:
+            true
+        default:
+            false
         }
     }
 }
