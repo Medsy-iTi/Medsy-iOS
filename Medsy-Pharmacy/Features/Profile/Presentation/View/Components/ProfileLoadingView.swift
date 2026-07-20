@@ -23,7 +23,7 @@ struct ProfileLoadingView: View {
 
     private func skeletonBlock(height: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-            .fill(PharmacyColor.mutedSurface)
+			.fill(PharmacyColor.card)
             .frame(height: height)
     }
 }

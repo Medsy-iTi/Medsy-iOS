@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchResultsView: View {
 	@StateObject private var viewModel: SearchResultsViewModel
 	@Environment(LanguageManager.self) private var languageManager
+	@Environment(CartViewModel.self) private var cartViewModel
 	@ObservedObject private var appSettings = AppSettings.shared
 	private let coordinator: SearchCoordinator
 	private let onBack: () -> Void
@@ -127,6 +128,18 @@ struct SearchResultsView: View {
 						ForEach($viewModel.products) { $product in
 							SearchedProductCard(
 								product: $product,
+								onAdd: {
+									addOneToCart(product)
+									product.quantity = cartQuantity(for: product)
+								},
+								onIncrement: {
+									addOneToCart(product)
+									product.quantity = cartQuantity(for: product)
+								},
+								onDecrement: {
+									cartViewModel.handle(.decreaseQuantity(itemID: product.id))
+									product.quantity = cartQuantity(for: product)
+								},
 								isSelectionMode: onSelect != nil,
 								onTap: {
 									if let onSelect {
@@ -137,6 +150,7 @@ struct SearchResultsView: View {
 								}
 							)
 							.onAppear {
+								product.quantity = cartQuantity(for: product)
 								viewModel.loadNextPageIfNeeded(currentItem: product)
 							}
 						}
@@ -157,5 +171,13 @@ struct SearchResultsView: View {
 					config: .noConnection(onRetry: { viewModel.load() })
 				)
 		}
+	}
+
+	private func addOneToCart(_ product: MedsyProduct) {
+		cartViewModel.handle(.addItem(CartItemPresentationMapper.map(product)))
+	}
+
+	private func cartQuantity(for product: MedsyProduct) -> Int {
+		cartViewModel.quantity(forProductID: Int64(product.id))
 	}
 }

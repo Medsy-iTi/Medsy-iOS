@@ -40,10 +40,6 @@ final class ProductDetailViewModel: ObservableObject {
         isFavorite.toggle()
     }
 
-    func addToCart() {
-
-    }
-
     func consultPharmacist() {
 
     }

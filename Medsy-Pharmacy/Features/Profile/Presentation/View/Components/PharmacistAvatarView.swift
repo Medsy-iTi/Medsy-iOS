@@ -47,9 +47,4 @@ struct PharmacistAvatarView: View {
     }
 }
 
-#Preview {
-    PharmacistAvatarView(
-        pharmacist: Pharmacist(id: "1", firstName: "أحمد", lastName: "محمد", email: "", role: .admin, isVerified: true, yearsOfExperience: 7, avatarURLString: nil)
-    )
-    .padding()
-}
+

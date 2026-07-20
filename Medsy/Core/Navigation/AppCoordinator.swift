@@ -17,6 +17,7 @@ enum AppRoute {
 enum AppTab: Int, CaseIterable {
     case home
     case favorites
+    case cart
     case offers
     case orders
     case profile
