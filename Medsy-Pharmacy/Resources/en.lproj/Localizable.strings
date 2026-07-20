@@ -230,3 +230,13 @@
 "pharmacy_team.remove_message" = "Are you sure you want to remove %@ from the pharmacy?";
 "pharmacy_team.remove_warning" = "This action cannot be undone. The pharmacist will lose access to the pharmacy immediately.";
 "pharmacy_team.remove_button" = "Remove Pharmacist";
+/* Request Details */
+"pharmacy.request.details.title" = "Request Details";
+"pharmacy.request.customer_info" = "Customer Information";
+"pharmacy.request.contact_customer" = "Contact Customer";
+"pharmacy.request.order_items" = "Order Items";
+"pharmacy.request.customer_notes" = "Customer Notes";
+"pharmacy.request.accept" = "Accept Request";
+"pharmacy.request.reject" = "Reject Request";
+"pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+
