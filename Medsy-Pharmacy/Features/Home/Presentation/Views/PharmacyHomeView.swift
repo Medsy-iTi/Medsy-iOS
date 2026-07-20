@@ -8,6 +8,7 @@ import SwiftUI
 
 struct PharmacyHomeView: View {
     @State private var selectedOrder: PharmacyHomeOrder? = nil
+    let onViewAllOrders: () -> Void
 
     private let metrics = [
         PharmacyHomeMetric(titleKey: "pharmacy.home.new_orders", value: "23", icon: "bag.fill", tint: PharmacyColor.primary),
@@ -28,10 +29,17 @@ struct PharmacyHomeView: View {
                 PharmacyHomeHeaderView()
                 PharmacyHeroCard()
                 PharmacyMetricsGrid(metrics: metrics)
-                PharmacyRecentOrdersView(orders: orders) { order in
-                    selectedOrder = order
-                }
-                PharmacyPrimaryButton(title: "pharmacy.home.view_all_orders".localized, action: {})
+                PharmacyRecentOrdersView(
+                    orders: orders,
+                    onSelectOrder: { order in
+                        selectedOrder = order
+                    },
+                    onViewAllOrders: onViewAllOrders
+                )
+                PharmacyPrimaryButton(
+                    title: "pharmacy.home.view_all_orders".localized,
+                    action: onViewAllOrders
+                )
             }
             .padding(.horizontal, PharmacySpacing.md)
             .padding(.top, PharmacySpacing.sm)
@@ -45,7 +53,7 @@ struct PharmacyHomeView: View {
 }
 
 #Preview("Arabic") {
-    PharmacyHomeView()
+    PharmacyHomeView(onViewAllOrders: {})
         .environment(LanguageManager.shared)
         .pharmacyLocalizedEnvironment()
 }

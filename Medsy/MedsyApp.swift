@@ -25,6 +25,7 @@ struct MedsyApp: App {
 			ProductsAssembly(),
             ProductDetailAssembly(),
             ProductsFeatureAssembly(),
+            CartAssembly(),
             ProfileAssembly()
         ])
 

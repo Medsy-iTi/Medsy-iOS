@@ -9,6 +9,7 @@ import SwiftUI
 struct PharmacyRecentOrdersView: View {
     let orders: [PharmacyHomeOrder]
     var onSelectOrder: ((PharmacyHomeOrder) -> Void)? = nil
+    let onViewAllOrders: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
@@ -17,7 +18,7 @@ struct PharmacyRecentOrdersView: View {
                     .font(PharmacyColor.sans(16, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
                 Spacer()
-                Button("pharmacy.home.view_all".localized, action: {})
+                Button("pharmacy.home.view_all".localized, action: onViewAllOrders)
                     .font(PharmacyColor.sans(13, .semibold))
                     .foregroundStyle(PharmacyColor.primary)
             }

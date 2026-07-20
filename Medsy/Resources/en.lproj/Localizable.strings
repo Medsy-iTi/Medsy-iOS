@@ -164,9 +164,46 @@
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
+"tab.cart" = "Cart";
 "tab.offers" = "Offers";
 "tab.orders" = "Orders";
 "tab.account" = "Account";
+
+/* Cart */
+"cart.title" = "Cart";
+"cart.subtitle" = "Review your request cart";
+"cart.message" = "Adjust quantities before sending one request to nearby pharmacies.";
+"cart.currency" = "EGP";
+"cart.unit_price_format" = "%@ each";
+"cart.quantity" = "Quantity";
+"cart.remove" = "Remove item";
+"cart.estimated_total" = "Estimated total";
+"cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
+"cart.continue" = "Continue";
+"cart.empty.title" = "Your cart is empty";
+"cart.empty.message" = "Search for medicines or upload a prescription to start a request.";
+"cart.empty.search" = "Search medicines";
+"cart.empty.upload" = "Upload prescription";
+"cart.error.title" = "Couldn't Load Cart";
+"cart.removed_message" = "%@ removed";
+"cart.undo" = "Undo";
+"cart.prescription.add" = "Add prescription";
+"cart.prescription.add_another" = "Add another prescription";
+"cart.prescription.number" = "Prescription %d";
+"cart.prescription.title" = "Attached prescription";
+"cart.prescription.change" = "Change prescription";
+"cart.prescription.remove" = "Remove prescription";
+"cart.prescription.source_title" = "Add a prescription";
+"cart.added_message" = "%@ added to cart";
+"cart.remove_confirmation.title" = "Remove from cart?";
+"cart.remove_confirmation.message" = "Remove %@ from your cart?";
+"cart.remove_confirmation.action" = "Remove";
+"cart.prescription.remove_confirmation.title" = "Remove prescription?";
+"cart.prescription.remove_confirmation.message" = "This prescription will be removed from your cart.";
+"cart.clear.accessibility" = "Clear cart";
+"cart.clear_confirmation.title" = "Clear your cart?";
+"cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
+"cart.clear_confirmation.action" = "Clear cart";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
