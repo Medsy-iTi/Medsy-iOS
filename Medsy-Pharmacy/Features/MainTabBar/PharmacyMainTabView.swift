@@ -39,7 +39,7 @@ struct PharmacyMainTabView: View {
     private var tabContent: some View {
         switch coordinator.selectedTab {
         case .home:
-            homeFactory.makeView()
+            homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
         case .orders:
             ordersFactory.makeView()
         case .products, .customers, .more:
