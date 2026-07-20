@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PharmacyHomeFactory {
     @MainActor
-    func makeView() -> PharmacyHomeView {
-        PharmacyHomeView()
+    func makeView(onViewAllOrders: @escaping () -> Void) -> PharmacyHomeView {
+        PharmacyHomeView(onViewAllOrders: onViewAllOrders)
     }
 }
