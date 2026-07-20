@@ -10,10 +10,18 @@ import SwiftUI
 @MainActor
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
+    private let homeFactory: PharmacyHomeFactory
+    private let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
-    init(coordinator: PharmacyMainTabCoordinator) {
+    init(
+        coordinator: PharmacyMainTabCoordinator,
+        homeFactory: PharmacyHomeFactory,
+        ordersFactory: PharmacyOrdersFactory
+    ) {
         _coordinator = State(initialValue: coordinator)
+        self.homeFactory = homeFactory
+        self.ordersFactory = ordersFactory
     }
 
     var body: some View {
@@ -29,9 +37,12 @@ struct PharmacyMainTabView: View {
 
     @ViewBuilder
     private var tabContent: some View {
-        if coordinator.selectedTab == .home {
-            PharmacyHomeView()
-        } else {
+        switch coordinator.selectedTab {
+        case .home:
+            homeFactory.makeView()
+        case .orders:
+            ordersFactory.makeView()
+        case .products, .customers, .more:
             PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
         }
     }
