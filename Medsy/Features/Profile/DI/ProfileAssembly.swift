@@ -41,5 +41,9 @@ struct ProfileAssembly: ModuleAssembly {
 		container.register(SearchAddressUseCaseProtocol.self) { _ in
 			SearchAddressUseCase()
 		}
+
+		container.register(ReverseGeocodeAddressUseCaseProtocol.self) { _ in
+			ReverseGeocodeAddressUseCase()
+		}
     }
 }

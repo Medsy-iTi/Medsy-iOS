@@ -5,7 +5,6 @@
 //  Created by Shahudaa on 20/07/2026.
 //
 
-
 import Observation
 import MapKit
 import CoreLocation
@@ -20,7 +19,7 @@ final class AddressPickerViewModel {
 	var cameraPosition: MapCameraPosition
 	var searchResults: [MKMapItem] = []
 	var isSearching = false
-
+	var isResolvingAddress = false
 
 	private let searchDebounceNanoseconds: UInt64 = 350_000_000
 	private var searchTask: Task<Void, Never>?
@@ -35,19 +34,24 @@ final class AddressPickerViewModel {
 	private var region: MKCoordinateRegion
 
 	private let searchAddressUseCase: SearchAddressUseCaseProtocol
+	private let reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol
 	private let onConfirm: (_ address: String, _ latitude: Double, _ longitude: Double) -> Void
 	let onCancel: () -> Void
 	private let locationManager = CLLocationManager()
+	private var reverseGeocodeTask: Task<Void, Never>?
+	private var initialLocationTask: Task<Void, Never>?
 
 	init(
 		initialAddress: String = "",
 		initialCoordinate: CLLocationCoordinate2D? = nil,
 		searchAddressUseCase: SearchAddressUseCaseProtocol,
+		reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol,
 		onConfirm: @escaping (_ address: String, _ latitude: Double, _ longitude: Double) -> Void,
 		onCancel: @escaping () -> Void
 	) {
 		self.addressText = initialAddress
 		self.searchAddressUseCase = searchAddressUseCase
+		self.reverseGeocodeAddressUseCase = reverseGeocodeAddressUseCase
 		self.onConfirm = onConfirm
 		self.onCancel = onCancel
 
@@ -64,7 +68,6 @@ final class AddressPickerViewModel {
 
 
 
-		
 	func scheduleSearch() {
 		searchTask?.cancel()
 
@@ -114,11 +117,81 @@ final class AddressPickerViewModel {
 		moveCamera(to: item.placemark.coordinate)
 		searchResults = []
 		searchText = ""
+		logPickedLocation()
 	}
 
+	func resolveInitialLocationIfNeeded() {
+		guard pickedCoordinate == nil else { return }
+		let query = addressText.trimmingCharacters(in: .whitespaces)
+		guard !query.isEmpty else { return }
+
+		initialLocationTask?.cancel()
+		initialLocationTask = Task { [weak self] in
+			guard let self else { return }
+			self.isResolvingAddress = true
+			defer { self.isResolvingAddress = false }
+
+			do {
+				let results = try await self.searchAddressUseCase.execute(query: query, region: self.region)
+				guard !Task.isCancelled, let first = results.first else { return }
+				self.pickedCoordinate = first.placemark.coordinate
+				self.moveCamera(to: first.placemark.coordinate)
+				self.logPickedLocation()
+			} catch {
+				guard !Task.isCancelled else { return }
+				print("Failed to resolve last saved address: \(error)")
+			}
+		}
+	}
 
 	func selectPin(at coordinate: CLLocationCoordinate2D) {
 		pickedCoordinate = coordinate
+		reverseGeocodeTask?.cancel()
+
+		reverseGeocodeTask = Task { [weak self] in
+			guard let self else { return }
+			self.isResolvingAddress = true
+			defer { self.isResolvingAddress = false }
+
+			do {
+				let resolvedAddress = try await self.reverseGeocodeAddressUseCase.execute(coordinate: coordinate)
+				guard !Task.isCancelled else { return }
+				self.addressText = resolvedAddress
+			} catch {
+				guard !Task.isCancelled else { return }
+				print("Reverse geocoding failed: \(error)")
+			}
+			self.logPickedLocation()
+		}
+	}
+
+	private func logPickedLocation() {
+		guard let pickedCoordinate else { return }
+		print("📍 lat: \(pickedCoordinate.latitude), lon: \(pickedCoordinate.longitude) — address: \(addressText)")
+	}
+
+	func updateRegion(_ newRegion: MKCoordinateRegion) {
+		region = newRegion
+	}
+
+	func zoomIn() {
+		applyZoom(factor: 0.5)
+	}
+
+	func zoomOut() {
+		applyZoom(factor: 2)
+	}
+
+	private func applyZoom(factor: Double) {
+		let minDelta = 0.002
+		let maxDelta = 60.0
+		region.span = MKCoordinateSpan(
+			latitudeDelta: min(max(region.span.latitudeDelta * factor, minDelta), maxDelta),
+			longitudeDelta: min(max(region.span.longitudeDelta * factor, minDelta), maxDelta)
+		)
+		withAnimation(.easeInOut(duration: 0.2)) {
+			cameraPosition = .region(region)
+		}
 	}
 
 	private func moveCamera(to coordinate: CLLocationCoordinate2D) {

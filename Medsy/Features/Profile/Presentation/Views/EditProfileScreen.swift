@@ -82,6 +82,7 @@ struct EditProfileScreen: View {
 					CLLocationCoordinate2D(latitude: lat, longitude: pickedLongitude ?? 0)
 				},
 				searchAddressUseCase: DIContainer.shared.resolve(SearchAddressUseCaseProtocol.self),
+				reverseGeocodeAddressUseCase: DIContainer.shared.resolve(ReverseGeocodeAddressUseCaseProtocol.self),
 				onConfirm: { address, latitude, longitude in
 					draftAddress = address
 					pickedLatitude = latitude

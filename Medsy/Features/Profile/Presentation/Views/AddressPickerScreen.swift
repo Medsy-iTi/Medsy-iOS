@@ -38,9 +38,9 @@ struct AddressPickerScreen: View {
 		}
 		.onAppear {
 			viewModel.requestLocationPermission()
+			viewModel.resolveInitialLocationIfNeeded()
 		}
 	}
-
 
 
 	private var searchField: some View {
@@ -137,6 +137,28 @@ struct AddressPickerScreen: View {
 					viewModel.selectPin(at: coordinate)
 				}
 			}
+			.onMapCameraChange(frequency: .onEnd) { context in
+				viewModel.updateRegion(context.region)
+			}
+			.overlay(alignment: .top) {
+				if viewModel.isResolvingAddress {
+					Text("address.resolving".localized)
+						.font(.system(size: 12, weight: .semibold))
+						.foregroundStyle(ProfileStyle.primaryText)
+						.padding(.horizontal, 12)
+						.padding(.vertical, 6)
+						.background(ProfileStyle.card)
+						.clipShape(Capsule())
+						.overlay {
+							Capsule().stroke(ProfileStyle.border, lineWidth: 1)
+						}
+						.padding(.top, 10)
+				}
+			}
+			.overlay(alignment: .trailing) {
+				zoomControls
+					.padding(.trailing, 10)
+			}
 		}
 		.clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 		.overlay {
@@ -147,7 +169,36 @@ struct AddressPickerScreen: View {
 		.frame(height: 420)
 	}
 
-		// MARK: - Address text + confirm
+	private var zoomControls: some View {
+		VStack(spacing: 1) {
+			zoomButton(systemImage: "plus") {
+				viewModel.zoomIn()
+			}
+			Divider()
+				.frame(width: 34)
+				.background(ProfileStyle.border)
+			zoomButton(systemImage: "minus") {
+				viewModel.zoomOut()
+			}
+		}
+		.background(ProfileStyle.card)
+		.clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+		.overlay {
+			RoundedRectangle(cornerRadius: 10, style: .continuous)
+				.stroke(ProfileStyle.border, lineWidth: 1)
+		}
+	}
+
+	private func zoomButton(systemImage: String, action: @escaping () -> Void) -> some View {
+		Button(action: action) {
+			Image(systemName: systemImage)
+				.font(.system(size: 14, weight: .bold))
+				.foregroundStyle(ProfileStyle.primaryText)
+				.frame(width: 34, height: 34)
+		}
+		.buttonStyle(.plain)
+	}
+
 
 	private var addressField: some View {
 		CustomTextField(
