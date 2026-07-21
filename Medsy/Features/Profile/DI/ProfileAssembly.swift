@@ -37,5 +37,9 @@ struct ProfileAssembly: ModuleAssembly {
                 updateCustomerProfileUseCase: container.resolve(UpdateCustomerProfileUseCaseProtocol.self)
             )
         }
+
+		container.register(SearchAddressUseCaseProtocol.self) { _ in
+			SearchAddressUseCase()
+		}
     }
 }
