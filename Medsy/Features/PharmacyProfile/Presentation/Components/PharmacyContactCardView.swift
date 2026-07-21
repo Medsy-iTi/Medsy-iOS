@@ -71,5 +71,9 @@ struct PharmacyContactCardView: View {
                 }
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            action?()
+        }
     }
 }
