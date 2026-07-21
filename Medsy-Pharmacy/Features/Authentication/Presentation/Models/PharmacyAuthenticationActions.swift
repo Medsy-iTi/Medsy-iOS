@@ -21,6 +21,9 @@ struct PharmacyAuthenticationActions {
     let login: (PharmacyLoginInput) async throws -> PharmacyAuthenticatedSession
     let register: (PharmacyRegistrationSubmission) async throws -> Void
     let verify: (String, String) async throws -> Void
+    let membership: () async throws -> PharmacyMembership
+    let createPharmacy: (CreatePharmacyInput) async throws -> CreatedPharmacy
+    let signOut: () -> Void
 
     static let placeholder = PharmacyAuthenticationActions(
         login: { _ in
@@ -39,13 +42,28 @@ struct PharmacyAuthenticationActions {
             )
         },
         register: { _ in },
-        verify: { _, _ in }
+        verify: { _, _ in },
+        membership: { PharmacyMembership(pharmacyID: nil, isAdmin: false) },
+        createPharmacy: { input in
+            CreatedPharmacy(
+                id: 1,
+                name: input.name,
+                latitude: input.location.latitude,
+                longitude: input.location.longitude,
+                address: input.location.address,
+                phoneNumber: input.phoneNumber
+            )
+        },
+        signOut: {}
     )
 
     static func live(
         loginUseCase: PharmacyLoginUseCaseProtocol,
         registrationUseCase: PharmacyRegistrationUseCaseProtocol,
-        verificationUseCase: PharmacyVerificationUseCaseProtocol
+        verificationUseCase: PharmacyVerificationUseCaseProtocol,
+        membershipUseCase: GetPharmacyMembershipUseCaseProtocol,
+        createPharmacyUseCase: CreatePharmacyUseCaseProtocol,
+        tokenStore: TokenStoreProtocol
     ) -> PharmacyAuthenticationActions {
         PharmacyAuthenticationActions(
             login: { input in
@@ -71,6 +89,15 @@ struct PharmacyAuthenticationActions {
                         otpCode: code
                     )
                 )
+            },
+            membership: {
+                try await membershipUseCase.execute()
+            },
+            createPharmacy: { input in
+                try await createPharmacyUseCase.execute(input: input)
+            },
+            signOut: {
+                try? tokenStore.clearTokens()
             }
         )
     }

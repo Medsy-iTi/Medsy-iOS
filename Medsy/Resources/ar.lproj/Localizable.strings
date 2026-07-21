@@ -424,3 +424,13 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+
+/* Address Picker */
+"address.title" = "اختر عنوانك";
+"address.search_placeholder" = "ابحث عن موقع";
+"address.confirm" = "تأكيد الموقع";
+"address.current_location" = "استخدم موقعي الحالي";
+"profile.pick_on_map" = "اختر على الخريطة";
+"address.permission_denied" = "يجب السماح بالوصول إلى الموقع لاختيار عنوانك";
+"NSLocationWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
