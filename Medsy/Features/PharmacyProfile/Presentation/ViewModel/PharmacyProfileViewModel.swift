@@ -18,9 +18,11 @@ final class PharmacyProfileViewModel {
 
     private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol?
 
-    init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol? = nil) {
+    nonisolated init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol? = nil) {
         self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
-        self.loadPharmacy()
+        Task { @MainActor in
+            self.loadPharmacy()
+        }
     }
 
     func loadPharmacy(id: Int = 1) {
