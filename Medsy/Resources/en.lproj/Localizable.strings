@@ -366,3 +366,14 @@
 "prescription.none.manual" = "Add medicine manually";
 "prescription.camera.unavailable.title" = "Camera unavailable";
 "prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";
+/* Address Picker */
+
+"address.title" = "Select your address";
+"address.search_placeholder" = "Search for a location";
+"address.confirm" = "Confirm location";
+"address.current_location" = "Use current location";
+"profile.pick_on_map" = "Pick on map";
+"address.permission_denied" = "Location access is needed to pick your address";
+
+"NSLocationWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";

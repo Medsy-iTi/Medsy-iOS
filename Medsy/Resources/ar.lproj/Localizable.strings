@@ -365,3 +365,12 @@
 "prescription.none.manual" = "إضافة دواء يدوًا";
 "prescription.camera.unavailable.title" = "الكاميرا غير متاحة";
 "prescription.camera.unavailable.message" = "استخدم جهازًا مزودًا بكاميرا أو اختر روشتة من مكتبة الصور.";
+/*Address Picker */
+"address.title" = "اختر عنوانك";
+"address.search_placeholder" = "ابحث عن موقع";
+"address.confirm" = "تأكيد الموقع";
+"address.current_location" = "استخدم موقعي الحالي";
+"profile.pick_on_map" = "اختر على الخريطة";
+"address.permission_denied" = "يجب السماح بالوصول إلى الموقع لاختيار عنوانك";
+"NSLocationWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";

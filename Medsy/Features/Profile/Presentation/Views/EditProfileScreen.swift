@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import MapKit
 struct EditProfileScreen: View {
 
     let name: String
@@ -21,6 +21,11 @@ struct EditProfileScreen: View {
     @State private var includesDateOfBirth: Bool
     @State private var draftDateOfBirth: Date
     @State private var addressError: String?
+	@State private var showsAddressPicker = false
+
+	@State private var pickedLatitude: Double?
+	@State private var pickedLongitude: Double?
+
 
     init(
         name: String,
@@ -70,7 +75,28 @@ struct EditProfileScreen: View {
                 }
             }
         }
-    }
+		.sheet(isPresented: $showsAddressPicker) {
+			let viewModel = AddressPickerViewModel(
+				initialAddress: draftAddress,
+				initialCoordinate: pickedLatitude.map { lat in
+					CLLocationCoordinate2D(latitude: lat, longitude: pickedLongitude ?? 0)
+				},
+				searchAddressUseCase: DIContainer.shared.resolve(SearchAddressUseCaseProtocol.self),
+				reverseGeocodeAddressUseCase: DIContainer.shared.resolve(ReverseGeocodeAddressUseCaseProtocol.self),
+				onConfirm: { address, latitude, longitude in
+					draftAddress = address
+					pickedLatitude = latitude
+					pickedLongitude = longitude
+					showsAddressPicker = false
+				},
+				onCancel: {
+					showsAddressPicker = false
+				}
+			)
+
+			AddressPickerScreen(viewModel: viewModel)
+		}
+}
 
     private var header: some View {
         HStack {
@@ -149,36 +175,48 @@ struct EditProfileScreen: View {
         }
     }
 
-    private var addressField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("profile.home_address".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(ProfileStyle.primaryText)
+	private var addressField: some View {
+		VStack(alignment: .leading, spacing: 8) {
+			Text("profile.home_address".localized)
+				.font(.system(size: 13, weight: .semibold))
+				.foregroundStyle(ProfileStyle.primaryText)
 
-            TextField("profile.home_address.placeholder".localized, text: $draftAddress, axis: .vertical)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(ProfileStyle.primaryText)
-                .textInputAutocapitalization(.words)
-                .lineLimit(2...4)
-                .padding(.horizontal, 17)
-                .padding(.vertical, 14)
-                .background(ProfileStyle.card)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(addressError == nil ? ProfileStyle.border : ProfileStyle.red, lineWidth: 1)
-                }
-                .onChange(of: draftAddress) {
-                    addressError = nil
-                }
+			TextField("profile.home_address.placeholder".localized, text: $draftAddress, axis: .vertical)
+				.font(.system(size: 15, weight: .medium))
+				.foregroundStyle(ProfileStyle.primaryText)
+				.textInputAutocapitalization(.words)
+				.lineLimit(2...4)
+				.padding(.horizontal, 17)
+				.padding(.vertical, 14)
+				.background(ProfileStyle.card)
+				.clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+				.overlay {
+					RoundedRectangle(cornerRadius: 14, style: .continuous)
+						.stroke(addressError == nil ? ProfileStyle.border : ProfileStyle.red, lineWidth: 1)
+				}
+				.onChange(of: draftAddress) {
+					addressError = nil
+				}
 
-            if let addressError {
-                Text(addressError)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(ProfileStyle.red)
-            }
-        }
-    }
+
+				Button {
+					showsAddressPicker = true
+				} label: {
+					Label("profile.pick_on_map".localized, systemImage: "mappin.and.ellipse")
+						.font(.system(size: 12, weight: .semibold))
+						.foregroundStyle(ProfileStyle.green)
+				}
+				.buttonStyle(.plain)
+			
+
+			if let addressError {
+				Text(addressError)
+					.font(.system(size: 11, weight: .medium))
+					.foregroundStyle(ProfileStyle.red)
+			}
+		}
+	}
+
 
     private var dateOfBirthField: some View {
         VStack(alignment: .leading, spacing: 10) {
