@@ -16,9 +16,9 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
-    private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol?
+    private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol
 
-    nonisolated init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol? = nil) {
+    nonisolated init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol = DIContainer.shared.resolve(FetchPharmacyProfileUseCaseProtocol.self)) {
         self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
         Task { @MainActor in
             self.loadPharmacy()
@@ -29,21 +29,8 @@ final class PharmacyProfileViewModel {
         state = .loading
         Task {
             do {
-                if let fetchPharmacyProfileUseCase {
-                    let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: id)
-                    state = .loaded(pharmacy)
-                } else {
-                    let dto = PharmacyDataDTO(
-                        id: id,
-                        name: "El-Eman Pharmacy",
-                        latitude: 30.0444,
-                        longitude: 31.2357,
-                        address: "123 Al Tahrir Street, Downtown, Cairo",
-                        phoneNumber: "+201234567890"
-                    )
-                    let pharmacy = PharmacyMapper.map(dto)
-                    state = .loaded(pharmacy)
-                }
+                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: id)
+                state = .loaded(pharmacy)
             } catch {
                 state = .error(error.localizedDescription)
             }
