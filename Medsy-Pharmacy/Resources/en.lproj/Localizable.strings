@@ -111,6 +111,42 @@
 "pharmacy.auth.signup.link" = "Sign Up";
 "pharmacy.auth.login.link" = "Log In";
 "pharmacy.auth.brand.name" = "Medsy";
+
+"pharmacy.auth.brand.tagline" = "For Pharmacies";
+"pharmacy.auth.or" = "Or";
+"pharmacy.setup.checking_membership" = "Checking your pharmacy…";
+"pharmacy.setup.decision.title" = "Do you have a pharmacy?";
+"pharmacy.setup.decision.subtitle" = "Add your pharmacy to start receiving and managing medicine requests.";
+"pharmacy.setup.decision.add" = "Add your pharmacy";
+"pharmacy.setup.decision.back_to_sign_in" = "Back to sign in";
+"pharmacy.setup.add.title" = "Add your pharmacy";
+"pharmacy.setup.add.subtitle" = "Enter the pharmacy details, select its location, and upload the licence document.";
+"pharmacy.setup.name" = "Pharmacy name";
+"pharmacy.setup.phone" = "Pharmacy phone number";
+"pharmacy.setup.add.action" = "Add pharmacy";
+"pharmacy.setup.location.current" = "Current location";
+"pharmacy.setup.location.map" = "Choose on map";
+"pharmacy.setup.location.resolving" = "Finding the city and province…";
+"pharmacy.setup.location.city" = "City";
+"pharmacy.setup.location.province" = "Province";
+"pharmacy.setup.location.selected" = "Selected location";
+"pharmacy.setup.location.not_selected" = "Select a location";
+"pharmacy.setup.location.permission_denied" = "Location access is disabled. Allow access in Settings or choose a place on the map.";
+"pharmacy.setup.location.unavailable" = "Your current location could not be determined. Try again or choose a place on the map.";
+"pharmacy.setup.location.address_unavailable" = "The city and province could not be found for this location. Choose another point.";
+"pharmacy.setup.license.select" = "Select pharmacy licence";
+"pharmacy.setup.license.requirements" = "PDF only, maximum 10 MB";
+"pharmacy.setup.map.hint" = "Tap the map to place the pharmacy pin. The city and province will be filled automatically.";
+"pharmacy.setup.map.confirm" = "Use this location";
+"pharmacy.setup.map.pin" = "Pharmacy";
+"pharmacy.setup.map.accessibility" = "Map for choosing the pharmacy location";
+"pharmacy.setup.validation.required" = "Complete all pharmacy details, location, and licence.";
+"pharmacy.setup.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
+"pharmacy.setup.validation.location" = "Select a valid pharmacy location.";
+"pharmacy.setup.validation.pdf" = "The pharmacy licence must be a valid PDF file.";
+"pharmacy.setup.validation.size" = "The pharmacy licence must not exceed 10 MB.";
+"pharmacy.setup.validation.unreadable" = "The selected licence file could not be read.";
+
 "pharmacy.auth.brand.tagline" = "for Pharmacies";
 "pharmacy.auth.or" = "or";
 
@@ -239,4 +275,5 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+
 

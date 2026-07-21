@@ -90,7 +90,10 @@ private struct PharmacyAuthenticationRootView: View {
 #Preview {
     ContentView(
         onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
-        authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder),
+        authenticationFactory: PharmacyAuthenticationFactory(
+            actions: .placeholder,
+            locationProvider: PreviewContentLocationProvider()
+        ),
         homeFactory: PharmacyHomeFactory(),
         ordersFactory: PharmacyOrdersFactory(
             makeViewModel: { PharmacyOrdersViewModel() }
@@ -98,4 +101,15 @@ private struct PharmacyAuthenticationRootView: View {
         coordinator: RootCoordinator(container: PharmacyDIContainer())
     )
     .environment(LanguageManager.shared)
+}
+
+@MainActor
+private final class PreviewContentLocationProvider: PharmacyLocationProviding {
+    func currentLocation() async throws -> PharmacyLocation {
+        PharmacyLocation(latitude: 30.0444, longitude: 31.2357, city: "Cairo", province: "Cairo")
+    }
+
+    func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
+        PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
+    }
 }
