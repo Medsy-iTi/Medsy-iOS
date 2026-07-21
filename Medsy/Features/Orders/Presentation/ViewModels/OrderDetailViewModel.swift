@@ -39,9 +39,15 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         loadTask?.cancel()
         detailState = .loading
         loadTask = Task {
-            try? await Task.sleep(for: .milliseconds(500))
-            guard !Task.isCancelled else { return }
-            detailState = .loaded(.mock)
+            guard let useCase = getOrderDetailUseCase else { return }
+            do {
+                let entity = try await useCase.execute(id: orderId)
+                guard !Task.isCancelled else { return }
+                detailState = .loaded(OrderEntityMapper.mapDetail(entity))
+            } catch {
+                guard !Task.isCancelled else { return }
+                detailState = .error(error.localizedDescription)
+            }
         }
     }
 }
