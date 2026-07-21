@@ -1,14 +1,16 @@
+//
 //  PharmacyProfileView.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 20/07/2026.
+//  Created by Antoneos Philip on 21/07/2026.
+//
 
 import SwiftUI
 
 struct PharmacyProfileView: View {
     @State private var viewModel: PharmacyProfileViewModel
 
-    init(viewModel: PharmacyProfileViewModel = PharmacyProfileViewModel()) {
+    init(viewModel: PharmacyProfileViewModel = DIContainer.shared.resolve(PharmacyProfileViewModel.self)) {
         _viewModel = State(initialValue: viewModel)
     }
 

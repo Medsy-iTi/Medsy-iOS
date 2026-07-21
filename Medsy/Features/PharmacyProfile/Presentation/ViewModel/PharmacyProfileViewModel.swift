@@ -1,7 +1,9 @@
+//
 //  PharmacyProfileViewModel.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 20/07/2026.
+//  Created by Antoneos Philip on 21/07/2026.
+//
 
 import Foundation
 import Observation
@@ -14,32 +16,29 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
-    nonisolated init() {
+    private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol
+
+    nonisolated init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol = DIContainer.shared.resolve(FetchPharmacyProfileUseCaseProtocol.self)) {
+        self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
         Task { @MainActor in
             self.loadPharmacy()
         }
     }
 
-    func loadPharmacy() {
+    func loadPharmacy(id: Int = 2) {
         state = .loading
-
-        let dto = PharmacyDataDTO(
-            id: 1,
-            name: "El-Eman Pharmacy",
-            latitude: 30.0444,
-            longitude: 31.2357,
-            address: "123 Al Tahrir Street, Downtown, Cairo",
-            phoneNumber: "+201234567890"
-        )
-        let pharmacy = PharmacyMapper.map(dto)
-        state = .loaded(pharmacy)
+        Task {
+            do {
+                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: id)
+                state = .loaded(pharmacy)
+            } catch {
+                state = .error(error.localizedDescription)
+            }
+        }
     }
 
     func callPharmacy(phoneNumber: String) {
-        let cleaned = phoneNumber.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-        if let url = URL(string: "tel://\(cleaned)"), UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        PharmacyCallHandler.call(phoneNumber: phoneNumber)
     }
 
     func openDirections(latitude: Double, longitude: Double, name: String) {
