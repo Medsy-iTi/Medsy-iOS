@@ -22,28 +22,6 @@ struct PharmacyContactCardView: View {
                 actionTitle: "Call",
                 action: onCall
             )
-
-            Divider()
-                .background(AppColor.border)
-
-            infoRow(
-                icon: "clock.fill",
-                title: "Working Hours",
-                subtitle: "Mon - Sun: 24 Hours Open",
-                actionTitle: nil,
-                action: nil
-            )
-
-            Divider()
-                .background(AppColor.border)
-
-            infoRow(
-                icon: "shippingbox.fill",
-                title: "Delivery Coverage",
-                subtitle: "Delivers within 5.0 km radius",
-                actionTitle: nil,
-                action: nil
-            )
         }
         .padding(MedsySpacing.md)
         .background(AppColor.card)
