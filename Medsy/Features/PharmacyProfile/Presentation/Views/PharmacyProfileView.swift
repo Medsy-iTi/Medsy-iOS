@@ -63,7 +63,7 @@ struct PharmacyProfileView: View {
                             .foregroundStyle(AppColor.textSec)
 
                         Button(action: { viewModel.loadPharmacy() }) {
-                            Text("Retry")
+                            Text("common.retry".localized)
                                 .font(MedsyFont.button(14))
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, MedsySpacing.lg)

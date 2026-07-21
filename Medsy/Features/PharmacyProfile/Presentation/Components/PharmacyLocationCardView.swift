@@ -35,7 +35,7 @@ struct PharmacyLocationCardView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(AppColor.green)
 
-                Text("Pharmacy Location")
+                Text("pharmacyProfile.location".localized)
                     .font(MedsyFont.title(16))
                     .foregroundStyle(AppColor.textPrim)
 

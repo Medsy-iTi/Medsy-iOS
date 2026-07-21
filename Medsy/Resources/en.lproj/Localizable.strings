@@ -15,9 +15,11 @@
 
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
+"pharmacyProfile.badge" = "Pharmacy";
 "pharmacyProfile.verified" = "Verified";
 "pharmacyProfile.location" = "Pharmacy Location";
 "pharmacyProfile.contact" = "Pharmacy Contact Information";
+"pharmacyProfile.phoneNumber" = "Phone Number";
 "pharmacyProfile.call" = "Call";
 "pharmacyProfile.directions" = "Directions";
 "pharmacyProfile.share" = "Share";

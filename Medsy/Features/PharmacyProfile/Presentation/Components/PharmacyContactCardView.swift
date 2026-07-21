@@ -11,15 +11,15 @@ struct PharmacyContactCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: MedsySpacing.md) {
-            Text("Pharmacy Contact Information")
+            Text("pharmacyProfile.contact".localized)
                 .font(MedsyFont.title(16))
                 .foregroundStyle(AppColor.textPrim)
 
             infoRow(
                 icon: "phone.fill",
-                title: "Phone Number",
+                title: "pharmacyProfile.phoneNumber".localized,
                 subtitle: phoneNumber,
-                actionTitle: "Call",
+                actionTitle: "pharmacyProfile.call".localized,
                 action: onCall
             )
         }

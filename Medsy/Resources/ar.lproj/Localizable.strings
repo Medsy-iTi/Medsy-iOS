@@ -15,9 +15,11 @@
 
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "الملف الشخصي للصيدلية";
+"pharmacyProfile.badge" = "صيدلية";
 "pharmacyProfile.verified" = "موثقة";
 "pharmacyProfile.location" = "موقع الصيدلية";
 "pharmacyProfile.contact" = "بيانات الاتصال بالصيدلية";
+"pharmacyProfile.phoneNumber" = "رقم الهاتف";
 "pharmacyProfile.call" = "اتصال";
 "pharmacyProfile.directions" = "الاتجاهات";
 "pharmacyProfile.share" = "مشاركة";

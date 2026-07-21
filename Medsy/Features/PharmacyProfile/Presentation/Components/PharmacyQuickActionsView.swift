@@ -13,21 +13,21 @@ struct PharmacyQuickActionsView: View {
     var body: some View {
         HStack(spacing: MedsySpacing.md) {
             actionButton(
-                title: "Call",
+                title: "pharmacyProfile.call".localized,
                 icon: "phone.fill",
                 color: AppColor.green,
                 action: onCall
             )
 
             actionButton(
-                title: "Directions",
+                title: "pharmacyProfile.directions".localized,
                 icon: "arrow.triangle.turn.up.right.diamond.fill",
                 color: AppColor.darkGreen,
                 action: onDirections
             )
 
             actionButton(
-                title: "Share",
+                title: "pharmacyProfile.share".localized,
                 icon: "square.and.arrow.up",
                 color: AppColor.textSec,
                 action: onShare

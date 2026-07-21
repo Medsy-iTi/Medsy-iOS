@@ -43,7 +43,7 @@ struct PharmacyHeaderView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.system(size: 14, weight: .bold))
-                        Text("Pharmacy")
+                        Text("pharmacyProfile.badge".localized)
                             .font(MedsyFont.caption(12))
                     }
                     .foregroundStyle(AppColor.green)
