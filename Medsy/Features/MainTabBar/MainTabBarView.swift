@@ -41,7 +41,10 @@ struct MainTabBarView: View {
                         onSearch: openSearchFromCart
                     )
                     .onAppear { isTabBarHidden = false }
-                case .favorites, .offers, .orders:
+                case .orders:
+                    OrdersCoordinatorView()
+                        .onAppear { isTabBarHidden = false }
+                case .favorites, .offers:
                     VStack {
                         Spacer()
                         Text("Tab \(coordinator.selectedTab.rawValue)")
