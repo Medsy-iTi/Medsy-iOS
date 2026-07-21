@@ -46,6 +46,10 @@ struct PharmacyProfileView: View {
                                 phoneNumber: pharmacy.phoneNumber,
                                 onCall: { viewModel.callPharmacy(phoneNumber: pharmacy.phoneNumber) }
                             )
+
+                            PharmacyServicesView()
+
+                            PharmacyReviewsCardView()
                         }
                         .padding(.horizontal, MedsySpacing.md)
                         .padding(.vertical, MedsySpacing.md)
