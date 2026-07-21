@@ -113,6 +113,40 @@
 "pharmacy.auth.brand.tagline" = "للصيدليات";
 "pharmacy.auth.or" = "أو";
 
+"pharmacy.setup.checking_membership" = "جارٍ التحقق من صيدليتك…";
+"pharmacy.setup.decision.title" = "هل لديك صيدلية؟";
+"pharmacy.setup.decision.subtitle" = "أضف صيدليتك لبدء استقبال وإدارة طلبات الأدوية.";
+"pharmacy.setup.decision.add" = "إضافة صيدليتك";
+"pharmacy.setup.decision.back_to_sign_in" = "العودة لتسجيل الدخول";
+"pharmacy.setup.add.title" = "إضافة صيدليتك";
+"pharmacy.setup.add.subtitle" = "أدخل بيانات الصيدلية وحدد موقعها وارفع مستند الترخيص.";
+"pharmacy.setup.name" = "اسم الصيدلية";
+"pharmacy.setup.phone" = "رقم هاتف الصيدلية";
+"pharmacy.setup.add.action" = "إضافة الصيدلية";
+"pharmacy.setup.location.current" = "الموقع الحالي";
+"pharmacy.setup.location.map" = "اختيار من الخريطة";
+"pharmacy.setup.location.resolving" = "جارٍ تحديد المدينة والمحافظة…";
+"pharmacy.setup.location.city" = "المدينة";
+"pharmacy.setup.location.province" = "المحافظة";
+"pharmacy.setup.location.selected" = "الموقع المحدد";
+"pharmacy.setup.location.not_selected" = "حدد موقعًا";
+"pharmacy.setup.location.permission_denied" = "تم تعطيل الوصول للموقع. اسمح بالوصول من الإعدادات أو اختر مكانًا على الخريطة.";
+"pharmacy.setup.location.unavailable" = "تعذر تحديد موقعك الحالي. حاول مرة أخرى أو اختر مكانًا على الخريطة.";
+"pharmacy.setup.location.address_unavailable" = "تعذر تحديد المدينة والمحافظة لهذا الموقع. اختر نقطة أخرى.";
+"pharmacy.setup.license.select" = "اختيار ترخيص الصيدلية";
+"pharmacy.setup.license.requirements" = "PDF فقط، بحد أقصى 10 ميجابايت";
+"pharmacy.setup.map.hint" = "اضغط على الخريطة لتحديد موقع الصيدلية. سيتم ملء المدينة والمحافظة تلقائيًا.";
+"pharmacy.setup.map.confirm" = "استخدام هذا الموقع";
+"pharmacy.setup.map.pin" = "الصيدلية";
+"pharmacy.setup.map.accessibility" = "خريطة لاختيار موقع الصيدلية";
+"pharmacy.setup.validation.required" = "أكمل جميع بيانات الصيدلية والموقع والترخيص.";
+"pharmacy.setup.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
+"pharmacy.setup.validation.location" = "حدد موقعًا صالحًا للصيدلية.";
+"pharmacy.setup.validation.pdf" = "يجب أن يكون ترخيص الصيدلية ملف PDF صالحًا.";
+"pharmacy.setup.validation.size" = "يجب ألا يتجاوز ترخيص الصيدلية 10 ميجابايت.";
+"pharmacy.setup.validation.unreadable" = "تعذرت قراءة ملف الترخيص المحدد.";
+
+
 
 /*Profile*/
 "profile_title" = "الملف الشخصي";
@@ -239,4 +273,5 @@
 "pharmacy.request.accept" = "قبول الطلب";
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+
 
