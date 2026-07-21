@@ -48,7 +48,21 @@ private struct PharmacyAuthenticationRootView: View {
 
 #Preview {
     ContentView(
-        authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder)
+        authenticationFactory: PharmacyAuthenticationFactory(
+            actions: .placeholder,
+            locationProvider: PreviewContentLocationProvider()
+        )
     )
         .environment(LanguageManager.shared)
+}
+
+@MainActor
+private final class PreviewContentLocationProvider: PharmacyLocationProviding {
+    func currentLocation() async throws -> PharmacyLocation {
+        PharmacyLocation(latitude: 30.0444, longitude: 31.2357, city: "Cairo", province: "Cairo")
+    }
+
+    func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
+        PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
+    }
 }
