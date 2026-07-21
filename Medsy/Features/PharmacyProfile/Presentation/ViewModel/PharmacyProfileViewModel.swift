@@ -1,7 +1,9 @@
+//
 //  PharmacyProfileViewModel.swift
 //  Medsy
 //
-//  Created by Antoneos Philip on 20/07/2026.
+//  Created by Antoneos Philip on 21/07/2026.
+//
 
 import Foundation
 import Observation
@@ -14,25 +16,36 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
-    nonisolated init() {
-        Task { @MainActor in
-            self.loadPharmacy()
-        }
+    private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol?
+
+    init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol? = nil) {
+        self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
+        self.loadPharmacy()
     }
 
-    func loadPharmacy() {
+    func loadPharmacy(id: Int = 1) {
         state = .loading
-
-        let dto = PharmacyDataDTO(
-            id: 1,
-            name: "El-Eman Pharmacy",
-            latitude: 30.0444,
-            longitude: 31.2357,
-            address: "123 Al Tahrir Street, Downtown, Cairo",
-            phoneNumber: "+201234567890"
-        )
-        let pharmacy = PharmacyMapper.map(dto)
-        state = .loaded(pharmacy)
+        Task {
+            do {
+                if let fetchPharmacyProfileUseCase {
+                    let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: id)
+                    state = .loaded(pharmacy)
+                } else {
+                    let dto = PharmacyDataDTO(
+                        id: id,
+                        name: "El-Eman Pharmacy",
+                        latitude: 30.0444,
+                        longitude: 31.2357,
+                        address: "123 Al Tahrir Street, Downtown, Cairo",
+                        phoneNumber: "+201234567890"
+                    )
+                    let pharmacy = PharmacyMapper.map(dto)
+                    state = .loaded(pharmacy)
+                }
+            } catch {
+                state = .error(error.localizedDescription)
+            }
+        }
     }
 
     func callPharmacy(phoneNumber: String) {
