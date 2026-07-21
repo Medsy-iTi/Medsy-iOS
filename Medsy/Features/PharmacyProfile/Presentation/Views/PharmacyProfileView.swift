@@ -74,7 +74,7 @@ struct PharmacyProfileView: View {
                     }
                 }
             }
-            .navigationTitle("Pharmacy Profile")
+            .navigationTitle("pharmacyProfile.title".localized)
             .navigationBarTitleDisplayMode(.inline)
         }
     }
