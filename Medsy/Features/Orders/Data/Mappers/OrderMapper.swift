@@ -16,26 +16,41 @@ enum OrderMapper {
     }()
 
     static func mapToEntity(_ dto: OrderDTO) -> OrderEntity {
-        OrderEntity(
+        let fulfillmentType = fulfillmentType(for: dto)
+        return OrderEntity(
             id: dto.id,
             orderNumber: dto.id,
-            pharmacyName: "Pharmacy #\(dto.pharmacyId)",
+            pharmacyName: dto.pharmacyName ?? String(
+                format: "orders.pharmacy_fallback".localized,
+                dto.pharmacyId
+            ),
             status: OrderStatus(rawValue: dto.status),
+            fulfillmentType: fulfillmentType,
             date: date(from: dto.date),
             totalPrice: dto.totalPrice,
-            itemCount: dto.items.count
+            itemCount: dto.items.reduce(0) { $0 + $1.quantity }
         )
     }
 
     static func mapToDetailEntity(_ dto: OrderDTO) -> OrderDetailEntity {
-        OrderDetailEntity(
+        let items = dto.items.map(mapToDetailItemEntity)
+        let itemsSubtotal = dto.itemsSubtotal
+            ?? items.reduce(0) { $0 + ($1.unitPrice * Double($1.quantity)) }
+        let fulfillmentType = fulfillmentType(for: dto)
+        return OrderDetailEntity(
             id: dto.id,
             orderNumber: dto.id,
-            pharmacyName: "Pharmacy #\(dto.pharmacyId)",
+            pharmacyName: dto.pharmacyName ?? String(
+                format: "orders.pharmacy_fallback".localized,
+                dto.pharmacyId
+            ),
+            pharmacyId: dto.pharmacyId,
             status: OrderStatus(rawValue: dto.status),
+            fulfillmentType: fulfillmentType,
             date: date(from: dto.date),
-            items: dto.items.map(mapToDetailItemEntity),
-            deliveryFee: nil,
+            items: items,
+            itemsSubtotal: itemsSubtotal,
+            deliveryFee: fulfillmentType == .delivery ? dto.deliveryFee : nil,
             totalPrice: dto.totalPrice
         )
     }
@@ -54,9 +69,20 @@ enum OrderMapper {
     private static func mapToDetailItemEntity(_ dto: OrderItemDTO) -> OrderDetailItemEntity {
         OrderDetailItemEntity(
             id: dto.id,
-            productName: "Product #\(dto.productId)",
+            productName: dto.productName ?? String(
+                format: "orders.product_fallback".localized,
+                dto.productId
+            ),
+            originalProductName: dto.originalProductName,
             quantity: dto.quantity,
             unitPrice: dto.unitPrice
+        )
+    }
+
+    private static func fulfillmentType(for dto: OrderDTO) -> OrderFulfillmentType {
+        OrderFulfillmentType(
+            rawValue: dto.fulfillmentType,
+            hasDeliveryCoordinates: dto.deliveryLatitude != nil && dto.deliveryLongitude != nil
         )
     }
 

@@ -380,12 +380,20 @@
 "orders.status.delivered"            = "Delivered";
 "orders.status.cancelled"            = "Cancelled";
 "orders.status.rejected"             = "Rejected";
+"orders.status.preparing"            = "Preparing";
+"orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.out_for_delivery"     = "Out for delivery";
 "orders.from_pharmacy"               = "From %@";
+"orders.pharmacy_fallback"           = "Pharmacy #%d";
+"orders.product_fallback"            = "Product #%d";
+"orders.fulfillment.delivery"        = "Delivery";
+"orders.fulfillment.pickup"          = "Pickup";
 "orders.items_count"                 = "%d items";
 "orders.item_count"                  = "%d item";
 "orders.price_format"                = "%.0f EGP";
 "orders.empty.title"                 = "No orders yet";
 "orders.empty.subtitle"              = "Your order history will appear here once you place your first order.";
+"orders.empty.search"                = "Search medicines";
 "orders.empty.active.title"          = "No active orders";
 "orders.empty.active.subtitle"       = "Orders you are currently waiting for will appear here.";
 "orders.empty.completed.title"       = "No completed orders";
@@ -397,6 +405,8 @@
 "orders.loading"                     = "Loading orders…";
 "orders.section.today"               = "Today";
 "orders.section.yesterday"           = "Yesterday";
+"orders.section.active"              = "Active orders";
+"orders.section.history"             = "Order history";
 "orders.detail.title"                = "Order Details";
 "orders.detail.order_number"         = "Order #%d";
 "orders.detail.date"                 = "Date";
@@ -414,3 +424,4 @@
 "orders.detail.order_summary"        = "Order Summary";
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
+"orders.detail.alternative_to"       = "Alternative to %@";

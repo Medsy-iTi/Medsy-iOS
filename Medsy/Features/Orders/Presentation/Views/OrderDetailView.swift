@@ -12,6 +12,7 @@ struct OrderDetailView: View {
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
+    var onSelectPharmacy: ((Int) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -123,7 +124,7 @@ struct OrderDetailView: View {
 
                 Spacer(minLength: 0)
 
-                deliveryBadge
+                fulfillmentBadge(for: order.fulfillmentType)
             }
 
             Text(dateLabel(for: order.date))
@@ -141,11 +142,15 @@ struct OrderDetailView: View {
         .medsyCardShadow()
     }
 
-    private var deliveryBadge: some View {
+    private func fulfillmentBadge(for type: OrderFulfillmentType) -> some View {
         HStack(spacing: MedsySpacing.xxs) {
-            Image(systemName: "shippingbox.fill")
+            Image(systemName: type == .delivery ? "shippingbox.fill" : "bag.fill")
                 .font(.system(size: 13))
-            Text("orders.detail.delivery".localized)
+            Text(
+                type == .delivery
+                    ? "orders.fulfillment.delivery".localized
+                    : "orders.fulfillment.pickup".localized
+            )
                 .font(AppColor.sans(13, .medium))
         }
         .foregroundStyle(AppColor.green)
@@ -156,7 +161,10 @@ struct OrderDetailView: View {
     }
 
     private func pharmacyCard(order: OrderDetailPresentationModel) -> some View {
-        HStack(spacing: MedsySpacing.sm) {
+        Button {
+            onSelectPharmacy?(order.pharmacyId)
+        } label: {
+            HStack(spacing: MedsySpacing.sm) {
             ZStack {
                 Circle()
                     .fill(AppColor.lightGreen)
@@ -180,7 +188,9 @@ struct OrderDetailView: View {
             Image(systemName: "chevron.forward")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AppColor.textSec)
+            }
         }
+        .buttonStyle(.plain)
         .padding(MedsySpacing.md)
         .background(AppColor.card)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
@@ -234,6 +244,13 @@ struct OrderDetailView: View {
                     .foregroundStyle(AppColor.textPrim)
                     .lineLimit(2)
 
+                if let originalName = item.originalProductName {
+                    Text(String(format: "orders.detail.alternative_to".localized, originalName))
+                        .font(AppColor.sans(12, .medium))
+                        .foregroundStyle(AppColor.green)
+                        .lineLimit(2)
+                }
+
                 Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
                     .font(AppColor.sans(12))
                     .foregroundStyle(AppColor.textSec)
@@ -250,8 +267,6 @@ struct OrderDetailView: View {
     }
 
     private func summaryCard(order: OrderDetailPresentationModel) -> some View {
-        let itemsTotal = order.items.reduce(0.0) { $0 + ($1.unitPrice * Double($1.quantity)) }
-
         return VStack(spacing: 0) {
             Text("orders.detail.order_summary".localized)
                 .font(AppColor.sans(15, .semibold))
@@ -261,11 +276,11 @@ struct OrderDetailView: View {
 
             summaryRow(
                 label: "orders.detail.items_subtotal".localized,
-                amount: itemsTotal,
+                amount: order.itemsSubtotal,
                 isTotal: false
             )
 
-            if let fee = order.deliveryFee {
+            if order.fulfillmentType == .delivery, let fee = order.deliveryFee {
                 Divider().background(AppColor.border).padding(.vertical, MedsySpacing.xs)
                 summaryRow(
                     label: "orders.detail.delivery_fee".localized,

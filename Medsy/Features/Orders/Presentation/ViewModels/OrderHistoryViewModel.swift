@@ -53,6 +53,7 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         if reset {
             currentPage = 0
             isLastPage = false
+            isLoadingNextPage = false
             loadedOrders = []
         }
         historyState = .loading
@@ -74,20 +75,40 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
     private func fetchOrders(filter: OrderFilter, page: Int, appending: Bool) async {
         guard let useCase = loadOrdersUseCase else { return }
         do {
-            let result = try await useCase.execute(
-                statuses: filter.domainStatuses,
-                page: page,
-                size: Self.pageSize
-            )
-            guard !Task.isCancelled else { return }
-            let mapped = result.items.map(OrderEntityMapper.map)
-            if appending {
-                loadedOrders.append(contentsOf: mapped)
-            } else {
-                loadedOrders = mapped
+            var requestedPage = page
+            var shouldReplace = !appending
+
+            while true {
+                let result = try await useCase.execute(
+                    statuses: filter.domainStatuses,
+                    page: requestedPage,
+                    size: Self.pageSize
+                )
+                guard !Task.isCancelled else { return }
+
+                // The deployed endpoint currently ignores the optional status query.
+                // Keep filtering locally as a compatibility fallback while paging past
+                // empty filtered pages so a later match is never hidden.
+                let mapped = result.items
+                    .filter { filter.matches($0.status) }
+                    .map(OrderEntityMapper.map)
+
+                if shouldReplace {
+                    loadedOrders = mapped
+                    shouldReplace = false
+                } else {
+                    loadedOrders.append(contentsOf: mapped)
+                }
+
+                currentPage = result.page
+                isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
+
+                if !mapped.isEmpty || isLastPage || filter == .all {
+                    break
+                }
+                requestedPage += 1
             }
-            currentPage = page
-            isLastPage = result.isLast ?? mapped.count < Self.pageSize
+
             let sections = buildSections(from: loadedOrders)
             historyState = sections.isEmpty ? .loaded([]) : .loaded(sections)
         } catch {
@@ -99,6 +120,24 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
     }
 
     private func buildSections(from orders: [OrderPresentationModel]) -> [OrderDateSection] {
+        if currentFilter == .all {
+            let activeOrders = orders.filter(\.status.isActive)
+            let historyOrders = orders.filter { !$0.status.isActive }
+            return [
+                OrderDateSection(
+                    id: "active",
+                    title: "orders.section.active".localized,
+                    orders: activeOrders
+                ),
+                OrderDateSection(
+                    id: "history",
+                    title: "orders.section.history".localized,
+                    orders: historyOrders
+                )
+            ]
+            .filter { !$0.orders.isEmpty }
+        }
+
         let calendar = Calendar.current
         var todayOrders: [OrderPresentationModel] = []
         var yesterdayOrders: [OrderPresentationModel] = []

@@ -13,6 +13,7 @@ struct OrderHistoryView: View {
     let onSelectOrder: (OrderPresentationModel) -> Void
     let onRetry: () -> Void
     let onLoadNextPage: () -> Void
+    var onSearch: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,9 +40,9 @@ struct OrderHistoryView: View {
         case .loaded(let sections):
             let orders = sections.flatMap(\.orders)
             if orders.isEmpty {
-                OrdersEmptyView(filter: selectedFilter)
+                OrdersEmptyView(filter: selectedFilter, onSearch: onSearch)
             } else {
-                ordersListView(orders: orders)
+                ordersListView(sections: sections)
             }
         case .error(let message):
             OrdersErrorView(message: message, onRetry: onRetry)
@@ -61,12 +62,20 @@ struct OrderHistoryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func ordersListView(orders: [OrderPresentationModel]) -> some View {
+    private func ordersListView(sections: [OrderDateSection]) -> some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: MedsySpacing.sm) {
-                ForEach(orders) { order in
-                    OrderCardView(order: order) {
-                        onSelectOrder(order)
+            LazyVStack(alignment: .leading, spacing: MedsySpacing.md) {
+                ForEach(sections) { section in
+                    Section {
+                        ForEach(section.orders) { order in
+                            OrderCardView(order: order) {
+                                onSelectOrder(order)
+                            }
+                        }
+                    } header: {
+                        Text(section.title)
+                            .font(AppColor.sans(14, .semibold))
+                            .foregroundStyle(AppColor.textSec)
                     }
                 }
 
@@ -103,7 +112,8 @@ struct OrderDateSection: Identifiable {
         state: .loaded(OrderHistoryView.previewSections),
         onSelectOrder: { _ in },
         onRetry: {},
-        onLoadNextPage: {}
+        onLoadNextPage: {},
+        onSearch: {}
     )
     .environment(LanguageManager.shared)
 }

@@ -37,6 +37,8 @@ struct OrderCardView: View {
                     .font(AppColor.sans(14, .semibold))
                     .foregroundStyle(order.status.color)
 
+                fulfillmentBadge
+
                 Text(String(format: "orders.from_pharmacy".localized, order.pharmacyName))
                     .font(AppColor.sans(13))
                     .foregroundStyle(AppColor.textSec)
@@ -100,6 +102,17 @@ struct OrderCardView: View {
     private var itemCountText: String {
         let key = order.itemCount == 1 ? "orders.item_count" : "orders.items_count"
         return String(format: key.localized, order.itemCount)
+    }
+
+    private var fulfillmentBadge: some View {
+        Label(
+            order.fulfillmentType == .delivery
+                ? "orders.fulfillment.delivery".localized
+                : "orders.fulfillment.pickup".localized,
+            systemImage: order.fulfillmentType == .delivery ? "shippingbox.fill" : "bag.fill"
+        )
+        .font(AppColor.sans(12, .medium))
+        .foregroundStyle(AppColor.green)
     }
 }
 

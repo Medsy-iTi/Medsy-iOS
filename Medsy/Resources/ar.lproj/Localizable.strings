@@ -379,12 +379,20 @@
 "orders.status.delivered"            = "تم التسليم";
 "orders.status.cancelled"            = "ملغى";
 "orders.status.rejected"             = "مرفوض";
+"orders.status.preparing"            = "جاري التجهيز";
+"orders.status.ready_for_pickup"     = "جاهز للاستلام";
+"orders.status.out_for_delivery"     = "خرج للتوصيل";
 "orders.from_pharmacy"               = "من %@";
+"orders.pharmacy_fallback"           = "صيدلية #%d";
+"orders.product_fallback"            = "منتج #%d";
+"orders.fulfillment.delivery"        = "توصيل";
+"orders.fulfillment.pickup"          = "استلام من الصيدلية";
 "orders.items_count"                 = "%d منتجات";
 "orders.item_count"                  = "%d منتج";
 "orders.price_format"                = "%.0f جنيه";
 "orders.empty.title"                 = "لا توجد طلبات بعد";
 "orders.empty.subtitle"              = "سيظهر تاريخ طلباتك هنا بمجرد تقديم طلبك الأول.";
+"orders.empty.search"                = "البحث عن أدوية";
 "orders.empty.active.title"          = "لا توجد طلبات جارية";
 "orders.empty.active.subtitle"       = "ستظهر هنا الطلبات التي تنتظر تسليمها حالياً.";
 "orders.empty.completed.title"       = "لا توجد طلبات منتهية";
@@ -396,6 +404,8 @@
 "orders.loading"                     = "جاري تحميل الطلبات…";
 "orders.section.today"               = "اليوم";
 "orders.section.yesterday"           = "أمس";
+"orders.section.active"              = "الطلبات الجارية";
+"orders.section.history"             = "سجل الطلبات";
 "orders.detail.title"                = "تفاصيل الطلب";
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
@@ -413,3 +423,4 @@
 "orders.detail.order_summary"        = "ملخص الطلب";
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
+"orders.detail.alternative_to"       = "بديل لـ %@";

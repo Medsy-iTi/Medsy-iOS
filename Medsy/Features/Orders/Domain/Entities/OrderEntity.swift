@@ -10,22 +10,22 @@ import Foundation
 enum OrderStatus {
     case pending
     case confirmed
-    case processing
-    case shipped
+    case preparing
+    case readyForPickup
+    case outForDelivery
     case delivered
     case cancelled
-    case rejected
     case unknown(String)
 
     var rawValue: String {
         switch self {
         case .pending:          return "PENDING"
         case .confirmed:        return "CONFIRMED"
-        case .processing:       return "PROCESSING"
-        case .shipped:          return "SHIPPED"
+        case .preparing:        return "PREPARING"
+        case .readyForPickup:   return "READY_FOR_PICKUP"
+        case .outForDelivery:   return "OUT_FOR_DELIVERY"
         case .delivered:        return "DELIVERED"
         case .cancelled:        return "CANCELLED"
-        case .rejected:         return "REJECTED"
         case .unknown(let raw): return raw
         }
     }
@@ -34,12 +34,25 @@ enum OrderStatus {
         switch rawValue.uppercased() {
         case "PENDING":    self = .pending
         case "CONFIRMED":  self = .confirmed
-        case "PROCESSING": self = .processing
-        case "SHIPPED":    self = .shipped
+        case "PREPARING":        self = .preparing
+        case "READY_FOR_PICKUP": self = .readyForPickup
+        case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED":  self = .delivered
         case "CANCELLED":  self = .cancelled
-        case "REJECTED":   self = .rejected
         default:           self = .unknown(rawValue)
+        }
+    }
+}
+
+enum OrderFulfillmentType: String, Equatable {
+    case delivery = "DELIVERY"
+    case pickup = "PICKUP"
+
+    init(rawValue: String?, hasDeliveryCoordinates: Bool) {
+        switch rawValue?.uppercased() {
+        case "PICKUP", "PICK_UP": self = .pickup
+        case "DELIVERY": self = .delivery
+        default: self = hasDeliveryCoordinates ? .delivery : .pickup
         }
     }
 }
@@ -49,6 +62,7 @@ struct OrderEntity: Identifiable {
     let orderNumber: Int
     let pharmacyName: String
     let status: OrderStatus
+    let fulfillmentType: OrderFulfillmentType
     let date: Date
     let totalPrice: Double
     let itemCount: Int

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OrdersEmptyView: View {
     let filter: OrderFilter
+    var onSearch: () -> Void = {}
 
     var body: some View {
         VStack(spacing: MedsySpacing.lg) {
@@ -27,6 +28,15 @@ struct OrdersEmptyView: View {
                     .foregroundStyle(AppColor.textSec)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, MedsySpacing.xl)
+            }
+
+            if filter == .all {
+                PrimaryButton(
+                    title: "orders.empty.search".localized,
+                    systemImage: "magnifyingglass",
+                    action: onSearch
+                )
+                .padding(.horizontal, MedsySpacing.xl)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -53,6 +63,6 @@ struct OrdersEmptyView: View {
 }
 
 #Preview {
-    OrdersEmptyView(filter: .all)
+    OrdersEmptyView(filter: .all, onSearch: {})
         .background(AppColor.bg)
 }

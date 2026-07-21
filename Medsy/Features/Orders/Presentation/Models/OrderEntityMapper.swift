@@ -14,6 +14,7 @@ enum OrderEntityMapper {
             orderNumber: entity.orderNumber,
             pharmacyName: entity.pharmacyName,
             status: OrderStatusPresentation(rawValue: entity.status.rawValue),
+            fulfillmentType: entity.fulfillmentType,
             date: entity.date,
             totalPrice: entity.totalPrice,
             itemCount: entity.itemCount
@@ -25,9 +26,12 @@ enum OrderEntityMapper {
             id: entity.id,
             orderNumber: entity.orderNumber,
             pharmacyName: entity.pharmacyName,
+            pharmacyId: entity.pharmacyId,
             status: OrderStatusPresentation(rawValue: entity.status.rawValue),
+            fulfillmentType: entity.fulfillmentType,
             date: entity.date,
             items: entity.items.map(mapItem),
+            itemsSubtotal: entity.itemsSubtotal,
             deliveryFee: entity.deliveryFee,
             totalPrice: entity.totalPrice
         )
@@ -37,6 +41,7 @@ enum OrderEntityMapper {
         OrderDetailItemModel(
             id: entity.id,
             productName: entity.productName,
+            originalProductName: entity.originalProductName,
             quantity: entity.quantity,
             unitPrice: entity.unitPrice
         )
@@ -47,9 +52,15 @@ extension OrderFilter {
     var domainStatuses: [OrderStatus]? {
         switch self {
         case .all:       return nil
-        case .active:    return [.pending, .confirmed, .processing, .shipped]
+        case .active:    return [.pending, .confirmed, .preparing, .readyForPickup, .outForDelivery]
         case .completed: return [.delivered]
-        case .cancelled: return [.cancelled, .rejected]
+        case .cancelled: return [.cancelled]
         }
+    }
+
+    func matches(_ status: OrderStatus) -> Bool {
+        guard let domainStatuses else { return true }
+        let acceptedValues = Set(domainStatuses.map(\.rawValue))
+        return acceptedValues.contains(status.rawValue)
     }
 }

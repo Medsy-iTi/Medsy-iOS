@@ -53,7 +53,7 @@ struct MainTabBarView: View {
                     .background(AppColor.bg)
                     .onAppear { isTabBarHidden = false }
                 case .orders:
-                    OrdersCoordinatorView()
+                    OrdersCoordinatorView(onSearch: openSearch)
                         .onAppear { isTabBarHidden = false }
                 }
             }
@@ -105,6 +105,10 @@ struct MainTabBarView: View {
     }
 
     private func openSearchFromCart() {
+        openSearch()
+    }
+
+    private func openSearch() {
         requestedHomeRoute = .search("")
         coordinator.select(.home)
     }

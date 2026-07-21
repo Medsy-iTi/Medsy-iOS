@@ -30,10 +30,11 @@ enum OrdersEndpoint: ApiEndpoint {
         case let .fetchOrders(page, size, status):
             var params: Parameters = [
                 "page": page,
-                "size": size
+                "size": size,
+                "sort": "date,desc"
             ]
             if let status {
-                params["sort"] = status
+                params["status"] = status
             }
             return params
         case .fetchOrderDetail:
