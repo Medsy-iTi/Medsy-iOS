@@ -22,6 +22,10 @@ final class AddressPickerViewModel {
 	var isSearching = false
 
 
+	private let searchDebounceNanoseconds: UInt64 = 350_000_000
+	private var searchTask: Task<Void, Never>?
+
+
 	private(set) var pickedCoordinate: CLLocationCoordinate2D?
 	var latitude: Double? { pickedCoordinate?.latitude }
 	var longitude: Double? { pickedCoordinate?.longitude }
@@ -60,26 +64,51 @@ final class AddressPickerViewModel {
 
 
 
+		
+	func scheduleSearch() {
+		searchTask?.cancel()
+
+		let query = searchText.trimmingCharacters(in: .whitespaces)
+		guard !query.isEmpty else {
+			searchResults = []
+			isSearching = false
+			return
+		}
+
+		searchTask = Task { [weak self] in
+			try? await Task.sleep(nanoseconds: self?.searchDebounceNanoseconds ?? 350_000_000)
+			guard let self, !Task.isCancelled else { return }
+			await self.performSearch()
+		}
+	}
+
 	func performSearch() async {
-		guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+		let query = searchText.trimmingCharacters(in: .whitespaces)
+		guard !query.isEmpty else {
+			searchResults = []
+			return
+		}
 
 		isSearching = true
 		defer { isSearching = false }
 
 		do {
-			let results = try await searchAddressUseCase.execute(query: searchText, region: region)
+			let results = try await searchAddressUseCase.execute(query: query, region: region)
+			guard !Task.isCancelled else { return }
 			searchResults = results
 
 			if let first = results.first {
 				moveCamera(to: first.placemark.coordinate)
 			}
 		} catch {
+			guard !Task.isCancelled else { return }
 			print("Search failed: \(error)")
 		}
 	}
 
 
 	func selectSearchResult(_ item: MKMapItem) {
+		searchTask?.cancel()
 		addressText = item.name ?? item.placemark.title ?? addressText
 		pickedCoordinate = item.placemark.coordinate
 		moveCamera(to: item.placemark.coordinate)

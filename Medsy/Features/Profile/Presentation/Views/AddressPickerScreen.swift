@@ -41,7 +41,7 @@ struct AddressPickerScreen: View {
 		}
 	}
 
-		// MARK: - Search
+
 
 	private var searchField: some View {
 		CustomTextField(
@@ -52,6 +52,9 @@ struct AddressPickerScreen: View {
 		.padding(.horizontal, 20)
 		.padding(.top, 12)
 		.padding(.bottom, viewModel.searchResults.isEmpty ? 12 : 0)
+		.onChange(of: viewModel.searchText) {
+			viewModel.scheduleSearch()
+		}
 		.onSubmit {
 			Task { await viewModel.performSearch() }
 		}
@@ -117,7 +120,6 @@ struct AddressPickerScreen: View {
 		.padding(.vertical, 12)
 	}
 
-		// MARK: - Map (tap anywhere to drop the pin)
 
 	private var mapSection: some View {
 		MapReader { proxy in
