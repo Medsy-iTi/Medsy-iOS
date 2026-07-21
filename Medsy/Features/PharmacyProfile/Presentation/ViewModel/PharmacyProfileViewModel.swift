@@ -38,10 +38,7 @@ final class PharmacyProfileViewModel {
     }
 
     func callPharmacy(phoneNumber: String) {
-        let cleaned = phoneNumber.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-        if let url = URL(string: "tel://\(cleaned)"), UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        PharmacyCallHandler.call(phoneNumber: phoneNumber)
     }
 
     func openDirections(latitude: Double, longitude: Double, name: String) {
