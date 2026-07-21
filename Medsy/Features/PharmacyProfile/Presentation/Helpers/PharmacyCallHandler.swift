@@ -23,6 +23,19 @@ enum PharmacyCallHandler {
         let cleaned = cleanPhoneNumber(phoneNumber)
         guard !cleaned.isEmpty else { return }
 
+        #if targetEnvironment(simulator)
+        print("📱 [Simulator Mode] Dialing pharmacy: \(phoneNumber) (\(cleaned))")
+        let alert = UIAlertController(
+            title: "pharmacyProfile.call".localized,
+            message: "\(phoneNumber)",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+            rootVC.present(alert, animated: true)
+        }
+        #else
         let promptScheme = "telprompt://\(cleaned)"
         let telScheme = "tel://\(cleaned)"
 
@@ -30,9 +43,7 @@ enum PharmacyCallHandler {
             UIApplication.shared.open(promptURL)
         } else if let telURL = URL(string: telScheme), UIApplication.shared.canOpenURL(telURL) {
             UIApplication.shared.open(telURL)
-        } else if let telURL = URL(string: telScheme) {
-            // Fallback for environments where canOpenURL returns false (e.g., Simulator)
-            UIApplication.shared.open(telURL)
         }
+        #endif
     }
 }
