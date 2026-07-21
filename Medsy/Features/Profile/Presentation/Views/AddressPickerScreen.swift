@@ -6,112 +6,167 @@
 //
 
 
-
 import SwiftUI
 import MapKit
 
 struct AddressPickerScreen: View {
 
-    let initialAddress: String
-    let initialCoordinate: CLLocationCoordinate2D?
-    let onConfirm: (String, CLLocationCoordinate2D) -> Void
-    let onCancel: () -> Void
+	@State private var viewModel: AddressPickerViewModel
 
-    @State private var region: MKCoordinateRegion
-    @State private var searchText: String = ""
-    @State private var addressText: String
+	init(viewModel: AddressPickerViewModel) {
+		_viewModel = State(wrappedValue: viewModel)
+	}
 
-    private static let defaultCoordinate = CLLocationCoordinate2D(latitude: 30.0444, longitude: 31.2357) // Cairo fallback
-    private static let defaultSpan = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+	var body: some View {
+		ZStack {
+			ProfileStyle.background
+				.ignoresSafeArea()
 
-    init(
-        initialAddress: String = "",
-        initialCoordinate: CLLocationCoordinate2D? = nil,
-        onConfirm: @escaping (String, CLLocationCoordinate2D) -> Void = { _, _ in },
-        onCancel: @escaping () -> Void = {}
-    ) {
-        self.initialAddress = initialAddress
-        self.initialCoordinate = initialCoordinate
-        self.onConfirm = onConfirm
-        self.onCancel = onCancel
+			VStack(spacing: 0) {
+				MedsyNavBar(title: "address.title".localized, onBack: viewModel.onCancel)
 
-        let coordinate = initialCoordinate ?? AddressPickerScreen.defaultCoordinate
-        _region = State(initialValue: MKCoordinateRegion(center: coordinate, span: AddressPickerScreen.defaultSpan))
-        _addressText = State(initialValue: initialAddress)
-    }
+				searchField
 
-    var body: some View {
-        ZStack {
-            ProfileStyle.background
-                .ignoresSafeArea()
+				if !viewModel.searchResults.isEmpty {
+					suggestionsList
+				} else {
+					mapSection
+					addressField
+					confirmButton
+				}
+			}
+		}
+		.onAppear {
+			viewModel.requestLocationPermission()
+		}
+	}
 
-            VStack(spacing: 0) {
-                MedsyNavBar(title: "address.title".localized, onBack: onCancel)
+		// MARK: - Search
 
-                searchField
-                mapSection
-                addressField
-                confirmButton
-            }
-        }
-    }
+	private var searchField: some View {
+		CustomTextField(
+			title: "address.search_placeholder".localized,
+			type: .address,
+			text: $viewModel.searchText
+		)
+		.padding(.horizontal, 20)
+		.padding(.top, 12)
+		.padding(.bottom, viewModel.searchResults.isEmpty ? 12 : 0)
+		.onSubmit {
+			Task { await viewModel.performSearch() }
+		}
+	}
 
-    // MARK: - Search
+	private var suggestionsList: some View {
+		ScrollView(showsIndicators: false) {
+			VStack(spacing: 0) {
+				ForEach(viewModel.annotatedItems) { annotated in
+					Button {
+						viewModel.selectSearchResult(annotated.mapItem)
+					} label: {
+						suggestionRow(annotated.mapItem)
+					}
+					.buttonStyle(.plain)
 
-    private var searchField: some View {
-        // View only — bind a search completer / results list here later.
-        CustomTextField(title: "address.search_placeholder".localized, type: .address, text: $searchText)
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 12)
-    }
+					if annotated.id != viewModel.annotatedItems.last?.id {
+						Divider()
+							.background(ProfileStyle.border)
+							.padding(.leading, 56)
+					}
+				}
+			}
+			.background(ProfileStyle.card)
+			.clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+			.overlay {
+				RoundedRectangle(cornerRadius: 16, style: .continuous)
+					.stroke(ProfileStyle.border, lineWidth: 1)
+			}
+			.padding(.horizontal, 20)
+			.padding(.top, 12)
+		}
+	}
 
-    // MARK: - Map
+	private func suggestionRow(_ item: MKMapItem) -> some View {
+		HStack(spacing: 12) {
+			RoundedRectangle(cornerRadius: 12, style: .continuous)
+				.fill(ProfileStyle.green.opacity(0.16))
+				.frame(width: 34, height: 34)
+				.overlay {
+					Image(systemName: "mappin")
+						.font(.system(size: 14, weight: .semibold))
+						.foregroundStyle(ProfileStyle.green)
+				}
 
-    private var mapSection: some View {
-        Map(coordinateRegion: $region)
-            // View only — no drag-end / reverse-geocode call wired up.
-            .overlay {
-                Image(systemName: "mappin")
-                    .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(ProfileStyle.red)
-                    .offset(y: -17) // tip of the pin sits on the exact center
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(ProfileStyle.border, lineWidth: 1)
-            }
-            .padding(.horizontal, 20)
-    }
+			VStack(alignment: .leading, spacing: 2) {
+				Text(item.name ?? "")
+					.font(.system(size: 14, weight: .semibold))
+					.foregroundStyle(ProfileStyle.primaryText)
+					.lineLimit(1)
 
-    // MARK: - Address text + confirm
+				if let subtitle = item.placemark.title {
+					Text(subtitle)
+						.font(.system(size: 12, weight: .medium))
+						.foregroundStyle(ProfileStyle.secondaryText)
+						.lineLimit(1)
+				}
+			}
 
-    private var addressField: some View {
-        // View only — plain editable field, not auto-filled from the map yet.
-        CustomTextField(title: "profile.home_address.placeholder".localized, type: .address, text: $addressText)
-            .padding(.horizontal, 20)
-            .padding(.top, 14)
-    }
+			Spacer(minLength: 0)
+		}
+		.padding(.horizontal, 14)
+		.padding(.vertical, 12)
+	}
 
-    private var confirmButton: some View {
-        PrimaryButton(
-            title: "address.confirm".localized,
-            isDisabled: addressText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        ) {
-            onConfirm(addressText, region.center)
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 14)
-        .padding(.bottom, 20)
-    }
-}
+		// MARK: - Map (tap anywhere to drop the pin)
 
-#Preview {
-    AddressPickerScreen(
-        initialAddress: "",
-        onConfirm: { _, _ in },
-        onCancel: {}
-    )
-    .environment(LanguageManager.shared)
+	private var mapSection: some View {
+		MapReader { proxy in
+			Map(position: $viewModel.cameraPosition) {
+				if let pickedCoordinate = viewModel.pickedCoordinate {
+					Annotation("", coordinate: pickedCoordinate) {
+						Image(systemName: "mappin.circle.fill")
+							.font(.system(size: 30, weight: .semibold))
+							.foregroundStyle(ProfileStyle.red)
+					}
+				}
+			}
+			.onTapGesture { screenPoint in
+				if let coordinate = proxy.convert(screenPoint, from: .local) {
+					viewModel.selectPin(at: coordinate)
+				}
+			}
+		}
+		.clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+		.overlay {
+			RoundedRectangle(cornerRadius: 20, style: .continuous)
+				.stroke(ProfileStyle.border, lineWidth: 1)
+		}
+		.padding(.horizontal, 20)
+		.frame(height: 420)
+	}
+
+		// MARK: - Address text + confirm
+
+	private var addressField: some View {
+		CustomTextField(
+			title: "profile.home_address.placeholder".localized,
+			type: .address,
+			text: $viewModel.addressText
+		)
+		.padding(.horizontal, 20)
+		.padding(.top, 16)
+	}
+
+	private var confirmButton: some View {
+		PrimaryButton(
+			title: "address.confirm".localized,
+			isDisabled: !viewModel.hasPickedLocation
+			|| viewModel.addressText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+		) {
+			viewModel.confirmSelection()
+		}
+		.padding(.horizontal, 20)
+		.padding(.top, 16)
+		.padding(.bottom, 24)
+	}
 }

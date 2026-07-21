@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import MapKit
 struct EditProfileScreen: View {
 
     let name: String
@@ -22,6 +22,10 @@ struct EditProfileScreen: View {
     @State private var draftDateOfBirth: Date
     @State private var addressError: String?
 	@State private var showsAddressPicker = false
+
+	@State private var pickedLatitude: Double?
+	@State private var pickedLongitude: Double?
+
 
     init(
         name: String,
@@ -71,18 +75,26 @@ struct EditProfileScreen: View {
                 }
             }
         }
-	.sheet(isPresented: $showsAddressPicker) {
-		AddressPickerScreen(
-			initialAddress: draftAddress,
-			onConfirm: { address, _ in
-				draftAddress = address
-				showsAddressPicker = false
-			},
-			onCancel: {
-				showsAddressPicker = false
-			}
-		)
-	}
+		.sheet(isPresented: $showsAddressPicker) {
+			let viewModel = AddressPickerViewModel(
+				initialAddress: draftAddress,
+				initialCoordinate: pickedLatitude.map { lat in
+					CLLocationCoordinate2D(latitude: lat, longitude: pickedLongitude ?? 0)
+				},
+				searchAddressUseCase: DIContainer.shared.resolve(SearchAddressUseCaseProtocol.self),
+				onConfirm: { address, latitude, longitude in
+					draftAddress = address
+					pickedLatitude = latitude
+					pickedLongitude = longitude
+					showsAddressPicker = false
+				},
+				onCancel: {
+					showsAddressPicker = false
+				}
+			)
+
+			AddressPickerScreen(viewModel: viewModel)
+		}
 }
 
     private var header: some View {
