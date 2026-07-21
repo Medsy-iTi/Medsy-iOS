@@ -409,3 +409,8 @@
 "orders.detail.total"                = "Total";
 "orders.detail.not_found"            = "Order not found";
 "orders.detail.error"                = "Couldn't load order details";
+"orders.detail.delivery"             = "Delivery";
+"orders.detail.item_qty_price"       = "%d × %.0f EGP";
+"orders.detail.order_summary"        = "Order Summary";
+"orders.detail.items_subtotal"       = "Items subtotal";
+"orders.detail.reorder"              = "Reorder";
