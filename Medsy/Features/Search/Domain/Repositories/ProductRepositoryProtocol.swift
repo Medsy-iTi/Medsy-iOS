@@ -11,13 +11,23 @@ protocol ProductRepositoryProtocol {
     func fetchProducts(
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String? 
     ) async throws -> PagedResult<Product>
 
     func searchProducts(
         keyword: String,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String?
+    ) async throws -> PagedResult<Product>
+
+    func fetchProductsByCategory(
+        categoryId: Int,
+        page: Int,
+        size: Int,
+        sort: [ProductSort],
+        lang: String?
     ) async throws -> PagedResult<Product>
 }

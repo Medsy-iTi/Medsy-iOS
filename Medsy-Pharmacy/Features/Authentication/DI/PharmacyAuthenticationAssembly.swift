@@ -25,6 +25,22 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(PharmacyRefreshSessionUseCaseProtocol.self) { container in
+            PharmacyRefreshSessionUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
+            )
+        }
+
+        container.register(TokenRefreshing.self) { container in
+            PharmacyAuthTokenRefresher(
+                refreshSessionUseCaseFactory: { @MainActor [weak container] in
+                    guard let container else { fatalError("Container deallocated") }
+                    return container.resolve(PharmacyRefreshSessionUseCaseProtocol.self)
+                },
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
         container.register(PharmacyRegistrationUseCaseProtocol.self) { container in
             PharmacyRegistrationUseCase(
                 repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)

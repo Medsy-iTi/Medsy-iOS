@@ -14,6 +14,7 @@ enum PharmacyAuthenticationEndpoint {
     case verify(PharmacyVerificationRequestDTO)
     case currentPharmacist
     case createPharmacy(PharmacyMultipartFormData)
+    case refresh(PharmacyRefreshTokenRequestDTO)
 }
 
 extension PharmacyAuthenticationEndpoint: ApiEndpoint {
@@ -29,6 +30,8 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             "pharmacists/me"
         case .createPharmacy:
             "pharmacies"
+        case .refresh:
+            "auth/refresh"
         }
     }
 
@@ -53,6 +56,8 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             nil
         case let .createPharmacy(form):
             form.body
+        case .refresh(let request):
+            try? JSONEncoder().encode(request)
         }
     }
 

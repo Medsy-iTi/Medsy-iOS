@@ -11,6 +11,7 @@ protocol PharmacyAuthenticationRemoteDataSourceProtocol {
     func verify(request: PharmacyVerificationRequestDTO) async throws -> PharmacyAuthenticationSessionDTO
     func getCurrentMembership() async throws -> PharmacyMembership
     func createPharmacy(input: CreatePharmacyInput) async throws -> PharmacyResponseDTO
+    func refresh(request: PharmacyRefreshTokenRequestDTO) async throws -> PharmacyAuthenticationSessionDTO
 }
 
 final class PharmacyAuthenticationRemoteDataSource: PharmacyAuthenticationRemoteDataSourceProtocol {
@@ -92,5 +93,21 @@ final class PharmacyAuthenticationRemoteDataSource: PharmacyAuthenticationRemote
             throw NetworkError.decodingFailed
         }
         return pharmacy
+    }
+
+    func refresh(request: PharmacyRefreshTokenRequestDTO) async throws -> PharmacyAuthenticationSessionDTO {
+        let response: PharmacyAuthenticationSessionResponseDTO = try await networkService.request(
+            endpoint: PharmacyAuthenticationEndpoint.refresh(request)
+        )
+
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+
+        guard let session = response.data else {
+            throw NetworkError.decodingFailed
+        }
+
+        return session
     }
 }

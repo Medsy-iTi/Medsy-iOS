@@ -10,21 +10,49 @@ import SwiftUI
 @MainActor
 struct PharmacyMainTabView: View {
     @State private var coordinator: PharmacyMainTabCoordinator
+    private let homeFactory: PharmacyHomeFactory
+    private let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+	private let onLoggedOut: () -> Void
 
-    init(coordinator: PharmacyMainTabCoordinator) {
+    init(
+        coordinator: PharmacyMainTabCoordinator,
+        homeFactory: PharmacyHomeFactory,
+        ordersFactory: PharmacyOrdersFactory,
+        onLoggedOut : @escaping () -> Void
+    ) {
         _coordinator = State(initialValue: coordinator)
+        self.homeFactory = homeFactory
+        self.ordersFactory = ordersFactory
+        self.onLoggedOut = onLoggedOut
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+            tabContent
                 .padding(.bottom, 82)
 
             tabBar
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+    }
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch coordinator.selectedTab {
+        case .home:
+            homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
+        case .orders:
+            ordersFactory.makeView()
+        case .more:
+				ProfileTabRootView(
+					container: PharmacyAppAssembler.shared.container,
+					onLoggedOut: onLoggedOut
+				)
+        case .products, .customers:
+            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+        }
     }
 
     private var tabBar: some View {

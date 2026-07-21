@@ -25,22 +25,23 @@ struct InfoRow: View {
 
     var body: some View {
         HStack(spacing: MedsySpacing.xs) {
-          
-            Text(label)
-                .font(MedsyFont.body(14))
-                .foregroundStyle(AppColor.textSec)
+			HStack(spacing: MedsySpacing.xxs) {
+				Image(systemName: icon)
+					.foregroundStyle(AppColor.darkGreen)
+					.imageScale(.medium)
+				Text(label)
+					.font(MedsyFont.body(14))
+					.foregroundStyle(AppColor.textPrim)
+			}
 
             Spacer()
 
 
-            HStack(spacing: MedsySpacing.xxs) {
-                Image(systemName: icon)
-                    .foregroundStyle(valueTint)
-                    .imageScale(.small)
+
                 Text(value)
                     .font(MedsyFont.bodyMedium(14))
-                    .foregroundStyle(valueTint)
-            }
+					.foregroundStyle(AppColor.textSec)
+
         }
         .padding(.vertical, MedsySpacing.xs)
     }

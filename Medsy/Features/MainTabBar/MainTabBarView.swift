@@ -11,10 +11,16 @@ import Observation
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
+    @State private var cartViewModel: CartViewModel
+    @State private var requestedHomeRoute: HomeRoute?
+    @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
+        _cartViewModel = State(
+            initialValue: DIContainer.shared.resolve(CartViewModel.self)
+        )
     }
     
     var body: some View {
@@ -22,10 +28,19 @@ struct MainTabBarView: View {
             Group {
                 switch coordinator.selectedTab {
                 case .home:
-                    HomeCoordinatorView { isTabBarHidden = $0 }
+                    HomeCoordinatorView(
+                        requestedRoute: $requestedHomeRoute,
+                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                    )
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
                         .onAppear { isTabBarHidden = false }
+                case .cart:
+                    CartView(
+                        viewModel: cartViewModel,
+                        onSearch: openSearchFromCart
+                    )
+                    .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
                     VStack {
                         Spacer()
@@ -39,6 +54,7 @@ struct MainTabBarView: View {
                     .onAppear { isTabBarHidden = false }
                 }
             }
+            .environment(cartViewModel)
             .padding(.bottom, isTabBarHidden ? 0 : 80)
             
             if !isTabBarHidden {
@@ -49,6 +65,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.itemCount)
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
@@ -64,18 +81,70 @@ struct MainTabBarView: View {
         .ignoresSafeArea(edges: .bottom)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .overlay(alignment: .top) {
+            if let productName = addedProductName {
+                CartAddedBanner(productName: productName)
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.top, MedsySpacing.sm)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .onChange(of: cartViewModel.feedbackSequence) { _, _ in
+            scheduleFeedbackDismissal()
+        }
+        .onDisappear {
+            cartFeedbackTask?.cancel()
+        }
+        .task {
+            cartViewModel.handle(.load)
+        }
+        .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
+    }
+
+    private func openSearchFromCart() {
+        requestedHomeRoute = .search("")
+        coordinator.select(.home)
+    }
+
+    private var addedProductName: String? {
+        guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
+        return productName
+    }
+
+    private func scheduleFeedbackDismissal() {
+        cartFeedbackTask?.cancel()
+        guard case .itemAdded = cartViewModel.feedback else { return }
+
+        cartFeedbackTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            cartViewModel.handle(.dismissFeedback)
+        }
     }
     
-    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String) -> some View {
+    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {
         let isActive = coordinator.selectedTab == tab
         return Button {
             isTabBarHidden = false
             coordinator.select(tab)
         } label: {
             VStack(spacing: 4) {
-                Image(systemName: isActive ? activeIcon : inactiveIcon)
-                    .font(.system(size: 20, weight: isActive ? .bold : .regular))
-                    .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: isActive ? activeIcon : inactiveIcon)
+                        .font(.system(size: 20, weight: isActive ? .bold : .regular))
+                        .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
+                        .frame(width: 28, height: 24)
+
+                    if let badgeCount, badgeCount > 0 {
+                        Text("\(min(badgeCount, 99))")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(minWidth: 16, minHeight: 16)
+                            .background(AppColor.danger)
+                            .clipShape(Capsule())
+                            .offset(x: 9, y: -7)
+                    }
+                }
                 
                 Text(labelKey.localized)
                     .font(AppColor.sans(10, isActive ? .bold : .medium))

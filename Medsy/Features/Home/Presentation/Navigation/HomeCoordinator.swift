@@ -26,6 +26,10 @@ final class HomeCoordinator {
         path.append(HomeRoute.prescription)
     }
 
+    func open(_ route: HomeRoute) {
+        path.append(route)
+    }
+
     func goBack() {
         if !path.isEmpty {
             path.removeLast()
@@ -35,9 +39,14 @@ final class HomeCoordinator {
 
 struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
+    @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
 
-    init(onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }) {
+    init(
+        requestedRoute: Binding<HomeRoute?> = .constant(nil),
+        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }
+    ) {
+        _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
     }
 
@@ -49,14 +58,12 @@ struct HomeCoordinatorView: View {
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
+                        SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                             coordinator.path.append(dest)
-                        }
+                        })
                     case .prescription:
-                        PrescriptionUploadView(
-                            onCamera: {},
-                            onGallery: {},
-                            onBack: coordinator.goBack
+                        PrescriptionCoordinatorView(
+                            onExit: coordinator.goBack
                         )
                     }
                 }
@@ -65,10 +72,20 @@ struct HomeCoordinatorView: View {
                 }
         }
         .onAppear {
+            openRequestedRoute()
             onTabBarHiddenChange(!coordinator.path.isEmpty)
+        }
+        .onChange(of: requestedRoute) { _, _ in
+            openRequestedRoute()
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
         }
+    }
+
+    private func openRequestedRoute() {
+        guard let requestedRoute else { return }
+        coordinator.open(requestedRoute)
+        self.requestedRoute = nil
     }
 }

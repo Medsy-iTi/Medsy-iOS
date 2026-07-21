@@ -93,22 +93,28 @@
 "categories.itemsCount" = "%d Products";
 
 /* Search */
-"search.title" = "Search Results";
-"search.placeholder" = "Enter medicine name to search";
-"search.result_count" = "%d results";
+"search.placeholder" = "Search for a product ...";
+"search.title" = "Search";
+"search.result_count" = "%d Results found";
 
-/* Filters & Sort */
-"filter.sort" = "Sort";
-"filter.sort_title" = "Sort & Filter";
-"filter.sort_by" = "Sort by";
-"filter.clear" = "Clear Sort";
+/* Sort */
+"sort.price_asc" = "Price: Low to High";
+"sort.price_desc" = "Price: High to Low";
+"sort.name_asc" = "Name(A to Z)";
+"sort.name_desc" = "Name(Z to A)";
+"sort.scientific_name_asc" = "Scientific Name";
+"sort.company_asc" = "Company";
+
+/* Filter */
+"filter.sort" = "Sort & Filter ";
+"filter.sort_title" = "Sort By & Filter";
+"filter.sort_by" = "Sort options";
+"filter.clear" = "Clear filters";
+"filter.apply" = "Apply";
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
-"sort.price_asc" = "Price ↑";
-"sort.price_desc" = "Price ↓";
-"sort.name_asc" = "Name A→Z";
-"sort.name_desc" = "Name Z→A";
+
 
 /* Empty state */
 "empty.title" = "No results found";
@@ -134,7 +140,10 @@
 "product.manufacturer" = "Manufacturer";
 "product.type" = "Type";
 "product.category" = "Drug Category";
+"product.scientific_name" = "Scientific Name";
+"product.route" = "Route of Administration";
 "product.dispense_method" = "Dispensing Method";
+"product.dispense_method_value" = "Dispensed after pharmacist review";
 "product.price_format" = "%@ %@";
 "product.not_found_title" = "Product Not Found";
 "product.not_found_subtitle" = "We couldn't find this product. It may have been removed or is temporarily unavailable.";
@@ -155,9 +164,46 @@
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
+"tab.cart" = "Cart";
 "tab.offers" = "Offers";
 "tab.orders" = "Orders";
 "tab.account" = "Account";
+
+/* Cart */
+"cart.title" = "Cart";
+"cart.subtitle" = "Review your request cart";
+"cart.message" = "Adjust quantities before sending one request to nearby pharmacies.";
+"cart.currency" = "EGP";
+"cart.unit_price_format" = "%@ each";
+"cart.quantity" = "Quantity";
+"cart.remove" = "Remove item";
+"cart.estimated_total" = "Estimated total";
+"cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
+"cart.continue" = "Continue";
+"cart.empty.title" = "Your cart is empty";
+"cart.empty.message" = "Search for medicines or upload a prescription to start a request.";
+"cart.empty.search" = "Search medicines";
+"cart.empty.upload" = "Upload prescription";
+"cart.error.title" = "Couldn't Load Cart";
+"cart.removed_message" = "%@ removed";
+"cart.undo" = "Undo";
+"cart.prescription.add" = "Add prescription";
+"cart.prescription.add_another" = "Add another prescription";
+"cart.prescription.number" = "Prescription %d";
+"cart.prescription.title" = "Attached prescription";
+"cart.prescription.change" = "Change prescription";
+"cart.prescription.remove" = "Remove prescription";
+"cart.prescription.source_title" = "Add a prescription";
+"cart.added_message" = "%@ added to cart";
+"cart.remove_confirmation.title" = "Remove from cart?";
+"cart.remove_confirmation.message" = "Remove %@ from your cart?";
+"cart.remove_confirmation.action" = "Remove";
+"cart.prescription.remove_confirmation.title" = "Remove prescription?";
+"cart.prescription.remove_confirmation.message" = "This prescription will be removed from your cart.";
+"cart.clear.accessibility" = "Clear cart";
+"cart.clear_confirmation.title" = "Clear your cart?";
+"cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
+"cart.clear_confirmation.action" = "Clear cart";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
@@ -214,6 +260,7 @@
 "profile.title" = "My Account";
 "profile.sample.name" = "Mahmoud El Demerdash";
 "profile.section.account" = "Account";
+"profile.section.details" = "Profile details";
 "profile.section.preferences" = "Preferences";
 "profile.section.support" = "Help and Support";
 "profile.section.about" = "About Medsy";
@@ -258,11 +305,19 @@
 "profile.change_photo" = "Change photo";
 "profile.full_name" = "Full name";
 "profile.full_name.placeholder" = "Enter your full name";
+"profile.email" = "Email";
 "profile.phone" = "Phone number";
+"profile.home_address" = "Home address";
+"profile.home_address.placeholder" = "Enter your home address";
+"profile.date_of_birth" = "Date of birth";
+"profile.not_set" = "Not set";
+"profile.loading" = "Loading profile...";
+"profile.load_failed" = "Could not load profile";
 "profile.verified" = "Verified";
 "profile.phone_support_note" = "To change your phone number, please contact support";
 "profile.save_changes" = "Save changes";
 "profile.name_error" = "Name must be at least 2 characters";
+"profile.address_error" = "Address must be at least 4 characters";
 
 "prescription.upload.title" = "Upload Prescription";
 "prescription.upload.heading" = "Upload your prescription";
@@ -290,12 +345,15 @@
 "prescription.review.message" = "Check your medicines before adding them to the cart";
 "prescription.review.found" = "found";
 "prescription.review.identified" = "identified";
+"prescription.review.confirmed" = "confirmed";
 "prescription.review.needsReview" = "needs review";
 "prescription.review.addToCart" = "Add to cart";
+"prescription.review.confirm" = "Confirm";
+"prescription.review.chooseAnother" = "Choose another";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";
-"prescription.added.cart" = "View cart";
+"prescription.added.cart" = "View cart and send request";
 "prescription.added.home" = "Back to home";
 "prescription.uploadFailed.title" = "Upload failed";
 "prescription.uploadFailed.message" = "Check your internet connection and try again.";
@@ -306,3 +364,5 @@
 "prescription.none.title" = "No medicines found";
 "prescription.none.message" = "Try a clearer photo or add medicines manually using the search.";
 "prescription.none.manual" = "Add medicine manually";
+"prescription.camera.unavailable.title" = "Camera unavailable";
+"prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";
