@@ -9,15 +9,43 @@ import Foundation
 
 struct OrdersAssembly: ModuleAssembly {
     func register(in container: DIContainer) {
-        container.register(OrderHistoryViewModel.self) { _ in
+        container.register(OrdersRemoteDataSourceProtocol.self) { container in
+            OrdersRemoteDataSource(
+                networkService: container.resolve(NetworkServiceProtocol.self)
+            )
+        }
+
+        container.register(OrdersRepositoryProtocol.self) { container in
+            OrdersRepository(
+                remoteDataSource: container.resolve(OrdersRemoteDataSourceProtocol.self)
+            )
+        }
+
+        container.register(LoadOrdersUseCaseProtocol.self) { container in
+            LoadOrdersUseCase(
+                repository: container.resolve(OrdersRepositoryProtocol.self)
+            )
+        }
+
+        container.register(GetOrderDetailUseCaseProtocol.self) { container in
+            GetOrderDetailUseCase(
+                repository: container.resolve(OrdersRepositoryProtocol.self)
+            )
+        }
+
+        container.register(OrderHistoryViewModel.self) { container in
             MainActor.assumeIsolated {
-                OrderHistoryViewModel()
+                OrderHistoryViewModel(
+                    loadOrdersUseCase: container.resolve(LoadOrdersUseCaseProtocol.self)
+                )
             }
         }
 
-        container.register(OrderDetailViewModel.self) { _ in
+        container.register(OrderDetailViewModel.self) { container in
             MainActor.assumeIsolated {
-                OrderDetailViewModel()
+                OrderDetailViewModel(
+                    getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self)
+                )
             }
         }
     }
