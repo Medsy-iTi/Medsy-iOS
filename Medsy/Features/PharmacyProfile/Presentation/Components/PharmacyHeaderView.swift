@@ -43,7 +43,7 @@ struct PharmacyHeaderView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.system(size: 14, weight: .bold))
-                        Text("Verified")
+                        Text("Pharmacy")
                             .font(MedsyFont.caption(12))
                     }
                     .foregroundStyle(AppColor.green)
@@ -51,33 +51,6 @@ struct PharmacyHeaderView: View {
                     .padding(.vertical, MedsySpacing.xxs)
                     .background(AppColor.pill)
                     .clipShape(Capsule())
-                }
-
-                HStack(spacing: MedsySpacing.sm) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .font(.system(size: 13))
-                            .foregroundStyle(AppColor.warningYellow)
-                        Text("4.9")
-                            .font(MedsyFont.bodyMedium(13))
-                            .foregroundStyle(AppColor.textPrim)
-                        Text("(120+ reviews)")
-                            .font(MedsyFont.caption(12))
-                            .foregroundStyle(AppColor.textSec)
-                    }
-
-                    Circle()
-                        .fill(AppColor.textSec)
-                        .frame(width: 3, height: 3)
-
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(AppColor.successGreen)
-                            .frame(width: 8, height: 8)
-                        Text("Open 24/7")
-                            .font(MedsyFont.caption(13))
-                            .foregroundStyle(AppColor.successGreen)
-                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
