@@ -27,8 +27,6 @@ struct PharmacyProfileView: View {
                 case .loaded(let pharmacy):
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: MedsySpacing.lg) {
-                            PharmacyOrderAcceptedBannerView(orderNumber: viewModel.orderNumber)
-
                             PharmacyHeaderView(name: pharmacy.name)
 
                             PharmacyQuickActionsView(
