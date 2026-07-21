@@ -13,6 +13,15 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Pharmacy Profile */
+"pharmacyProfile.title" = "Pharmacy Profile";
+"pharmacyProfile.verified" = "Verified";
+"pharmacyProfile.location" = "Pharmacy Location";
+"pharmacyProfile.contact" = "Pharmacy Contact Information";
+"pharmacyProfile.call" = "Call";
+"pharmacyProfile.directions" = "Directions";
+"pharmacyProfile.share" = "Share";
+
 "language.english" = "English";
 "language.arabic"  = "Arabic";
 

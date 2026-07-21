@@ -14,8 +14,10 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
-    init() {
-        loadPharmacy()
+    nonisolated init() {
+        Task { @MainActor in
+            self.loadPharmacy()
+        }
     }
 
     func loadPharmacy() {
