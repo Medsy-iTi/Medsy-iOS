@@ -10,26 +10,45 @@ import SwiftUI
 struct OrdersCoordinatorView: View {
     @State private var coordinator = OrdersCoordinator()
     @State private var selectedFilter: OrderFilter = .all
+    @State private var historyViewModel: OrderHistoryViewModel
+    @State private var detailViewModel: OrderDetailViewModel
 
-    private let mockListState: OrderHistoryViewState = .loaded(OrderHistoryView.previewSections)
+    init() {
+        _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
+        _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
+    }
+
+    init(historyViewModel: OrderHistoryViewModel, detailViewModel: OrderDetailViewModel) {
+        _historyViewModel = State(initialValue: historyViewModel)
+        _detailViewModel = State(initialValue: detailViewModel)
+    }
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             OrderHistoryView(
                 selectedFilter: $selectedFilter,
-                state: mockListState,
+                state: historyViewModel.historyState,
                 onSelectOrder: { order in coordinator.showDetail(orderId: order.id) },
-                onRetry: {},
-                onLoadNextPage: {}
+                onRetry: { historyViewModel.handle(.retry) },
+                onLoadNextPage: { historyViewModel.handle(.loadNextPage) }
             )
+            .onChange(of: selectedFilter) { _, newFilter in
+                historyViewModel.handle(.selectFilter(newFilter))
+            }
+            .task {
+                historyViewModel.handle(.load)
+            }
             .navigationDestination(for: OrdersRoute.self) { route in
                 switch route {
-                case .detail:
+                case .detail(let orderId):
                     OrderDetailView(
-                        state: .loaded(.mock),
-                        onRetry: {},
+                        state: detailViewModel.detailState,
+                        onRetry: { detailViewModel.handle(.retry(orderId: orderId)) },
                         onBack: { coordinator.pop() }
                     )
+                    .task {
+                        detailViewModel.handle(.load(orderId: orderId))
+                    }
                 }
             }
         }
@@ -37,6 +56,9 @@ struct OrdersCoordinatorView: View {
 }
 
 #Preview {
-    OrdersCoordinatorView()
-        .environment(LanguageManager.shared)
+    OrdersCoordinatorView(
+        historyViewModel: OrderHistoryViewModel(state: .loaded(OrderHistoryView.previewSections)),
+        detailViewModel: OrderDetailViewModel(state: .loaded(.mock))
+    )
+    .environment(LanguageManager.shared)
 }
