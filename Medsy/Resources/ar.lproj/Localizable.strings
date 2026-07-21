@@ -408,3 +408,8 @@
 "orders.detail.total"                = "الإجمالي";
 "orders.detail.not_found"            = "الطلب غير موجود";
 "orders.detail.error"                = "تعذر تحميل تفاصيل الطلب";
+"orders.detail.delivery"             = "توصيل";
+"orders.detail.item_qty_price"       = "%d × %.0f جنيه";
+"orders.detail.order_summary"        = "ملخص الطلب";
+"orders.detail.items_subtotal"       = "إجمالي المنتجات";
+"orders.detail.reorder"              = "إعادة الطلب";

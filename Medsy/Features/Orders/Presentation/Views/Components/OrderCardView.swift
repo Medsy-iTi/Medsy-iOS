@@ -13,56 +13,45 @@ struct OrderCardView: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(alignment: .center, spacing: MedsySpacing.md) {
+            VStack(alignment: .leading, spacing: MedsySpacing.xs) {
 
-                VStack(alignment: .leading, spacing: MedsySpacing.xxs + 2) {
-                    Text(String(format: "orders.detail.order_number".localized, order.orderNumber))
-                        .font(AppColor.sans(13, .semibold))
-                        .foregroundStyle(AppColor.textSec)
-
-                    Text(order.status.labelKey.localized)
-                        .font(AppColor.sans(14, .bold))
-                        .foregroundStyle(order.status.color)
-
-                    Text(String(format: "orders.from_pharmacy".localized, order.pharmacyName))
-                        .font(AppColor.sans(13))
-                        .foregroundStyle(AppColor.textSec)
-                        .lineLimit(1)
-
-                    Spacer(minLength: 0)
-
-                    HStack(spacing: MedsySpacing.xs) {
-                        Text(String(format: "orders.price_format".localized, order.totalPrice))
-                            .font(MedsyFont.price(14))
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("#\(order.orderNumber)")
+                            .font(AppColor.sans(16, .bold))
                             .foregroundStyle(AppColor.textPrim)
 
-                        Text("·")
-                            .foregroundStyle(AppColor.textSec)
-
-                        Text(itemCountText)
+                        Text(dateLabel)
                             .font(AppColor.sans(12))
                             .foregroundStyle(AppColor.textSec)
                     }
-                }
-
-                Spacer(minLength: 0)
-
-                VStack(alignment: .trailing, spacing: MedsySpacing.xs) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AppColor.textSec)
 
                     Spacer(minLength: 0)
 
+                    Image(systemName: "chevron.forward")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AppColor.textSec)
+                }
+
+                Text(order.status.labelKey.localized)
+                    .font(AppColor.sans(14, .semibold))
+                    .foregroundStyle(order.status.color)
+
+                Text(String(format: "orders.from_pharmacy".localized, order.pharmacyName))
+                    .font(AppColor.sans(13))
+                    .foregroundStyle(AppColor.textSec)
+                    .lineLimit(1)
+
+                HStack(alignment: .bottom) {
                     HStack(spacing: -MedsySpacing.xxs) {
                         ForEach(0..<min(order.itemCount, 3), id: \.self) { _ in
                             RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
                                 .fill(AppColor.lightGreen)
-                                .frame(width: 38, height: 38)
+                                .frame(width: 40, height: 40)
                                 .overlay(
                                     Image(systemName: "pills.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(AppColor.green.opacity(0.6))
+                                        .font(.system(size: 17))
+                                        .foregroundStyle(AppColor.green.opacity(0.65))
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
@@ -70,8 +59,19 @@ struct OrderCardView: View {
                                 )
                         }
                     }
+
+                    Spacer(minLength: 0)
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(String(format: "orders.price_format".localized, order.totalPrice))
+                            .font(MedsyFont.price(15))
+                            .foregroundStyle(AppColor.textPrim)
+
+                        Text(itemCountText)
+                            .font(AppColor.sans(12))
+                            .foregroundStyle(AppColor.textSec)
+                    }
                 }
-                .frame(maxHeight: .infinity, alignment: .topTrailing)
             }
             .padding(MedsySpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -84,6 +84,17 @@ struct OrderCardView: View {
             .medsyCardShadow()
         }
         .buttonStyle(.plain)
+    }
+
+    private var dateLabel: String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(order.date) {
+            return "orders.section.today".localized
+        } else if calendar.isDateInYesterday(order.date) {
+            return "orders.section.yesterday".localized
+        } else {
+            return order.date.formatted(.dateTime.day().month(.abbreviated))
+        }
     }
 
     private var itemCountText: String {
@@ -100,4 +111,5 @@ struct OrderCardView: View {
     }
     .padding(MedsySpacing.md)
     .background(AppColor.bg)
+    .environment(LanguageManager.shared)
 }

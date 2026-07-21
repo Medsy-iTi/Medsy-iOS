@@ -16,7 +16,6 @@ struct OrderHistoryView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
             Text("orders.title".localized)
                 .font(AppColor.sans(17, .bold))
                 .foregroundStyle(AppColor.textPrim)
@@ -38,10 +37,11 @@ struct OrderHistoryView: View {
         case .loading:
             loadingView
         case .loaded(let sections):
-            if sections.allSatisfy({ $0.orders.isEmpty }) || sections.isEmpty {
+            let orders = sections.flatMap(\.orders)
+            if orders.isEmpty {
                 OrdersEmptyView(filter: selectedFilter)
             } else {
-                ordersListView(sections: sections)
+                ordersListView(orders: orders)
             }
         case .error(let message):
             OrdersErrorView(message: message, onRetry: onRetry)
@@ -61,26 +61,12 @@ struct OrderHistoryView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func ordersListView(sections: [OrderDateSection]) -> some View {
+    private func ordersListView(orders: [OrderPresentationModel]) -> some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading, spacing: MedsySpacing.lg, pinnedViews: []) {
-                ForEach(sections) { section in
-                    if !section.orders.isEmpty {
-                        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
-                            Text(section.title)
-                                .font(AppColor.sans(13, .semibold))
-                                .foregroundStyle(AppColor.textSec)
-                                .padding(.horizontal, MedsySpacing.md)
-
-                            VStack(spacing: MedsySpacing.sm) {
-                                ForEach(section.orders) { order in
-                                    OrderCardView(order: order) {
-                                        onSelectOrder(order)
-                                    }
-                                    .padding(.horizontal, MedsySpacing.md)
-                                }
-                            }
-                        }
+            LazyVStack(spacing: MedsySpacing.sm) {
+                ForEach(orders) { order in
+                    OrderCardView(order: order) {
+                        onSelectOrder(order)
                     }
                 }
 
@@ -88,6 +74,7 @@ struct OrderHistoryView: View {
                     .frame(height: 1)
                     .onAppear { onLoadNextPage() }
             }
+            .padding(.horizontal, MedsySpacing.md)
             .padding(.top, MedsySpacing.md)
             .padding(.bottom, MedsySpacing.xxl + 80)
         }
