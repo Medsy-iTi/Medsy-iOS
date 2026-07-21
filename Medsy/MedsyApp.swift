@@ -26,7 +26,8 @@ struct MedsyApp: App {
             ProductDetailAssembly(),
             ProductsFeatureAssembly(),
             CartAssembly(),
-            ProfileAssembly()
+            ProfileAssembly(),
+            OrdersAssembly()
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
