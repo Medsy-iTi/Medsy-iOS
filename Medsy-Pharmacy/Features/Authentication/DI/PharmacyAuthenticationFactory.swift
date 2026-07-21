@@ -7,9 +7,14 @@
 
 struct PharmacyAuthenticationFactory {
     private let actions: PharmacyAuthenticationActions
+    private let locationProvider: PharmacyLocationProviding
 
-    init(actions: PharmacyAuthenticationActions) {
+    init(
+        actions: PharmacyAuthenticationActions,
+        locationProvider: PharmacyLocationProviding
+    ) {
         self.actions = actions
+        self.locationProvider = locationProvider
     }
 
     @MainActor
@@ -18,6 +23,7 @@ struct PharmacyAuthenticationFactory {
     ) -> PharmacyAuthenticationCoordinator {
         PharmacyAuthenticationCoordinator(
             actions: actions,
+            locationProvider: locationProvider,
             onAuthenticated: onAuthenticated
         )
     }
