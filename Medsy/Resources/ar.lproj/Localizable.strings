@@ -13,6 +13,15 @@
 "common.welcome"  = "مرحباً، %@!";
 "common.language" = "اللغة";
 
+/* Pharmacy Profile */
+"pharmacyProfile.title" = "الملف الشخصي للصيدلية";
+"pharmacyProfile.verified" = "موثقة";
+"pharmacyProfile.location" = "موقع الصيدلية";
+"pharmacyProfile.contact" = "بيانات الاتصال بالصيدلية";
+"pharmacyProfile.call" = "اتصال";
+"pharmacyProfile.directions" = "الاتجاهات";
+"pharmacyProfile.share" = "مشاركة";
+
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
 
