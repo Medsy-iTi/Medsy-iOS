@@ -25,7 +25,7 @@ final class PharmacyProfileViewModel {
         }
     }
 
-    func loadPharmacy(id: Int = 1) {
+    func loadPharmacy(id: Int = 2) {
         state = .loading
         Task {
             do {
