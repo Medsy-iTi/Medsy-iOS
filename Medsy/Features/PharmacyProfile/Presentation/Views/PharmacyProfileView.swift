@@ -48,8 +48,6 @@ struct PharmacyProfileView: View {
                             )
 
                             PharmacyServicesView()
-
-                            PharmacyReviewsCardView()
                         }
                         .padding(.horizontal, MedsySpacing.md)
                         .padding(.vertical, MedsySpacing.md)
