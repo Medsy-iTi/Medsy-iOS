@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedStatus: HomeSearchStatus = .home
+    @State private var selectedStatus: HomeSearchStatus = .firstOffer
     let onSearchTap: () -> Void
     let onPrescription: () -> Void
     var onCompareOffers: (() -> Void)? = nil
