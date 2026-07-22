@@ -26,7 +26,7 @@ struct MainTabBarView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                switch coordinator.selectedTab {
+            switch coordinator.selectedTab {
                 case .home:
                     HomeCoordinatorView(
                         requestedRoute: $requestedHomeRoute,
@@ -41,7 +41,7 @@ struct MainTabBarView: View {
                         onSearch: openSearchFromCart
                     )
                     .onAppear { isTabBarHidden = false }
-                case .favorites, .offers, .orders:
+                case .favorites, .offers:
                     VStack {
                         Spacer()
                         Text("Tab \(coordinator.selectedTab.rawValue)")
@@ -52,6 +52,9 @@ struct MainTabBarView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(AppColor.bg)
                     .onAppear { isTabBarHidden = false }
+                case .orders:
+                    OrdersCoordinatorView(onSearch: openSearch)
+                        .onAppear { isTabBarHidden = false }
                 }
             }
             .environment(cartViewModel)
@@ -102,6 +105,10 @@ struct MainTabBarView: View {
     }
 
     private func openSearchFromCart() {
+        openSearch()
+    }
+
+    private func openSearch() {
         requestedHomeRoute = .search("")
         coordinator.select(.home)
     }

@@ -366,6 +366,66 @@
 "prescription.none.manual" = "Add medicine manually";
 "prescription.camera.unavailable.title" = "Camera unavailable";
 "prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";
+
+/* Orders */
+"orders.title"                       = "My Orders";
+"orders.filter.all"                  = "All";
+"orders.filter.active"               = "Active";
+"orders.filter.completed"            = "Completed";
+"orders.filter.cancelled"            = "Cancelled";
+"orders.status.pending"              = "Order Confirmed";
+"orders.status.confirmed"            = "Order Confirmed";
+"orders.status.processing"           = "Processing";
+"orders.status.shipped"              = "Shipped";
+"orders.status.delivered"            = "Delivered";
+"orders.status.cancelled"            = "Cancelled";
+"orders.status.rejected"             = "Rejected";
+"orders.status.preparing"            = "Preparing";
+"orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.out_for_delivery"     = "Out for delivery";
+"orders.from_pharmacy"               = "From %@";
+"orders.pharmacy_fallback"           = "Pharmacy #%d";
+"orders.product_fallback"            = "Product #%d";
+"orders.fulfillment.delivery"        = "Delivery";
+"orders.fulfillment.pickup"          = "Pickup";
+"orders.items_count"                 = "%d items";
+"orders.item_count"                  = "%d item";
+"orders.price_format"                = "%.0f EGP";
+"orders.empty.title"                 = "No orders yet";
+"orders.empty.subtitle"              = "Your order history will appear here once you place your first order.";
+"orders.empty.search"                = "Search medicines";
+"orders.empty.active.title"          = "No active orders";
+"orders.empty.active.subtitle"       = "Orders you are currently waiting for will appear here.";
+"orders.empty.completed.title"       = "No completed orders";
+"orders.empty.completed.subtitle"    = "Orders that have been delivered will appear here.";
+"orders.empty.cancelled.title"       = "No cancelled orders";
+"orders.empty.cancelled.subtitle"    = "Cancelled orders will appear here.";
+"orders.error.title"                 = "Couldn't load orders";
+"orders.error.subtitle"              = "Check your internet connection and try again.";
+"orders.loading"                     = "Loading orders…";
+"orders.section.today"               = "Today";
+"orders.section.yesterday"           = "Yesterday";
+"orders.section.active"              = "Active orders";
+"orders.section.history"             = "Order history";
+"orders.detail.title"                = "Order Details";
+"orders.detail.order_number"         = "Order #%d";
+"orders.detail.date"                 = "Date";
+"orders.detail.status"               = "Status";
+"orders.detail.pharmacy"             = "Pharmacy";
+"orders.detail.items"                = "Items price";
+"orders.detail.items_label"          = "Items";
+"orders.detail.item_unit_price"      = "%.0f EGP each";
+"orders.detail.delivery_fee"         = "Delivery Fee";
+"orders.detail.total"                = "Total";
+"orders.detail.not_found"            = "Order not found";
+"orders.detail.error"                = "Couldn't load order details";
+"orders.detail.delivery"             = "Delivery";
+"orders.detail.item_qty_price"       = "%d × %.0f EGP";
+"orders.detail.order_summary"        = "Order Summary";
+"orders.detail.items_subtotal"       = "Items subtotal";
+"orders.detail.reorder"              = "Reorder";
+"orders.detail.alternative_to"       = "Alternative to %@";
+
 /* Address Picker */
 
 "address.title" = "Select your address";

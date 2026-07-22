@@ -16,7 +16,6 @@ struct Address: Equatable, Identifiable {
 	let city: String?
 	let country: String?
 
-	
 	static func == (lhs: Address, rhs: Address) -> Bool {
 		lhs.id == rhs.id &&
 		lhs.fullAddress == rhs.fullAddress &&
