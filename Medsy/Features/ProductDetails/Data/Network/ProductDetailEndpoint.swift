@@ -13,8 +13,6 @@ enum ProductDetailEndpoint {
 
 extension ProductDetailEndpoint: ApiEndpoint {
 
-    var baseURL: String? { Constants.baseURL }
-
     var method: HTTPMethod { .get }
 
     var queryParameters: Parameters? { nil }

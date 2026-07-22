@@ -33,7 +33,7 @@ final class PharmacyProfileMapperTests: XCTestCase {
     }
 
     func testPharmacyEndpointPathAndAuth() {
-        let endpoint = PharmacyEndpoint.fetchProfile(id: 42)
+        let endpoint = PharmacyEndpoint.fetchPharmacy(id: 42)
         XCTAssertEqual(endpoint.path, "pharmacies/42")
         XCTAssertTrue(endpoint.requiresAuthentication)
     }
