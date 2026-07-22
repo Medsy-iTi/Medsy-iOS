@@ -434,3 +434,38 @@
 "address.permission_denied" = "يجب السماح بالوصول إلى الموقع لاختيار عنوانك";
 "NSLocationWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+
+/* Offers */
+"offers.list.title" = "العروض المتاحة";
+"offers.list.subtitleFormat" = "%d عروض متاحة لطلبك";
+"offers.list.badge.full" = "عرض كامل";
+"offers.list.badge.partial" = "عرض جزئي";
+"offers.list.badge.combined" = "عرض مركب";
+"offers.list.priceFrom" = "من";
+"offers.list.currency" = "جنيه";
+"offers.list.info.title" = "الأسعار ثابتة من Medsy";
+"offers.list.info.desc" = "الصيدليات يمكنها فقط تطبيق خصم وإضافة رسوم التوصيل";
+"offers.list.pharmacy.nahda" = "صيدلية النهضة";
+"offers.list.pharmacy.shifa" = "صيدلية الشفاء";
+"offers.list.pharmacy.twoPharmacies" = "عرض من صيدليتين";
+"offers.list.subtitle.bestPrice" = "أفضل سعر";
+"offers.list.subtitle.unavailableMeds" = "يحتوي على أدوية غير متوفرة";
+"offers.list.subtitle.fullCoverage" = "تغطية كاملة للطلب";
+
+"offers.details.requestedMeds" = "الأدوية المطلوبة";
+"offers.details.available" = "متوفر";
+"offers.details.unavailable" = "غير متوفر";
+"offers.details.pharmacistComment" = "تعليق من الصيدلي";
+"offers.details.viewPrescription" = "عرض الروشتة";
+"offers.details.selectOffer" = "اختار هذا العرض";
+"offers.details.managerSuffix" = " (المدير)";
+"offers.details.defaultComment" = "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿";
+"offers.details.med.panadol" = "بانادول اكسترا";
+"offers.details.dosage.panadol" = "20 قرص";
+"offers.details.med.amoxicillin" = "أموكسيسيلين 500 مجم";
+"offers.details.dosage.amoxicillin" = "16 كبسولة";
+"offers.details.med.brufen" = "بروفين 400 مجم";
+"offers.details.dosage.brufen" = "10 أقراص";
+"offers.details.med.vitaminc" = "فيتامين سي 1000 مجم";
+"offers.details.dosage.vitaminc" = "10 أقراص";
+

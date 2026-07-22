@@ -13,11 +13,11 @@ enum OfferBadgeType {
     var title: String {
         switch self {
         case .full:
-            return "عرض كامل"
+            return "offers.list.badge.full".localized
         case .partial:
-            return "عرض جزئي"
+            return "offers.list.badge.partial".localized
         case .combined:
-            return "عرض مركب"
+            return "offers.list.badge.combined".localized
         }
     }
 

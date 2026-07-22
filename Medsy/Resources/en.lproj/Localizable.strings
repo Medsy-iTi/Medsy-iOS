@@ -437,3 +437,38 @@
 
 "NSLocationWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
+
+/* Offers */
+"offers.list.title" = "Available Offers";
+"offers.list.subtitleFormat" = "%d offers available for your order";
+"offers.list.badge.full" = "Full Offer";
+"offers.list.badge.partial" = "Partial Offer";
+"offers.list.badge.combined" = "Combined Offer";
+"offers.list.priceFrom" = "From";
+"offers.list.currency" = "EGP";
+"offers.list.info.title" = "Prices are fixed by Medsy";
+"offers.list.info.desc" = "Pharmacies can only apply discounts and add delivery fees";
+"offers.list.pharmacy.nahda" = "El-Nahda Pharmacy";
+"offers.list.pharmacy.shifa" = "El-Shifa Pharmacy";
+"offers.list.pharmacy.twoPharmacies" = "Offer from 2 Pharmacies";
+"offers.list.subtitle.bestPrice" = "Best Price";
+"offers.list.subtitle.unavailableMeds" = "Contains unavailable medicines";
+"offers.list.subtitle.fullCoverage" = "Full Order Coverage";
+
+"offers.details.requestedMeds" = "Requested Medicines";
+"offers.details.available" = "Available";
+"offers.details.unavailable" = "Unavailable";
+"offers.details.pharmacistComment" = "Pharmacist Comment";
+"offers.details.viewPrescription" = "View Prescription";
+"offers.details.selectOffer" = "Select This Offer";
+"offers.details.managerSuffix" = " (Manager)";
+"offers.details.defaultComment" = "Hello, all medicines are available and ready for preparation. Please adhere to the indicated dosages. We wish you a speedy recovery 🌿";
+"offers.details.med.panadol" = "Panadol Extra";
+"offers.details.dosage.panadol" = "20 tablets";
+"offers.details.med.amoxicillin" = "Amoxicillin 500mg";
+"offers.details.dosage.amoxicillin" = "16 capsules";
+"offers.details.med.brufen" = "Brufen 400mg";
+"offers.details.dosage.brufen" = "10 tablets";
+"offers.details.med.vitaminc" = "Vitamin C 1000mg";
+"offers.details.dosage.vitaminc" = "10 tablets";
+

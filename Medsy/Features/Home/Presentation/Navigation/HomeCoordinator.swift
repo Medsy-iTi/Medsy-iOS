@@ -12,6 +12,7 @@ enum HomeRoute: Hashable {
     case search(String)
     case prescription
     case offersList
+    case offerDetails(OfferPresentationModel)
 }
 
 @MainActor
@@ -29,6 +30,10 @@ final class HomeCoordinator {
 
     func openOffersList() {
         path.append(HomeRoute.offersList)
+    }
+
+    func openOfferDetails(_ offer: OfferPresentationModel) {
+        path.append(HomeRoute.offerDetails(offer))
     }
 
     func open(_ route: HomeRoute) {
@@ -76,7 +81,14 @@ struct HomeCoordinatorView: View {
                     )
                 case .offersList:
                     OffersListView(
-                        onBack: coordinator.goBack
+                        onBack: coordinator.goBack,
+                        onOfferSelected: coordinator.openOfferDetails
+                    )
+                case let .offerDetails(offer):
+                    OfferDetailsView(
+                        offer: offer,
+                        onBack: coordinator.goBack,
+                        onPrescriptionTap: coordinator.showPrescription
                     )
                 }
             }

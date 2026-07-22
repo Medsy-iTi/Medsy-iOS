@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct OfferCardView: View {
+    @Environment(LanguageManager.self) private var languageManager
     let offer: OfferPresentationModel
     let onTap: () -> Void
 
@@ -26,7 +27,7 @@ struct OfferCardView: View {
                     Spacer().frame(height: 8)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("من")
+                        Text("offers.list.priceFrom".localized)
                             .font(AppColor.sans(11))
                             .foregroundStyle(AppColor.textSec)
 
@@ -35,7 +36,7 @@ struct OfferCardView: View {
                                 .font(AppColor.sans(26, .bold))
                                 .foregroundStyle(AppColor.textPrim)
 
-                            Text("جنيه")
+                            Text("offers.list.currency".localized)
                                 .font(AppColor.sans(12, .medium))
                                 .foregroundStyle(AppColor.textSec)
                         }
@@ -56,6 +57,7 @@ struct OfferCardView: View {
                         .multilineTextAlignment(.trailing)
                 }
             }
+            .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
