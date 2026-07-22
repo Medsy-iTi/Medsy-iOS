@@ -469,3 +469,18 @@
 "offers.details.med.vitaminc" = "فيتامين سي 1000 مجم";
 "offers.details.dosage.vitaminc" = "10 أقراص";
 
+/* Order Review */
+"orderReview.title" = "مراجعة الطلب";
+"orderReview.section.medicines" = "الأدوية";
+"orderReview.section.deliveryAddress" = "عنوان التوصيل";
+"orderReview.section.deliveryDetails" = "تفاصيل التوصيل";
+"orderReview.address.edit" = "تعديل";
+"orderReview.address.text" = "شارع النيل المعادي - القاهرة\nأمام برج النيل، الدور 3، شقة 12";
+"orderReview.delivery.type" = "توصيل للمنزل";
+"orderReview.delivery.feeLabel" = "رسوم التوصيل";
+"orderReview.summary.subtotal" = "إجمالي سعر الأدوية";
+"orderReview.summary.deliveryFee" = "رسوم التوصيل";
+"orderReview.summary.total" = "الإجمالي";
+"orderReview.confirmOrder" = "تأكيد الطلب";
+
+

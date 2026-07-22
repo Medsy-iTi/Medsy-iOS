@@ -472,3 +472,18 @@
 "offers.details.med.vitaminc" = "Vitamin C 1000mg";
 "offers.details.dosage.vitaminc" = "10 tablets";
 
+/* Order Review */
+"orderReview.title" = "Order Review";
+"orderReview.section.medicines" = "Medicines";
+"orderReview.section.deliveryAddress" = "Delivery Address";
+"orderReview.section.deliveryDetails" = "Delivery Details";
+"orderReview.address.edit" = "Edit";
+"orderReview.address.text" = "El-Nile St. Maadi - Cairo\nIn front of Nile Tower, 3rd Floor, Apt 12";
+"orderReview.delivery.type" = "Home Delivery";
+"orderReview.delivery.feeLabel" = "Delivery Fee";
+"orderReview.summary.subtotal" = "Medicines Subtotal";
+"orderReview.summary.deliveryFee" = "Delivery Fee";
+"orderReview.summary.total" = "Total";
+"orderReview.confirmOrder" = "Confirm Order";
+
+
