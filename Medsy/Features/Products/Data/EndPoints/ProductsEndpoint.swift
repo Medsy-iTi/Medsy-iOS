@@ -9,14 +9,10 @@ import Alamofire
 enum ProductsEndpoint: ApiEndpoint {
     case fetchByCategory(id: Int, page: Int, size: Int)
 
-    var baseURL: String? {
-        return "http://localhost:8080"
-    }
-
     var path: String {
         switch self {
         case let .fetchByCategory(id, _, _):
-            return "/api/v1/products/category/\(id)"
+            return "products/category/\(id)"
         }
     }
 
