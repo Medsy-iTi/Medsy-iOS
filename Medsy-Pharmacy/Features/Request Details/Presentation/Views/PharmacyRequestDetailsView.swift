@@ -1,13 +1,15 @@
 //  PharmacyRequestDetailsView.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
 
 struct PharmacyRequestDetailsView: View {
     @Environment(\.dismiss) private var dismiss
+
+    var viewModel: PharmacyRequestDetailsViewModel?
 
     @State private var requestModel = PharmacyRequestDetailsModel(
         id: "1258",
@@ -40,38 +42,46 @@ struct PharmacyRequestDetailsView: View {
                 }
             )
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: PharmacySpacing.md) {
-                    PharmacyCustomerInfoCard(
-                        customer: requestModel.customer,
-                        onContact: {
-                            if let url = URL(string: "tel://\(requestModel.customer.phone.replacingOccurrences(of: " ", with: ""))") {
-                                UIApplication.shared.open(url)
-                            }
-                        }
-                    )
-
-                    PharmacyOrderItemsCard(
-                        items: $requestModel.items,
-                        deliveryFee: requestModel.deliveryFee,
-                        total: requestModel.total,
-                        onToggleAlternative: { itemId in
-                            if let index = requestModel.items.firstIndex(where: { $0.id == itemId }) {
-                                selectedItemForAlternative = requestModel.items[index]
-                                alternativeText = requestModel.items[index].alternativeMedicine ?? ""
-                                showAlternativeAlert = true
-                            }
-                        }
-                    )
-
-                    PharmacyCustomerNotesCard(
-                        notes: requestModel.notes
-                    )
+            if let viewModel, viewModel.state == .loading {
+                VStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
                 }
-                .padding(.horizontal, PharmacySpacing.md)
-                .padding(.vertical, PharmacySpacing.sm)
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: PharmacySpacing.md) {
+                        PharmacyCustomerInfoCard(
+                            customer: requestModel.customer,
+                            onContact: {
+                                if let url = URL(string: "tel://\(requestModel.customer.phone.replacingOccurrences(of: " ", with: ""))") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                        )
+
+                        PharmacyOrderItemsCard(
+                            items: $requestModel.items,
+                            deliveryFee: requestModel.deliveryFee,
+                            total: requestModel.total,
+                            onToggleAlternative: { itemId in
+                                if let index = requestModel.items.firstIndex(where: { $0.id == itemId }) {
+                                    selectedItemForAlternative = requestModel.items[index]
+                                    alternativeText = requestModel.items[index].alternativeMedicine ?? ""
+                                    showAlternativeAlert = true
+                                }
+                            }
+                        )
+
+                        PharmacyCustomerNotesCard(
+                            notes: requestModel.notes
+                        )
+                    }
+                    .padding(.horizontal, PharmacySpacing.md)
+                    .padding(.vertical, PharmacySpacing.sm)
+                }
+                .background(PharmacyColor.bg)
             }
-            .background(PharmacyColor.bg)
 
             PharmacyRequestDetailsBottomBar(
                 onAccept: {
@@ -96,6 +106,14 @@ struct PharmacyRequestDetailsView: View {
             Button("إلغاء", role: .cancel) {}
         } message: {
             Text("أدخل اسم الدواء البديل المقترح للعميل في حالة عدم توفر المنتج الأصلي.")
+        }
+        .task {
+            if let viewModel {
+                await viewModel.loadDetails()
+                if let model = viewModel.requestModel {
+                    self.requestModel = model
+                }
+            }
         }
     }
 }
