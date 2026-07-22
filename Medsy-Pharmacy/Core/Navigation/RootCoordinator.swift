@@ -34,11 +34,7 @@ final class RootCoordinator {
     }
 
     func finishSplash() {
-        if isAuthenticated {
-            flow = .main
-        } else {
-            flow = hasCompletedOnboardingUseCase.execute() ? .authentication : .onboarding
-        }
+        flow = hasCompletedOnboardingUseCase.execute() ? .authentication : .onboarding
     }
 
     func finishOnboarding() {
@@ -52,6 +48,12 @@ final class RootCoordinator {
     }
 
     func logout() {
+        isAuthenticated = false
+        try? tokenStore.clearTokens()
+        flow = .authentication
+    }
+
+    func returnToSignIn() {
         isAuthenticated = false
         try? tokenStore.clearTokens()
         flow = .authentication

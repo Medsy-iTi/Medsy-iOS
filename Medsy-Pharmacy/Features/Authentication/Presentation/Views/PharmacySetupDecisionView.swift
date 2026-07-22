@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct PharmacySetupDecisionView: View {
+    let invitationCount: Int
+    let onShowInvitations: () -> Void
     let onAddPharmacy: () -> Void
     let onBackToSignIn: () -> Void
 
@@ -28,11 +30,24 @@ struct PharmacySetupDecisionView: View {
                 .frame(maxWidth: .infinity, minHeight: 48)
             }
         }
+        .overlay(alignment: .topTrailing) {
+            PharmacyInvitationBadgeButton(
+                count: invitationCount,
+                action: onShowInvitations
+            )
+            .padding(.top, PharmacySpacing.md)
+            .padding(.trailing, PharmacySpacing.lg)
+        }
         .navigationBarBackButtonHidden()
     }
 }
 
 #Preview {
-    PharmacySetupDecisionView(onAddPharmacy: {}, onBackToSignIn: {})
+    PharmacySetupDecisionView(
+        invitationCount: 3,
+        onShowInvitations: {},
+        onAddPharmacy: {},
+        onBackToSignIn: {}
+    )
         .environment(LanguageManager.shared)
 }
