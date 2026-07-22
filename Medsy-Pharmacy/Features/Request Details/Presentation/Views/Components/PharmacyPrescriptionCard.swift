@@ -53,10 +53,10 @@ struct PharmacyPrescriptionCard: View {
                     Image(systemName: "cross.case.circle.fill")
                         .font(.system(size: 40))
                         .foregroundStyle(PharmacyColor.primary.opacity(0.8))
-                    Text("صورة الروشتة بخط اليد")
+                    Text("pharmacy.request.prescription_handwritten".localized)
                         .font(PharmacyColor.sans(13, .bold))
                         .foregroundStyle(PharmacyColor.textPrimary)
-                    Text("اضغط للتكبير والتحقق من الأصناف والجرعات")
+                    Text("pharmacy.request.prescription_tap_to_enlarge".localized)
                         .font(PharmacyColor.sans(11, .regular))
                         .foregroundStyle(PharmacyColor.textSecondary)
                 }

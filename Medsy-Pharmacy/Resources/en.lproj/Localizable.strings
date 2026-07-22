@@ -317,3 +317,19 @@
 "pharmacy.request.delivery_fee" = "Delivery Fee";
 "pharmacy.request.total" = "Final Total";
 
+/* UI Dialogs & Common Request Keys */
+"pharmacy.request.currency_unit" = "EGP";
+"pharmacy.request.alternative_selected" = "Substitute selected";
+"pharmacy.request.prescription_handwritten" = "Handwritten Prescription";
+"pharmacy.request.prescription_tap_to_enlarge" = "Tap to enlarge and verify items & dosages";
+"pharmacy.request.alert_add_alternative" = "Add Substitute Medicine";
+"pharmacy.request.alternative_placeholder" = "Substitute medicine name";
+"pharmacy.request.confirm_alternative" = "Confirm Substitute";
+"pharmacy.request.cancel" = "Cancel";
+"pharmacy.request.alternative_message" = "Enter the name of the suggested substitute medicine for the customer if the original product is unavailable.";
+"pharmacy.request.preview_prescription" = "Preview Handwritten Prescription";
+"common.close" = "Close";
+"pharmacy.request.no_data" = "No request data available";
+"pharmacy.request.loading" = "Loading request details…";
+
+

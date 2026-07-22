@@ -31,7 +31,7 @@ struct PharmacyOrderItemsCard: View {
                     VStack(alignment: .trailing, spacing: 8) {
                         HStack(alignment: .center, spacing: 12) {
                             HStack(spacing: 4) {
-                                Text("جنيه")
+                                Text("pharmacy.request.currency_unit".localized)
                                     .font(PharmacyColor.sans(12, .semibold))
                                     .foregroundStyle(PharmacyColor.textSecondary)
 
@@ -79,7 +79,7 @@ struct PharmacyOrderItemsCard: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: item.isAvailable ? "exclamationmark.triangle" : "arrow.triangle.2.circlepath")
                                         .font(.system(size: 11, weight: .bold))
-                                    Text(item.isAvailable ? "pharmacy.request.add_alternative".localized : (item.alternativeMedicine ?? "تم تحديد بديل"))
+                                    Text(item.isAvailable ? "pharmacy.request.add_alternative".localized : (item.alternativeMedicine ?? "pharmacy.request.alternative_selected".localized))
                                         .font(PharmacyColor.sans(11, .semibold))
                                 }
                                 .foregroundStyle(item.isAvailable ? PharmacyColor.warning : PharmacyColor.secondary)
@@ -101,7 +101,7 @@ struct PharmacyOrderItemsCard: View {
 
             VStack(spacing: 8) {
                 HStack {
-                    Text("\(Int(deliveryFee)) جنيه")
+                    Text("\(Int(deliveryFee)) \("pharmacy.request.currency_unit".localized)")
                         .font(PharmacyColor.sans(13, .semibold))
                         .foregroundStyle(PharmacyColor.textPrimary)
 
@@ -113,7 +113,7 @@ struct PharmacyOrderItemsCard: View {
                 }
 
                 HStack {
-                    Text("\(Int(total)) جنيه")
+                    Text("\(Int(total)) \("pharmacy.request.currency_unit".localized)")
                         .font(PharmacyColor.sans(16, .bold))
                         .foregroundStyle(PharmacyColor.primary)
 

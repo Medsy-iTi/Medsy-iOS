@@ -24,7 +24,7 @@ struct PharmacyRequestDetailsHeaderView: View {
             Spacer()
 
             VStack(spacing: 2) {
-                Text("تفاصيل الطلب")
+                Text("pharmacy.request.details.title".localized)
                     .font(PharmacyColor.sans(18, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 

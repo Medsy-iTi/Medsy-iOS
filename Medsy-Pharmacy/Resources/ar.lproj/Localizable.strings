@@ -315,3 +315,19 @@
 "pharmacy.request.delivery_fee" = "رسوم التوصيل";
 "pharmacy.request.total" = "الإجمالي النهائي";
 
+/* UI Dialogs & Common Request Keys */
+"pharmacy.request.currency_unit" = "جنيه";
+"pharmacy.request.alternative_selected" = "تم تحديد بديل";
+"pharmacy.request.prescription_handwritten" = "صورة الروشتة بخط اليد";
+"pharmacy.request.prescription_tap_to_enlarge" = "اضغط للتكبير والتحقق من الأصناف والجرعات";
+"pharmacy.request.alert_add_alternative" = "إضافة دواء بديل";
+"pharmacy.request.alternative_placeholder" = "اسم الدواء البديل";
+"pharmacy.request.confirm_alternative" = "تأكيد البديـل";
+"pharmacy.request.cancel" = "إلغاء";
+"pharmacy.request.alternative_message" = "أدخل اسم الدواء البديل المقترح للعميل في حالة عدم توفر المنتج الأصلي.";
+"pharmacy.request.preview_prescription" = "معاينة صورة الروشتة بخط اليد";
+"common.close" = "إغلاق";
+"pharmacy.request.no_data" = "لا توجد بيانات للطلب";
+"pharmacy.request.loading" = "جارٍ تحميل تفاصيل الطلب…";
+
+

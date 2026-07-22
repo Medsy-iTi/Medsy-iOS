@@ -15,7 +15,7 @@ struct PharmacyCustomerInfoCard: View {
             HStack(spacing: 8) {
                 Spacer()
 
-                Text("معلومات العميل")
+                Text("pharmacy.request.customer_info".localized)
                     .font(PharmacyColor.sans(15, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 
@@ -30,7 +30,7 @@ struct PharmacyCustomerInfoCard: View {
                     Text(customer.name)
                         .font(PharmacyColor.sans(14, .semibold))
                         .foregroundStyle(PharmacyColor.textPrimary)
-                    Image(systemName: "phone")
+                    Image(systemName: "person")
                         .font(.system(size: 14))
                         .foregroundStyle(PharmacyColor.primary)
                 }
@@ -59,7 +59,7 @@ struct PharmacyCustomerInfoCard: View {
             Button(action: onContact) {
                 HStack(spacing: 8) {
                     Spacer()
-                    Text("تواصل مع العميل")
+                    Text("pharmacy.request.contact_customer".localized)
                         .font(PharmacyColor.sans(14, .bold))
                     Image(systemName: "phone.fill")
                         .font(.system(size: 14))
