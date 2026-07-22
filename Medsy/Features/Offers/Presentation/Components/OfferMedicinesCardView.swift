@@ -6,11 +6,12 @@
 import SwiftUI
 
 struct OfferMedicinesCardView: View {
+    @Environment(LanguageManager.self) private var languageManager
     let medicines: [OfferMedicineItem]
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
-            Text("الأدوية المطلوبة")
+            Text("offers.details.requestedMeds".localized)
                 .font(AppColor.sans(16, .bold))
                 .foregroundStyle(AppColor.textPrim)
                 .padding(.horizontal, 4)
@@ -35,5 +36,6 @@ struct OfferMedicinesCardView: View {
                     )
             )
         }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
     }
 }
