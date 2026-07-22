@@ -11,6 +11,7 @@ import SwiftUI
 enum HomeRoute: Hashable {
     case search(String)
     case prescription
+    case offersList
 }
 
 @MainActor
@@ -24,6 +25,10 @@ final class HomeCoordinator {
 
     func showPrescription() {
         path.append(HomeRoute.prescription)
+    }
+
+    func openOffersList() {
+        path.append(HomeRoute.offersList)
     }
 
     func open(_ route: HomeRoute) {
@@ -54,19 +59,27 @@ struct HomeCoordinatorView: View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            HomeView(onSearchTap: coordinator.openSearch, onPrescription: coordinator.showPrescription)
-                .navigationDestination(for: HomeRoute.self) { route in
-                    switch route {
-                    case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
-                            coordinator.path.append(dest)
-                        })
-                    case .prescription:
-                        PrescriptionCoordinatorView(
-                            onExit: coordinator.goBack
-                        )
-                    }
+            HomeView(
+                onSearchTap: coordinator.openSearch,
+                onPrescription: coordinator.showPrescription,
+                onCompareOffers: coordinator.openOffersList
+            )
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case let .search(query):
+                    SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
+                        coordinator.path.append(dest)
+                    })
+                case .prescription:
+                    PrescriptionCoordinatorView(
+                        onExit: coordinator.goBack
+                    )
+                case .offersList:
+                    OffersListView(
+                        onBack: coordinator.goBack
+                    )
                 }
+            }
                 .navigationDestination(for: ProductDetailDestination.self) { destination in
                     ProductDetailView(productId: destination.productId)
                 }

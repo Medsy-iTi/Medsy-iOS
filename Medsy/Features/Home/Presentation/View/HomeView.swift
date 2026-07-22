@@ -10,6 +10,7 @@ struct HomeView: View {
     @State private var selectedStatus: HomeSearchStatus = .home
     let onSearchTap: () -> Void
     let onPrescription: () -> Void
+    var onCompareOffers: (() -> Void)? = nil
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -25,9 +26,9 @@ struct HomeView: View {
                 case .searching:
                     HomeSearchingStatusView(selectedStatus: $selectedStatus)
                 case .firstOffer:
-                    HomeFirstOfferStatusView(selectedStatus: $selectedStatus)
+                    HomeFirstOfferStatusView(selectedStatus: $selectedStatus, onCompareOffers: onCompareOffers)
                 case .multipleOffers:
-                    HomeMultipleOffersStatusView(selectedStatus: $selectedStatus)
+                    HomeMultipleOffersStatusView(selectedStatus: $selectedStatus, onCompareOffers: onCompareOffers)
                 case .expired:
                     HomeExpiredStatusView(selectedStatus: $selectedStatus)
                 }
