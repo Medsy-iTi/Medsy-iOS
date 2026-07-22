@@ -26,17 +26,24 @@ struct OffersHeaderView: View {
                 .frame(width: 44, height: 44)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            Spacer()
+
+            VStack(alignment: .center, spacing: 4) {
                 Text("offers.list.title".localized)
                     .font(AppColor.sans(20, .bold))
                     .foregroundStyle(AppColor.textPrim)
+                    .multilineTextAlignment(.center)
 
                 Text(subtitleText)
                     .font(AppColor.sans(13))
                     .foregroundStyle(AppColor.textSec)
+                    .multilineTextAlignment(.center)
             }
 
             Spacer()
+
+            Color.clear
+                .frame(width: 44, height: 44)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)

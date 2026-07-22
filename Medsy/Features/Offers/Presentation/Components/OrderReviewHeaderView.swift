@@ -25,11 +25,17 @@ struct OrderReviewHeaderView: View {
                 .frame(width: 44, height: 44)
             }
 
+            Spacer()
+
             Text("orderReview.title".localized)
                 .font(AppColor.sans(20, .bold))
                 .foregroundStyle(AppColor.textPrim)
+                .multilineTextAlignment(.center)
 
             Spacer()
+
+            Color.clear
+                .frame(width: 44, height: 44)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
