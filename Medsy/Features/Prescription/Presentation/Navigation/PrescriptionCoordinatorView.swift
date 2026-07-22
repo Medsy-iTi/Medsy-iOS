@@ -48,11 +48,16 @@ struct PrescriptionCoordinatorView: View {
                 PrescriptionReadingView(stage: stage, onCancel: { send(.cancelReading) })
             case .review:
                 PrescriptionReviewView(
+                    imageData: viewModel.selectedImageData,
                     medicines: viewModel.medicines,
                     confirmedCount: viewModel.confirmedMedicineCount,
+                    needsReviewCount: viewModel.needsReviewMedicineCount,
                     canAddToCart: viewModel.canAddToCart,
                     onConfirm: { send(.confirmMedicine($0)) },
                     onChooseAlternative: { send(.chooseAlternative($0)) },
+                    onIncreaseQuantity: { send(.increaseQuantity($0)) },
+                    onDecreaseQuantity: { send(.decreaseQuantity($0)) },
+                    onDelete: { send(.deleteMedicine($0)) },
                     onAddToCart: { send(.addToCart) },
                     onBack: { send(.back) }
                 )

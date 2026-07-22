@@ -44,6 +44,9 @@ enum PrescriptionEvent {
     case chooseAlternative(UUID)
     case replaceMedicine(UUID, MedsyProduct)
     case cancelMedicineSearch
+    case increaseQuantity(UUID)
+    case decreaseQuantity(UUID)
+    case deleteMedicine(UUID)
     case addToCart
     case retry
     case continueWithoutReading

@@ -17,6 +17,9 @@ struct PrescriptionMedicineDisplay: Identifiable, Equatable {
     var name: String
     var details: String
     var price: String
+    var unit: String
+    var quantity: Int
+    var imageName: String
     var confidence: PrescriptionMedicineConfidence
     var isConfirmed: Bool
 
@@ -29,6 +32,9 @@ struct PrescriptionMedicineDisplay: Identifiable, Equatable {
         name: String,
         details: String,
         price: String,
+        unit: String = "prescription.review.perPack",
+        quantity: Int = 1,
+        imageName: String = "pills.fill",
         confidence: PrescriptionMedicineConfidence,
         isConfirmed: Bool = false
     ) {
@@ -36,14 +42,44 @@ struct PrescriptionMedicineDisplay: Identifiable, Equatable {
         self.name = name
         self.details = details
         self.price = price
+        self.unit = unit
+        self.quantity = quantity
+        self.imageName = imageName
         self.confidence = confidence
         self.isConfirmed = isConfirmed
     }
 
     static let samples = [
-        PrescriptionMedicineDisplay(name: "Panadol Extra", details: "20 tablets", price: "45.00 EGP", confidence: .identified),
-        PrescriptionMedicineDisplay(name: "Augmentin", details: "1 g · 14 tablets", price: "180.00 EGP", confidence: .identified),
-        PrescriptionMedicineDisplay(name: "Telfast", details: "120 mg · 10 tablets", price: "95.00 EGP", confidence: .identified),
-        PrescriptionMedicineDisplay(name: "Medicine name unclear", details: "Needs your review", price: "--", confidence: .needsReview)
+        PrescriptionMedicineDisplay(
+            name: "ABILIFY 15 MG 10 TABS.",
+            details: "ARIPIPRAZOLE",
+            price: "330 EGP",
+            imageName: "pills.fill",
+            confidence: .identified,
+            isConfirmed: true
+        ),
+        PrescriptionMedicineDisplay(
+            name: "ABILIFY 5 MG 10 TABS.",
+            details: "ARIPIPRAZOLE",
+            price: "134 EGP",
+            imageName: "cross.case.fill",
+            confidence: .identified,
+            isConfirmed: true
+        ),
+        PrescriptionMedicineDisplay(
+            name: "ABIMOL 500 MG 20 TAB.",
+            details: "PARACETAMOL(ACETAMINOPHEN)",
+            price: "24 EGP",
+            imageName: "capsule.portrait.fill",
+            confidence: .identified,
+            isConfirmed: true
+        ),
+        PrescriptionMedicineDisplay(
+            name: "ABIMOL EXTRA 20 TAB.",
+            details: "CAFFEINE+PARACETAMOL(ACETAMINOPHEN)",
+            price: "28 EGP",
+            imageName: "pills.circle.fill",
+            confidence: .needsReview
+        )
     ]
 }

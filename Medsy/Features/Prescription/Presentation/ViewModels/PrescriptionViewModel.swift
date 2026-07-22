@@ -19,8 +19,15 @@ final class PrescriptionViewModel {
     private var selectedSource: PrescriptionImageSource?
     private var processingTask: Task<Void, Never>?
 
-    init(mockOutcome: PrescriptionMockOutcome = .success) {
+    init(
+        mockOutcome: PrescriptionMockOutcome = .success,
+        initialMedicines: [PrescriptionMedicineDisplay] = []
+    ) {
         self.mockOutcome = mockOutcome
+        medicines = initialMedicines
+        if !initialMedicines.isEmpty {
+            state = .review
+        }
     }
 
     var canAddToCart: Bool {
@@ -29,6 +36,10 @@ final class PrescriptionViewModel {
 
     var confirmedMedicineCount: Int {
         medicines.filter(\.isConfirmed).count
+    }
+
+    var needsReviewMedicineCount: Int {
+        medicines.filter { $0.needsReview && !$0.isConfirmed }.count
     }
 
     @discardableResult
@@ -45,12 +56,18 @@ final class PrescriptionViewModel {
         case let .confirmMedicine(id):
             confirmMedicine(id: id)
         case let .chooseAlternative(id):
-            guard medicines.contains(where: { $0.id == id && !$0.isConfirmed }) else { break }
+            guard medicines.contains(where: { $0.id == id }) else { break }
             state = .medicineSearch(id)
         case let .replaceMedicine(id, product):
             replaceMedicine(id: id, with: product)
         case .cancelMedicineSearch:
             state = .review
+        case let .increaseQuantity(id):
+            updateQuantity(for: id, by: 1)
+        case let .decreaseQuantity(id):
+            updateQuantity(for: id, by: -1)
+        case let .deleteMedicine(id):
+            deleteMedicine(id: id)
         case .addToCart:
             guard canAddToCart else { break }
             state = .result(.added)
@@ -139,17 +156,29 @@ final class PrescriptionViewModel {
     }
 
     private func replaceMedicine(id: UUID, with product: MedsyProduct) {
-        guard let index = medicines.firstIndex(where: { $0.id == id }), !medicines[index].isConfirmed else {
+        guard let index = medicines.firstIndex(where: { $0.id == id }) else {
             state = .review
             return
         }
 
         medicines[index].name = product.name
         medicines[index].details = product.dosageInfo.isEmpty ? product.categoryName : product.dosageInfo
-        medicines[index].price = String(format: "%.2f EGP", product.price)
+        medicines[index].price = String(format: "%.0f EGP", product.price)
         medicines[index].confidence = .identified
-        medicines[index].isConfirmed = false
+        medicines[index].isConfirmed = true
         state = .review
+    }
+
+    private func updateQuantity(for id: UUID, by delta: Int) {
+        guard let index = medicines.firstIndex(where: { $0.id == id }) else { return }
+        medicines[index].quantity = max(1, medicines[index].quantity + delta)
+    }
+
+    private func deleteMedicine(id: UUID) {
+        medicines.removeAll { $0.id == id }
+        if medicines.isEmpty {
+            state = .result(.noMedicines)
+        }
     }
 
     private func goBack() -> PrescriptionEffect? {
