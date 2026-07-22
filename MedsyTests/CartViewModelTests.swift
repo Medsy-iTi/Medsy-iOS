@@ -17,10 +17,23 @@ final class CartViewModelTests: XCTestCase {
         let effect = viewModel.handle(.addItem(item(id: "local-2", productID: 10, quantity: 2)))
 
         XCTAssertEqual(viewModel.itemCount, 3)
+        XCTAssertEqual(viewModel.distinctProductCount, 1)
         XCTAssertEqual(loadedItems(from: viewModel).count, 1)
         XCTAssertEqual(effect, .sync)
         XCTAssertEqual(viewModel.feedback, .itemAdded("Medicine"))
         XCTAssertEqual(viewModel.feedbackSequence, 1)
+    }
+
+    func testDistinctProductCountCountsRowsNotQuantities() {
+        let viewModel = CartViewModel(
+            items: [
+                item(id: "first", productID: 10, quantity: 3),
+                item(id: "second", productID: 20, quantity: 2)
+            ]
+        )
+
+        XCTAssertEqual(viewModel.itemCount, 5)
+        XCTAssertEqual(viewModel.distinctProductCount, 2)
     }
 
     func testDecreasingLastQuantityRemovesItemAndUndoRestoresIt() {

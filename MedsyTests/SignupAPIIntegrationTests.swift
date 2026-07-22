@@ -227,6 +227,8 @@ private final class AuthNetworkDataSourceSpy: AuthNetworkDataSourceProtocol {
     func verify(request: VerificationRequestDTO) async throws -> AuthSessionDTO {
         throw SignupTestError.invalidResponseType
     }
+
+    func logout(request: LogoutRequestDTO) async throws {}
 }
 
 private final class SignupUseCaseSpy: SignupUseCaseProtocol {

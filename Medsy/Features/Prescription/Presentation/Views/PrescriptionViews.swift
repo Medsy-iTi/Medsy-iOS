@@ -212,54 +212,193 @@ private struct PrescriptionReadingStageRow: View {
 }
 
 struct PrescriptionReviewView: View {
+    let imageData: Data?
     let medicines: [PrescriptionMedicineDisplay]
     let confirmedCount: Int
+    let needsReviewCount: Int
     let canAddToCart: Bool
+    let isAddingToCart: Bool
+    let cartErrorMessage: String?
     let onConfirm: (UUID) -> Void
     let onChooseAlternative: (UUID) -> Void
+    let onIncreaseQuantity: (UUID) -> Void
+    let onDecreaseQuantity: (UUID) -> Void
+    let onDelete: (UUID) -> Void
     let onAddToCart: () -> Void
     let onBack: () -> Void
 
     var body: some View {
         PrescriptionPage(title: "prescription.review.title".localized, onBack: onBack) {
-            VStack(spacing: MedsySpacing.md) {
-                VStack(spacing: MedsySpacing.xs) {
-                    Text("prescription.review.message".localized)
-                        .font(.body)
-                        .foregroundStyle(AppColor.textSec)
-
-                    HStack {
-                        PrescriptionCount(value: "\(medicines.count)", title: "prescription.review.found".localized)
-                        PrescriptionCount(value: "\(confirmedCount)", title: "prescription.review.confirmed".localized)
-                        PrescriptionCount(
-                            value: "\(medicines.filter { $0.needsReview && !$0.isConfirmed }.count)",
-                            title: "prescription.review.needsReview".localized
-                        )
-                    }
-                }
-                .padding(.horizontal)
-
+            VStack(spacing: 0) {
                 ScrollView {
-                    LazyVStack(spacing: MedsySpacing.sm) {
+                    LazyVStack(spacing: MedsySpacing.md) {
+                        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+                            Text("prescription.review.message".localized)
+                                .font(MedsyFont.body(13))
+                                .foregroundStyle(AppColor.textSec)
+
+                            PrescriptionReviewSummaryCard(
+                                imageData: imageData,
+                                totalCount: medicines.count,
+                                recognizedCount: confirmedCount,
+                                needsReviewCount: needsReviewCount
+                            )
+                        }
+
                         ForEach(medicines) { medicine in
                             PrescriptionMedicineRow(
                                 medicine: medicine,
                                 onConfirm: { onConfirm(medicine.id) },
-                                onChooseAlternative: { onChooseAlternative(medicine.id) }
+                                onChooseAlternative: { onChooseAlternative(medicine.id) },
+                                onIncreaseQuantity: { onIncreaseQuantity(medicine.id) },
+                                onDecreaseQuantity: { onDecreaseQuantity(medicine.id) },
+                                onDelete: { onDelete(medicine.id) }
                             )
                         }
+
+                        if !canAddToCart {
+                            PrescriptionReviewBlockingBanner()
+                        }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.top, MedsySpacing.sm)
+                    .padding(.bottom, 108)
                 }
 
                 PrimaryButton(
-                    title: "prescription.review.addToCart".localized,
+                    title: isAddingToCart
+                        ? "prescription.review.addingToCart".localized
+                        : "prescription.review.addToCart".localized,
                     isDisabled: !canAddToCart,
                     action: onAddToCart
                 )
-                    .padding()
+                .padding(.horizontal, MedsySpacing.md)
+                .padding(.top, MedsySpacing.sm)
+
+                if let cartErrorMessage {
+                    Text(cartErrorMessage)
+                        .font(MedsyFont.caption(12))
+                        .foregroundStyle(AppColor.danger)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, MedsySpacing.md)
+                        .padding(.top, MedsySpacing.xs)
+                }
+
+                Spacer().frame(height: MedsySpacing.sm)
+                .background(.ultraThinMaterial)
             }
         }
+    }
+}
+
+private struct PrescriptionReviewSummaryCard: View {
+    @State private var showsImage = false
+
+    let imageData: Data?
+    let totalCount: Int
+    let recognizedCount: Int
+    let needsReviewCount: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.md) {
+            Text("prescription.review.foundCount".localized(totalCount))
+                .font(MedsyFont.title(17))
+                .foregroundStyle(AppColor.textPrim)
+
+            HStack(spacing: MedsySpacing.sm) {
+                PrescriptionReviewMetricCard(
+                    value: recognizedCount,
+                    title: "prescription.review.recognized".localized,
+                    tint: AppColor.green,
+                    background: AppColor.lightGreen.opacity(0.8)
+                )
+
+                PrescriptionReviewMetricCard(
+                    value: needsReviewCount,
+                    title: "prescription.review.needsReview".localized,
+                    tint: AppColor.warningYellow,
+                    background: Color(hex: "#FEF8E7")
+                )
+            }
+
+            DisclosureGroup(isExpanded: $showsImage) {
+                if let imageData, let image = UIImage(data: imageData) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: 220)
+                        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+                        .padding(.top, MedsySpacing.sm)
+                } else {
+                    Label("prescription.review.noImage".localized, systemImage: "photo")
+                        .font(MedsyFont.caption(12))
+                        .foregroundStyle(AppColor.textSec)
+                        .padding(.top, MedsySpacing.sm)
+                }
+            } label: {
+                Text("prescription.review.showImage".localized)
+                    .font(MedsyFont.button(13))
+                    .foregroundStyle(AppColor.green)
+            }
+            .tint(AppColor.green)
+            .padding(MedsySpacing.sm)
+            .background(AppColor.card, in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                    .stroke(AppColor.border, lineWidth: 1)
+            )
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+    }
+}
+
+private struct PrescriptionReviewMetricCard: View {
+    let value: Int
+    let title: String
+    let tint: Color
+    let background: Color
+
+    var body: some View {
+        VStack(spacing: MedsySpacing.xs) {
+            Text("\(value)")
+                .font(MedsyFont.title(24))
+                .foregroundStyle(tint)
+
+            Text(title)
+                .font(MedsyFont.caption(12))
+                .foregroundStyle(tint)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, MedsySpacing.md)
+        .background(background, in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+    }
+}
+
+private struct PrescriptionReviewBlockingBanner: View {
+    var body: some View {
+        HStack(spacing: MedsySpacing.sm) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(AppColor.warningYellow)
+
+            Text("prescription.review.blocked".localized)
+                .font(MedsyFont.caption(12))
+                .foregroundStyle(AppColor.warningYellow)
+
+            Spacer()
+        }
+        .padding(.horizontal, MedsySpacing.md)
+        .padding(.vertical, MedsySpacing.sm)
+        .background(Color(hex: "#FFF8E1"), in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                .stroke(Color(hex: "#FDE68A"), lineWidth: 1)
+        )
     }
 }
 
@@ -337,25 +476,5 @@ private struct PrescriptionTipsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(AppColor.lightGreen.opacity(0.55), in: RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-    }
-}
-
-private struct PrescriptionCount: View {
-    let value: String
-    let title: String
-
-    var body: some View {
-        VStack(spacing: 2) {
-            Text(value)
-                .font(.title3.weight(.bold))
-                .foregroundStyle(AppColor.green)
-
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(AppColor.textSec)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, MedsySpacing.sm)
-        .background(AppColor.card, in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
     }
 }
