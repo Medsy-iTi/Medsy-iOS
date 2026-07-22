@@ -41,13 +41,16 @@ struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
     @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
+    private let onOpenCart: () -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
-        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }
+        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
+        onOpenCart: @escaping () -> Void = {}
     ) {
         _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
+        self.onOpenCart = onOpenCart
     }
 
     var body: some View {
@@ -63,7 +66,11 @@ struct HomeCoordinatorView: View {
                         })
                     case .prescription:
                         PrescriptionCoordinatorView(
-                            onExit: coordinator.goBack
+                            onExit: coordinator.goBack,
+                            onViewCart: {
+                                coordinator.goBack()
+                                onOpenCart()
+                            }
                         )
                     }
                 }

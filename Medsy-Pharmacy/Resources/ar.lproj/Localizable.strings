@@ -273,7 +273,6 @@
 "pharmacy.request.accept" = "قبول الطلب";
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
-
 /* Pharmacist Invitations */
 "common.error" = "حدث خطأ";
 "common.ok" = "حسنًا";
