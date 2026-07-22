@@ -8,7 +8,6 @@ import Foundation
 
 protocol FetchPharmacyRequestDetailsUseCaseProtocol {
     func execute(requestId: Int) async throws -> PharmacyRequestDetailsEntity
-    func execute(pharmacyId: Int, page: Int, size: Int) async throws -> [PharmacyRequestDetailsEntity]
 }
 
 struct FetchPharmacyRequestDetailsUseCase: FetchPharmacyRequestDetailsUseCaseProtocol {
@@ -16,9 +15,5 @@ struct FetchPharmacyRequestDetailsUseCase: FetchPharmacyRequestDetailsUseCasePro
 
     func execute(requestId: Int) async throws -> PharmacyRequestDetailsEntity {
         try await repository.fetchRequestDetails(requestId: requestId)
-    }
-
-    func execute(pharmacyId: Int, page: Int, size: Int) async throws -> [PharmacyRequestDetailsEntity] {
-        try await repository.fetchPharmacyRequests(pharmacyId: pharmacyId, page: page, size: size)
     }
 }

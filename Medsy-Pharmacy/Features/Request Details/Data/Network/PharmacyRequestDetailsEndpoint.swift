@@ -9,14 +9,11 @@ import Foundation
 
 enum PharmacyRequestDetailsEndpoint: ApiEndpoint {
     case fetchRequestDetails(requestId: Int)
-    case fetchPharmacyRequests(pharmacyId: Int, page: Int, size: Int)
 
     var path: String {
         switch self {
         case .fetchRequestDetails(let requestId):
             return "orders/\(requestId)"
-        case .fetchPharmacyRequests(let pharmacyId, _, _):
-            return "orders/pharmacy/\(pharmacyId)"
         }
     }
 
@@ -26,8 +23,6 @@ enum PharmacyRequestDetailsEndpoint: ApiEndpoint {
         switch self {
         case .fetchRequestDetails:
             return nil
-        case .fetchPharmacyRequests(_, let page, let size):
-            return ["page": page, "size": size]
         }
     }
 

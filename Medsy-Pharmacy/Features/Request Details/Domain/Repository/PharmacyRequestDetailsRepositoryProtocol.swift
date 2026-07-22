@@ -8,5 +8,4 @@ import Foundation
 
 protocol PharmacyRequestDetailsRepositoryProtocol {
     func fetchRequestDetails(requestId: Int) async throws -> PharmacyRequestDetailsEntity
-    func fetchPharmacyRequests(pharmacyId: Int, page: Int, size: Int) async throws -> [PharmacyRequestDetailsEntity]
 }
