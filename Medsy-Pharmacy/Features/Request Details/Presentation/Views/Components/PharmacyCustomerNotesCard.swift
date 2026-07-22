@@ -1,7 +1,7 @@
 //  PharmacyCustomerNotesCard.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
@@ -14,7 +14,7 @@ struct PharmacyCustomerNotesCard: View {
             HStack(spacing: 8) {
                 Spacer()
 
-                Text("ملاحظات العميل")
+                Text("pharmacy.request.customer_notes".localized)
                     .font(PharmacyColor.sans(15, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 

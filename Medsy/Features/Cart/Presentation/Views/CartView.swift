@@ -24,15 +24,18 @@ struct CartView: View {
 
     let onSearch: () -> Void
     let onContinue: (CartRequestDraft) -> Void
+    let onProductSelected: (String) -> Void
 
     init(
         viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
-        onContinue: @escaping (CartRequestDraft) -> Void = { _ in }
+        onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
+        onProductSelected: @escaping (String) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onSearch = onSearch
         self.onContinue = onContinue
+        self.onProductSelected = onProductSelected
     }
 
     var body: some View {
@@ -206,19 +209,13 @@ struct CartView: View {
                             )
                         }
                     }
-
-                    PrimaryButton(
-                        title: "cart.prescription.add_another".localized,
-                        systemImage: "camera",
-                        style: .secondary,
-                        action: { presentPrescriptionSources() }
-                    )
                 }
 
                 VStack(spacing: MedsySpacing.sm) {
                     ForEach(items) { item in
                         CartItemRow(
                             item: item,
+                            onSelect: { openProductDetails(for: item) },
                             onDecrease: { handleItemEvent(.decreaseQuantity(itemID: item.id)) },
                             onIncrease: { handleItemEvent(.increaseQuantity(itemID: item.id)) },
                             onRemove: { handleItemEvent(.removeItem(itemID: item.id)) }
@@ -296,6 +293,11 @@ struct CartView: View {
     private func continueRequest() {
         guard case let .continueRequest(draft) = viewModel.handle(.continueRequest) else { return }
         onContinue(draft)
+    }
+
+    private func openProductDetails(for item: CartDisplayItem) {
+        guard let productID = item.productID else { return }
+        onProductSelected(String(productID))
     }
 
 }

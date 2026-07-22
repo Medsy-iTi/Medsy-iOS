@@ -1,7 +1,7 @@
 //  PharmacyRequestDetailsBottomBar.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
@@ -13,7 +13,7 @@ struct PharmacyRequestDetailsBottomBar: View {
     var body: some View {
         HStack(spacing: PharmacySpacing.md) {
             Button(action: onReject) {
-                Text("رفض الطلب")
+                Text("pharmacy.request.reject".localized)
                     .font(PharmacyColor.sans(15, .bold))
                     .foregroundStyle(PharmacyColor.danger)
                     .frame(maxWidth: .infinity)
@@ -27,7 +27,7 @@ struct PharmacyRequestDetailsBottomBar: View {
             .buttonStyle(.plain)
 
             Button(action: onAccept) {
-                Text("قبول الطلب")
+                Text("pharmacy.request.accept".localized)
                     .font(PharmacyColor.sans(15, .bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)

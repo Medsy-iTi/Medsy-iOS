@@ -9,7 +9,7 @@ import XCTest
 @testable import Medsy_Pharmacy
 
 final class Medsy_PharmacyTests: XCTestCase {
-    func testRegistrationRequestUsesPharmacistRole() {
+    func testRegistrationRequestUsesPharmacistRole() throws {
         let input = PharmacyRegistrationInput(
             firstName: "Ahmed",
             lastName: "Elkady",
@@ -25,6 +25,14 @@ final class Medsy_PharmacyTests: XCTestCase {
         XCTAssertEqual(request.role, "PHARMACIST")
         XCTAssertEqual(request.homeAddress, "Cairo")
         XCTAssertEqual(request.dob, "1970-01-01")
+        XCTAssertNil(request.pharmacyId)
+
+        let data = try JSONEncoder().encode(request)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        XCTAssertTrue(json.keys.contains("pharmacyId"))
+        XCTAssertTrue(json["pharmacyId"] is NSNull)
     }
 
     func testAuthenticationSessionDecodesNullableProfileFields() throws {

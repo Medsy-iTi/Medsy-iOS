@@ -1,7 +1,7 @@
 //  PharmacyRequestItemModel.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
@@ -11,7 +11,7 @@ struct PharmacyOrderItem: Identifiable {
     let name: String
     let spec: String
     let quantity: Int
-    let price: Double
+    var price: Double
     let imageName: String?
     var isAvailable: Bool = true
     var alternativeMedicine: String? = nil
@@ -30,6 +30,7 @@ struct PharmacyRequestDetailsModel {
     var items: [PharmacyOrderItem]
     let deliveryFee: Double
     let notes: String
+    var prescriptionImageUrl: String? = nil
     
     var subtotal: Double {
         items.reduce(0) { $0 + ($1.price * Double($1.quantity)) }

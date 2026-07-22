@@ -1,7 +1,7 @@
 //  PharmacyOrderItemsCard.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
@@ -17,7 +17,7 @@ struct PharmacyOrderItemsCard: View {
             HStack(spacing: 8) {
                 Spacer()
 
-                Text("تفاصيل الطلب")
+                Text("pharmacy.request.order_items".localized)
                     .font(PharmacyColor.sans(15, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 
@@ -27,12 +27,25 @@ struct PharmacyOrderItemsCard: View {
             }
 
             VStack(spacing: 12) {
-                ForEach(items.indices, id: \.self) { index in
-                    let item = items[index]
-                    
-                    VStack(alignment: .trailing, spacing: 6) {
+                ForEach($items) { $item in
+                    VStack(alignment: .trailing, spacing: 8) {
                         HStack(alignment: .center, spacing: 12) {
-                            Text("\(item.quantity) × \(Int(item.price))")
+                            HStack(spacing: 4) {
+                                Text("pharmacy.request.currency_unit".localized)
+                                    .font(PharmacyColor.sans(12, .semibold))
+                                    .foregroundStyle(PharmacyColor.textSecondary)
+
+                                TextField("pharmacy.request.unit_price_placeholder".localized, value: $item.price, format: .number)
+                                    .font(PharmacyColor.sans(14, .bold))
+                                    .multilineTextAlignment(.center)
+                                    .keyboardType(.decimalPad)
+                                    .frame(width: 60)
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 6)
+                                    .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
+                            }
+
+                            Text("\(item.quantity) ×")
                                 .font(PharmacyColor.sans(14, .bold))
                                 .foregroundStyle(PharmacyColor.textPrimary)
 
@@ -66,7 +79,7 @@ struct PharmacyOrderItemsCard: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: item.isAvailable ? "exclamationmark.triangle" : "arrow.triangle.2.circlepath")
                                         .font(.system(size: 11, weight: .bold))
-                                    Text(item.isAvailable ? "غير متوفر / إضافة بديل" : (item.alternativeMedicine ?? "تم تحديد بديل"))
+                                    Text(item.isAvailable ? "pharmacy.request.add_alternative".localized : (item.alternativeMedicine ?? "pharmacy.request.alternative_selected".localized))
                                         .font(PharmacyColor.sans(11, .semibold))
                                 }
                                 .foregroundStyle(item.isAvailable ? PharmacyColor.warning : PharmacyColor.secondary)
@@ -79,11 +92,6 @@ struct PharmacyOrderItemsCard: View {
                             Spacer()
                         }
                     }
-
-                    if index < items.count - 1 {
-                        Divider()
-                            .overlay(PharmacyColor.border)
-                    }
                 }
             }
             .padding(.vertical, 4)
@@ -93,25 +101,25 @@ struct PharmacyOrderItemsCard: View {
 
             VStack(spacing: 8) {
                 HStack {
-                    Text("\(Int(deliveryFee)) جنيه")
+                    Text("\(Int(deliveryFee)) \("pharmacy.request.currency_unit".localized)")
                         .font(PharmacyColor.sans(13, .semibold))
                         .foregroundStyle(PharmacyColor.textPrimary)
 
                     Spacer()
 
-                    Text("رسوم التوصيل")
+                    Text("pharmacy.request.delivery_fee".localized)
                         .font(PharmacyColor.sans(13, .medium))
                         .foregroundStyle(PharmacyColor.textSecondary)
                 }
 
                 HStack {
-                    Text("\(Int(total)) جنيه")
+                    Text("\(Int(total)) \("pharmacy.request.currency_unit".localized)")
                         .font(PharmacyColor.sans(16, .bold))
                         .foregroundStyle(PharmacyColor.primary)
 
                     Spacer()
 
-                    Text("الإجمالي")
+                    Text("pharmacy.request.total".localized)
                         .font(PharmacyColor.sans(16, .bold))
                         .foregroundStyle(PharmacyColor.textPrimary)
                 }

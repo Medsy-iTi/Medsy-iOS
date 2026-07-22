@@ -101,6 +101,171 @@
 "pharmacy.onboarding.page3.title" = "Track every order to completion";
 "pharmacy.onboarding.page3.subtitle" = "Move orders forward with one tap — patients are updated automatically at every step.";
 
+"pharmacy.auth.login.title" = "Welcome back";
+"pharmacy.auth.login.subtitle" = "Log in to manage your pharmacy.";
+"pharmacy.auth.login.action" = "Log In";
+"pharmacy.auth.forgot_password" = "Forgot Password?";
+"pharmacy.auth.continue_google" = "Continue with Google";
+"pharmacy.auth.continue_apple" = "Continue with Apple";
+"pharmacy.auth.no_account" = "Don't have an account?";
+"pharmacy.auth.signup.link" = "Sign Up";
+"pharmacy.auth.login.link" = "Log In";
+"pharmacy.auth.brand.name" = "Medsy";
+
+"pharmacy.auth.brand.tagline" = "For Pharmacies";
+"pharmacy.auth.or" = "Or";
+"pharmacy.setup.checking_membership" = "Checking your pharmacy…";
+"pharmacy.setup.decision.title" = "Do you have a pharmacy?";
+"pharmacy.setup.decision.subtitle" = "Add your pharmacy to start receiving and managing medicine requests.";
+"pharmacy.setup.decision.add" = "Add your pharmacy";
+"pharmacy.setup.decision.back_to_sign_in" = "Back to sign in";
+"pharmacy.setup.add.title" = "Add your pharmacy";
+"pharmacy.setup.add.subtitle" = "Enter the pharmacy details, select its location, and upload the licence document.";
+"pharmacy.setup.name" = "Pharmacy name";
+"pharmacy.setup.phone" = "Pharmacy phone number";
+"pharmacy.setup.add.action" = "Add pharmacy";
+"pharmacy.setup.location.current" = "Current location";
+"pharmacy.setup.location.map" = "Choose on map";
+"pharmacy.setup.location.resolving" = "Finding the city and province…";
+"pharmacy.setup.location.city" = "City";
+"pharmacy.setup.location.province" = "Province";
+"pharmacy.setup.location.selected" = "Selected location";
+"pharmacy.setup.location.not_selected" = "Select a location";
+"pharmacy.setup.location.permission_denied" = "Location access is disabled. Allow access in Settings or choose a place on the map.";
+"pharmacy.setup.location.unavailable" = "Your current location could not be determined. Try again or choose a place on the map.";
+"pharmacy.setup.location.address_unavailable" = "The city and province could not be found for this location. Choose another point.";
+"pharmacy.setup.license.select" = "Select pharmacy licence";
+"pharmacy.setup.license.requirements" = "PDF only, maximum 10 MB";
+"pharmacy.setup.map.hint" = "Tap the map to place the pharmacy pin. The city and province will be filled automatically.";
+"pharmacy.setup.map.confirm" = "Use this location";
+"pharmacy.setup.map.pin" = "Pharmacy";
+"pharmacy.setup.map.accessibility" = "Map for choosing the pharmacy location";
+"pharmacy.setup.validation.required" = "Complete all pharmacy details, location, and licence.";
+"pharmacy.setup.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
+"pharmacy.setup.validation.location" = "Select a valid pharmacy location.";
+"pharmacy.setup.validation.pdf" = "The pharmacy licence must be a valid PDF file.";
+"pharmacy.setup.validation.size" = "The pharmacy licence must not exceed 10 MB.";
+"pharmacy.setup.validation.unreadable" = "The selected licence file could not be read.";
+
+"pharmacy.auth.brand.tagline" = "for Pharmacies";
+"pharmacy.auth.or" = "or";
+
+/* profile */
+"profile_title" = "Profile";
+"settings_title" = "Settings";
+
+"verified_pharmacy" = "Verified Pharmacy";
+"unverified_pharmacy" = "Under Review";
+"rating_count_suffix" = "ratings";
+"pharmacy_details_title" = "Pharmacy Details";
+
+"phone_number_title" = "Phone Number";
+"change_action" = "Change";
+"change_phone_title" = "Change Phone Number";
+
+"license_title" = "License";
+"registered_location_title" = "Registered Location";
+"edit_data_request_title" = "Data Edit Request";
+"edit_data_request_subtitle" = "Request a data change from admin";
+
+"order_receiving_status_title" = "Order Receiving Status";
+"status_open" = "Open";
+"status_closed" = "Closed";
+
+"language_title" = "Language";
+"arabic" = "Arabic";
+"english" = "English";
+
+"theme_title" = "Appearance";
+"theme_light" = "Light";
+"theme_dark" = "Dark";
+
+"logout_title" = "Log Out";
+"logout_confirmation_title" = "Log Out";
+"logout_confirmation_message" = "Are you sure you want to log out?";
+"logout_confirm_action" = "Log Out";
+"cancel" = "Cancel";
+
+"loading" = "Loading...";
+"retry" = "Retry";
+"profile_generic_error" = "Couldn't load your data. Please try again";
+"coming_soon" = "Coming soon";
+
+// Edit Profile
+"profile.edit.title" = "Edit Profile";
+"profile.change_photo" = "Change Photo";
+"profile.full_name" = "Full Name";
+"profile.email" = "Email Address";
+"profile.not_set" = "Not set";
+"profile.phone" = "Phone Number";
+"profile.phone_support_note" = "To change your phone number, please contact support.";
+"profile.home_address" = "Home Address";
+"profile.home_address.placeholder" = "Enter your full address";
+"profile.address_error" = "Please enter a valid address.";
+"profile.date_of_birth" = "Date of Birth";
+"profile.save_changes" = "Save Changes";
+
+// Pharmacy Card
+"pharmacy_card.your_pharmacy" = "Your Pharmacy";
+"pharmacy_card.unknown" = "Unnamed Pharmacy";
+"pharmacy_card.edit" = "Edit Pharmacy";
+"pharmacy_card.leave" = "Leave Pharmacy";
+"pharmacy_card.leave_confirm_title" = "Leave Pharmacy";
+"pharmacy_card.leave_confirm_message" = "Are you sure you want to leave this pharmacy? You will be signed out and lose access to all pharmacy-related features.";
+"pharmacy_card.leave_confirm_action" = "Leave";
+"pharmacy_card.not_assigned" = "Not Assigned to a Pharmacy";
+"pharmacy_card.not_assigned_subtitle" = "Contact your pharmacy administrator to be added.";
+
+// Edit Pharmacy
+"pharmacy_edit.title" = "Edit Pharmacy";
+"pharmacy_edit.name" = "Pharmacy Name";
+"pharmacy_edit.name.placeholder" = "Enter pharmacy name";
+"pharmacy_edit.address" = "Address";
+"pharmacy_edit.address.placeholder" = "Enter pharmacy address";
+"pharmacy_edit.phone" = "Phone Number";
+"pharmacy_edit.phone.placeholder" = "Enter pharmacy phone number";
+
+// Pharmacy Team (admin)
+"pharmacy_team.title" = "Pharmacy Team";
+"pharmacy_team.empty" = "No other pharmacists to manage.";
+"pharmacy_team.edit" = "Edit pharmacist";
+"pharmacy_team.remove" = "Remove pharmacist";
+"pharmacy_team.edit_title" = "Edit Pharmacist";
+"pharmacy_team.validation_name" = "First and last name are required.";
+"pharmacy_team.validation_email" = "Enter a valid email address.";
+"pharmacy_team.remove_confirm_title" = "Remove Pharmacist";
+"pharmacy_team.remove_confirm_message" = "Remove %@ from your pharmacy? They will lose access to this pharmacy.";
+"pharmacy_team.remove_confirm_action" = "Remove";
+
+"profile.first_name" = "First Name";
+"profile.last_name" = "Last Name";
+
+// Delete Pharmacy (admin)
+"pharmacy_card.delete" = "Delete Pharmacy";
+"pharmacy_card.delete_confirm_title" = "Delete Pharmacy";
+"pharmacy_card.delete_confirm_message" = "This permanently deletes the pharmacy and removes all pharmacists. You will be signed out.";
+"pharmacy_card.delete_confirm_action" = "Delete";
+
+// User Profile
+"profile.user_profile" = "User Profile";
+"profile.pharmacy_profile" = "Pharmacy Profile";
+"profile.pharmacists_count" = "%d pharmacists";
+
+// Invite Pharmacist
+"pharmacy_team.invite" = "Invite Pharmacist";
+"pharmacy_team.invite_header" = "Invite Pharmacist";
+"pharmacy_team.invite_title" = "Invite a pharmacist";
+"pharmacy_team.invite_subtitle" = "Send an invitation to join %@";
+"pharmacy_team.invite_email" = "Email Address";
+"pharmacy_team.invite_email_placeholder" = "Enter pharmacist's email";
+"pharmacy_team.invite_button" = "Send Invitation";
+
+// Remove Pharmacist
+"pharmacy_team.remove_header" = "Remove Pharmacist";
+"pharmacy_team.remove_title" = "Remove pharmacist";
+"pharmacy_team.remove_message" = "Are you sure you want to remove %@ from the pharmacy?";
+"pharmacy_team.remove_warning" = "This action cannot be undone. The pharmacist will lose access to the pharmacy immediately.";
+"pharmacy_team.remove_button" = "Remove Pharmacist";
 /* Request Details */
 "pharmacy.request.details.title" = "Request Details";
 "pharmacy.request.customer_info" = "Customer Information";
@@ -110,4 +275,61 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+/* Pharmacist Invitations */
+"common.error" = "Something went wrong";
+"common.ok" = "OK";
+"common.retry" = "Retry";
+"pharmacy.invitations.notifications" = "Pharmacy invitations";
+"pharmacy.invitations.badge_count" = "%d pending invitations";
+"pharmacy.invitations.title" = "Pharmacy invitations";
+"pharmacy.invitations.subtitle" = "Review invitations from pharmacies that want you to join their team.";
+"pharmacy.invitations.invited_to_join" = "You have been invited to join this pharmacy.";
+"pharmacy.invitations.received_on" = "Received %@";
+"pharmacy.invitations.pending" = "Pending";
+"pharmacy.invitations.accept" = "Accept";
+"pharmacy.invitations.decline" = "Decline";
+"pharmacy.invitations.loading" = "Loading invitations…";
+"pharmacy.invitations.empty.title" = "No pending invitations";
+"pharmacy.invitations.empty.message" = "New pharmacy invitations will appear here.";
+"pharmacy.invitations.error.title" = "Invitations could not be loaded";
+
+/* Orders List */
+"pharmacy.orders.customer.fallback" = "Customer #%@";
+"pharmacy.orders.address.fallback" = "Address unavailable";
+"pharmacy.orders.retry" = "Retry";
+"pharmacy.orders.detail_placeholder" = "Order details coming soon.";
+"pharmacy.orders.noData" = "No orders found.";
+"common.somethingWentWrong" = "Something went wrong.";
+
+/* Prescription & Side-by-side Validation */
+"pharmacy.request.prescription_image" = "Prescription Image";
+"pharmacy.request.prescription_subtitle" = "Handwritten prescription image for verifying items and quantities";
+"pharmacy.request.compare_side_by_side" = "Compare Prescription & Extracted Items";
+"pharmacy.request.view_full_image" = "Enlarge Image";
+"pharmacy.request.ai_extracted_items" = "AI-Extracted Items";
+"pharmacy.request.unit_price" = "Unit Price";
+"pharmacy.request.unit_price_placeholder" = "Enter price";
+"pharmacy.request.quantity_label" = "Quantity: %d";
+"pharmacy.request.offer_notes" = "Offer Notes for Customer";
+"pharmacy.request.offer_notes_placeholder" = "Enter offer details or additional notes…";
+"pharmacy.request.submit_offer" = "Send Offer to Customer";
+"pharmacy.request.subtotal" = "Subtotal";
+"pharmacy.request.delivery_fee" = "Delivery Fee";
+"pharmacy.request.total" = "Final Total";
+
+/* UI Dialogs & Common Request Keys */
+"pharmacy.request.currency_unit" = "EGP";
+"pharmacy.request.alternative_selected" = "Substitute selected";
+"pharmacy.request.prescription_handwritten" = "Handwritten Prescription";
+"pharmacy.request.prescription_tap_to_enlarge" = "Tap to enlarge and verify items & dosages";
+"pharmacy.request.alert_add_alternative" = "Add Substitute Medicine";
+"pharmacy.request.alternative_placeholder" = "Substitute medicine name";
+"pharmacy.request.confirm_alternative" = "Confirm Substitute";
+"pharmacy.request.cancel" = "Cancel";
+"pharmacy.request.alternative_message" = "Enter the name of the suggested substitute medicine for the customer if the original product is unavailable.";
+"pharmacy.request.preview_prescription" = "Preview Handwritten Prescription";
+"common.close" = "Close";
+"pharmacy.request.no_data" = "No request data available";
+"pharmacy.request.loading" = "Loading request details…";
+
 

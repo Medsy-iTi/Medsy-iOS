@@ -12,7 +12,7 @@ struct ImageCarousel: View {
     @Binding var selectedIndex: Int
     @Binding var isFavorite: Bool
     var showFavorite: Bool = true
-    var height: CGFloat = 260
+    var height: CGFloat = 240
 
     @Environment(\.layoutDirection) private var layoutDirection
     @ObservedObject private var appSettings = AppSettings.shared
@@ -55,9 +55,9 @@ struct ImageCarousel: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .flipsForRightToLeftLayoutDirection(true)
-            .frame(height: height)
-            .background(AppColor.surface)
-            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
+			.frame(width: 340 ,height: height)
+			.background(.white)
+			.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
 
             if showFavorite {
                 FavoriteButton(isFavorite: $isFavorite, size: 40)

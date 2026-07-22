@@ -19,6 +19,40 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(PharmacySetupRepositoryProtocol.self) { container in
+            PharmacySetupRepository(
+                remoteDataSource: container.resolve(PharmacyAuthenticationRemoteDataSourceProtocol.self)
+            )
+        }
+
+        container.register(PharmacyInvitationRemoteDataSourceProtocol.self) { container in
+            PharmacyInvitationRemoteDataSource(
+                networkService: container.resolve(NetworkServiceProtocol.self)
+            )
+        }
+
+        container.register(PharmacyInvitationRepositoryProtocol.self) { container in
+            PharmacyInvitationRepository(
+                remoteDataSource: container.resolve(PharmacyInvitationRemoteDataSourceProtocol.self)
+            )
+        }
+
+        container.register(PharmacyRefreshSessionUseCaseProtocol.self) { container in
+            PharmacyRefreshSessionUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
+            )
+        }
+
+        container.register(TokenRefreshing.self) { container in
+            PharmacyAuthTokenRefresher(
+                refreshSessionUseCaseFactory: { @MainActor [weak container] in
+                    guard let container else { fatalError("Container deallocated") }
+                    return container.resolve(PharmacyRefreshSessionUseCaseProtocol.self)
+                },
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
         container.register(PharmacyRegistrationUseCaseProtocol.self) { container in
             PharmacyRegistrationUseCase(
                 repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
@@ -39,17 +73,44 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(GetPharmacyMembershipUseCaseProtocol.self) { container in
+            GetPharmacyMembershipUseCase(
+                repository: container.resolve(PharmacySetupRepositoryProtocol.self)
+            )
+        }
+
+        container.register(CreatePharmacyUseCaseProtocol.self) { container in
+            CreatePharmacyUseCase(
+                repository: container.resolve(PharmacySetupRepositoryProtocol.self)
+            )
+        }
+
+        container.register(ManagePharmacyInvitationsUseCaseProtocol.self) { container in
+            ManagePharmacyInvitationsUseCase(
+                repository: container.resolve(PharmacyInvitationRepositoryProtocol.self)
+            )
+        }
+
+        container.register(PharmacyLocationProviding.self) { _ in
+            PharmacyLocationService()
+        }
+
         container.register(PharmacyAuthenticationActions.self) { container in
             .live(
                 loginUseCase: container.resolve(PharmacyLoginUseCaseProtocol.self),
                 registrationUseCase: container.resolve(PharmacyRegistrationUseCaseProtocol.self),
-                verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self)
+                verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self),
+                membershipUseCase: container.resolve(GetPharmacyMembershipUseCaseProtocol.self),
+                invitationUseCase: container.resolve(ManagePharmacyInvitationsUseCaseProtocol.self),
+                createPharmacyUseCase: container.resolve(CreatePharmacyUseCaseProtocol.self),
+                tokenStore: container.resolve(TokenStoreProtocol.self)
             )
         }
 
         container.register(PharmacyAuthenticationFactory.self) { container in
             PharmacyAuthenticationFactory(
-                actions: container.resolve(PharmacyAuthenticationActions.self)
+                actions: container.resolve(PharmacyAuthenticationActions.self),
+                locationProvider: container.resolve(PharmacyLocationProviding.self)
             )
         }
     }

@@ -198,6 +198,8 @@ private final class LoginDataSourceSpy: AuthNetworkDataSourceProtocol {
     func verify(request: VerificationRequestDTO) async throws -> AuthSessionDTO {
         throw LoginTestError.invalidResponseType
     }
+
+    func logout(request: LogoutRequestDTO) async throws {}
 }
 
 private final class LoginTokenStoreSpy: TokenStoreProtocol {

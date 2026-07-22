@@ -1,7 +1,7 @@
 //  PharmacyRequestDetailsHeaderView.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
@@ -24,7 +24,7 @@ struct PharmacyRequestDetailsHeaderView: View {
             Spacer()
 
             VStack(spacing: 2) {
-                Text("تفاصيل الطلب")
+                Text("pharmacy.request.details.title".localized)
                     .font(PharmacyColor.sans(18, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 

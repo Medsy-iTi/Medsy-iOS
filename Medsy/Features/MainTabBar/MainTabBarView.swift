@@ -26,22 +26,27 @@ struct MainTabBarView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-                switch coordinator.selectedTab {
+            switch coordinator.selectedTab {
                 case .home:
                     HomeCoordinatorView(
                         requestedRoute: $requestedHomeRoute,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                        onTabBarHiddenChange: { isTabBarHidden = $0 },
+                        onOpenCart: { coordinator.select(.cart) }
                     )
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
                         .onAppear { isTabBarHidden = false }
                 case .cart:
-                    CartView(
+                    CartCoordinatorView(
                         viewModel: cartViewModel,
-                        onSearch: openSearchFromCart
+                        onSearch: openSearchFromCart,
+                        onTabBarHiddenChange: { isTabBarHidden = $0 }
                     )
                     .onAppear { isTabBarHidden = false }
-                case .favorites, .offers, .orders:
+                case .orders:
+                    OrdersCoordinatorView()
+                        .onAppear { isTabBarHidden = false }
+                case .favorites, .offers:
                     VStack {
                         Spacer()
                         Text("Tab \(coordinator.selectedTab.rawValue)")
@@ -52,6 +57,9 @@ struct MainTabBarView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(AppColor.bg)
                     .onAppear { isTabBarHidden = false }
+                case .orders:
+                    OrdersCoordinatorView(onSearch: openSearch)
+                        .onAppear { isTabBarHidden = false }
                 }
             }
             .environment(cartViewModel)
@@ -65,7 +73,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.itemCount)
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.distinctProductCount)
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
@@ -102,6 +110,10 @@ struct MainTabBarView: View {
     }
 
     private func openSearchFromCart() {
+        openSearch()
+    }
+
+    private func openSearch() {
         requestedHomeRoute = .search("")
         coordinator.select(.home)
     }

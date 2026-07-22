@@ -113,6 +113,157 @@
 "pharmacy.auth.brand.tagline" = "للصيدليات";
 "pharmacy.auth.or" = "أو";
 
+"pharmacy.setup.checking_membership" = "جارٍ التحقق من صيدليتك…";
+"pharmacy.setup.decision.title" = "هل لديك صيدلية؟";
+"pharmacy.setup.decision.subtitle" = "أضف صيدليتك لبدء استقبال وإدارة طلبات الأدوية.";
+"pharmacy.setup.decision.add" = "إضافة صيدليتك";
+"pharmacy.setup.decision.back_to_sign_in" = "العودة لتسجيل الدخول";
+"pharmacy.setup.add.title" = "إضافة صيدليتك";
+"pharmacy.setup.add.subtitle" = "أدخل بيانات الصيدلية وحدد موقعها وارفع مستند الترخيص.";
+"pharmacy.setup.name" = "اسم الصيدلية";
+"pharmacy.setup.phone" = "رقم هاتف الصيدلية";
+"pharmacy.setup.add.action" = "إضافة الصيدلية";
+"pharmacy.setup.location.current" = "الموقع الحالي";
+"pharmacy.setup.location.map" = "اختيار من الخريطة";
+"pharmacy.setup.location.resolving" = "جارٍ تحديد المدينة والمحافظة…";
+"pharmacy.setup.location.city" = "المدينة";
+"pharmacy.setup.location.province" = "المحافظة";
+"pharmacy.setup.location.selected" = "الموقع المحدد";
+"pharmacy.setup.location.not_selected" = "حدد موقعًا";
+"pharmacy.setup.location.permission_denied" = "تم تعطيل الوصول للموقع. اسمح بالوصول من الإعدادات أو اختر مكانًا على الخريطة.";
+"pharmacy.setup.location.unavailable" = "تعذر تحديد موقعك الحالي. حاول مرة أخرى أو اختر مكانًا على الخريطة.";
+"pharmacy.setup.location.address_unavailable" = "تعذر تحديد المدينة والمحافظة لهذا الموقع. اختر نقطة أخرى.";
+"pharmacy.setup.license.select" = "اختيار ترخيص الصيدلية";
+"pharmacy.setup.license.requirements" = "PDF فقط، بحد أقصى 10 ميجابايت";
+"pharmacy.setup.map.hint" = "اضغط على الخريطة لتحديد موقع الصيدلية. سيتم ملء المدينة والمحافظة تلقائيًا.";
+"pharmacy.setup.map.confirm" = "استخدام هذا الموقع";
+"pharmacy.setup.map.pin" = "الصيدلية";
+"pharmacy.setup.map.accessibility" = "خريطة لاختيار موقع الصيدلية";
+"pharmacy.setup.validation.required" = "أكمل جميع بيانات الصيدلية والموقع والترخيص.";
+"pharmacy.setup.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
+"pharmacy.setup.validation.location" = "حدد موقعًا صالحًا للصيدلية.";
+"pharmacy.setup.validation.pdf" = "يجب أن يكون ترخيص الصيدلية ملف PDF صالحًا.";
+"pharmacy.setup.validation.size" = "يجب ألا يتجاوز ترخيص الصيدلية 10 ميجابايت.";
+"pharmacy.setup.validation.unreadable" = "تعذرت قراءة ملف الترخيص المحدد.";
+
+
+
+/*Profile*/
+"profile_title" = "الملف الشخصي";
+"settings_title" = "الإعدادات";
+
+"verified_pharmacy" = "صيدلية معتمدة";
+"unverified_pharmacy" = "قيد المراجعة";
+"rating_count_suffix" = "تقييم";
+"pharmacy_details_title" = "بيانات الصيدلية";
+
+"phone_number_title" = "رقم الهاتف";
+"change_action" = "تغيير";
+"change_phone_title" = "تغيير رقم الهاتف";
+
+"license_title" = "الترخيص";
+"registered_location_title" = "الموقع المسجل";
+"edit_data_request_title" = "طلب تعديل بيانات";
+"edit_data_request_subtitle" = "طلب تعديل البيانات من الإدارة";
+
+"order_receiving_status_title" = "حالة استقبال الطلبات";
+"status_open" = "مفتوح";
+"status_closed" = "مغلق";
+
+"language_title" = "اللغة";
+"arabic" = "العربية";
+"english" = "الإنجليزية";
+
+"theme_title" = "المظهر";
+"theme_light" = "فاتح";
+"theme_dark" = "داكن";
+
+"logout_title" = "تسجيل الخروج";
+"logout_confirmation_title" = "تسجيل الخروج";
+"logout_confirmation_message" = "هل أنت متأكد أنك تريد تسجيل الخروج؟";
+"logout_confirm_action" = "تسجيل الخروج";
+"cancel" = "إلغاء";
+
+"loading" = "جارِ التحميل...";
+"retry" = "إعادة المحاولة";
+"profile_generic_error" = "تعذر تحميل البيانات، حاول مرة أخرى";
+"coming_soon" = "قريباً";
+
+// Edit Profile
+"profile.edit.title" = "تعديل الملف الشخصي";
+"profile.change_photo" = "تغيير الصورة";
+"profile.full_name" = "الاسم الكامل";
+"profile.email" = "البريد الإلكتروني";
+"profile.not_set" = "غير محدد";
+"profile.phone" = "رقم الهاتف";
+"profile.phone_support_note" = "لتغيير رقم هاتفك، يرجى التواصل مع الدعم.";
+"profile.home_address" = "عنوان المنزل";
+"profile.home_address.placeholder" = "أدخل عنوانك بالكامل";
+"profile.address_error" = "يرجى إدخال عنوان صحيح.";
+"profile.date_of_birth" = "تاريخ الميلاد";
+"profile.save_changes" = "حفظ التغييرات";
+
+// Pharmacy Card
+"pharmacy_card.your_pharmacy" = "صيدليتك";
+"pharmacy_card.unknown" = "صيدلية بدون اسم";
+"pharmacy_card.edit" = "تعديل بيانات الصيدلية";
+"pharmacy_card.leave" = "مغادرة الصيدلية";
+"pharmacy_card.leave_confirm_title" = "مغادرة الصيدلية";
+"pharmacy_card.leave_confirm_message" = "هل أنت متأكد من رغبتك في مغادرة هذه الصيدلية؟ سيتم تسجيل خروجك وستفقد الوصول إلى جميع ميزات الصيدلية.";
+"pharmacy_card.leave_confirm_action" = "مغادرة";
+"pharmacy_card.not_assigned" = "غير مسجّل في صيدلية";
+"pharmacy_card.not_assigned_subtitle" = "تواصل مع مدير الصيدلية لإضافتك.";
+
+// Edit Pharmacy
+"pharmacy_edit.title" = "تعديل بيانات الصيدلية";
+"pharmacy_edit.name" = "اسم الصيدلية";
+"pharmacy_edit.name.placeholder" = "أدخل اسم الصيدلية";
+"pharmacy_edit.address" = "العنوان";
+"pharmacy_edit.address.placeholder" = "أدخل عنوان الصيدلية";
+"pharmacy_edit.phone" = "رقم الهاتف";
+"pharmacy_edit.phone.placeholder" = "أدخل رقم هاتف الصيدلية";
+
+// Pharmacy Team (admin)
+"pharmacy_team.title" = "فريق الصيدلية";
+"pharmacy_team.empty" = "لا يوجد صيادلة آخرون للإدارة.";
+"pharmacy_team.edit" = "تعديل الصيدلي";
+"pharmacy_team.remove" = "إزالة الصيدلي";
+"pharmacy_team.edit_title" = "تعديل بيانات الصيدلي";
+"pharmacy_team.validation_name" = "الاسم الأول واسم العائلة مطلوبان.";
+"pharmacy_team.validation_email" = "يرجى إدخال بريد إلكتروني صحيح.";
+"pharmacy_team.remove_confirm_title" = "إزالة الصيدلي";
+"pharmacy_team.remove_confirm_message" = "إزالة %@ من صيدليتك؟ سيفقد الوصول إلى هذه الصيدلية.";
+"pharmacy_team.remove_confirm_action" = "إزالة";
+
+"profile.first_name" = "الاسم الأول";
+"profile.last_name" = "اسم العائلة";
+
+// Delete Pharmacy (admin)
+"pharmacy_card.delete" = "حذف الصيدلية";
+"pharmacy_card.delete_confirm_title" = "حذف الصيدلية";
+"pharmacy_card.delete_confirm_message" = "سيؤدي هذا إلى حذف الصيدلية نهائياً وإزالة جميع الصيادلة. سيتم تسجيل خروجك.";
+"pharmacy_card.delete_confirm_action" = "حذف";
+
+// User Profile
+"profile.user_profile" = "الملف الشخصي";
+"profile.pharmacy_profile" = "ملف الصيدلية";
+"profile.pharmacists_count" = "%d صيدلي";
+
+// Invite Pharmacist
+"pharmacy_team.invite" = "دعوة صيدلي";
+"pharmacy_team.invite_header" = "دعوة صيدلي";
+"pharmacy_team.invite_title" = "دعوة صيدلي للانضمام";
+"pharmacy_team.invite_subtitle" = "أرسل دعوة للانضمام إلى %@";
+"pharmacy_team.invite_email" = "البريد الإلكتروني";
+"pharmacy_team.invite_email_placeholder" = "أدخل بريد الصيدلي الإلكتروني";
+"pharmacy_team.invite_button" = "إرسال الدعوة";
+
+// Remove Pharmacist
+"pharmacy_team.remove_header" = "إزالة الصيدلي";
+"pharmacy_team.remove_title" = "إزالة الصيدلي";
+"pharmacy_team.remove_message" = "هل أنت متأكد من رغبتك في إزالة %@ من الصيدلية؟";
+"pharmacy_team.remove_warning" = "لا يمكن التراجع عن هذا الإجراء. سيفقد الصيدلي الوصول إلى الصيدلية فوراً.";
+"pharmacy_team.remove_button" = "إزالة الصيدلي";
 /* Request Details */
 "pharmacy.request.details.title" = "تفاصيل الطلب";
 "pharmacy.request.customer_info" = "معلومات العميل";
@@ -122,4 +273,61 @@
 "pharmacy.request.accept" = "قبول الطلب";
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+/* Pharmacist Invitations */
+"common.error" = "حدث خطأ";
+"common.ok" = "حسنًا";
+"common.retry" = "إعادة المحاولة";
+"pharmacy.invitations.notifications" = "دعوات الصيدليات";
+"pharmacy.invitations.badge_count" = "%d دعوات معلقة";
+"pharmacy.invitations.title" = "دعوات الصيدليات";
+"pharmacy.invitations.subtitle" = "راجع دعوات الصيدليات التي ترغب في انضمامك إلى فريقها.";
+"pharmacy.invitations.invited_to_join" = "تمت دعوتك للانضمام إلى هذه الصيدلية.";
+"pharmacy.invitations.received_on" = "وصلت في %@";
+"pharmacy.invitations.pending" = "معلقة";
+"pharmacy.invitations.accept" = "قبول";
+"pharmacy.invitations.decline" = "رفض";
+"pharmacy.invitations.loading" = "جارٍ تحميل الدعوات…";
+"pharmacy.invitations.empty.title" = "لا توجد دعوات معلقة";
+"pharmacy.invitations.empty.message" = "ستظهر دعوات الصيدليات الجديدة هنا.";
+"pharmacy.invitations.error.title" = "تعذر تحميل الدعوات";
+
+/* Orders List */
+"pharmacy.orders.customer.fallback" = "عميل رقم %@";
+"pharmacy.orders.address.fallback" = "العنوان غير متوفر";
+"pharmacy.orders.retry" = "إعادة المحاولة";
+"pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
+"pharmacy.orders.noData" = "لا توجد طلبات.";
+"common.somethingWentWrong" = "حدث خطأ ما.";
+
+/* Prescription & Side-by-side Validation */
+"pharmacy.request.prescription_image" = "صورة الروشتة";
+"pharmacy.request.prescription_subtitle" = "صورة الروشتة بخط اليد للتحقق من الأصناف والكميات";
+"pharmacy.request.compare_side_by_side" = "مقارنة الروشتة بالأصناف المستخرجة";
+"pharmacy.request.view_full_image" = "تكبير الروشتة";
+"pharmacy.request.ai_extracted_items" = "الأصناف المستخرجة بواسطة الذكاء الاصطناعي";
+"pharmacy.request.unit_price" = "سعر الوحدة";
+"pharmacy.request.unit_price_placeholder" = "أدخل السعر";
+"pharmacy.request.quantity_label" = "الكمية: %d";
+"pharmacy.request.offer_notes" = "ملاحظات العرض للعميل";
+"pharmacy.request.offer_notes_placeholder" = "أدخل تفاصيل العرض أو أي ملاحظات إضافية…";
+"pharmacy.request.submit_offer" = "إرسال العرض للعميل";
+"pharmacy.request.subtotal" = "المجموع الفرعي";
+"pharmacy.request.delivery_fee" = "رسوم التوصيل";
+"pharmacy.request.total" = "الإجمالي النهائي";
+
+/* UI Dialogs & Common Request Keys */
+"pharmacy.request.currency_unit" = "جنيه";
+"pharmacy.request.alternative_selected" = "تم تحديد بديل";
+"pharmacy.request.prescription_handwritten" = "صورة الروشتة بخط اليد";
+"pharmacy.request.prescription_tap_to_enlarge" = "اضغط للتكبير والتحقق من الأصناف والجرعات";
+"pharmacy.request.alert_add_alternative" = "إضافة دواء بديل";
+"pharmacy.request.alternative_placeholder" = "اسم الدواء البديل";
+"pharmacy.request.confirm_alternative" = "تأكيد البديـل";
+"pharmacy.request.cancel" = "إلغاء";
+"pharmacy.request.alternative_message" = "أدخل اسم الدواء البديل المقترح للعميل في حالة عدم توفر المنتج الأصلي.";
+"pharmacy.request.preview_prescription" = "معاينة صورة الروشتة بخط اليد";
+"common.close" = "إغلاق";
+"pharmacy.request.no_data" = "لا توجد بيانات للطلب";
+"pharmacy.request.loading" = "جارٍ تحميل تفاصيل الطلب…";
+
 

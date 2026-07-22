@@ -28,63 +28,178 @@ struct PrescriptionMedicineRow: View {
     let medicine: PrescriptionMedicineDisplay
     let onConfirm: () -> Void
     let onChooseAlternative: () -> Void
+    let onIncreaseQuantity: () -> Void
+    let onDecreaseQuantity: () -> Void
+    let onDelete: () -> Void
 
     private var showsWarning: Bool {
         medicine.needsReview && !medicine.isConfirmed
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
-            HStack(spacing: MedsySpacing.sm) {
-                Image(systemName: showsWarning ? "exclamationmark.triangle.fill" : "pills.fill")
-                    .foregroundStyle(showsWarning ? AppColor.warningYellow : AppColor.green)
-                    .frame(width: 40, height: 40)
-                    .background(showsWarning ? Color(hex: "#FEF3C7") : AppColor.lightGreen, in: Circle())
+        VStack(spacing: 0) {
+            header
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(medicine.name)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(AppColor.textPrim)
-                    Text(medicine.details)
-                        .font(.caption)
+            VStack(alignment: .leading, spacing: MedsySpacing.md) {
+                if showsWarning {
+                    Text("prescription.review.unclearMessage".localized)
+                        .font(MedsyFont.caption(12))
                         .foregroundStyle(AppColor.textSec)
+                        .padding(.top, MedsySpacing.xs)
                 }
 
-                Spacer()
+                HStack(alignment: .center, spacing: MedsySpacing.md) {
+                    thumbnail
 
-                VStack(alignment: .trailing, spacing: 3) {
-                    Text(medicine.price)
-                        .font(.subheadline.weight(.bold))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(medicine.name)
+                            .font(MedsyFont.title(15))
+                            .foregroundStyle(AppColor.textPrim)
+                            .lineLimit(2)
+
+                        Text(medicine.details)
+                            .font(MedsyFont.caption(12))
+                            .foregroundStyle(AppColor.textSec)
+                            .lineLimit(2)
+                    }
+
+                    Spacer(minLength: MedsySpacing.sm)
+
+                    VStack(alignment: .trailing, spacing: 3) {
+                        Text(medicine.price)
+                            .font(MedsyFont.price(15))
+                            .foregroundStyle(AppColor.green)
+                            .lineLimit(1)
+
+                        Text(medicine.unit.localized)
+                            .font(MedsyFont.caption(10))
+                            .foregroundStyle(AppColor.textSec)
+                    }
+                }
+
+                if showsWarning {
+                    HStack(spacing: MedsySpacing.sm) {
+                        Button(action: onConfirm) {
+                            Text("prescription.review.confirm".localized)
+                                .font(MedsyFont.button(13))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.white)
+                        .background(AppColor.green, in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+
+                        Button(action: onChooseAlternative) {
+                            Text("prescription.review.chooseAnother".localized)
+                                .font(MedsyFont.button(13))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                        }
+                        .buttonStyle(.plain)
                         .foregroundStyle(AppColor.textPrim)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                                .stroke(AppColor.border, lineWidth: 1)
+                        )
+                    }
+                } else {
+                    HStack {
+                        PrescriptionQuantityStepper(
+                            quantity: medicine.quantity,
+                            onDecrease: onDecreaseQuantity,
+                            onIncrease: onIncreaseQuantity
+                        )
 
-                    if medicine.isConfirmed {
-                        Label("prescription.review.confirmed".localized, systemImage: "checkmark.circle.fill")
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(AppColor.successGreen)
-                    } else if medicine.needsReview {
-                        Text("prescription.needsReview".localized)
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(AppColor.warningYellow)
+                        Spacer()
+
+                        Button(action: onChooseAlternative) {
+                            Label("prescription.review.edit".localized, systemImage: "pencil")
+                                .font(MedsyFont.button(12))
+                                .foregroundStyle(AppColor.textPrim)
+                                .frame(height: 36)
+                                .padding(.horizontal, MedsySpacing.md)
+                                .overlay(
+                                    Capsule()
+                                        .stroke(AppColor.border, lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
+            .padding(MedsySpacing.md)
+        }
+        .background(AppColor.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(showsWarning ? Color(hex: "#FDE68A") : AppColor.border, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
 
-            if !medicine.isConfirmed {
-                HStack(spacing: MedsySpacing.sm) {
-                    Button("prescription.review.chooseAnother".localized, action: onChooseAlternative)
-                        .buttonStyle(.bordered)
-                        .tint(AppColor.green)
+    private var header: some View {
+        HStack(spacing: MedsySpacing.xs) {
+            Image(systemName: showsWarning ? "magnifyingglass" : "checkmark")
+                .font(.system(size: 10, weight: .bold))
 
-                    Button("prescription.review.confirm".localized, action: onConfirm)
-                        .buttonStyle(.borderedProminent)
-                        .tint(AppColor.green)
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
+            Text(showsWarning ? "prescription.review.needsReview".localized : "prescription.review.recognized".localized)
+                .font(MedsyFont.caption(11).weight(.semibold))
+
+            Spacer()
+
+            Button(action: onDelete) {
+                Image(systemName: "trash")
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("common.delete".localized)
+        }
+        .foregroundStyle(showsWarning ? AppColor.warningYellow : AppColor.green)
+        .padding(.horizontal, MedsySpacing.md)
+        .padding(.vertical, MedsySpacing.sm)
+        .background(showsWarning ? Color(hex: "#FFFBEB") : AppColor.lightGreen.opacity(0.8))
+    }
+
+    private var thumbnail: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
+                .fill(showsWarning ? Color(hex: "#EFF6FF") : AppColor.lightGreen.opacity(0.65))
+
+            Image(systemName: medicine.imageName)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(showsWarning ? Color(hex: "#64748B") : AppColor.green)
+        }
+        .frame(width: 48, height: 48)
+    }
+}
+
+private struct PrescriptionQuantityStepper: View {
+    let quantity: Int
+    let onDecrease: () -> Void
+    let onIncrease: () -> Void
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Button(action: onDecrease) {
+                Image(systemName: "minus")
+                    .frame(width: 34, height: 34)
+            }
+
+            Text("\(quantity)")
+                .font(MedsyFont.button(13))
+                .frame(width: 28, height: 34)
+
+            Button(action: onIncrease) {
+                Image(systemName: "plus")
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(AppColor.green, in: Circle())
             }
         }
-        .padding()
-        .background(AppColor.card, in: RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous).stroke(AppColor.border))
+        .font(.system(size: 12, weight: .bold))
+        .foregroundStyle(AppColor.textPrim)
+        .background(AppColor.card, in: Capsule())
+        .overlay(Capsule().stroke(AppColor.border, lineWidth: 1))
     }
 }
 
