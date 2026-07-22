@@ -22,6 +22,6 @@ struct Constants {
     }()
 
     static let baseURL = secrets["API_BASE_URL"] as? String ?? ""
-    static let geminiKey = secrets["GEMINI_API_KEY"] as? String ?? ""
+    static let aiKey = secrets["AI_API_KEY"] as? String ?? ""
     static var customerId: String?
 }
