@@ -85,6 +85,10 @@ final class CartViewModel: CartViewModelProtocol {
         items.reduce(0) { $0 + $1.quantity }
     }
 
+    var distinctProductCount: Int {
+        Set(items.map(\.duplicateIdentity)).count
+    }
+
     var estimatedTotal: Double {
         items.reduce(0) { $0 + $1.lineTotal }
     }
