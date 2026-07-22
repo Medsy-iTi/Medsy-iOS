@@ -1,93 +1,158 @@
 //
 //  PharmacyOrdersViewModel.swift
-//  Medsy-Pharmacy
+//  Medsy
 //
-//  Created by Ehab Salah on 20/07/2026.
+//  Created by Shahudaa on 21/07/2026.
 //
 
 import Foundation
 import Observation
 
+enum PharmacyOrdersResolutionError: Error, LocalizedError {
+	case noPharmacy
+
+	var errorDescription: String? {
+		switch self {
+			case .noPharmacy:
+				return "pharmacy.orders.no_pharmacy".localized
+		}
+	}
+}
+
 @MainActor
 @Observable
 final class PharmacyOrdersViewModel {
-    var selectedFilter: PharmacyOrdersFilter = .all
-    var searchText = ""
+	enum LoadState: Equatable {
+		case idle
+		case loading
+		case loaded
+		case failed(String)
+	}
 
-    private(set) var orders: [PharmacyOrderListItem]
+	var selectedFilter: PharmacyOrdersFilter = .all
+	var searchText = ""
+	private(set) var orders: [PharmacyOrderListItem] = []
+	private(set) var loadState: LoadState = .idle
+	private(set) var isLoadingNextPage = false
 
-    init(orders: [PharmacyOrderListItem]? = nil) {
-        self.orders = orders ?? Self.sampleOrders
-    }
+	private let fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol
+	private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
+	private let appSettings: PharmacyAppSettings
+	private let identityProvider: PharmacyIdentityProviding
+	private let pageSize = 20
 
-    var visibleOrders: [PharmacyOrderListItem] {
-        orders.filter { order in
-            matchesSelectedFilter(order) && matchesSearchText(order)
-        }
-    }
+	private var currentPage = 0
+	private var isLastPage = false
 
-    func clearSearch() {
-        searchText = ""
-    }
+	init(
+		fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol,
+		getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
+		appSettings: PharmacyAppSettings,
+		identityProvider: PharmacyIdentityProviding
+	) {
+		self.fetchOrdersUseCase = fetchOrdersUseCase
+		self.getProfileUseCase = getProfileUseCase
+		self.appSettings = appSettings
+		self.identityProvider = identityProvider
+	}
 
-    func handleAction(for order: PharmacyOrderListItem) {
-        // UI-only for now. This is the integration point for the order workflow.
-    }
+	var visibleOrders: [PharmacyOrderListItem] {
+		orders.filter { matchesSelectedFilter($0) && matchesSearchText($0) }
+	}
 
-    private func matchesSelectedFilter(_ order: PharmacyOrderListItem) -> Bool {
-        switch selectedFilter {
-        case .all:
-            true
-        case .new:
-            order.status == .new
-        case .preparing:
-            order.status == .preparing
-        case .delivered:
-            order.status == .delivered
-        }
-    }
+	var allOrdersCount: Int {
+		orders.count
+	}
 
-    private func matchesSearchText(_ order: PharmacyOrderListItem) -> Bool {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return true }
+	var deliveredOrdersCount: Int {
+		orders.filter { $0.status == .delivered }.count
+	}
+	var newOrdersCount: Int {
+		orders.filter { $0.status == .new }.count
+	}
 
-        return order.id.localizedCaseInsensitiveContains(query)
-            || order.customerName.localizedCaseInsensitiveContains(query)
-            || order.phoneNumber.localizedCaseInsensitiveContains(query)
-    }
-}
+	var preparingOrdersCount: Int {
+		orders.filter { $0.status == .preparing }.count
+	}
+	func loadInitial() async {
+		guard loadState != .loading else { return }
+		loadState = .loading
+		currentPage = 0
+		isLastPage = false
 
-private extension PharmacyOrdersViewModel {
-    static let sampleOrders = [
-        PharmacyOrderListItem(
-            id: "1258",
-            customerName: "pharmacy.orders.customer.ahmed".localized,
-            phoneNumber: "010 1234 5678",
-            address: "pharmacy.orders.address.maadi".localized,
-            paymentMethod: .cash,
-            amount: 165,
-            minutesAgo: 5,
-            status: .new
-        ),
-        PharmacyOrderListItem(
-            id: "1257",
-            customerName: "pharmacy.orders.customer.menna".localized,
-            phoneNumber: "010 9876 5432",
-            address: "pharmacy.orders.address.nozha".localized,
-            paymentMethod: .visa(lastFourDigits: "3456"),
-            amount: 230,
-            minutesAgo: 15,
-            status: .preparing
-        ),
-        PharmacyOrderListItem(
-            id: "1256",
-            customerName: "pharmacy.orders.customer.youssef".localized,
-            phoneNumber: "011 2345 6789",
-            address: "pharmacy.orders.address.dar_elsalam".localized,
-            paymentMethod: .cash,
-            amount: 185,
-            minutesAgo: 35,
-            status: .delivered
-        )
-    ]
+		do {
+			let pharmacyId = try await resolvePharmacyId()
+			let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: currentPage, size: pageSize)
+			orders = page.orders.map(PharmacyOrderMapper.mapToListItem)
+			isLastPage = page.isLastPage
+			loadState = .loaded
+		} catch let error as PharmacyOrdersResolutionError {
+			loadState = .failed(error.errorDescription ?? "Something went wrong.")
+		} catch {
+			loadState = .failed((error as? NetworkError)?.errorDescription ?? "Something went wrong.")
+		}
+
+	}
+
+	func refresh() async {
+		await loadInitial()
+	}
+
+	func loadNextPageIfNeeded(currentItem: PharmacyOrderListItem) async {
+		guard currentItem.id == visibleOrders.last?.id,
+			  !isLastPage,
+			  !isLoadingNextPage,
+			  loadState == .loaded,
+			  let pharmacyId = identityProvider.currentPharmacyId else { return }
+
+		isLoadingNextPage = true
+		defer { isLoadingNextPage = false }
+
+		let nextPage = currentPage + 1
+		do {
+			let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: nextPage, size: pageSize)
+			orders.append(contentsOf: page.orders.map(PharmacyOrderMapper.mapToListItem))
+			currentPage = nextPage
+			isLastPage = page.isLastPage
+		} catch {
+
+		}
+	}
+
+	func clearSearch() {
+		searchText = ""
+	}
+
+	func handleAction(for order: PharmacyOrderListItem) {
+	}
+
+
+	private func resolvePharmacyId() async throws -> Int {
+		if let cached = identityProvider.currentPharmacyId {
+			return cached
+		}
+		let profile = try await getProfileUseCase.execute()
+		guard let pharmacyId = profile.pharmacyId else {
+			throw PharmacyOrdersResolutionError.noPharmacy
+		}
+		identityProvider.currentPharmacyId = pharmacyId
+		return pharmacyId
+	}
+
+	private func matchesSelectedFilter(_ order: PharmacyOrderListItem) -> Bool {
+		switch selectedFilter {
+			case .all: true
+			case .new: order.status == .new
+			case .preparing: order.status == .preparing
+			case .delivered: order.status == .delivered
+		}
+	}
+
+	private func matchesSearchText(_ order: PharmacyOrderListItem) -> Bool {
+		let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !query.isEmpty else { return true }
+		return order.id.localizedCaseInsensitiveContains(query)
+		|| order.customerName.localizedCaseInsensitiveContains(query)
+		|| order.phoneNumber.localizedCaseInsensitiveContains(query)
+	}
 }

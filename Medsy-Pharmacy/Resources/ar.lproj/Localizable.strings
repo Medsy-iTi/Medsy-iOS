@@ -290,3 +290,11 @@
 "pharmacy.invitations.empty.title" = "لا توجد دعوات معلقة";
 "pharmacy.invitations.empty.message" = "ستظهر دعوات الصيدليات الجديدة هنا.";
 "pharmacy.invitations.error.title" = "تعذر تحميل الدعوات";
+
+/* Orders List */
+"pharmacy.orders.customer.fallback" = "عميل رقم %@";
+"pharmacy.orders.address.fallback" = "العنوان غير متوفر";
+"pharmacy.orders.retry" = "إعادة المحاولة";
+"pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
+"pharmacy.orders.noData" = "لا توجد طلبات.";
+"common.somethingWentWrong" = "حدث خطأ ما.";
