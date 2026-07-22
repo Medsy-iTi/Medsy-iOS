@@ -277,3 +277,6 @@
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
 
 
+"pharmacy.orders.customer.fallback" = "Customer #%@";
+"pharmacy.orders.address.fallback" = "Address unavailable";
+"pharmacy.orders.retry" = "Retry";

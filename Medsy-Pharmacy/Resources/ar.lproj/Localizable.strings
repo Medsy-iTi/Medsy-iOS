@@ -274,4 +274,7 @@
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
 
-
+/*orders list */
+"pharmacy.orders.customer.fallback" = "عميل رقم %@";
+"pharmacy.orders.address.fallback" = "العنوان غير متوفر";
+"pharmacy.orders.retry" = "إعادة المحاولة";
