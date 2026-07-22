@@ -37,5 +37,13 @@ struct ProfileAssembly: ModuleAssembly {
                 updateCustomerProfileUseCase: container.resolve(UpdateCustomerProfileUseCaseProtocol.self)
             )
         }
+
+		container.register(SearchAddressUseCaseProtocol.self) { _ in
+			SearchAddressUseCase()
+		}
+
+		container.register(ReverseGeocodeAddressUseCaseProtocol.self) { _ in
+			ReverseGeocodeAddressUseCase()
+		}
     }
 }
