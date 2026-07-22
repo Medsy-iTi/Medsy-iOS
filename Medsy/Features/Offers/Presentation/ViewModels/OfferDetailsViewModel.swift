@@ -12,45 +12,49 @@ final class OfferDetailsViewModel {
     var offerDetail: OfferDetailPresentationModel
 
     init(offer: OfferPresentationModel? = nil) {
+        let defaultPharmacyName = "offers.list.pharmacy.nahda".localized
+        let managerSuffix = "offers.details.managerSuffix".localized
+        let defaultManagerName = "محمد أحمد" + managerSuffix
+
         self.offerDetail = OfferDetailPresentationModel(
             id: offer?.id ?? "1",
-            pharmacyName: offer?.pharmacyName ?? "صيدلية النهضة",
-            managerName: "محمد أحمد (المدير)",
+            pharmacyName: offer?.pharmacyName ?? defaultPharmacyName,
+            managerName: defaultManagerName,
             medicines: [
                 OfferMedicineItem(
                     id: "m1",
-                    name: "بانادول اكسترا",
-                    dosage: "20 قرص",
+                    name: "offers.details.med.panadol".localized,
+                    dosage: "offers.details.dosage.panadol".localized,
                     price: 24,
                     isAvailable: true,
                     imageName: "pill.fill"
                 ),
                 OfferMedicineItem(
                     id: "m2",
-                    name: "أموكسيسيلين 500 مجم",
-                    dosage: "16 كبسولة",
+                    name: "offers.details.med.amoxicillin".localized,
+                    dosage: "offers.details.dosage.amoxicillin".localized,
                     price: 12,
                     isAvailable: true,
                     imageName: "cross.vial.fill"
                 ),
                 OfferMedicineItem(
                     id: "m3",
-                    name: "بروفين 400 مجم",
-                    dosage: "10 أقراص",
+                    name: "offers.details.med.brufen".localized,
+                    dosage: "offers.details.dosage.brufen".localized,
                     price: 8,
                     isAvailable: true,
                     imageName: "pills.fill"
                 ),
                 OfferMedicineItem(
                     id: "m4",
-                    name: "فيتامين سي 1000 مجم",
-                    dosage: "10 أقراص",
+                    name: "offers.details.med.vitaminc".localized,
+                    dosage: "offers.details.dosage.vitaminc".localized,
                     price: 4,
                     isAvailable: true,
                     imageName: "leaf.fill"
                 )
             ],
-            pharmacistComment: "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿",
+            pharmacistComment: "offers.details.defaultComment".localized,
             totalPrice: offer?.price ?? 48
         )
     }
