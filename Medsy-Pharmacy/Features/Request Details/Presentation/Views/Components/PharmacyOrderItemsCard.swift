@@ -27,9 +27,7 @@ struct PharmacyOrderItemsCard: View {
             }
 
             VStack(spacing: 12) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    let item = items[index]
-                    
+                ForEach($items) { $item in
                     VStack(alignment: .trailing, spacing: 8) {
                         HStack(alignment: .center, spacing: 12) {
                             HStack(spacing: 4) {
@@ -37,17 +35,14 @@ struct PharmacyOrderItemsCard: View {
                                     .font(PharmacyColor.sans(12, .semibold))
                                     .foregroundStyle(PharmacyColor.textSecondary)
 
-                                TextField("pharmacy.request.unit_price_placeholder".localized, value: Binding(
-                                    get: { items[index].price },
-                                    set: { items[index].price = $0 }
-                                ), format: .number)
-                                .font(PharmacyColor.sans(14, .bold))
-                                .multilineTextAlignment(.center)
-                                .keyboardType(.decimalPad)
-                                .frame(width: 60)
-                                .padding(.vertical, 4)
-                                .padding(.horizontal, 6)
-                                .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.xs, style: .continuous))
+                                TextField("pharmacy.request.unit_price_placeholder".localized, value: $item.price, format: .number)
+                                    .font(PharmacyColor.sans(14, .bold))
+                                    .multilineTextAlignment(.center)
+                                    .keyboardType(.decimalPad)
+                                    .frame(width: 60)
+                                    .padding(.vertical, 4)
+                                    .padding(.horizontal, 6)
+                                    .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
                             }
 
                             Text("\(item.quantity) ×")
@@ -96,11 +91,6 @@ struct PharmacyOrderItemsCard: View {
 
                             Spacer()
                         }
-                    }
-
-                    if index < items.count - 1 {
-                        Divider()
-                            .overlay(PharmacyColor.border)
                     }
                 }
             }
