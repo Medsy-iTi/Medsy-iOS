@@ -43,6 +43,9 @@ struct MainTabBarView: View {
                         onTabBarHiddenChange: { isTabBarHidden = $0 }
                     )
                     .onAppear { isTabBarHidden = false }
+                case .orders:
+                    OrdersCoordinatorView()
+                        .onAppear { isTabBarHidden = false }
                 case .favorites, .offers:
                     VStack {
                         Spacer()
