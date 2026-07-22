@@ -36,7 +36,8 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
             NetworkService(
                 transport: container.resolve(NetworkTransportProtocol.self),
                 requestBuilder: container.resolve(NetworkRequestBuilder.self),
-                tokenStore: container.resolve(TokenStoreProtocol.self)
+                tokenStore: container.resolve(TokenStoreProtocol.self),
+                tokenRefresher: container.resolve(TokenRefreshing.self)
             )
         }
     }

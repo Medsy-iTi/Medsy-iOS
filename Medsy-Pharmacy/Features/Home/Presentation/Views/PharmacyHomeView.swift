@@ -1,13 +1,15 @@
-//
 //  PharmacyHomeView.swift
 //  Medsy-Pharmacy
 //
-//  Created by Ehab Salah on 18/07/2026.
+//  Created by Antoneos Philip on 19/07/2026.
 //
 
 import SwiftUI
 
 struct PharmacyHomeView: View {
+    @State private var selectedOrder: PharmacyHomeOrder? = nil
+    let onViewAllOrders: () -> Void
+
     private let metrics = [
         PharmacyHomeMetric(titleKey: "pharmacy.home.new_orders", value: "23", icon: "bag.fill", tint: PharmacyColor.primary),
         PharmacyHomeMetric(titleKey: "pharmacy.home.preparing", value: "18", icon: "shippingbox.fill", tint: PharmacyColor.secondary),
@@ -27,19 +29,31 @@ struct PharmacyHomeView: View {
                 PharmacyHomeHeaderView()
                 PharmacyHeroCard()
                 PharmacyMetricsGrid(metrics: metrics)
-                PharmacyRecentOrdersView(orders: orders)
-                PharmacyPrimaryButton(title: "pharmacy.home.view_all_orders".localized, action: {})
+                PharmacyRecentOrdersView(
+                    orders: orders,
+                    onSelectOrder: { order in
+                        selectedOrder = order
+                    },
+                    onViewAllOrders: onViewAllOrders
+                )
+                PharmacyPrimaryButton(
+                    title: "pharmacy.home.view_all_orders".localized,
+                    action: onViewAllOrders
+                )
             }
             .padding(.horizontal, PharmacySpacing.md)
             .padding(.top, PharmacySpacing.sm)
             .padding(.bottom, PharmacySpacing.md)
         }
         .background(PharmacyColor.bg)
+        .fullScreenCover(item: $selectedOrder) { _ in
+            PharmacyRequestDetailsView()
+        }
     }
 }
 
 #Preview("Arabic") {
-    PharmacyHomeView()
+    PharmacyHomeView(onViewAllOrders: {})
         .environment(LanguageManager.shared)
         .pharmacyLocalizedEnvironment()
 }

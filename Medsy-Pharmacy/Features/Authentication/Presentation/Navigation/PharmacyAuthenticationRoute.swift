@@ -10,5 +10,7 @@ enum PharmacyAuthenticationRoute: Hashable {
     case registrationDetails
     case accountSetup
     case verification
+    case pharmacySetupDecision
+    case addPharmacy
+    case choosePharmacyLocation
 }
-

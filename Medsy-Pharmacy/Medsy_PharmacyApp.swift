@@ -12,18 +12,27 @@ struct Medsy_PharmacyApp: App {
     private let languageManager: LanguageManager
     private let authenticationFactory: PharmacyAuthenticationFactory
     private let onboardingFactory: PharmacyOnboardingFactory
+    private let homeFactory: PharmacyHomeFactory
+    private let ordersFactory: PharmacyOrdersFactory
     private let coordinator: RootCoordinator
+    @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
     init() {
         PharmacyAppAssembler.shared.assemble(modules: [
             PharmacyCoreAssembly(),
             PharmacyAuthenticationAssembly(),
-            OnboardingModuleAssembly()
+            OnboardingModuleAssembly(),
+			ProfileAssembly(),
+			
+            PharmacyHomeAssembly(),
+            PharmacyOrdersAssembly()
         ])
         
         let container = PharmacyAppAssembler.shared.container
         languageManager = container.resolve(LanguageManager.self)
         authenticationFactory = container.resolve(PharmacyAuthenticationFactory.self)
+        homeFactory = container.resolve(PharmacyHomeFactory.self)
+        ordersFactory = container.resolve(PharmacyOrdersFactory.self)
         
         onboardingFactory = PharmacyOnboardingFactory(
             getPagesUseCase: container.resolve(GetOnboardingPagesUseCaseProtocol.self)
@@ -36,11 +45,13 @@ struct Medsy_PharmacyApp: App {
             ContentView(
                 onboardingFactory: onboardingFactory,
                 authenticationFactory: authenticationFactory,
+                homeFactory: homeFactory,
+                ordersFactory: ordersFactory,
                 coordinator: coordinator
             )
             .pharmacyLocalizedEnvironment()
             .environment(languageManager)
-            .id(languageManager.currentLanguage)
+            .id("\(languageManager.currentLanguage.rawValue)-\(PharmacyAppSettings.shared.isDarkMode)")
         }
     }
 }
