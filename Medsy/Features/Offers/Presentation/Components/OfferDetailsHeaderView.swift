@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct OfferDetailsHeaderView: View {
+    @Environment(LanguageManager.self) private var languageManager
     let pharmacyName: String
     let managerName: String
     let onBack: () -> Void
@@ -25,12 +26,13 @@ struct OfferDetailsHeaderView: View {
             }
 
             Button(action: onBack) {
-                Image(systemName: "arrow.right")
+                Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(AppColor.textPrim)
                     .frame(width: 36, height: 36)
             }
         }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
