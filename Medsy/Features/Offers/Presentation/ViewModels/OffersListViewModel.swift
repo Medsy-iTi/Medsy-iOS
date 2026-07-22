@@ -19,24 +19,24 @@ final class OffersListViewModel {
         offers = [
             OfferPresentationModel(
                 id: "1",
-                pharmacyName: "صيدلية النهضة",
-                subtitle: "أفضل سعر",
+                pharmacyName: "offers.list.pharmacy.nahda".localized,
+                subtitle: "offers.list.subtitle.bestPrice".localized,
                 price: 48,
                 badgeType: .full,
                 isBestOption: true
             ),
             OfferPresentationModel(
                 id: "2",
-                pharmacyName: "صيدلية الشفاء",
-                subtitle: "يحتوي على أدوية غير متوفرة",
+                pharmacyName: "offers.list.pharmacy.shifa".localized,
+                subtitle: "offers.list.subtitle.unavailableMeds".localized,
                 price: 36,
                 badgeType: .partial,
                 isBestOption: false
             ),
             OfferPresentationModel(
                 id: "3",
-                pharmacyName: "عرض من صيدليتين",
-                subtitle: "تغطية كاملة للطلب",
+                pharmacyName: "offers.list.pharmacy.twoPharmacies".localized,
+                subtitle: "offers.list.subtitle.fullCoverage".localized,
                 price: 46,
                 badgeType: .combined,
                 isBestOption: false
@@ -49,6 +49,6 @@ final class OffersListViewModel {
     }
 
     var subtitleText: String {
-        "\(totalOffersCount) عروض متاحة لطلبك"
+        String(format: "offers.list.subtitleFormat".localized, totalOffersCount)
     }
 }
