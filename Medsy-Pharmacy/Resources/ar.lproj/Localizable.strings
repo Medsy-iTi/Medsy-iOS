@@ -278,3 +278,7 @@
 "pharmacy.orders.customer.fallback" = "عميل رقم %@";
 "pharmacy.orders.address.fallback" = "العنوان غير متوفر";
 "pharmacy.orders.retry" = "إعادة المحاولة";
+"pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
+"pharmacy.orders.noData" = "لا توجد طلبات.";
+"common.somethingWentWrong" = "حدث خطأ ما.";
+"common.retry" = "إعادة المحاولة";

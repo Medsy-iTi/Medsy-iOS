@@ -17,15 +17,18 @@ final class PharmacyOrdersCoordinator: Coordinator {
 	private let fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol
 	private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
 	private let appSettings: PharmacyAppSettings
+	let identityProvider: PharmacyIdentityProviding
 
 	init(
 		fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol,
 		getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
-		appSettings: PharmacyAppSettings
+		appSettings: PharmacyAppSettings,
+		identityProvider: PharmacyIdentityProviding
 	) {
 		self.fetchOrdersUseCase = fetchOrdersUseCase
 		self.getProfileUseCase = getProfileUseCase
 		self.appSettings = appSettings
+		self.identityProvider = identityProvider
 	}
 
 	@ViewBuilder
@@ -37,7 +40,8 @@ final class PharmacyOrdersCoordinator: Coordinator {
 		PharmacyOrdersViewModel(
 			fetchOrdersUseCase: fetchOrdersUseCase,
 			getProfileUseCase: getProfileUseCase,
-			appSettings: appSettings
+			appSettings: appSettings,
+			identityProvider: identityProvider
 		)
 	}
 

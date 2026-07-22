@@ -14,9 +14,13 @@ protocol LogoutUseCaseProtocol {
 struct LogoutUseCase: LogoutUseCaseProtocol {
     let repository: ProfileRepositoryProtocol
     let tokenStore: TokenStoreProtocol
+	let pharmacyIdentityProvidor: PharmacyIdentityProviding
+
 
     func execute() async {
         try? await repository.logout()
 		try? tokenStore.clearTokens()
+		pharmacyIdentityProvidor.currentPharmacyId = nil
+
     }
 }
