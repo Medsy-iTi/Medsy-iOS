@@ -22,7 +22,7 @@ enum PrescriptionEndpoint: ApiEndpoint {
     var headers: HTTPHeaders? {
         [
             "Accept": "application/json",
-            "X-Gemini-Api-Key": Constants.geminiKey
+            "X-AI-Api-Key": Constants.geminiKey
         ]
     }
 
