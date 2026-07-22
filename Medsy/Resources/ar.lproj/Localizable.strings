@@ -483,4 +483,18 @@
 "orderReview.summary.total" = "الإجمالي";
 "orderReview.confirmOrder" = "تأكيد الطلب";
 
+/* Order Confirmation */
+"orderConfirm.successTitle" = "تم تأكيد طلبك بنجاح!";
+"orderConfirm.orderNumberLabel" = "رقم الطلب";
+"orderConfirm.orderNumber" = "#MS-250721-001";
+"orderConfirm.deliveryTo" = "التوصيل إلى";
+"orderConfirm.estimatedTimeLabel" = "وقت التجهيز المتوقع";
+"orderConfirm.estimatedTime" = "30 – 45 دقيقة";
+"orderConfirm.paymentMethodLabel" = "طريقة الدفع";
+"orderConfirm.paymentMethod" = "كاش عند الاستلام";
+"orderConfirm.noticeText" = "سيتم إشعارك عند بدء تجهيز الطلب\nيمكنك متابعة حالة الطلب من الصفحة الرئيسية";
+"orderConfirm.trackOrder" = "تتبع الطلب";
+"orderConfirm.backToHome" = "العودة إلى الرئيسية";
+
+
 

@@ -486,4 +486,18 @@
 "orderReview.summary.total" = "Total";
 "orderReview.confirmOrder" = "Confirm Order";
 
+/* Order Confirmation */
+"orderConfirm.successTitle" = "Your order has been confirmed successfully!";
+"orderConfirm.orderNumberLabel" = "Order Number";
+"orderConfirm.orderNumber" = "#MS-250721-001";
+"orderConfirm.deliveryTo" = "Delivery to";
+"orderConfirm.estimatedTimeLabel" = "Estimated Prep Time";
+"orderConfirm.estimatedTime" = "30 – 45 minutes";
+"orderConfirm.paymentMethodLabel" = "Payment Method";
+"orderConfirm.paymentMethod" = "Cash on delivery";
+"orderConfirm.noticeText" = "You will be notified when order preparation begins.\nYou can track order status from home page.";
+"orderConfirm.trackOrder" = "Track Order";
+"orderConfirm.backToHome" = "Back to Home";
+
+
 
