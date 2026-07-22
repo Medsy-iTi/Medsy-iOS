@@ -235,7 +235,8 @@ struct HomeSearchingStatusView: View {
 struct HomeFirstOfferStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
-    
+    var onCompareOffers: (() -> Void)? = nil
+
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
@@ -345,6 +346,7 @@ struct HomeFirstOfferStatusView: View {
             )
             
             Button {
+                onCompareOffers?()
             } label: {
                 Text("home.status.firstOffer.continueCompare".localized)
                     .font(AppColor.sans(15, .bold))
@@ -385,6 +387,7 @@ struct HomeFirstOfferStatusView: View {
 struct HomeMultipleOffersStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var onCompareOffers: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 20) {
@@ -503,6 +506,7 @@ struct HomeMultipleOffersStatusView: View {
                 .clipShape(Capsule())
             
             Button {
+                onCompareOffers?()
             } label: {
                 Text("home.status.multipleOffers.compareOffers".localized)
                     .font(AppColor.sans(15, .bold))
