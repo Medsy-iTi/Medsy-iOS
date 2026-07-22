@@ -27,7 +27,7 @@ struct PharmacyOrderItemsCard: View {
             }
 
             VStack(spacing: 12) {
-                ForEach(items.indices, id: \.self) { index in
+                ForEach(0..<items.count, id: \.self) { index in
                     let item = items[index]
                     
                     VStack(alignment: .trailing, spacing: 8) {
