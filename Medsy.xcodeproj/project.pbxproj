@@ -56,6 +56,7 @@
 		6DCBAAD8300F0D4E004036A1 /* Exceptions for "Medsy" folder in "Medsy" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Features/Orders/Presentation/Views/OrdersCoordinatorView.swift,
 				Info.plist,
 			);
 			target = 7834991830055416001D87B6 /* Medsy */;

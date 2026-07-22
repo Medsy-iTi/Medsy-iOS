@@ -9,12 +9,8 @@ import Alamofire
 enum CategoryEndpoint: ApiEndpoint {
     case fetch(page: Int, size: Int)
 
-    var baseURL: String? {
-        return "http://localhost:8080"
-    }
-
     var path: String {
-        return "/api/v1/categories"
+        return "categories"
     }
 
     var method: HTTPMethod {
