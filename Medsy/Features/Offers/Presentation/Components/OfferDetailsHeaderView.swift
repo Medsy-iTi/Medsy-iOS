@@ -13,35 +13,32 @@ struct OfferDetailsHeaderView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(pharmacyName)
-                    .font(AppColor.sans(20, .bold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-
-                Text(managerName)
-                    .font(AppColor.sans(13))
-                    .foregroundStyle(AppColor.textSec)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-
             Button(action: onBack) {
                 ZStack {
                     Circle()
                         .fill(AppColor.card)
-                        .overlay(
-                            Circle()
-                                .stroke(AppColor.border, lineWidth: 1)
-                        )
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
 
-                    Image(systemName: languageManager.isRTL ? "chevron.right" : "chevron.left")
+                    Image(systemName: "chevron.right")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(AppColor.textPrim)
+                        .flipsForRightToLeftLayoutDirection(false)
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
             }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(pharmacyName)
+                    .font(AppColor.sans(20, .bold))
+                    .foregroundStyle(AppColor.textPrim)
+
+                Text(managerName)
+                    .font(AppColor.sans(13))
+                    .foregroundStyle(AppColor.textSec)
+            }
+
+            Spacer()
         }
-        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }

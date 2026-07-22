@@ -11,28 +11,26 @@ struct OrderReviewHeaderView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("orderReview.title".localized)
-                .font(AppColor.sans(20, .bold))
-                .foregroundStyle(AppColor.textPrim)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-
             Button(action: onBack) {
                 ZStack {
                     Circle()
                         .fill(AppColor.card)
-                        .overlay(
-                            Circle()
-                                .stroke(AppColor.border, lineWidth: 1)
-                        )
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
 
-                    Image(systemName: languageManager.isRTL ? "chevron.right" : "chevron.left")
+                    Image(systemName: "chevron.right")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(AppColor.textPrim)
+                        .flipsForRightToLeftLayoutDirection(false)
                 }
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
             }
+
+            Text("orderReview.title".localized)
+                .font(AppColor.sans(20, .bold))
+                .foregroundStyle(AppColor.textPrim)
+
+            Spacer()
         }
-        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
