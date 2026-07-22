@@ -16,7 +16,7 @@ struct PharmacyOrdersAssembly: PharmacyModuleAssembly {
 		}
 
 		container.register(PharmacyIdentityProviding.self) { c in
-			PharmacySessionSettings.shared 
+			PharmacySessionSettings.shared
 		}
 
 		container.register(PharmacyOrdersFactory.self) { c in

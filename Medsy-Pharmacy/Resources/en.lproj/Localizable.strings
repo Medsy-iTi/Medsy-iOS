@@ -275,12 +275,28 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+/* Pharmacist Invitations */
+"common.error" = "Something went wrong";
+"common.ok" = "OK";
+"common.retry" = "Retry";
+"pharmacy.invitations.notifications" = "Pharmacy invitations";
+"pharmacy.invitations.badge_count" = "%d pending invitations";
+"pharmacy.invitations.title" = "Pharmacy invitations";
+"pharmacy.invitations.subtitle" = "Review invitations from pharmacies that want you to join their team.";
+"pharmacy.invitations.invited_to_join" = "You have been invited to join this pharmacy.";
+"pharmacy.invitations.received_on" = "Received %@";
+"pharmacy.invitations.pending" = "Pending";
+"pharmacy.invitations.accept" = "Accept";
+"pharmacy.invitations.decline" = "Decline";
+"pharmacy.invitations.loading" = "Loading invitations…";
+"pharmacy.invitations.empty.title" = "No pending invitations";
+"pharmacy.invitations.empty.message" = "New pharmacy invitations will appear here.";
+"pharmacy.invitations.error.title" = "Invitations could not be loaded";
 
-
+/* Orders List */
 "pharmacy.orders.customer.fallback" = "Customer #%@";
 "pharmacy.orders.address.fallback" = "Address unavailable";
 "pharmacy.orders.retry" = "Retry";
 "pharmacy.orders.detail_placeholder" = "Order details coming soon.";
 "pharmacy.orders.noData" = "No orders found.";
 "common.somethingWentWrong" = "Something went wrong.";
-"common.retry" = "Retry";

@@ -32,7 +32,7 @@ enum PharmacyOrdersEndpoint: ApiEndpoint {
         }
     }
 
-    var body: Data? { nil }   
+    var body: Data? { nil }
 
     var requiresAuthentication: Bool { true }
 }

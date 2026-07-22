@@ -91,7 +91,7 @@ final class PharmacyOrdersViewModel {
 		} catch {
 			loadState = .failed((error as? NetworkError)?.errorDescription ?? "Something went wrong.")
 		}
-		
+
 	}
 
 	func refresh() async {
@@ -115,7 +115,7 @@ final class PharmacyOrdersViewModel {
 			currentPage = nextPage
 			isLastPage = page.isLastPage
 		} catch {
-				
+
 		}
 	}
 

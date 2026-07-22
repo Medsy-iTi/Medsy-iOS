@@ -273,12 +273,28 @@
 "pharmacy.request.accept" = "قبول الطلب";
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+/* Pharmacist Invitations */
+"common.error" = "حدث خطأ";
+"common.ok" = "حسنًا";
+"common.retry" = "إعادة المحاولة";
+"pharmacy.invitations.notifications" = "دعوات الصيدليات";
+"pharmacy.invitations.badge_count" = "%d دعوات معلقة";
+"pharmacy.invitations.title" = "دعوات الصيدليات";
+"pharmacy.invitations.subtitle" = "راجع دعوات الصيدليات التي ترغب في انضمامك إلى فريقها.";
+"pharmacy.invitations.invited_to_join" = "تمت دعوتك للانضمام إلى هذه الصيدلية.";
+"pharmacy.invitations.received_on" = "وصلت في %@";
+"pharmacy.invitations.pending" = "معلقة";
+"pharmacy.invitations.accept" = "قبول";
+"pharmacy.invitations.decline" = "رفض";
+"pharmacy.invitations.loading" = "جارٍ تحميل الدعوات…";
+"pharmacy.invitations.empty.title" = "لا توجد دعوات معلقة";
+"pharmacy.invitations.empty.message" = "ستظهر دعوات الصيدليات الجديدة هنا.";
+"pharmacy.invitations.error.title" = "تعذر تحميل الدعوات";
 
-/*orders list */
+/* Orders List */
 "pharmacy.orders.customer.fallback" = "عميل رقم %@";
 "pharmacy.orders.address.fallback" = "العنوان غير متوفر";
 "pharmacy.orders.retry" = "إعادة المحاولة";
 "pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
-"common.retry" = "إعادة المحاولة";

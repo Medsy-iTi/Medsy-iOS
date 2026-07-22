@@ -61,7 +61,7 @@ enum PharmacyOrderMapper {
         case .pending: .new
         case .accepted, .preparing, .outForDelivery: .preparing
         case .delivered: .delivered
-        case .cancelled, .unknown: .delivered 
+        case .cancelled, .unknown: .delivered
         }
     }
 }

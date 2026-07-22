@@ -25,6 +25,18 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(PharmacyInvitationRemoteDataSourceProtocol.self) { container in
+            PharmacyInvitationRemoteDataSource(
+                networkService: container.resolve(NetworkServiceProtocol.self)
+            )
+        }
+
+        container.register(PharmacyInvitationRepositoryProtocol.self) { container in
+            PharmacyInvitationRepository(
+                remoteDataSource: container.resolve(PharmacyInvitationRemoteDataSourceProtocol.self)
+            )
+        }
+
         container.register(PharmacyRefreshSessionUseCaseProtocol.self) { container in
             PharmacyRefreshSessionUseCase(
                 repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
@@ -73,6 +85,12 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(ManagePharmacyInvitationsUseCaseProtocol.self) { container in
+            ManagePharmacyInvitationsUseCase(
+                repository: container.resolve(PharmacyInvitationRepositoryProtocol.self)
+            )
+        }
+
         container.register(PharmacyLocationProviding.self) { _ in
             PharmacyLocationService()
         }
@@ -83,6 +101,7 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
                 registrationUseCase: container.resolve(PharmacyRegistrationUseCaseProtocol.self),
                 verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self),
                 membershipUseCase: container.resolve(GetPharmacyMembershipUseCaseProtocol.self),
+                invitationUseCase: container.resolve(ManagePharmacyInvitationsUseCaseProtocol.self),
                 createPharmacyUseCase: container.resolve(CreatePharmacyUseCaseProtocol.self),
                 tokenStore: container.resolve(TokenStoreProtocol.self)
             )

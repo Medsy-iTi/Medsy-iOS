@@ -49,7 +49,9 @@ struct ContentView: View {
             case .authentication:
                 PharmacyAuthenticationRootView(
                     factory: authenticationFactory,
-                    onAuthenticated: coordinator.finishAuthentication
+                    shouldResumeStoredSession: coordinator.isAuthenticated,
+                    onAuthenticated: coordinator.finishAuthentication,
+                    onSignedOut: coordinator.returnToSignIn
                 )
                 .transition(.opacity)
 
@@ -70,20 +72,31 @@ struct ContentView: View {
 
 private struct PharmacyAuthenticationRootView: View {
     @State private var coordinator: PharmacyAuthenticationCoordinator
+    @State private var hasAttemptedSessionResume = false
+    private let shouldResumeStoredSession: Bool
 
     init(
         factory: PharmacyAuthenticationFactory,
-        onAuthenticated: @escaping () -> Void
+        shouldResumeStoredSession: Bool,
+        onAuthenticated: @escaping () -> Void,
+        onSignedOut: @escaping () -> Void
     ) {
+        self.shouldResumeStoredSession = shouldResumeStoredSession
         _coordinator = State(
             initialValue: factory.makeCoordinator(
-                onAuthenticated: onAuthenticated
+                onAuthenticated: onAuthenticated,
+                onSignedOut: onSignedOut
             )
         )
     }
 
     var body: some View {
         PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
+            .task {
+                guard shouldResumeStoredSession, !hasAttemptedSessionResume else { return }
+                hasAttemptedSessionResume = true
+                coordinator.resolveAuthenticatedDestination()
+            }
     }
 }
 
