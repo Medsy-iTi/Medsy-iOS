@@ -131,11 +131,4 @@ struct UserProfileView: View {
     }
 }
 
-#Preview {
-    UserProfileView(
-        profile: PharmacyProfile.preview,
-        onEdit: {}
-    )
-    .padding()
-    .background(PharmacyColor.bg)
-}
+

@@ -10,438 +10,523 @@ import Observation
 @MainActor
 final class ProfileViewModel {
 
-    // MARK: - View State
-
-    enum ViewState: Equatable {
-        case loading
-        case loaded
-        case error(String)
-    }
-
-    // MARK: - Published State
-
-    private(set) var state: ViewState = .loading
-    private(set) var profile: PharmacyProfile?
-
-    // Order receiving status (local until API is available)
-    var isAcceptingOrders = true
-
-    // Logout
-    var showLogoutConfirmation = false
-    var isLoggingOut = false
-
-    // Edit personal profile
-    var isSaving = false
-    var saveErrorMessage: String?
-
-    // Leave pharmacy
-    var showLeavePharmacyConfirmation = false
-    var isLeavingPharmacy = false
-    var leavePharmacyErrorMessage: String?
-
-    // Delete pharmacy
-    var showDeletePharmacyConfirmation = false
-    var isDeletingPharmacy = false
-    var deletePharmacyErrorMessage: String?
-
-    // Edit pharmacy
-    var isUpdatingPharmacy = false
-    var updatePharmacyErrorMessage: String?
-
-    // Pharmacist team management (admin)
-    var selectedPharmacist: PharmacistMember?
-    var showRemovePharmacistConfirmation = false
-    var isRemovingPharmacist = false
-    var removePharmacistErrorMessage: String?
-    var isUpdatingPharmacist = false
-    var updatePharmacistErrorMessage: String?
-
-    // Invite pharmacist (admin)
-    var inviteEmail = ""
-    var isInvitingPharmacist = false
-    var inviteErrorMessage: String?
-
-    // MARK: - Dependencies
-
-    private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
-    private let updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol
-    private let leavePharmacyUseCase: LeavePharmacyUseCaseProtocol
-    private let updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol
-    private let deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
-    private let removePharmacistUseCase: RemovePharmacistUseCaseProtocol
-    private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
-    private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
-    private let logoutUseCase: LogoutUseCaseProtocol
-    let languageManager: LanguageManager
-    private let appSettings: PharmacyAppSettings
-
-    // MARK: - Navigation
-
-    var onNavigate: ((ProfileRoute) -> Void)?
-    var onPresentSheet: ((ProfileSheet) -> Void)?
-    var onLoggedOut: (() -> Void)?
-
-    // MARK: - Init
-
-    init(
-        getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
-        updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol,
-        leavePharmacyUseCase: LeavePharmacyUseCaseProtocol,
-        updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol,
-        deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
-        removePharmacistUseCase: RemovePharmacistUseCaseProtocol,
-        invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
-        updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
-        logoutUseCase: LogoutUseCaseProtocol,
-        languageManager: LanguageManager,
-        appSettings: PharmacyAppSettings
-    ) {
-        self.getProfileUseCase = getProfileUseCase
-        self.updateProfileUseCase = updateProfileUseCase
-        self.leavePharmacyUseCase = leavePharmacyUseCase
-        self.updatePharmacyUseCase = updatePharmacyUseCase
-        self.deletePharmacyUseCase = deletePharmacyUseCase
-        self.removePharmacistUseCase = removePharmacistUseCase
-        self.invitePharmacistUseCase = invitePharmacistUseCase
-        self.updatePharmacistUseCase = updatePharmacistUseCase
-        self.logoutUseCase = logoutUseCase
-        self.languageManager = languageManager
-        self.appSettings = appSettings
-    }
-
-    // MARK: - Computed Props
-
-    var currentLanguage: PharmacyAppLanguage { languageManager.currentLanguage }
-    var isDarkMode: Bool { appSettings.isDarkMode }
-
-    var pharmacyMembers: [PharmacistMember] {
-        profile?.pharmacyMembers ?? []
-    }
-
-    var pharmacistCount: Int {
-        pharmacyMembers.count
-    }
-
-    var pharmacistCountLabel: String {
-        String(format: "profile.pharmacists_count".localized, pharmacistCount)
-    }
-
-    /// Non-admin members the current admin can remove or edit.
-    var manageablePharmacists: [PharmacistMember] {
-        guard let profile, profile.isPharmacyAdmin else { return [] }
-        return pharmacyMembers.filter { member in
-            member.id != Int(profile.id) && !member.isAdmin
-        }
-    }
-
-    func canManage(_ member: PharmacistMember) -> Bool {
-        guard let profile, profile.isPharmacyAdmin else { return false }
-        return member.id != Int(profile.id) && !member.isAdmin
-    }
-
-    // MARK: - Lifecycle
-
-    func onAppear() async {
-        guard profile == nil else { return }
-        await loadProfile()
-    }
-
-    func refresh() async {
-        await loadProfile(showsSpinner: false)
-    }
-
-    private func loadProfile(showsSpinner: Bool = true) async {
-        if showsSpinner { state = .loading }
-        do {
-            let profile = try await getProfileUseCase.execute()
-            self.profile = profile
-            self.state = .loaded
-        } catch {
-            if case NetworkError.unauthorized = error {
-                onLoggedOut?()
-                return
-            }
-            self.state = .error(Self.userFacingMessage(for: error))
-        }
-    }
-
-    // MARK: - Personal Profile
-
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
-        guard let profile, let id = Int(profile.id) else { return false }
-        isSaving = true
-        saveErrorMessage = nil
-        do {
-            try await updateProfileUseCase.execute(
-                id: id,
-                email: profile.email,
-                firstName: profile.firstName,
-                lastName: profile.lastName,
-                homeAddress: homeAddress,
-                dateOfBirth: dateOfBirth
-            )
-            isSaving = false
-            await loadProfile(showsSpinner: false)
-            return true
-        } catch {
-            isSaving = false
-            saveErrorMessage = Self.userFacingMessage(for: error)
-            return false
-        }
-    }
-
-    // MARK: - Pharmacy Actions
-
-    func requestLeavePharmacy() {
-        showLeavePharmacyConfirmation = true
-    }
-
-    func cancelLeavePharmacy() {
-        showLeavePharmacyConfirmation = false
-    }
-
-    func confirmLeavePharmacy() async {
-        guard let pharmacyId = profile?.pharmacyId else { return }
-        isLeavingPharmacy = true
-        showLeavePharmacyConfirmation = false
-        leavePharmacyErrorMessage = nil
-        do {
-            try await leavePharmacyUseCase.execute(pharmacyId: pharmacyId)
-            await logoutAndNotify()
-        } catch {
-            isLeavingPharmacy = false
-            leavePharmacyErrorMessage = Self.userFacingMessage(for: error)
-        }
-    }
-
-    func requestDeletePharmacy() {
-        showDeletePharmacyConfirmation = true
-    }
-
-    func cancelDeletePharmacy() {
-        showDeletePharmacyConfirmation = false
-    }
-
-    func confirmDeletePharmacy() async {
-        guard let pharmacyId = profile?.pharmacyId else { return }
-        isDeletingPharmacy = true
-        showDeletePharmacyConfirmation = false
-        deletePharmacyErrorMessage = nil
-        do {
-            try await deletePharmacyUseCase.execute(id: pharmacyId)
-            await logoutAndNotify()
-        } catch {
-            isDeletingPharmacy = false
-            deletePharmacyErrorMessage = Self.userFacingMessage(for: error)
-        }
-    }
-
-    func updatePharmacy(name: String?, address: String?, phoneNumber: String?) async -> Bool {
-        guard let pharmacyId = profile?.pharmacyId else { return false }
-        isUpdatingPharmacy = true
-        updatePharmacyErrorMessage = nil
-        do {
-            try await updatePharmacyUseCase.execute(
-                id: pharmacyId,
-                name: name,
-                address: address,
-                phoneNumber: phoneNumber
-            )
-            isUpdatingPharmacy = false
-            await loadProfile(showsSpinner: false)
-            return true
-        } catch {
-            isUpdatingPharmacy = false
-            updatePharmacyErrorMessage = Self.userFacingMessage(for: error)
-            return false
-        }
-    }
-
-    // MARK: - Pharmacist Team (Admin)
-
-    func didTapPharmacistOptions(_ member: PharmacistMember) {
-        guard canManage(member) else { return }
-        selectedPharmacist = member
-        onPresentSheet?(.pharmacistOptions(member))
-    }
-
-    func didTapViewPharmacistProfile(_ member: PharmacistMember) {
-        onNavigate?(.pharmacistProfile(member))
-    }
-
-    func didTapEditPharmacist(_ member: PharmacistMember) {
-        selectedPharmacist = member
-        onPresentSheet?(.editPharmacist(member))
-    }
-
-    func requestRemovePharmacist(_ member: PharmacistMember) {
-        guard canManage(member) else { return }
-        selectedPharmacist = member
-        // Show confirmation dialog instead of sheet
-        showRemovePharmacistConfirmation = true
-    }
-
-    func cancelRemovePharmacist() {
-        selectedPharmacist = nil
-    }
-
-    func confirmRemovePharmacist() async -> Bool {
-        guard
-            let member = selectedPharmacist,
-            let pharmacyId = profile?.pharmacyId
-        else { return false }
-
-        isRemovingPharmacist = true
-        removePharmacistErrorMessage = nil
-        do {
-            try await removePharmacistUseCase.execute(
-                pharmacistId: member.id,
-                pharmacyId: pharmacyId
-            )
-            isRemovingPharmacist = false
-            selectedPharmacist = nil
-            await loadProfile(showsSpinner: false)
-            return true
-        } catch {
-            isRemovingPharmacist = false
-            removePharmacistErrorMessage = Self.userFacingMessage(for: error)
-            return false
-        }
-    }
-
-    func updatePharmacist(
-        id: Int,
-        email: String,
-        firstName: String,
-        lastName: String,
-        homeAddress: String?,
-        dateOfBirth: Date?
-    ) async -> Bool {
-        isUpdatingPharmacist = true
-        updatePharmacistErrorMessage = nil
-        do {
-            try await updatePharmacistUseCase.execute(
-                id: id,
-                email: email.isEmpty ? nil : email,
-                firstName: firstName.isEmpty ? nil : firstName,
-                lastName: lastName.isEmpty ? nil : lastName,
-                homeAddress: homeAddress,
-                dateOfBirth: dateOfBirth
-            )
-            isUpdatingPharmacist = false
-            selectedPharmacist = nil
-            await loadProfile(showsSpinner: false)
-            return true
-        } catch {
-            isUpdatingPharmacist = false
-            updatePharmacistErrorMessage = Self.userFacingMessage(for: error)
-            return false
-        }
-    }
-
-    // MARK: - Invite Pharmacist (Admin)
-
-    func sendInvitation() async -> Bool {
-        guard
-            let pharmacyId = profile?.pharmacyId,
-            profile?.isPharmacyAdmin == true
-        else { return false }
-
-        let trimmedEmail = inviteEmail.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedEmail.contains("@"), trimmedEmail.contains(".") else {
-            inviteErrorMessage = "pharmacy_invite.validation_email".localized
-            return false
-        }
-
-        isInvitingPharmacist = true
-        inviteErrorMessage = nil
-        do {
-            let invitation = try await invitePharmacistUseCase.execute(
-                pharmacyId: pharmacyId,
-                email: trimmedEmail
-            )
-            isInvitingPharmacist = false
-            inviteEmail = ""
-            onNavigate?(.inviteSuccess(InviteSuccessInfo(
-                email: invitation.invitedEmail,
-                pharmacyName: invitation.pharmacyName
-            )))
-            return true
-        } catch {
-            isInvitingPharmacist = false
-            inviteErrorMessage = Self.userFacingMessage(for: error)
-            return false
-        }
-    }
-
-    func resetInviteForm() {
-        inviteEmail = ""
-        inviteErrorMessage = nil
-    }
-
-    // MARK: - Navigation
-
-    func didTapPersonalProfile() {
-        onNavigate?(.personalProfileDetail)
-    }
-
-    func didTapPharmacyProfile() {
-        onNavigate?(.pharmacyDetail)
-    }
-
-    func didTapPharmacistsList() {
-        onNavigate?(.pharmacistsList)
-    }
-
-    func didTapInvitePharmacist() {
-        resetInviteForm()
-        onNavigate?(.invitePharmacist)
-    }
-
-    func didTapEditProfile() {
-        onPresentSheet?(.editProfile)
-    }
-
-    func didTapEditPharmacy() {
-        onPresentSheet?(.editPharmacy)
-    }
-
-    func didTapSettings() {
-        onNavigate?(.settings)
-    }
-
-    // MARK: - Settings
-
-    func setLanguage(_ language: PharmacyAppLanguage) {
-        languageManager.set(language)
-    }
-
-    func setTheme(isDark: Bool) {
-        appSettings.isDarkMode = isDark
-    }
-
-    // MARK: - Logout
-
-    func requestLogout() { showLogoutConfirmation = true }
-    func cancelLogout() { showLogoutConfirmation = false }
-
-    func confirmLogout() async {
-        isLoggingOut = true
-        await logoutAndNotify()
-    }
-
-    private func logoutAndNotify() async {
-        await logoutUseCase.execute()
-        isLoggingOut = false
-        isLeavingPharmacy = false
-        isDeletingPharmacy = false
-        showLogoutConfirmation = false
-        onLoggedOut?()
-    }
-
-    // MARK: - Helpers
-
-    private static func userFacingMessage(for error: Error) -> String {
-        "profile_generic_error".localized
-    }
+		// MARK: - View State
+
+	enum ViewState: Equatable {
+		case loading
+		case loaded
+		case error(String)
+	}
+
+		// MARK: - Published State
+
+	private(set) var state: ViewState = .loading
+	private(set) var profile: PharmacyProfile?
+
+		// Presence (on-duty / off-duty / heartbeat)
+	private(set) var isOnDuty = false
+	var isTogglingDuty = false
+	var dutyErrorMessage: String?
+
+		// Logout
+	var showLogoutConfirmation = false
+	var isLoggingOut = false
+
+		// Edit personal profile
+	var isSaving = false
+	var saveErrorMessage: String?
+
+		// Leave pharmacy
+	var showLeavePharmacyConfirmation = false
+	var isLeavingPharmacy = false
+	var leavePharmacyErrorMessage: String?
+
+		// Delete pharmacy
+	var showDeletePharmacyConfirmation = false
+	var isDeletingPharmacy = false
+	var deletePharmacyErrorMessage: String?
+
+		// Edit pharmacy
+	var isUpdatingPharmacy = false
+	var updatePharmacyErrorMessage: String?
+
+		// Pharmacist team management (admin)
+	var selectedPharmacist: PharmacistMember?
+	var showRemovePharmacistConfirmation = false
+	var isRemovingPharmacist = false
+	var removePharmacistErrorMessage: String?
+	var isUpdatingPharmacist = false
+	var updatePharmacistErrorMessage: String?
+
+		// Invite pharmacist (admin)
+	var inviteEmail = ""
+	var isInvitingPharmacist = false
+	var inviteErrorMessage: String?
+
+		// MARK: - Dependencies
+
+	private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
+	private let updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol
+	private let leavePharmacyUseCase: LeavePharmacyUseCaseProtocol
+	private let updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol
+	private let deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
+	private let removePharmacistUseCase: RemovePharmacistUseCaseProtocol
+	private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
+	private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
+	private let logoutUseCase: LogoutUseCaseProtocol
+	private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
+	private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
+	private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
+	let languageManager: LanguageManager
+	private let appSettings: PharmacyAppSettings
+
+		// Recurring heartbeat while on duty, keeping presence alive server-side.
+	private var heartbeatTask: Task<Void, Never>?
+	private static let heartbeatInterval: UInt64 = 60_000_000_000 // 60s
+
+		// MARK: - Navigation
+
+	var onNavigate: ((ProfileRoute) -> Void)?
+	var onPresentSheet: ((ProfileSheet) -> Void)?
+	var onLoggedOut: (() -> Void)?
+
+		// MARK: - Init
+
+	init(
+		getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
+		updateProfileUseCase: PharmacyUpdateProfileUseCaseProtocol,
+		leavePharmacyUseCase: LeavePharmacyUseCaseProtocol,
+		updatePharmacyUseCase: UpdatePharmacyUseCaseProtocol,
+		deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
+		removePharmacistUseCase: RemovePharmacistUseCaseProtocol,
+		invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
+		updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
+		logoutUseCase: LogoutUseCaseProtocol,
+		goOnDutyUseCase: GoOnDutyUseCaseProtocol,
+		goOffDutyUseCase: GoOffDutyUseCaseProtocol,
+		sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
+		languageManager: LanguageManager,
+		appSettings: PharmacyAppSettings
+	) {
+		self.getProfileUseCase = getProfileUseCase
+		self.updateProfileUseCase = updateProfileUseCase
+		self.leavePharmacyUseCase = leavePharmacyUseCase
+		self.updatePharmacyUseCase = updatePharmacyUseCase
+		self.deletePharmacyUseCase = deletePharmacyUseCase
+		self.removePharmacistUseCase = removePharmacistUseCase
+		self.invitePharmacistUseCase = invitePharmacistUseCase
+		self.updatePharmacistUseCase = updatePharmacistUseCase
+		self.logoutUseCase = logoutUseCase
+		self.goOnDutyUseCase = goOnDutyUseCase
+		self.goOffDutyUseCase = goOffDutyUseCase
+		self.sendHeartbeatUseCase = sendHeartbeatUseCase
+		self.languageManager = languageManager
+		self.appSettings = appSettings
+	}
+
+	deinit {
+			
+		let taskToCancel = heartbeatTask
+		heartbeatTask = nil
+		taskToCancel?.cancel()
+	}
+
+		// MARK: - Computed Props
+
+	var currentLanguage: PharmacyAppLanguage { languageManager.currentLanguage }
+	var isDarkMode: Bool { appSettings.isDarkMode }
+
+	var pharmacyMembers: [PharmacistMember] {
+		profile?.pharmacyMembers ?? []
+	}
+
+	var pharmacistCount: Int {
+		pharmacyMembers.count
+	}
+
+	var pharmacistCountLabel: String {
+		String(format: "profile.pharmacists_count".localized, pharmacistCount)
+	}
+
+
+	var manageablePharmacists: [PharmacistMember] {
+		guard let profile, profile.isPharmacyAdmin else { return [] }
+		return pharmacyMembers.filter { member in
+			member.id != Int(profile.id) && !member.isAdmin
+		}
+	}
+
+	func canManage(_ member: PharmacistMember) -> Bool {
+		guard let profile, profile.isPharmacyAdmin else { return false }
+		return member.id != Int(profile.id) && !member.isAdmin
+	}
+
+		// MARK: - Lifecycle
+
+	func onAppear() async {
+		guard profile == nil else {
+			return
+		}
+		await loadProfile()
+		await syncPresenceStatus()
+	}
+
+	func refresh() async {
+		await loadProfile(showsSpinner: false)
+		await syncPresenceStatus()
+	}
+
+	private func loadProfile(showsSpinner: Bool = true) async {
+		if showsSpinner { state = .loading }
+		do {
+			let profile = try await getProfileUseCase.execute()
+			self.profile = profile
+			self.state = .loaded
+		} catch {
+			if case NetworkError.unauthorized = error {
+				onLoggedOut?()
+				return
+			}
+			self.state = .error(Self.userFacingMessage(for: error))
+		}
+	}
+
+		// MARK: - Personal Profile
+
+	func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+		guard let profile, let id = Int(profile.id) else { return false }
+		isSaving = true
+		saveErrorMessage = nil
+		do {
+			try await updateProfileUseCase.execute(
+				id: id,
+				email: profile.email,
+				firstName: profile.firstName,
+				lastName: profile.lastName,
+				homeAddress: homeAddress,
+				dateOfBirth: dateOfBirth
+			)
+			isSaving = false
+			await loadProfile(showsSpinner: false)
+			return true
+		} catch {
+			isSaving = false
+			saveErrorMessage = Self.userFacingMessage(for: error)
+			return false
+		}
+	}
+
+		// MARK: - Pharmacy Actions
+
+	func requestLeavePharmacy() {
+		showLeavePharmacyConfirmation = true
+	}
+
+	func cancelLeavePharmacy() {
+		showLeavePharmacyConfirmation = false
+	}
+
+	func confirmLeavePharmacy() async {
+		guard let pharmacyId = profile?.pharmacyId else { return }
+		isLeavingPharmacy = true
+		showLeavePharmacyConfirmation = false
+		leavePharmacyErrorMessage = nil
+		do {
+			try await leavePharmacyUseCase.execute(pharmacyId: pharmacyId)
+			await logoutAndNotify()
+		} catch {
+			isLeavingPharmacy = false
+			leavePharmacyErrorMessage = Self.userFacingMessage(for: error)
+		}
+	}
+
+	func requestDeletePharmacy() {
+		showDeletePharmacyConfirmation = true
+	}
+
+	func cancelDeletePharmacy() {
+		showDeletePharmacyConfirmation = false
+	}
+
+	func confirmDeletePharmacy() async {
+		guard let pharmacyId = profile?.pharmacyId else { return }
+		isDeletingPharmacy = true
+		showDeletePharmacyConfirmation = false
+		deletePharmacyErrorMessage = nil
+		do {
+			try await deletePharmacyUseCase.execute(id: pharmacyId)
+			await logoutAndNotify()
+		} catch {
+			isDeletingPharmacy = false
+			deletePharmacyErrorMessage = Self.userFacingMessage(for: error)
+		}
+	}
+
+	func updatePharmacy(name: String?, address: String?, phoneNumber: String?) async -> Bool {
+		guard let pharmacyId = profile?.pharmacyId else { return false }
+		isUpdatingPharmacy = true
+		updatePharmacyErrorMessage = nil
+		do {
+			try await updatePharmacyUseCase.execute(
+				id: pharmacyId,
+				name: name,
+				address: address,
+				phoneNumber: phoneNumber
+			)
+			isUpdatingPharmacy = false
+			await loadProfile(showsSpinner: false)
+			return true
+		} catch {
+			isUpdatingPharmacy = false
+			updatePharmacyErrorMessage = Self.userFacingMessage(for: error)
+			return false
+		}
+	}
+
+		// MARK: - Pharmacist Team (Admin)
+
+	func didTapPharmacistOptions(_ member: PharmacistMember) {
+		guard canManage(member) else { return }
+		selectedPharmacist = member
+		onPresentSheet?(.pharmacistOptions(member))
+	}
+
+	func didTapViewPharmacistProfile(_ member: PharmacistMember) {
+		onNavigate?(.pharmacistProfile(member))
+	}
+
+	func didTapEditPharmacist(_ member: PharmacistMember) {
+		selectedPharmacist = member
+		onPresentSheet?(.editPharmacist(member))
+	}
+
+	func requestRemovePharmacist(_ member: PharmacistMember) {
+		guard canManage(member) else { return }
+		selectedPharmacist = member
+			// Show confirmation dialog instead of sheet
+		showRemovePharmacistConfirmation = true
+	}
+
+	func cancelRemovePharmacist() {
+		selectedPharmacist = nil
+	}
+
+	func confirmRemovePharmacist() async -> Bool {
+		guard
+			let member = selectedPharmacist,
+			let pharmacyId = profile?.pharmacyId
+		else { return false }
+
+		isRemovingPharmacist = true
+		removePharmacistErrorMessage = nil
+		do {
+			try await removePharmacistUseCase.execute(
+				pharmacistId: member.id,
+				pharmacyId: pharmacyId
+			)
+			isRemovingPharmacist = false
+			selectedPharmacist = nil
+			await loadProfile(showsSpinner: false)
+			return true
+		} catch {
+			isRemovingPharmacist = false
+			removePharmacistErrorMessage = Self.userFacingMessage(for: error)
+			return false
+		}
+	}
+
+	func updatePharmacist(
+		id: Int,
+		email: String,
+		firstName: String,
+		lastName: String,
+		homeAddress: String?,
+		dateOfBirth: Date?
+	) async -> Bool {
+		isUpdatingPharmacist = true
+		updatePharmacistErrorMessage = nil
+		do {
+			try await updatePharmacistUseCase.execute(
+				id: id,
+				email: email.isEmpty ? nil : email,
+				firstName: firstName.isEmpty ? nil : firstName,
+				lastName: lastName.isEmpty ? nil : lastName,
+				homeAddress: homeAddress,
+				dateOfBirth: dateOfBirth
+			)
+			isUpdatingPharmacist = false
+			selectedPharmacist = nil
+			await loadProfile(showsSpinner: false)
+			return true
+		} catch {
+			isUpdatingPharmacist = false
+			updatePharmacistErrorMessage = Self.userFacingMessage(for: error)
+			return false
+		}
+	}
+
+		// MARK: - Invite Pharmacist (Admin)
+
+	func sendInvitation() async -> Bool {
+		guard
+			let pharmacyId = profile?.pharmacyId,
+			profile?.isPharmacyAdmin == true
+		else { return false }
+
+		let trimmedEmail = inviteEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard trimmedEmail.contains("@"), trimmedEmail.contains(".") else {
+			inviteErrorMessage = "pharmacy_invite.validation_email".localized
+			return false
+		}
+
+		isInvitingPharmacist = true
+		inviteErrorMessage = nil
+		do {
+			let invitation = try await invitePharmacistUseCase.execute(
+				pharmacyId: pharmacyId,
+				email: trimmedEmail
+			)
+			isInvitingPharmacist = false
+			inviteEmail = ""
+			onNavigate?(.inviteSuccess(InviteSuccessInfo(
+				email: invitation.invitedEmail,
+				pharmacyName: invitation.pharmacyName
+			)))
+			return true
+		} catch {
+			isInvitingPharmacist = false
+			inviteErrorMessage = Self.userFacingMessage(for: error)
+			return false
+		}
+	}
+
+	func resetInviteForm() {
+		inviteEmail = ""
+		inviteErrorMessage = nil
+	}
+
+
+	private func syncPresenceStatus() async {
+		do {
+			let status = try await sendHeartbeatUseCase.execute()
+			isOnDuty = status.isOnDuty
+			if isOnDuty {
+				startHeartbeatLoop()
+			}
+		} catch {
+
+		}
+	}
+
+	func toggleOrderReceiving() async {
+		guard !isTogglingDuty else { return }
+		isTogglingDuty = true
+		dutyErrorMessage = nil
+		do {
+			let status = isOnDuty
+			? try await goOffDutyUseCase.execute()
+			: try await goOnDutyUseCase.execute()
+			isOnDuty = status.isOnDuty
+			isTogglingDuty = false
+			if isOnDuty {
+				startHeartbeatLoop()
+			} else {
+				stopHeartbeatLoop()
+			}
+		} catch {
+			isTogglingDuty = false
+			dutyErrorMessage = Self.userFacingMessage(for: error)
+		}
+	}
+
+	private func startHeartbeatLoop() {
+		guard heartbeatTask == nil else { return }
+		heartbeatTask = Task { [weak self] in
+			while let self, !Task.isCancelled {
+				try? await Task.sleep(nanoseconds: Self.heartbeatInterval)
+				guard !Task.isCancelled else { break }
+				do {
+					let status = try await self.sendHeartbeatUseCase.execute()
+					self.isOnDuty = status.isOnDuty
+					if !status.isOnDuty {
+						self.stopHeartbeatLoop()
+					}
+				} catch {
+						
+				}
+			}
+		}
+	}
+
+	private func stopHeartbeatLoop() {
+		heartbeatTask?.cancel()
+		heartbeatTask = nil
+	}
+
+		// MARK: - Navigation
+
+	func didTapPersonalProfile() {
+		onNavigate?(.personalProfileDetail)
+	}
+
+	func didTapPharmacyProfile() {
+		onNavigate?(.pharmacyDetail)
+	}
+
+	func didTapPharmacistsList() {
+		onNavigate?(.pharmacistsList)
+	}
+
+	func didTapInvitePharmacist() {
+		resetInviteForm()
+		onNavigate?(.invitePharmacist)
+	}
+
+	func didTapEditProfile() {
+		onPresentSheet?(.editProfile)
+	}
+
+	func didTapEditPharmacy() {
+		onPresentSheet?(.editPharmacy)
+	}
+
+	func didTapSettings() {
+		onNavigate?(.settings)
+	}
+
+		// MARK: - Settings
+
+	func setLanguage(_ language: PharmacyAppLanguage) {
+		languageManager.set(language)
+	}
+
+	func setTheme(isDark: Bool) {
+		appSettings.isDarkMode = isDark
+	}
+
+		// MARK: - Logout
+
+	func requestLogout() { showLogoutConfirmation = true }
+	func cancelLogout() { showLogoutConfirmation = false }
+
+	func confirmLogout() async {
+		isLoggingOut = true
+		await logoutAndNotify()
+	}
+
+	private func logoutAndNotify() async {
+		stopHeartbeatLoop()
+		await logoutUseCase.execute()
+		isLoggingOut = false
+		isLeavingPharmacy = false
+		isDeletingPharmacy = false
+		showLogoutConfirmation = false
+		onLoggedOut?()
+	}
+
+		// MARK: - Helpers
+
+	private static func userFacingMessage(for error: Error) -> String {
+		"profile_generic_error".localized
+	}
 }

@@ -25,6 +25,12 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: Auth
     case logout(refreshToken: String)
 
+	// MARK: Presence
+	case goOnDuty
+	case goOffDuty
+	case heartbeat
+
+
     // MARK: - Path
     var path: String {
         switch self {
@@ -46,6 +52,12 @@ enum ProfileEndpoint: ApiEndpoint {
             return "pharmacy-invitations/pharmacy/\(pharmacyId)"
         case .logout:
             return "auth/logout"
+		case .goOnDuty:
+			return "pharmacists/me/presence/on-duty"
+		case .goOffDuty:
+			return "pharmacists/me/presence/off-duty"
+		case .heartbeat:
+			return "pharmacists/me/presence/heartbeat"
         }
     }
 
@@ -58,18 +70,23 @@ enum ProfileEndpoint: ApiEndpoint {
             return .put
         case .leavePharmacy, .deletePharmacy, .removePharmacist:
             return .delete
-        case .invitePharmacist:
-            return .post
-        case .logout:
-            return .post
+			case .invitePharmacist, .logout, .goOnDuty, .goOffDuty, .heartbeat:
+				return .post
         }
     }
 
     // MARK: - Body
     var body: Data? {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy, .removePharmacist:
-            return nil
+		case .fetchPharmacistMe,
+					.fetchPharmacyMine,
+					.leavePharmacy,
+					.deletePharmacy,
+					.removePharmacist,
+					.goOnDuty,
+					.goOffDuty,
+					.heartbeat:
+			return nil
         case let .invitePharmacist(_, request):
             return try? JSONEncoder().encode(request)
         case let .logout(refreshToken):
@@ -82,4 +99,34 @@ enum ProfileEndpoint: ApiEndpoint {
     }
 
     var requiresAuthentication: Bool { true }
+}
+	//
+	//  PresenceEndpoint.swift
+	//  Medsy-Pharmacy
+	//
+
+import Alamofire
+import Foundation
+
+enum PresenceEndpoint: ApiEndpoint {
+	case goOnDuty
+	case goOffDuty
+	case heartbeat
+
+	var path: String {
+		switch self {
+			case .goOnDuty:
+				return "pharmacists/me/presence/on-duty"
+			case .goOffDuty:
+				return "pharmacists/me/presence/off-duty"
+			case .heartbeat:
+				return "pharmacists/me/presence/heartbeat"
+		}
+	}
+
+	var method: HTTPMethod { .post }
+
+	var body: Data? { nil }
+
+	var requiresAuthentication: Bool { true }
 }

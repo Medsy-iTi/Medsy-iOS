@@ -193,38 +193,3 @@ struct PharmacyProfileView: View {
     }
 }
 
-#Preview {
-    VStack(spacing: PharmacySpacing.md) {
-        PharmacyProfileView(
-            profile: PharmacyProfile.preview,
-            onEdit: {},
-            onInvite: {},
-            onLeave: nil,
-            onDelete: {}
-        )
-        
-        PharmacyProfileView(
-            profile: PharmacyProfile(
-                id: "2",
-                firstName: "John",
-                lastName: "Doe",
-                email: "john@example.com",
-                phoneNumber: "010 1234 5678",
-                pharmacyId: 1,
-                isPharmacyAdmin: false,
-                homeAddress: nil,
-                dateOfBirth: nil,
-                pharmacyName: "Test Pharmacy",
-                pharmacyAddress: "123 Main St",
-                pharmacyPhoneNumber: "010 9876 5432",
-                pharmacyMembers: []
-            ),
-            onEdit: nil,
-            onInvite: nil,
-            onLeave: {},
-            onDelete: nil
-        )
-    }
-    .padding()
-    .background(PharmacyColor.bg)
-}

@@ -52,5 +52,19 @@ struct ProfileAssembly: PharmacyModuleAssembly {
                 tokenStore: container.resolve(TokenStoreProtocol.self)
             )
         }
+
+
+
+		container.register(GoOnDutyUseCaseProtocol.self) { container in
+			GoOnDutyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+		}
+
+		container.register(GoOffDutyUseCaseProtocol.self) { container in
+			GoOffDutyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+		}
+
+		container.register(SendHeartbeatUseCaseProtocol.self) { container in
+			SendHeartbeatUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+		}
     }
 }

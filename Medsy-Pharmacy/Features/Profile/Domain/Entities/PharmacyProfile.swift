@@ -30,22 +30,3 @@ struct PharmacyProfile: Equatable, Identifiable {
     }
 }
 
-#if DEBUG
-extension PharmacyProfile {
-    static let preview = PharmacyProfile(
-        id: "1",
-        firstName: "أحمد",
-        lastName: "محمود",
-        email: "ahmed@pharmacy.com",
-        phoneNumber: "010 1234 5678",
-        pharmacyId: 1,
-        isPharmacyAdmin: true,
-        homeAddress: "شارع النيل، المعادي، القاهرة",
-        dateOfBirth: Date(),
-        pharmacyName: "صيدلية النهضية",
-        pharmacyAddress: "شارع النيل، المعادي، القاهرة",
-        pharmacyPhoneNumber: "010 9876 5432",
-        pharmacyMembers: []
-    )
-}
-#endif

@@ -38,4 +38,8 @@ protocol ProfileRepositoryProtocol {
 
     // Auth
     func logout() async throws
+
+	func goOnDuty() async throws -> PresenceStatus
+	func goOffDuty() async throws -> PresenceStatus
+	func sendHeartbeat() async throws -> PresenceStatus
 }
