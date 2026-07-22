@@ -88,28 +88,47 @@ private struct PharmacyAuthenticationRootView: View {
 }
 
 #Preview {
-    ContentView(
-        onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
-        authenticationFactory: PharmacyAuthenticationFactory(
-            actions: .placeholder,
-            locationProvider: PreviewContentLocationProvider()
-        ),
-        homeFactory: PharmacyHomeFactory(),
-        ordersFactory: PharmacyOrdersFactory(
-            makeViewModel: { PharmacyOrdersViewModel() }
-        ),
-        coordinator: RootCoordinator(container: PharmacyDIContainer())
-    )
-    .environment(LanguageManager.shared)
+	ContentView(
+		onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
+		authenticationFactory: PharmacyAuthenticationFactory(
+			actions: .placeholder,
+			locationProvider: PreviewContentLocationProvider()
+		),
+		homeFactory: PharmacyHomeFactory(),
+		ordersFactory: PharmacyOrdersFactory(
+			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
+			getProfileUseCase: PreviewGetProfileUseCase(),
+			appSettings: .shared,
+			identityProvider: PreviewIdentityProvider()
+		),
+		coordinator: RootCoordinator(container: PharmacyDIContainer())
+	)
+	.environment(LanguageManager.shared)
+}
+
+private struct PreviewFetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
+	func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
+		PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
+	}
+}
+
+private struct PreviewGetProfileUseCase: GetPharmacyProfileUseCaseProtocol {
+	func execute() async throws -> PharmacyProfile {
+		.preview
+	}
+}
+
+private final class PreviewIdentityProvider: PharmacyIdentityProviding {
+	var currentPharmacyId: Int? = 1
 }
 
 @MainActor
 private final class PreviewContentLocationProvider: PharmacyLocationProviding {
-    func currentLocation() async throws -> PharmacyLocation {
-        PharmacyLocation(latitude: 30.0444, longitude: 31.2357, city: "Cairo", province: "Cairo")
-    }
+	func currentLocation() async throws -> PharmacyLocation {
+		PharmacyLocation(latitude: 30.0444, longitude: 31.2357, city: "Cairo", province: "Cairo")
+	}
 
-    func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
-        PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
-    }
+	func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
+		PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
+	}
 }

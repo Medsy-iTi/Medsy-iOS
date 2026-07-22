@@ -273,3 +273,12 @@
 "pharmacy.request.accept" = "قبول الطلب";
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
+
+/*orders list */
+"pharmacy.orders.customer.fallback" = "عميل رقم %@";
+"pharmacy.orders.address.fallback" = "العنوان غير متوفر";
+"pharmacy.orders.retry" = "إعادة المحاولة";
+"pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
+"pharmacy.orders.noData" = "لا توجد طلبات.";
+"common.somethingWentWrong" = "حدث خطأ ما.";
+"common.retry" = "إعادة المحاولة";
