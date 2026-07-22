@@ -55,7 +55,7 @@ final class CartViewModel: CartViewModelProtocol {
         maximumItemCount: Int = 20
     ) {
         state = items.isEmpty ? .empty : .loaded(items)
-        self.prescriptions = prescriptions
+        self.prescriptions = prescriptions.suffix(1).map { $0 }
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
@@ -71,7 +71,7 @@ final class CartViewModel: CartViewModelProtocol {
         maximumItemCount: Int = 20
     ) {
         self.state = state
-        self.prescriptions = prescriptions
+        self.prescriptions = prescriptions.suffix(1).map { $0 }
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
@@ -123,10 +123,16 @@ final class CartViewModel: CartViewModelProtocol {
         }
 
         let attachment: CartPrescriptionAttachment?
+        let replacedPrescriptionID = previousPrescriptions.first?.id
         if let prescriptionData, !prescriptionData.isEmpty, let source {
-            let newAttachment = CartPrescriptionAttachment(imageData: prescriptionData, source: source)
+            let newAttachment = CartPrescriptionAttachment(
+                id: replacedPrescriptionID ?? UUID(),
+                imageData: prescriptionData,
+                source: source,
+                createdAt: previousPrescriptions.first?.createdAt ?? Date()
+            )
             attachment = newAttachment
-            prescriptions.append(newAttachment)
+            prescriptions = [newAttachment]
         } else {
             attachment = nil
         }
@@ -158,9 +164,15 @@ final class CartViewModel: CartViewModelProtocol {
 
             var updatedPrescriptions = updatedCart.prescriptions
             if let attachment, let manageCartPrescriptionsUseCase {
-                updatedPrescriptions = try await manageCartPrescriptionsUseCase.add(
-                    CartPrescriptionPresentationMapper.map(attachment)
-                )
+                let prescription = CartPrescriptionPresentationMapper.map(attachment)
+                if let replacedPrescriptionID {
+                    updatedPrescriptions = try await manageCartPrescriptionsUseCase.replace(
+                        id: replacedPrescriptionID,
+                        with: prescription
+                    )
+                } else {
+                    updatedPrescriptions = try await manageCartPrescriptionsUseCase.add(prescription)
+                }
             }
 
             apply(updatedCart.withPrescriptions(updatedPrescriptions))
@@ -391,13 +403,23 @@ final class CartViewModel: CartViewModelProtocol {
     ) -> CartEffect? {
         guard canMutate, !data.isEmpty else { return nil }
         let previousPrescriptions = prescriptions
-        let attachment = CartPrescriptionAttachment(imageData: data, source: source)
-        prescriptions.append(attachment)
+        let existingPrescription = prescriptions.first
+        let attachment = CartPrescriptionAttachment(
+            id: existingPrescription?.id ?? UUID(),
+            imageData: data,
+            source: source,
+            createdAt: existingPrescription?.createdAt ?? Date()
+        )
+        prescriptions = [attachment]
         feedback = nil
         guard let useCase = manageCartPrescriptionsUseCase else { return .persistPrescription }
 
         startPrescriptionMutation(previousPrescriptions: previousPrescriptions) {
-            try await useCase.add(CartPrescriptionPresentationMapper.map(attachment))
+            let prescription = CartPrescriptionPresentationMapper.map(attachment)
+            if let existingPrescription {
+                return try await useCase.replace(id: existingPrescription.id, with: prescription)
+            }
+            return try await useCase.add(prescription)
         }
         return .persistPrescription
     }
@@ -515,7 +537,7 @@ final class CartViewModel: CartViewModelProtocol {
 
     private func apply(_ cart: Cart) {
         replaceItems(cart.items.map(CartItemPresentationMapper.map))
-        prescriptions = cart.prescriptions.map(CartPrescriptionPresentationMapper.map)
+        prescriptions = cart.prescriptions.suffix(1).map(CartPrescriptionPresentationMapper.map)
     }
 
     private func add(_ item: CartDisplayItem) -> Bool {
