@@ -26,10 +26,19 @@ struct OfferDetailsHeaderView: View {
             }
 
             Button(action: onBack) {
-                Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .frame(width: 36, height: 36)
+                ZStack {
+                    Circle()
+                        .fill(AppColor.card)
+                        .overlay(
+                            Circle()
+                                .stroke(AppColor.border, lineWidth: 1)
+                        )
+
+                    Image(systemName: languageManager.isRTL ? "chevron.right" : "chevron.left")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppColor.textPrim)
+                }
+                .frame(width: 40, height: 40)
             }
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
