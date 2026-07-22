@@ -11,6 +11,7 @@ import UIKit
 
 @MainActor
 struct PrescriptionCoordinatorView: View {
+    @Environment(CartViewModel.self) private var cartViewModel
     @State private var viewModel: PrescriptionViewModel
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var showsPhotoPicker = false
@@ -18,13 +19,16 @@ struct PrescriptionCoordinatorView: View {
     @State private var showsCameraUnavailable = false
 
     private let onExit: () -> Void
+    private let onViewCart: () -> Void
 
     init(
         mockOutcome: PrescriptionMockOutcome = .success,
-        onExit: @escaping () -> Void
+        onExit: @escaping () -> Void,
+        onViewCart: @escaping () -> Void = {}
     ) {
         _viewModel = State(initialValue: PrescriptionViewModel(mockOutcome: mockOutcome))
         self.onExit = onExit
+        self.onViewCart = onViewCart
     }
 
     var body: some View {
@@ -48,12 +52,19 @@ struct PrescriptionCoordinatorView: View {
                 PrescriptionReadingView(stage: stage, onCancel: { send(.cancelReading) })
             case .review:
                 PrescriptionReviewView(
+                    imageData: viewModel.selectedImageData,
                     medicines: viewModel.medicines,
                     confirmedCount: viewModel.confirmedMedicineCount,
+                    needsReviewCount: viewModel.needsReviewMedicineCount,
                     canAddToCart: viewModel.canAddToCart,
+                    isAddingToCart: viewModel.isAddingToCart,
+                    cartErrorMessage: viewModel.cartErrorMessage,
                     onConfirm: { send(.confirmMedicine($0)) },
                     onChooseAlternative: { send(.chooseAlternative($0)) },
-                    onAddToCart: { send(.addToCart) },
+                    onIncreaseQuantity: { send(.increaseQuantity($0)) },
+                    onDecreaseQuantity: { send(.decreaseQuantity($0)) },
+                    onDelete: { send(.deleteMedicine($0)) },
+                    onAddToCart: addToCart,
                     onBack: { send(.back) }
                 )
             case let .medicineSearch(medicineID):
@@ -66,9 +77,9 @@ struct PrescriptionCoordinatorView: View {
             case let .result(result):
                 PrescriptionResultView(
                     result: result,
-                    primaryAction: { send(primaryEvent(for: result)) },
+                    primaryAction: { performPrimaryAction(for: result) },
                     secondaryAction: { send(secondaryEvent(for: result)) },
-                    isPrimaryDisabled: result == .added,
+                    isPrimaryDisabled: false,
                     onBack: { send(.back) }
                 )
             }
@@ -117,10 +128,46 @@ struct PrescriptionCoordinatorView: View {
         }
     }
 
+    private func addToCart() {
+        send(.addToCart)
+        guard viewModel.isAddingToCart else { return }
+
+        let source: CartPrescriptionSource?
+        switch viewModel.selectedImageSource {
+        case .camera:
+            source = .camera
+        case .gallery:
+            source = .photoLibrary
+        case nil:
+            source = nil
+        }
+
+        Task {
+            do {
+                try await cartViewModel.addPrescriptionReview(
+                    items: viewModel.cartItems,
+                    prescriptionData: viewModel.selectedImageData,
+                    source: source
+                )
+                send(.addToCartSucceeded)
+            } catch {
+                send(.addToCartFailed(error.localizedDescription))
+            }
+        }
+    }
+
+    private func performPrimaryAction(for result: PrescriptionFlowResult) {
+        if result == .added {
+            onViewCart()
+        } else {
+            send(primaryEvent(for: result))
+        }
+    }
+
     private func primaryEvent(for result: PrescriptionFlowResult) -> PrescriptionEvent {
         switch result {
         case .added:
-            .viewCart
+            .backHome
         case .uploadFailed:
             .retry
         case .readingFailed, .noMedicines:

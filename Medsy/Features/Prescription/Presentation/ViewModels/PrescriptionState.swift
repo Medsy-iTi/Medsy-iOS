@@ -44,11 +44,15 @@ enum PrescriptionEvent {
     case chooseAlternative(UUID)
     case replaceMedicine(UUID, MedsyProduct)
     case cancelMedicineSearch
+    case increaseQuantity(UUID)
+    case decreaseQuantity(UUID)
+    case deleteMedicine(UUID)
     case addToCart
+    case addToCartSucceeded
+    case addToCartFailed(String)
     case retry
     case continueWithoutReading
     case addMedicineManually
-    case viewCart
     case backHome
     case back
 }

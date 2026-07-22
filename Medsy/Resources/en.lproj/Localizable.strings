@@ -359,8 +359,17 @@
 "prescription.review.confirmed" = "confirmed";
 "prescription.review.needsReview" = "needs review";
 "prescription.review.addToCart" = "Add to cart";
+"prescription.review.addingToCart" = "Adding to cart...";
 "prescription.review.confirm" = "Confirm";
 "prescription.review.chooseAnother" = "Choose another";
+"prescription.review.foundCount" = "%d medicines found";
+"prescription.review.recognized" = "Recognized";
+"prescription.review.showImage" = "Show prescription image";
+"prescription.review.noImage" = "No prescription image available";
+"prescription.review.perPack" = "per pack";
+"prescription.review.edit" = "Edit";
+"prescription.review.unclearMessage" = "The medicine is unclear and may be similar to:";
+"prescription.review.blocked" = "Confirm unclear medicines first to enable adding";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";

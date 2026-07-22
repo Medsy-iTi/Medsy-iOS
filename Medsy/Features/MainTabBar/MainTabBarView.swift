@@ -30,7 +30,8 @@ struct MainTabBarView: View {
                 case .home:
                     HomeCoordinatorView(
                         requestedRoute: $requestedHomeRoute,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                        onTabBarHiddenChange: { isTabBarHidden = $0 },
+                        onOpenCart: { coordinator.select(.cart) }
                     )
                 case .profile:
                     ProfileCoordinatorView(onLogout: coordinator.logout)
