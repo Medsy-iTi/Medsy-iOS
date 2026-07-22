@@ -97,6 +97,89 @@ final class CartViewModel: CartViewModelProtocol {
         !items.isEmpty || !prescriptions.isEmpty
     }
 
+    func addPrescriptionReview(
+        items reviewItems: [CartDisplayItem],
+        prescriptionData: Data?,
+        source: CartPrescriptionSource?
+    ) async throws {
+        guard canMutate else { throw CartPrescriptionReviewError.cartIsBusy }
+        guard !reviewItems.isEmpty,
+              reviewItems.allSatisfy({ $0.productID != nil && $0.quantity > 0 }) else {
+            throw CartPrescriptionReviewError.invalidMedicine
+        }
+
+        let requestedQuantity = reviewItems.reduce(0) { $0 + $1.quantity }
+        guard itemCount + requestedQuantity <= maximumItemCount else {
+            throw CartPrescriptionReviewError.maximumItemCountReached(maximumItemCount)
+        }
+
+        let previousItems = items
+        let previousPrescriptions = prescriptions
+        for item in reviewItems {
+            guard add(item) else {
+                replaceItems(previousItems)
+                throw CartPrescriptionReviewError.invalidMedicine
+            }
+        }
+
+        let attachment: CartPrescriptionAttachment?
+        if let prescriptionData, !prescriptionData.isEmpty, let source {
+            let newAttachment = CartPrescriptionAttachment(imageData: prescriptionData, source: source)
+            attachment = newAttachment
+            prescriptions.append(newAttachment)
+        } else {
+            attachment = nil
+        }
+
+        guard let addCartItemUseCase else {
+            syncState = .synced
+            return
+        }
+
+        syncState = .syncing
+        do {
+            var updatedCart: Cart?
+            for item in reviewItems {
+                guard let productID = item.productID else {
+                    throw CartPrescriptionReviewError.invalidMedicine
+                }
+                updatedCart = try await addCartItemUseCase.execute(
+                    input: AddCartItemInput(
+                        productID: productID,
+                        quantity: item.quantity,
+                        dosageInfo: item.dosageInfo
+                    )
+                )
+            }
+
+            guard let updatedCart else {
+                throw CartPrescriptionReviewError.invalidMedicine
+            }
+
+            var updatedPrescriptions = updatedCart.prescriptions
+            if let attachment, let manageCartPrescriptionsUseCase {
+                updatedPrescriptions = try await manageCartPrescriptionsUseCase.add(
+                    CartPrescriptionPresentationMapper.map(attachment)
+                )
+            }
+
+            apply(updatedCart.withPrescriptions(updatedPrescriptions))
+            syncState = .synced
+            feedback = nil
+        } catch {
+            if let loadCartUseCase, let refreshedCart = try? await loadCartUseCase.refresh() {
+                apply(refreshedCart)
+            } else {
+                replaceItems(previousItems)
+                prescriptions = previousPrescriptions
+            }
+            let message = error.localizedDescription
+            syncState = .failed(message)
+            feedback = .operationFailed(message)
+            throw error
+        }
+    }
+
     func quantity(forProductID productID: Int64?) -> Int {
         guard let productID else { return 0 }
         return items.first(where: { $0.productID == productID })?.quantity ?? 0
@@ -508,5 +591,22 @@ final class CartViewModel: CartViewModelProtocol {
     private func clearRemoval() {
         removedItem = nil
         removedItemIndex = nil
+    }
+}
+
+private enum CartPrescriptionReviewError: LocalizedError {
+    case cartIsBusy
+    case invalidMedicine
+    case maximumItemCountReached(Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .cartIsBusy:
+            return "The cart is still updating. Please try again."
+        case .invalidMedicine:
+            return "One or more medicines could not be added to the cart."
+        case let .maximumItemCountReached(limit):
+            return "You can add up to \(limit) items to the cart."
+        }
     }
 }

@@ -347,8 +347,17 @@
 "prescription.review.confirmed" = "تم التأكيد";
 "prescription.review.needsReview" = "تحتاج مراجعة";
 "prescription.review.addToCart" = "أضف إلى السلة";
+"prescription.review.addingToCart" = "جارٍ الإضافة إلى السلة...";
 "prescription.review.confirm" = "تأكيد";
 "prescription.review.chooseAnother" = "اختيار دواء آخر";
+"prescription.review.foundCount" = "تم العثور على %d أدوية";
+"prescription.review.recognized" = "تم التعرف";
+"prescription.review.showImage" = "عرض صورة الروشتة";
+"prescription.review.noImage" = "لا توجد صورة روشتة متاحة";
+"prescription.review.perPack" = "للعبوة";
+"prescription.review.edit" = "تعديل";
+"prescription.review.unclearMessage" = "الدواء غير واضح وقد يكون مشابهًا لـ:";
+"prescription.review.blocked" = "أكد الأدوية غير الواضحة أولًا لتفعيل الإضافة";
 "prescription.needsReview" = "تحتاج مراجعة";
 "prescription.added.title" = "تمت الإضافة إلى السلة!";
 "prescription.added.message" = "يمكنك مراجعة الكميات وإتمام طلبك من السلة.";

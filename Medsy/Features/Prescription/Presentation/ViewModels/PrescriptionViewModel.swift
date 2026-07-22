@@ -14,21 +14,44 @@ final class PrescriptionViewModel {
     private(set) var state: PrescriptionViewState = .upload
     private(set) var selectedImageData: Data?
     private(set) var medicines: [PrescriptionMedicineDisplay] = []
+    private(set) var isAddingToCart = false
+    private(set) var cartErrorMessage: String?
 
     private let mockOutcome: PrescriptionMockOutcome
     private var selectedSource: PrescriptionImageSource?
     private var processingTask: Task<Void, Never>?
 
-    init(mockOutcome: PrescriptionMockOutcome = .success) {
+    init(
+        mockOutcome: PrescriptionMockOutcome = .success,
+        initialMedicines: [PrescriptionMedicineDisplay] = []
+    ) {
         self.mockOutcome = mockOutcome
+        medicines = initialMedicines
+        if !initialMedicines.isEmpty {
+            state = .review
+        }
     }
 
     var canAddToCart: Bool {
-        !medicines.isEmpty && medicines.allSatisfy(\.isConfirmed)
+        !isAddingToCart
+            && !medicines.isEmpty
+            && medicines.allSatisfy { $0.isConfirmed && $0.cartItem != nil }
+    }
+
+    var cartItems: [CartDisplayItem] {
+        medicines.compactMap(\.cartItem)
+    }
+
+    var selectedImageSource: PrescriptionImageSource? {
+        selectedSource
     }
 
     var confirmedMedicineCount: Int {
         medicines.filter(\.isConfirmed).count
+    }
+
+    var needsReviewMedicineCount: Int {
+        medicines.filter { $0.needsReview && !$0.isConfirmed }.count
     }
 
     @discardableResult
@@ -45,20 +68,32 @@ final class PrescriptionViewModel {
         case let .confirmMedicine(id):
             confirmMedicine(id: id)
         case let .chooseAlternative(id):
-            guard medicines.contains(where: { $0.id == id && !$0.isConfirmed }) else { break }
+            guard medicines.contains(where: { $0.id == id }) else { break }
             state = .medicineSearch(id)
         case let .replaceMedicine(id, product):
             replaceMedicine(id: id, with: product)
         case .cancelMedicineSearch:
             state = .review
+        case let .increaseQuantity(id):
+            updateQuantity(for: id, by: 1)
+        case let .decreaseQuantity(id):
+            updateQuantity(for: id, by: -1)
+        case let .deleteMedicine(id):
+            deleteMedicine(id: id)
         case .addToCart:
             guard canAddToCart else { break }
+            cartErrorMessage = nil
+            isAddingToCart = true
+        case .addToCartSucceeded:
+            guard isAddingToCart else { break }
+            isAddingToCart = false
             state = .result(.added)
+        case let .addToCartFailed(message):
+            isAddingToCart = false
+            cartErrorMessage = message
         case .continueWithoutReading:
             break
         case .addMedicineManually:
-            break
-        case .viewCart:
             break
         case .backHome:
             return .exit
@@ -129,30 +164,52 @@ final class PrescriptionViewModel {
         selectedSource = nil
         selectedImageData = nil
         medicines = []
+        isAddingToCart = false
+        cartErrorMessage = nil
         state = .upload
     }
 
     private func confirmMedicine(id: UUID) {
         guard let index = medicines.firstIndex(where: { $0.id == id }), !medicines[index].isConfirmed else { return }
         medicines[index].isConfirmed = true
+        cartErrorMessage = nil
         state = .review
     }
 
     private func replaceMedicine(id: UUID, with product: MedsyProduct) {
-        guard let index = medicines.firstIndex(where: { $0.id == id }), !medicines[index].isConfirmed else {
+        guard let index = medicines.firstIndex(where: { $0.id == id }) else {
             state = .review
             return
         }
 
         medicines[index].name = product.name
         medicines[index].details = product.dosageInfo.isEmpty ? product.categoryName : product.dosageInfo
-        medicines[index].price = String(format: "%.2f EGP", product.price)
+        medicines[index].price = String(format: "%.0f EGP", product.price)
+        medicines[index].productID = Int64(product.id)
+        medicines[index].unitPrice = product.price
+        medicines[index].imageURL = product.imageUrl
         medicines[index].confidence = .identified
-        medicines[index].isConfirmed = false
+        medicines[index].isConfirmed = true
+        cartErrorMessage = nil
         state = .review
     }
 
+    private func updateQuantity(for id: UUID, by delta: Int) {
+        guard let index = medicines.firstIndex(where: { $0.id == id }) else { return }
+        medicines[index].quantity = max(1, medicines[index].quantity + delta)
+        cartErrorMessage = nil
+    }
+
+    private func deleteMedicine(id: UUID) {
+        medicines.removeAll { $0.id == id }
+        cartErrorMessage = nil
+        if medicines.isEmpty {
+            state = .result(.noMedicines)
+        }
+    }
+
     private func goBack() -> PrescriptionEffect? {
+        guard !isAddingToCart else { return nil }
         switch state {
         case .upload:
             return .exit
