@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct OfferMedicineItemRow: View {
+    @Environment(LanguageManager.self) private var languageManager
     let item: OfferMedicineItem
 
     var body: some View {
@@ -16,19 +17,19 @@ struct OfferMedicineItemRow: View {
                         .font(AppColor.sans(16, .bold))
                         .foregroundStyle(AppColor.textPrim)
 
-                    Text("جنيه")
+                    Text("offers.list.currency".localized)
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                 }
 
                 HStack(spacing: 4) {
-                    Image(systemName: "checkmark.circle.fill")
+                    Image(systemName: item.isAvailable ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(AppColor.green)
+                        .foregroundStyle(item.isAvailable ? AppColor.green : AppColor.danger)
 
-                    Text("متوفر")
+                    Text(item.isAvailable ? "offers.details.available".localized : "offers.details.unavailable".localized)
                         .font(AppColor.sans(11, .bold))
-                        .foregroundStyle(AppColor.green)
+                        .foregroundStyle(item.isAvailable ? AppColor.green : AppColor.danger)
                 }
             }
 
@@ -60,6 +61,7 @@ struct OfferMedicineItemRow: View {
             }
             .frame(width: 52, height: 52)
         }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
     }
