@@ -205,11 +205,10 @@ struct EditProfileScreen: View {
 					Label("profile.pick_on_map".localized, systemImage: "mappin.and.ellipse")
 						.font(.system(size: 12, weight: .semibold))
 						.foregroundStyle(ProfileStyle.green)
-				}
-				.buttonStyle(.plain)
-			
+					}
+					.buttonStyle(.plain)
 
-			if let addressError {
+				if let addressError {
 				Text(addressError)
 					.font(.system(size: 11, weight: .medium))
 					.foregroundStyle(ProfileStyle.red)
