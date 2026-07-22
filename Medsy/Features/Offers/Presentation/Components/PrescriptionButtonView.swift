@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct PrescriptionButtonView: View {
+    @Environment(LanguageManager.self) private var languageManager
     let onTap: () -> Void
 
     var body: some View {
@@ -13,7 +14,7 @@ struct PrescriptionButtonView: View {
             HStack(spacing: 12) {
                 Spacer()
 
-                Text("عرض الروشتة")
+                Text("offers.details.viewPrescription".localized)
                     .font(AppColor.sans(15, .bold))
                     .foregroundStyle(AppColor.textPrim)
 
@@ -23,6 +24,7 @@ struct PrescriptionButtonView: View {
 
                 Spacer()
             }
+            .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
