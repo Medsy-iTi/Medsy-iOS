@@ -6,11 +6,12 @@
 import SwiftUI
 
 struct PharmacistCommentCardView: View {
+    @Environment(LanguageManager.self) private var languageManager
     let comment: String
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
-            Text("تعليق من الصيدلي")
+            Text("offers.details.pharmacistComment".localized)
                 .font(AppColor.sans(16, .bold))
                 .foregroundStyle(AppColor.textPrim)
                 .padding(.horizontal, 4)
@@ -43,5 +44,6 @@ struct PharmacistCommentCardView: View {
                     )
             )
         }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
     }
 }
