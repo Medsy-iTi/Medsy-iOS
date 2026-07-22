@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct OfferDetailsView: View {
+    @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: OfferDetailsViewModel
     let onBack: () -> Void
     var onPrescriptionTap: (() -> Void)? = nil
@@ -51,7 +52,7 @@ struct OfferDetailsView: View {
                     viewModel.selectOffer()
                     onSelectOffer?()
                 } label: {
-                    Text("اختار هذا العرض")
+                    Text("offers.details.selectOffer".localized)
                         .font(AppColor.sans(16, .bold))
                         .foregroundStyle(AppColor.white)
                         .frame(maxWidth: .infinity)
@@ -66,6 +67,7 @@ struct OfferDetailsView: View {
             }
             .background(AppColor.bg)
         }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
     }
