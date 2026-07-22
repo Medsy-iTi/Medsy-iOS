@@ -36,11 +36,11 @@ struct MainTabBarView: View {
                     ProfileCoordinatorView(onLogout: coordinator.logout)
                         .onAppear { isTabBarHidden = false }
                 case .cart:
-                    CartView(
+                    CartCoordinatorView(
                         viewModel: cartViewModel,
-                        onSearch: openSearchFromCart
+                        onSearch: openSearchFromCart,
+                        onTabBarHiddenChange: { isTabBarHidden = $0 }
                     )
-                    .onAppear { isTabBarHidden = false }
                 case .favorites, .offers, .orders:
                     VStack {
                         Spacer()
@@ -65,7 +65,7 @@ struct MainTabBarView: View {
                     HStack(spacing: 0) {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
-                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.itemCount)
+                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.distinctProductCount)
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
