@@ -14,6 +14,7 @@ enum HomeRoute: Hashable {
     case offersList
     case offerDetails(OfferPresentationModel)
     case orderReview(OfferDetailPresentationModel)
+    case orderConfirm(OrderReviewPresentationModel)
 }
 
 @MainActor
@@ -39,6 +40,14 @@ final class HomeCoordinator {
 
     func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
         path.append(HomeRoute.orderReview(offerDetail))
+    }
+
+    func openOrderConfirm(_ orderReview: OrderReviewPresentationModel) {
+        path.append(HomeRoute.orderConfirm(orderReview))
+    }
+
+    func resetToHome() {
+        path = NavigationPath()
     }
 
     func open(_ route: HomeRoute) {
@@ -103,7 +112,17 @@ struct HomeCoordinatorView: View {
                 case let .orderReview(offerDetail):
                     OrderReviewView(
                         offerDetail: offerDetail,
-                        onBack: coordinator.goBack
+                        onBack: coordinator.goBack,
+                        onConfirmOrder: {
+                            coordinator.openOrderConfirm(
+                                OrderReviewViewModel(offerDetail: offerDetail).orderReview
+                            )
+                        }
+                    )
+                case let .orderConfirm(orderReview):
+                    OrderConfirmView(
+                        orderReview: orderReview,
+                        onBackToHome: coordinator.resetToHome
                     )
                 }
             }
