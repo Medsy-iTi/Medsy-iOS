@@ -48,10 +48,11 @@ enum PrescriptionEvent {
     case decreaseQuantity(UUID)
     case deleteMedicine(UUID)
     case addToCart
+    case addToCartSucceeded
+    case addToCartFailed(String)
     case retry
     case continueWithoutReading
     case addMedicineManually
-    case viewCart
     case backHome
     case back
 }

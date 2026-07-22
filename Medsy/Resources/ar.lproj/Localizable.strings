@@ -347,6 +347,7 @@
 "prescription.review.confirmed" = "تم التأكيد";
 "prescription.review.needsReview" = "تحتاج مراجعة";
 "prescription.review.addToCart" = "أضف إلى السلة";
+"prescription.review.addingToCart" = "جارٍ الإضافة إلى السلة...";
 "prescription.review.confirm" = "تأكيد";
 "prescription.review.chooseAnother" = "اختيار دواء آخر";
 "prescription.review.foundCount" = "تم العثور على %d أدوية";

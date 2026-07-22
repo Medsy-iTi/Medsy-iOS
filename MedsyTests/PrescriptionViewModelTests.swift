@@ -68,6 +68,40 @@ final class PrescriptionViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state, .result(.noMedicines))
     }
 
+    func testAddingToCartOnlyShowsSuccessAfterPersistenceSucceeds() {
+        let viewModel = PrescriptionViewModel(initialMedicines: [recognizedMedicine()])
+
+        viewModel.handle(.addToCart)
+
+        XCTAssertTrue(viewModel.isAddingToCart)
+        XCTAssertEqual(viewModel.state, .review)
+
+        viewModel.handle(.addToCartSucceeded)
+
+        XCTAssertFalse(viewModel.isAddingToCart)
+        XCTAssertEqual(viewModel.state, .result(.added))
+    }
+
+    func testAddingPrescriptionReviewPopulatesCartItemsAndAttachment() async throws {
+        let medicine = recognizedMedicine()
+        let prescriptionData = Data([1, 2, 3])
+        let prescriptionViewModel = PrescriptionViewModel(initialMedicines: [medicine])
+        let cartViewModel = CartViewModel()
+
+        try await cartViewModel.addPrescriptionReview(
+            items: prescriptionViewModel.cartItems,
+            prescriptionData: prescriptionData,
+            source: .photoLibrary
+        )
+
+        guard case let .loaded(items) = cartViewModel.state else {
+            return XCTFail("Expected the cart to contain the reviewed medicine")
+        }
+        XCTAssertEqual(items.first?.productID, 1)
+        XCTAssertEqual(items.first?.quantity, 1)
+        XCTAssertEqual(cartViewModel.prescriptions.first?.imageData, prescriptionData)
+    }
+
     private func recognizedMedicine() -> PrescriptionMedicineDisplay {
         medicine(confidence: .identified, isConfirmed: true)
     }
@@ -80,6 +114,8 @@ final class PrescriptionViewModelTests: XCTestCase {
             name: "Medicine",
             details: "20 tablets",
             price: "20 EGP",
+            productID: 1,
+            unitPrice: 20,
             confidence: confidence,
             isConfirmed: isConfirmed
         )

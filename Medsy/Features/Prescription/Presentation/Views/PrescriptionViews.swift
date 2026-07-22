@@ -217,6 +217,8 @@ struct PrescriptionReviewView: View {
     let confirmedCount: Int
     let needsReviewCount: Int
     let canAddToCart: Bool
+    let isAddingToCart: Bool
+    let cartErrorMessage: String?
     let onConfirm: (UUID) -> Void
     let onChooseAlternative: (UUID) -> Void
     let onIncreaseQuantity: (UUID) -> Void
@@ -264,12 +266,25 @@ struct PrescriptionReviewView: View {
                 }
 
                 PrimaryButton(
-                    title: "prescription.review.addToCart".localized,
+                    title: isAddingToCart
+                        ? "prescription.review.addingToCart".localized
+                        : "prescription.review.addToCart".localized,
                     isDisabled: !canAddToCart,
                     action: onAddToCart
                 )
                 .padding(.horizontal, MedsySpacing.md)
-                .padding(.vertical, MedsySpacing.sm)
+                .padding(.top, MedsySpacing.sm)
+
+                if let cartErrorMessage {
+                    Text(cartErrorMessage)
+                        .font(MedsyFont.caption(12))
+                        .foregroundStyle(AppColor.danger)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, MedsySpacing.md)
+                        .padding(.top, MedsySpacing.xs)
+                }
+
+                Spacer().frame(height: MedsySpacing.sm)
                 .background(.ultraThinMaterial)
             }
         }
