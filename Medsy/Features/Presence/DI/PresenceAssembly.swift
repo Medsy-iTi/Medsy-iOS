@@ -6,6 +6,7 @@
 
 import Foundation
 
+@MainActor
 struct PresenceAssembly: ModuleAssembly {
     @MainActor
     func register(in container: DIContainer) {
