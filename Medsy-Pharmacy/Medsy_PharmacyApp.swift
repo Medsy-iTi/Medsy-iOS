@@ -15,6 +15,7 @@ struct Medsy_PharmacyApp: App {
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
     private let coordinator: RootCoordinator
+    private let heartbeatService: PharmacyHeartbeatService
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
 
     init() {
@@ -22,23 +23,28 @@ struct Medsy_PharmacyApp: App {
             PharmacyCoreAssembly(),
             PharmacyAuthenticationAssembly(),
             OnboardingModuleAssembly(),
-			ProfileAssembly(),
+            ProfileAssembly(),
             PresenceAssembly(),
-			
             PharmacyHomeAssembly(),
             PharmacyOrdersAssembly()
         ])
-        
+
         let container = PharmacyAppAssembler.shared.container
         languageManager = container.resolve(LanguageManager.self)
         authenticationFactory = container.resolve(PharmacyAuthenticationFactory.self)
         homeFactory = container.resolve(PharmacyHomeFactory.self)
         ordersFactory = container.resolve(PharmacyOrdersFactory.self)
-        
+        heartbeatService = container.resolve(PharmacyHeartbeatService.self)
+
         onboardingFactory = PharmacyOnboardingFactory(
             getPagesUseCase: container.resolve(GetOnboardingPagesUseCaseProtocol.self)
         )
         coordinator = RootCoordinator(container: container)
+
+        Task { @MainActor in
+            heartbeatService.startHeartbeat()
+            print("[Medsy_PharmacyApp] 🚀 App launched — heartbeat started")
+        }
     }
 
     var body: some Scene {

@@ -157,7 +157,6 @@ final class ProfileViewModel {
     func onAppear() async {
         guard profile == nil else { return }
         await loadProfile()
-        heartbeatService.startHeartbeat()
         if dutyStatusStore.isOnDuty {
             await restoreOnDuty()
         }
