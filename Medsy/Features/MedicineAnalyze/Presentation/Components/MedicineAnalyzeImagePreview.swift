@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct MedicineAnalyzeImagePreview: View {
     let imageData: Data
@@ -26,11 +25,20 @@ struct MedicineAnalyzeImagePreview: View {
                     .multilineTextAlignment(.center)
             }
 
-            previewImage
+            MedicineAnalyzePreviewImage(imageData: imageData)
 
-            Button("medicineAnalyze.changeImage".localized, action: onChangeImage)
+            Button(action: onChangeImage) {
+                Label(
+                    "medicineAnalyze.changeImage".localized,
+                    systemImage: "arrow.trianglehead.2.clockwise.rotate.90"
+                )
                 .font(MedsyFont.button(14))
                 .foregroundStyle(AppColor.green)
+                .frame(height: 40)
+                .padding(.horizontal, MedsySpacing.md)
+                .background(AppColor.lightGreen.opacity(0.55), in: Capsule())
+            }
+            .buttonStyle(.plain)
 
             Spacer()
 
@@ -40,21 +48,5 @@ struct MedicineAnalyzeImagePreview: View {
             )
         }
         .padding(MedsySpacing.md)
-    }
-
-    @ViewBuilder
-    private var previewImage: some View {
-        if let image = UIImage(data: imageData) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: 430)
-                .background(AppColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                        .stroke(AppColor.border, lineWidth: 1)
-                )
-        }
     }
 }
