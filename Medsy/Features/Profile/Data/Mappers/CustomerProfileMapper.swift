@@ -14,6 +14,8 @@ enum CustomerProfileMapper {
             lastName: dto.lastName,
             homeAddress: dto.homeAddress,
             dateOfBirth: dto.dob.flatMap(ProfileDateMapper.date),
+			homeLatitude: dto.latitude,
+			homeLongitude: dto.longitude,
             phoneNumber: dto.phoneNumber
         )
     }
