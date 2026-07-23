@@ -23,6 +23,7 @@ struct Medsy_PharmacyApp: App {
             PharmacyAuthenticationAssembly(),
             OnboardingModuleAssembly(),
 			ProfileAssembly(),
+            PresenceAssembly(),
 			
             PharmacyHomeAssembly(),
             PharmacyOrdersAssembly()
