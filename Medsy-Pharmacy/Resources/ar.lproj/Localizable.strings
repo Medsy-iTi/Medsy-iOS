@@ -298,3 +298,8 @@
 "pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
+
+/* On Duty */
+"profile.on_duty.title" = "حالة الدوام";
+"profile.on_duty.on" = "في الخدمة";
+"profile.on_duty.off" = "خارج الخدمة";

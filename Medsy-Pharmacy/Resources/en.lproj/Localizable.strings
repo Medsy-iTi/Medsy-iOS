@@ -300,3 +300,8 @@
 "pharmacy.orders.detail_placeholder" = "Order details coming soon.";
 "pharmacy.orders.noData" = "No orders found.";
 "common.somethingWentWrong" = "Something went wrong.";
+
+/* On Duty */
+"profile.on_duty.title" = "On Duty";
+"profile.on_duty.on" = "On Duty";
+"profile.on_duty.off" = "Off Duty";
