@@ -113,6 +113,7 @@ Features/
 
 - Views render state and forward user intent. Keep business rules, API calls, and persistence out of SwiftUI view bodies.
 - Place feature-specific reusable view components under `Presentation/Views/Components/`, next to the feature's screen views. Do not create `Presentation/Components/` as a sibling of `Views/`.
+- Declare every reusable SwiftUI component as an independent `struct` conforming to `View` in its own file. Do not create component views using computed `var` properties or helper `func` methods inside another view.
 - View models are `@MainActor` and expose explicit screen state. Prefer a single state value when a screen has meaningful loading, content, empty, and error states.
 - Define a protocol for every view model in `Presentation/ViewModels/`. Views and factories should depend on the protocol when practical, while the concrete implementation remains responsible for Observation state and behavior.
 - Use cases express one business action and are injected into view models.
