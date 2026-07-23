@@ -160,14 +160,14 @@ final class ProfileCoordinator: Coordinator {
             leavePharmacyUseCase: container.resolve(LeavePharmacyUseCaseProtocol.self),
             updatePharmacyUseCase: container.resolve(UpdatePharmacyUseCaseProtocol.self),
             deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
-			removePharmacistUseCase: container
-				.resolve(
-					RemovePharmacistUseCaseProtocol.self
-				),
-			invitePharmacistUseCase: container
-				.resolve(InvitePharmacistUseCaseProtocol.self),
+            removePharmacistUseCase: container.resolve(RemovePharmacistUseCaseProtocol.self),
+            invitePharmacistUseCase: container.resolve(InvitePharmacistUseCaseProtocol.self),
             updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
             logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
+            goOnDutyUseCase: container.resolve(GoOnDutyUseCaseProtocol.self),
+            goOffDutyUseCase: container.resolve(GoOffDutyUseCaseProtocol.self),
+            heartbeatService: container.resolve(PharmacyHeartbeatService.self),
+            dutyStatusStore: container.resolve(DutyStatusStore.self),
             languageManager: container.resolve(LanguageManager.self),
             appSettings: container.resolve(PharmacyAppSettings.self)
         )

@@ -23,8 +23,8 @@ final class ProfileViewModel {
     private(set) var state: ViewState = .loading
     private(set) var profile: PharmacyProfile?
 
-    // Order receiving status (local until API is available)
-    var isAcceptingOrders = true
+    private(set) var isOnDuty: Bool = false
+    private(set) var isDutyToggleLoading: Bool = false
 
     // Logout
     var showLogoutConfirmation = false
@@ -72,6 +72,10 @@ final class ProfileViewModel {
     private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
     private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
+    private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
+    private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
+    private let heartbeatService: PharmacyHeartbeatService
+    private let dutyStatusStore: DutyStatusStore
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
 
@@ -93,6 +97,10 @@ final class ProfileViewModel {
         invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
         updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
+        goOnDutyUseCase: GoOnDutyUseCaseProtocol,
+        goOffDutyUseCase: GoOffDutyUseCaseProtocol,
+        heartbeatService: PharmacyHeartbeatService,
+        dutyStatusStore: DutyStatusStore,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -105,8 +113,13 @@ final class ProfileViewModel {
         self.invitePharmacistUseCase = invitePharmacistUseCase
         self.updatePharmacistUseCase = updatePharmacistUseCase
         self.logoutUseCase = logoutUseCase
+        self.goOnDutyUseCase = goOnDutyUseCase
+        self.goOffDutyUseCase = goOffDutyUseCase
+        self.heartbeatService = heartbeatService
+        self.dutyStatusStore = dutyStatusStore
         self.languageManager = languageManager
         self.appSettings = appSettings
+        self.isOnDuty = dutyStatusStore.isOnDuty
     }
 
     // MARK: - Computed Props
@@ -144,10 +157,48 @@ final class ProfileViewModel {
     func onAppear() async {
         guard profile == nil else { return }
         await loadProfile()
+        if dutyStatusStore.isOnDuty {
+            await restoreOnDuty()
+        }
     }
 
     func refresh() async {
         await loadProfile(showsSpinner: false)
+    }
+
+    private func restoreOnDuty() async {
+        do {
+            let entity = try await goOnDutyUseCase.execute()
+            isOnDuty = entity.onDuty
+            dutyStatusStore.isOnDuty = entity.onDuty
+            heartbeatService.startHeartbeat()
+            print("[ProfileViewModel] ✅ Restored on-duty state")
+        } catch {
+            print("[ProfileViewModel] ❌ Failed to restore on-duty: \(error)")
+        }
+    }
+
+    func toggleDuty() async {
+        guard !isDutyToggleLoading else { return }
+        isDutyToggleLoading = true
+        do {
+            if isOnDuty {
+                let entity = try await goOffDutyUseCase.execute()
+                isOnDuty = entity.onDuty
+                dutyStatusStore.isOnDuty = entity.onDuty
+                heartbeatService.stopHeartbeat()
+                print("[ProfileViewModel] 🔴 Went off duty")
+            } else {
+                let entity = try await goOnDutyUseCase.execute()
+                isOnDuty = entity.onDuty
+                dutyStatusStore.isOnDuty = entity.onDuty
+                heartbeatService.startHeartbeat()
+                print("[ProfileViewModel] 🟢 Went on duty")
+            }
+        } catch {
+            print("[ProfileViewModel] ❌ toggleDuty failed: \(error)")
+        }
+        isDutyToggleLoading = false
     }
 
     private func loadProfile(showsSpinner: Bool = true) async {
