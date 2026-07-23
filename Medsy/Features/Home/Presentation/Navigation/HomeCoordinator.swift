@@ -83,7 +83,12 @@ struct HomeCoordinatorView: View {
                         )
                     case .medicineAnalyze:
                         MedicineAnalyzeView(
-                            onBack: coordinator.goBack
+                            onBack: coordinator.goBack,
+                            onProductSelected: { productID in
+                                coordinator.path.append(
+                                    ProductDetailDestination(productId: productID)
+                                )
+                            }
                         )
                     }
                 }
