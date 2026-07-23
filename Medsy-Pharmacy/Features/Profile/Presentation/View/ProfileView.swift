@@ -119,12 +119,25 @@ struct ProfileView: View {
     @ViewBuilder
     private func loadedContent(profile: PharmacyProfile) -> some View {
         VStack(spacing: PharmacySpacing.md) {
-            // User Profile Section
             UserProfileView(profile: profile) {
                 viewModel.didTapEditProfile()
             }
 
-            // Pharmacy Profile Section
+            ProfileSectionContainer {
+                ProfileToggleRow(
+                    icon: "stethoscope",
+                    title: "profile.on_duty.title".localized,
+                    badgeText: viewModel.isOnDuty
+                        ? "profile.on_duty.on".localized
+                        : "profile.on_duty.off".localized,
+                    isLoading: viewModel.isDutyToggleLoading,
+                    isOn: Binding(
+                        get: { viewModel.isOnDuty },
+                        set: { _ in Task { await viewModel.toggleDuty() } }
+                    )
+                )
+            }
+
             pharmacySection(profile: profile)
 
             // Settings Section
