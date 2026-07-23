@@ -19,7 +19,7 @@ struct PharmacyLocationCardView: View {
         self.latitude = latitude
         self.longitude = longitude
         self.onOpenDirections = onOpenDirections
-        
+
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let region = MKCoordinateRegion(
             center: center,

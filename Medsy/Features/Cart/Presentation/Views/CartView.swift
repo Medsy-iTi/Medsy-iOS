@@ -209,13 +209,6 @@ struct CartView: View {
                             )
                         }
                     }
-
-                    PrimaryButton(
-                        title: "cart.prescription.add_another".localized,
-                        systemImage: "camera",
-                        style: .secondary,
-                        action: { presentPrescriptionSources() }
-                    )
                 }
 
                 VStack(spacing: MedsySpacing.sm) {

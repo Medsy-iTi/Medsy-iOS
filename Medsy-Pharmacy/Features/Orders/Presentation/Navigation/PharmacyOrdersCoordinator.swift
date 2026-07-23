@@ -1,38 +1,58 @@
 //
-//  PharmacyOrdersFactory.swift
-//  Medsy-Pharmacy
+//  PharmacyOrdersCoordinator.swift
+//  Medsy
 //
-//  Created by Ehab Salah on 20/07/2026.
+//  Created by Shahudaa on 22/07/2026.
 //
+
 
 import SwiftUI
+import Observation
 
-struct PharmacyOrdersFactory {
+@Observable
+@MainActor
+final class PharmacyOrdersCoordinator: Coordinator {
+	var path = NavigationPath()
+
 	private let fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol
 	private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
 	private let appSettings: PharmacyAppSettings
-	private let identityProvider: PharmacyIdentityProviding
+	let identityProvider: PharmacyIdentityProviding
 
 	init(
 		fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol,
 		getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
-		appSettings: PharmacyAppSettings ,
-	    identityProvider: PharmacyIdentityProviding
+		appSettings: PharmacyAppSettings,
+		identityProvider: PharmacyIdentityProviding
 	) {
 		self.fetchOrdersUseCase = fetchOrdersUseCase
 		self.getProfileUseCase = getProfileUseCase
 		self.appSettings = appSettings
 		self.identityProvider = identityProvider
-
 	}
 
-	@MainActor
-	func makeCoordinator() -> PharmacyOrdersCoordinator {
-		PharmacyOrdersCoordinator(
+	@ViewBuilder
+	func start() -> some View {
+		PharmacyOrdersView(viewModel: makeViewModel(), coordinator: self)
+	}
+
+	func makeViewModel() -> PharmacyOrdersViewModel {
+		PharmacyOrdersViewModel(
 			fetchOrdersUseCase: fetchOrdersUseCase,
 			getProfileUseCase: getProfileUseCase,
 			appSettings: appSettings,
 			identityProvider: identityProvider
 		)
 	}
+
+	func pop() {
+		guard !path.isEmpty else { return }
+		path.removeLast()
+	}
+
+	func popToRoot() {
+		path.removeLast(path.count)
+	}
+
+
 }

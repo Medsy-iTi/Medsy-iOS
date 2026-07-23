@@ -51,7 +51,7 @@ final class PharmacyProfileViewModel {
     func sharePharmacy(name: String, address: String) {
         let text = "\(name)\n\(address)"
         let activityVC = UIActivityViewController(activityItems: [text], applicationActivities: nil)
-        
+
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootVC = windowScene.windows.first?.rootViewController {
             rootVC.present(activityVC, animated: true)

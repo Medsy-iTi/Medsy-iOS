@@ -9,7 +9,10 @@ import SwiftUI
 
 struct PharmacyOrdersFilterBar: View {
     @Binding var selection: PharmacyOrdersFilter
-
+	let allCount: Int
+	let newCount: Int
+	let preparingCount: Int
+	let deliveredCount: Int
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: PharmacySpacing.xs) {
@@ -30,11 +33,12 @@ struct PharmacyOrdersFilterBar: View {
         .accessibilityLabel("pharmacy.orders.filters".localized)
     }
 
-    private func badgeCount(for filter: PharmacyOrdersFilter) -> Int? {
-        switch filter {
-        case .all, .delivered: nil
-        case .new: 23
-        case .preparing: 18
-        }
-    }
+	private func badgeCount(for filter: PharmacyOrdersFilter) -> Int? {
+		switch filter {
+			case .all: allCount > 0 ? allCount : nil
+			case .new: newCount > 0 ? newCount : nil
+			case .preparing: preparingCount > 0 ? preparingCount : nil
+			case .delivered: deliveredCount > 0 ? deliveredCount : nil
+		}
+	}
 }
