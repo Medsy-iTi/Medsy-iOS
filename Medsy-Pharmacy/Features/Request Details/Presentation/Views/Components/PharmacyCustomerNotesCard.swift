@@ -1,3 +1,4 @@
+//
 //  PharmacyCustomerNotesCard.swift
 //  Medsy-Pharmacy
 //
@@ -10,34 +11,25 @@ struct PharmacyCustomerNotesCard: View {
     let notes: String
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: PharmacySpacing.xs) {
-            HStack(spacing: 8) {
-                Spacer()
-
-                Text("pharmacy.request.customer_notes".localized)
-                    .font(PharmacyColor.sans(15, .bold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-
-                Image(systemName: "message")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
-            }
+        VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
+            Text("pharmacy.request.customer_notes_header".localized)
+                .font(PharmacyColor.sans(16, .bold))
+                .foregroundStyle(PharmacyColor.textPrimary)
+                .padding(.bottom, 2)
 
             HStack {
-                Spacer()
-
-                Text(notes)
-                    .font(PharmacyColor.sans(13, .medium))
+                Text(notes.isEmpty ? "pharmacy.request.no_customer_notes".localized : notes)
+                    .font(PharmacyColor.sans(14, .regular))
                     .foregroundStyle(PharmacyColor.textSecondary)
-                    .multilineTextAlignment(.trailing)
+
+                Spacer()
             }
-            .padding(.top, 4)
+            .padding(PharmacySpacing.md)
+            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+                    .stroke(PharmacyColor.border, lineWidth: 1)
+            )
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
     }
 }

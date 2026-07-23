@@ -1,3 +1,4 @@
+//
 //  PharmacyRequestDetailsView.swift
 //  Medsy-Pharmacy
 //
@@ -12,12 +13,8 @@ struct PharmacyRequestDetailsView: View {
     var viewModel: PharmacyRequestDetailsViewModel?
 
     @State private var requestModel: PharmacyRequestDetailsModel?
-    @State private var selectedItemForAlternative: PharmacyOrderItem? = nil
-    @State private var alternativeText: String = ""
-    @State private var showAlternativeAlert: Bool = false
-    @State private var isSideBySideActive: Bool = false
+    @State private var notesForCustomerText: String = ""
     @State private var showFullPrescriptionImage: Bool = false
-    @State private var offerNotesText: String = ""
 
     init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
         self._requestModel = State(initialValue: requestModel)
@@ -27,7 +24,7 @@ struct PharmacyRequestDetailsView: View {
     var body: some View {
         VStack(spacing: 0) {
             PharmacyRequestDetailsHeaderView(
-                orderId: requestModel?.id ?? "—",
+                orderId: requestModel?.id ?? "1",
                 statusTitle: requestModel?.statusTitle ?? "",
                 onBack: {
                     dismiss()
@@ -47,6 +44,8 @@ struct PharmacyRequestDetailsView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.md) {
                         PharmacyCustomerInfoCard(
+                            orderId: model.wrappedValue.id,
+                            minutesAgo: model.wrappedValue.minutesAgo,
                             customer: model.wrappedValue.customer,
                             onContact: {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
@@ -55,94 +54,30 @@ struct PharmacyRequestDetailsView: View {
                             }
                         )
 
+                        PharmacyOrderItemsCard(
+                            items: model.items,
+                            deliveryFee: model.wrappedValue.deliveryFee,
+                            total: model.wrappedValue.total
+                        )
+
                         PharmacyPrescriptionCard(
                             imageUrl: model.wrappedValue.prescriptionImageUrl,
                             onEnlarge: {
                                 showFullPrescriptionImage = true
-                            },
-                            onToggleSideBySide: {
-                                withAnimation {
-                                    isSideBySideActive.toggle()
-                                }
-                            },
-                            isSideBySideActive: isSideBySideActive
-                        )
-
-                        if isSideBySideActive {
-                            HStack(alignment: .top, spacing: PharmacySpacing.sm) {
-                                VStack(alignment: .trailing, spacing: 8) {
-                                    Text("pharmacy.request.prescription_image".localized)
-                                        .font(PharmacyColor.sans(13, .bold))
-                                        .foregroundStyle(PharmacyColor.textPrimary)
-
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                                            .fill(PharmacyColor.mutedSurface)
-                                            .frame(height: 260)
-
-                                        VStack(spacing: 6) {
-                                            Image(systemName: "doc.text.image.fill")
-                                                .font(.system(size: 36))
-                                                .foregroundStyle(PharmacyColor.primary)
-                                            Text("pharmacy.request.prescription_handwritten".localized)
-                                                .font(PharmacyColor.sans(12, .semibold))
-                                        }
-                                    }
-                                }
-
-                                VStack(alignment: .trailing, spacing: 8) {
-                                    Text("pharmacy.request.ai_extracted_items".localized)
-                                        .font(PharmacyColor.sans(13, .bold))
-                                        .foregroundStyle(PharmacyColor.textPrimary)
-
-                                    PharmacyOrderItemsCard(
-                                        items: model.items,
-                                        deliveryFee: model.wrappedValue.deliveryFee,
-                                        total: model.wrappedValue.total,
-                                        onToggleAlternative: { itemId in
-                                            if let index = model.wrappedValue.items.firstIndex(where: { $0.id == itemId }) {
-                                                selectedItemForAlternative = model.wrappedValue.items[index]
-                                                alternativeText = model.wrappedValue.items[index].alternativeMedicine ?? ""
-                                                showAlternativeAlert = true
-                                            }
-                                        }
-                                    )
-                                }
                             }
-                        } else {
-                            PharmacyOrderItemsCard(
-                                items: model.items,
-                                deliveryFee: model.wrappedValue.deliveryFee,
-                                total: model.wrappedValue.total,
-                                onToggleAlternative: { itemId in
-                                    if let index = model.wrappedValue.items.firstIndex(where: { $0.id == itemId }) {
-                                        selectedItemForAlternative = model.wrappedValue.items[index]
-                                        alternativeText = model.wrappedValue.items[index].alternativeMedicine ?? ""
-                                        showAlternativeAlert = true
-                                    }
-                                }
-                            )
-                        }
+                        )
 
                         PharmacyCustomerNotesCard(
                             notes: model.wrappedValue.notes
                         )
 
-                        VStack(alignment: .trailing, spacing: 6) {
-                            Text("pharmacy.request.offer_notes".localized)
-                                .font(PharmacyColor.sans(14, .bold))
-                                .foregroundStyle(PharmacyColor.textPrimary)
+                        PharmacyNotesForCustomerCard(
+                            text: $notesForCustomerText
+                        )
 
-                            TextField("pharmacy.request.offer_notes_placeholder".localized, text: $offerNotesText, axis: .vertical)
-                                .lineLimit(3...5)
-                                .font(PharmacyColor.sans(13, .regular))
-                                .padding(12)
-                                .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                                        .stroke(PharmacyColor.border, lineWidth: 1)
-                                )
-                        }
+                        PharmacyOrderTotalCard(
+                            total: model.wrappedValue.total
+                        )
                     }
                     .padding(.horizontal, PharmacySpacing.md)
                     .padding(.vertical, PharmacySpacing.sm)
@@ -167,26 +102,17 @@ struct PharmacyRequestDetailsView: View {
                 },
                 onReject: {
                     dismiss()
+                },
+                onContact: {
+                    if let model = requestModel,
+                       let url = URL(string: "tel://\(model.customer.phone.replacingOccurrences(of: " ", with: ""))") {
+                        UIApplication.shared.open(url)
+                    }
                 }
             )
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
-        .alert("pharmacy.request.alert_add_alternative".localized, isPresented: $showAlternativeAlert) {
-            TextField("pharmacy.request.alternative_placeholder".localized, text: $alternativeText)
-            Button("pharmacy.request.confirm_alternative".localized) {
-                if let selected = selectedItemForAlternative,
-                   var current = requestModel,
-                   let index = current.items.firstIndex(where: { $0.id == selected.id }) {
-                    current.items[index].isAvailable = false
-                    current.items[index].alternativeMedicine = alternativeText.isEmpty ? "pharmacy.request.alternative_selected".localized : alternativeText
-                    requestModel = current
-                }
-            }
-            Button("pharmacy.request.cancel".localized, role: .cancel) {}
-        } message: {
-            Text("pharmacy.request.alternative_message".localized)
-        }
         .sheet(isPresented: $showFullPrescriptionImage) {
             NavigationStack {
                 VStack {
@@ -224,8 +150,21 @@ struct PharmacyRequestDetailsView: View {
     }
 }
 
-#Preview("Arabic") {
-    PharmacyRequestDetailsView()
-        .environment(LanguageManager.shared)
-        .pharmacyLocalizedEnvironment()
+#Preview("English") {
+    PharmacyRequestDetailsView(
+        requestModel: PharmacyRequestDetailsModel(
+            id: "1",
+            minutesAgo: 0,
+            statusTitle: "PENDING",
+            customer: PharmacyCustomerInfo(name: "Customer #11", phone: "01012345678", address: "string"),
+            items: [
+                PharmacyOrderItem(id: "1", name: "Product #1", spec: "1", quantity: 1, price: 0.0, imageName: nil),
+                PharmacyOrderItem(id: "2", name: "Product #2", spec: "1", quantity: 1, price: 0.0, imageName: nil)
+            ],
+            deliveryFee: 0.0,
+            notes: ""
+        )
+    )
+    .environment(LanguageManager.shared)
+    .pharmacyLocalizedEnvironment()
 }

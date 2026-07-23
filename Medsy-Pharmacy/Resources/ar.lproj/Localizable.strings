@@ -329,5 +329,19 @@
 "common.close" = "إغلاق";
 "pharmacy.request.no_data" = "لا توجد بيانات للطلب";
 "pharmacy.request.loading" = "جارٍ تحميل تفاصيل الطلب…";
+"pharmacy.request.requested_medicines" = "الأدوية المطلوبة";
+"pharmacy.request.customer_prescription" = "روشتة العميل";
+"pharmacy.request.customer_notes_header" = "ملاحظات العميل";
+"pharmacy.request.no_customer_notes" = "لا توجد ملاحظات من العميل";
+"pharmacy.request.notes_for_customer_header" = "ملاحظات للعميل";
+"pharmacy.request.notes_for_customer_placeholder" = "أضف أي ملاحظات بشأن البدائل والأسعار...";
+"pharmacy.request.order_total_header" = "إجمالي الطلب";
+"pharmacy.request.view_payment_summary" = "عرض ملخص الدفع";
+"pharmacy.request.reject_order_btn" = "رفض الطلب";
+"pharmacy.request.contact_customer_btn" = "التواصل مع العميل";
+"pharmacy.request.accept_order_btn" = "قبول الطلب";
+"pharmacy.request.min_ago" = "منذ %d دقيقة";
+"pharmacy.request.customer_id_label" = "عميل #%@";
+
 
 
