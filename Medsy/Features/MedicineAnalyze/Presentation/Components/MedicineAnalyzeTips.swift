@@ -27,14 +27,3 @@ struct MedicineAnalyzeTips: View {
         )
     }
 }
-
-private struct MedicineAnalyzeTipRow: View {
-    let text: String
-
-    var body: some View {
-        Label(text, systemImage: "checkmark.circle.fill")
-            .font(MedsyFont.caption(13))
-            .foregroundStyle(AppColor.textSec)
-            .symbolRenderingMode(.hierarchical)
-    }
-}

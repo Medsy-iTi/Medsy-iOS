@@ -10,11 +10,19 @@ import SwiftUI
 struct MedicineAnalyzeIntroduction: View {
     var body: some View {
         VStack(spacing: MedsySpacing.md) {
-            Image(systemName: "pills.fill")
-                .font(.system(size: 46, weight: .semibold))
-                .foregroundStyle(AppColor.green)
-                .frame(width: 104, height: 104)
-                .background(AppColor.pill, in: Circle())
+            ZStack {
+                Circle()
+                    .fill(AppColor.lightGreen.opacity(0.7))
+                    .frame(width: 132, height: 132)
+
+                Image(systemName: "viewfinder")
+                    .font(.system(size: 72, weight: .light))
+                    .foregroundStyle(AppColor.green.opacity(0.55))
+
+                Image(systemName: "pills.fill")
+                    .font(.system(size: 38, weight: .semibold))
+                    .foregroundStyle(AppColor.green)
+            }
 
             VStack(spacing: MedsySpacing.xs) {
                 Text("medicineAnalyze.heading".localized)
@@ -28,6 +36,6 @@ struct MedicineAnalyzeIntroduction: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, MedsySpacing.md)
+        .padding(.vertical, MedsySpacing.lg)
     }
 }
