@@ -13,7 +13,6 @@ struct MedsyNavBar<Trailing: View>: View {
     @ViewBuilder var trailing: () -> Trailing
 
     @Environment(LanguageManager.self) private var languageManager
-    @ObservedObject private var appSettings = AppSettings.shared
 
     init(
         title: String? = nil,
@@ -36,16 +35,15 @@ struct MedsyNavBar<Trailing: View>: View {
             }
 
             HStack {
-                Button {
-                    onBack?()
-                } label: {
-                    Image(systemName: languageManager.isRTL ? "chevron.right" : "chevron.left")
-                        .foregroundStyle(AppColor.textPrim)
-                        .imageScale(.large)
+                if let onBack {
+                    MedsyNavBarBackButton(
+                        isRTL: languageManager.isRTL,
+                        action: onBack
+                    )
+                } else {
+                    Color.clear
+                        .frame(width: 44, height: 44)
                 }
-                .frame(width: 44, height: 44)
-                .opacity(onBack == nil ? 0 : 1)
-                .disabled(onBack == nil)
 
                 Spacer()
 
