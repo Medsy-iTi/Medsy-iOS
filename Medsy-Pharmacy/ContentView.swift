@@ -70,21 +70,33 @@ struct ContentView: View {
 
 private struct PharmacyAuthenticationRootView: View {
     @State private var coordinator: PharmacyAuthenticationCoordinator
+	@State private var hasAttemptedSessionResume = false
+	private let shouldResumeStoredSession: Bool
+
 
     init(
         factory: PharmacyAuthenticationFactory,
-        onAuthenticated: @escaping () -> Void
+		shouldResumeStoredSession: Bool,
+		onAuthenticated: @escaping () -> Void,
+		onSignedOut: @escaping () -> Void
     ) {
-        _coordinator = State(
-            initialValue: factory.makeCoordinator(
-                onAuthenticated: onAuthenticated
-            )
-        )
+		self.shouldResumeStoredSession = shouldResumeStoredSession
+		_coordinator = State(
+			initialValue: factory.makeCoordinator(
+				onAuthenticated: onAuthenticated,
+				onSignedOut: onSignedOut
+			)
+		)
     }
 
-    var body: some View {
-        PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
-    }
+	var body: some View {
+		PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
+			.task {
+				guard shouldResumeStoredSession, !hasAttemptedSessionResume else { return }
+				hasAttemptedSessionResume = true
+				coordinator.resolveAuthenticatedDestination()
+			}
+	}
 }
 
 #Preview {
@@ -102,6 +114,22 @@ private struct PharmacyAuthenticationRootView: View {
     )
     .environment(LanguageManager.shared)
 }
+private struct PreviewFetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
+	func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
+		PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
+	}
+}
+
+private struct PreviewGetProfileUseCase: GetPharmacyProfileUseCaseProtocol {
+	func execute() async throws -> PharmacyProfile {
+		.preview
+	}
+}
+
+private final class PreviewIdentityProvider: PharmacyIdentityProviding {
+	var currentPharmacyId: Int? = 1
+}
+
 
 @MainActor
 private final class PreviewContentLocationProvider: PharmacyLocationProviding {

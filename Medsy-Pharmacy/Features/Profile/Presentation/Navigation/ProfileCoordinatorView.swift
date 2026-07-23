@@ -9,14 +9,18 @@
 import SwiftUI
 
 struct ProfileCoordinatorView: View {
-    @Bindable var coordinator: ProfileCoordinator
+	@Bindable var coordinator: ProfileCoordinator
 
-    var body: some View {
-        NavigationStack(path: $coordinator.path) {
-            coordinator.start()
-                .navigationDestination(for: ProfileRoute.self) { route in
-                    coordinator.destination(for: route)
-                }
-        }
-    }
+	var body: some View {
+		NavigationStack(path: $coordinator.path) {
+			coordinator.start()
+				.navigationDestination(for: ProfileRoute.self) { route in
+					coordinator.destination(for: route)
+				}
+		}
+		.sheet(item: $coordinator.activeSheet) { sheet in
+			coordinator.sheet(for: sheet)
+		}
+		.tint(PharmacyColor.primary)
+	}
 }
