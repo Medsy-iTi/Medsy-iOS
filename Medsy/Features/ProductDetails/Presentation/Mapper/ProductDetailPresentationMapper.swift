@@ -45,6 +45,46 @@ enum ProductDetailPresentationMapper {
             ))
         }
 
+        if !entity.form.isEmpty {
+            rows.append(ProductInfoRow(
+                icon: "pills",
+                label: "product.form",
+                value: entity.form
+            ))
+        }
+
+        if !entity.strength.isEmpty {
+            rows.append(ProductInfoRow(
+                icon: "bolt",
+                label: "product.strength",
+                value: entity.strength
+            ))
+        }
+
+        if !entity.packSize.isEmpty {
+            rows.append(ProductInfoRow(
+                icon: "number.square",
+                label: "product.pack_size",
+                value: entity.packSize
+            ))
+        }
+
+        if !entity.scientificCategory.isEmpty {
+            rows.append(ProductInfoRow(
+                icon: "book.circle",
+                label: "product.scientific_category",
+                value: entity.scientificCategory
+            ))
+        }
+
+        if !entity.consumerCategory.isEmpty {
+            rows.append(ProductInfoRow(
+                icon: "tag",
+                label: "product.consumer_category",
+                value: entity.consumerCategory
+            ))
+        }
+
         if entity.isPrescription {
             rows.append(ProductInfoRow(
                 icon: "lock",
@@ -59,7 +99,9 @@ enum ProductDetailPresentationMapper {
         let (englishShortName, dosage) = ProductNameParser.parseName(entity.name)
 
         let displayName: String
-        if isRTL && !entity.arabicName.isEmpty && entity.arabicName != entity.name {
+        if !entity.productName.isEmpty {
+            displayName = entity.productName
+        } else if isRTL && !entity.arabicName.isEmpty && entity.arabicName != entity.name {
             displayName = entity.arabicName
         } else {
             displayName = englishShortName

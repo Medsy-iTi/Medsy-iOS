@@ -21,7 +21,13 @@ enum ProductDetailMapper {
             company: dto.company ?? "",
             route: dto.route ?? "",
             isPrescription: dto.isPrescription ?? false,
-            descriptionText: dto.description ?? ""
+            descriptionText: dto.description ?? "",
+            productName: dto.productName ?? "",
+            strength: dto.strength ?? "",
+            packSize: dto.packSize ?? "",
+            form: dto.form ?? dto.dosageForm ?? "",
+            scientificCategory: dto.scientificCategory ?? "",
+            consumerCategory: dto.consumerCategory ?? ""
         )
     }
 }

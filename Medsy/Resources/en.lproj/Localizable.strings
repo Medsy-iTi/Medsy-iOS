@@ -145,6 +145,11 @@
 
 /* Product detail */
 "product.info_title" = "Product Information";
+"product.form" = "Form";
+"product.strength" = "Strength";
+"product.pack_size" = "Pack Size";
+"product.scientific_category" = "Scientific Category";
+"product.consumer_category" = "Consumer Category";
 "product.add_to_cart" = "Add to Cart";
 "product.consult_pharmacist" = "Consult a Pharmacist";
 "product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";

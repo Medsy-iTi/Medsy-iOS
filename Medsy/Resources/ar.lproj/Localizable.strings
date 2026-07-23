@@ -144,6 +144,11 @@
 
 /* Product detail */
 "product.info_title" = "معلومات المنتج";
+"product.form" = "الشكل الدوائي";
+"product.strength" = "التركيز";
+"product.pack_size" = "حجم العبوة";
+"product.scientific_category" = "الفئة العلمية";
+"product.consumer_category" = "فئة المستهلك";
 "product.add_to_cart" = "أضف إلى السلة";
 "product.consult_pharmacist" = "استشارة صيدلي";
 "product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
