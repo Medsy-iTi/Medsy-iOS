@@ -1,14 +1,8 @@
-//
-//  PharmacyOrdersView.swift
-//  Medsy-Pharmacy
-//
-//  Created by Ehab Salah on 20/07/2026.
-//
-
 import SwiftUI
 
 struct PharmacyOrdersView: View {
 	@State private var viewModel: PharmacyOrdersViewModel
+	@State private var selectedOrder: PharmacyOrderListItem? = nil
 	let coordinator: PharmacyOrdersCoordinator
 
 	init(viewModel: PharmacyOrdersViewModel, coordinator: PharmacyOrdersCoordinator) {
@@ -59,12 +53,11 @@ struct PharmacyOrdersView: View {
 								Spacer()
 							}
 							.frame(minHeight: UIScreen.main.bounds.height * 0.6)
-						}else if viewModel.visibleOrders.isEmpty {
-								// Orders exist, but none match the current filter/search
+						} else if viewModel.visibleOrders.isEmpty {
 							PharmacyOrdersEmptyView()
 						} else {
 							ForEach(viewModel.visibleOrders) { order in
-								PharmacyOrderCard(order: order, onAction: { viewModel.handleAction(for: order) })
+								PharmacyOrderCard(order: order, onAction: { selectedOrder = order })
 									.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
 							}
 							if viewModel.isLoadingNextPage {
@@ -78,6 +71,9 @@ struct PharmacyOrdersView: View {
 			.padding(.bottom, PharmacySpacing.md)
 		}
 		.background(PharmacyColor.bg)
+		.fullScreenCover(item: $selectedOrder) { order in
+			PharmacyRequestDetailsView(requestModel: PharmacyRequestDetailsModel(order: order))
+		}
 		.refreshable { await viewModel.refresh() }
 		.task { await viewModel.loadInitial() }
 	}

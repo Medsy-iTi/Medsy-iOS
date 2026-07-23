@@ -11,13 +11,18 @@ struct PharmacyRequestDetailsView: View {
 
     var viewModel: PharmacyRequestDetailsViewModel?
 
-    @State private var requestModel: PharmacyRequestDetailsModel? = nil
+    @State private var requestModel: PharmacyRequestDetailsModel?
     @State private var selectedItemForAlternative: PharmacyOrderItem? = nil
     @State private var alternativeText: String = ""
     @State private var showAlternativeAlert: Bool = false
     @State private var isSideBySideActive: Bool = false
     @State private var showFullPrescriptionImage: Bool = false
     @State private var offerNotesText: String = ""
+
+    init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
+        self._requestModel = State(initialValue: requestModel)
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -209,7 +214,7 @@ struct PharmacyRequestDetailsView: View {
             }
         }
         .task {
-            if let viewModel {
+            if requestModel == nil, let viewModel {
                 await viewModel.loadDetails()
                 if let model = viewModel.requestModel {
                     self.requestModel = model
