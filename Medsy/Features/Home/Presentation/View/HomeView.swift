@@ -9,6 +9,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var selectedStatus: HomeSearchStatus = .home
     let onSearchTap: () -> Void
+    let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
     
     var body: some View {
@@ -21,7 +22,10 @@ struct HomeView: View {
                 
                 switch selectedStatus {
                 case .home:
-                    HomeOrderOptionsView(onPrescription: onPrescription)
+                    HomeOrderOptionsView(
+                        onMedicineAnalyze: onMedicineAnalyze,
+                        onPrescription: onPrescription
+                    )
                 case .searching:
                     HomeSearchingStatusView(selectedStatus: $selectedStatus)
                 case .firstOffer:
