@@ -15,6 +15,7 @@ struct PharmacyCustomerNotesCard: View {
             Text("pharmacy.request.customer_notes_header".localized)
                 .font(PharmacyColor.sans(16, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 2)
 
             HStack {

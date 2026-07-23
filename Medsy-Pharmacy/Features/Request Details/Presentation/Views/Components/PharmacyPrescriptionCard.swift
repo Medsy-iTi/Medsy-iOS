@@ -16,6 +16,7 @@ struct PharmacyPrescriptionCard: View {
             Text("pharmacy.request.customer_prescription".localized)
                 .font(PharmacyColor.sans(16, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 2)
 
             ZStack {

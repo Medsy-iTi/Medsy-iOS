@@ -48,7 +48,10 @@ struct PharmacyRequestDetailsModel {
         self.minutesAgo = minutesAgo
         self.statusTitle = statusTitle
         self.customer = customer
-        self.items = items
+        self.items = items.isEmpty ? [
+            PharmacyOrderItem(id: "1", name: "pharmacy.request.product_label".localized("1"), spec: "1", quantity: 1, price: 0.0, imageName: nil),
+            PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
+        ] : items
         self.deliveryFee = deliveryFee
         self.notes = notes
         self.prescriptionImageUrl = prescriptionImageUrl
@@ -74,13 +77,30 @@ extension PharmacyRequestDetailsModel {
                 phone: order.phoneNumber,
                 address: order.address
             ),
-            items: [],
+            items: [
+                PharmacyOrderItem(id: "1", name: "pharmacy.request.product_label".localized("1"), spec: "1", quantity: 1, price: 0.0, imageName: nil),
+                PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
+            ],
             deliveryFee: 0.0,
             notes: ""
         )
     }
 
     init(order: PharmacyOrder) {
+        let mappedItems = order.items.isEmpty ? [
+            PharmacyOrderItem(id: "1", name: "pharmacy.request.product_label".localized("1"), spec: "1", quantity: 1, price: 0.0, imageName: nil),
+            PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
+        ] : order.items.map { item in
+            PharmacyOrderItem(
+                id: String(item.id),
+                name: "pharmacy.request.product_label".localized(String(item.productId)),
+                spec: "\(item.quantity)",
+                quantity: item.quantity,
+                price: item.unitPrice,
+                imageName: nil
+            )
+        }
+
         self.init(
             id: String(order.id),
             minutesAgo: 0,
@@ -90,19 +110,7 @@ extension PharmacyRequestDetailsModel {
                 phone: "—",
                 address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress
             ),
-            items: order.items.isEmpty ? [
-                PharmacyOrderItem(id: "1", name: "pharmacy.request.product_label".localized("1"), spec: "1", quantity: 1, price: 0.0, imageName: nil),
-                PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
-            ] : order.items.map { item in
-                PharmacyOrderItem(
-                    id: String(item.id),
-                    name: "pharmacy.request.product_label".localized(String(item.productId)),
-                    spec: "\(item.quantity)",
-                    quantity: item.quantity,
-                    price: item.unitPrice,
-                    imageName: nil
-                )
-            },
+            items: mappedItems,
             deliveryFee: 0.0,
             notes: ""
         )

@@ -15,6 +15,7 @@ struct PharmacyNotesForCustomerCard: View {
             Text("pharmacy.request.notes_for_customer_header".localized)
                 .font(PharmacyColor.sans(16, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 2)
 
             TextField("pharmacy.request.notes_for_customer_placeholder".localized, text: $text, axis: .vertical)

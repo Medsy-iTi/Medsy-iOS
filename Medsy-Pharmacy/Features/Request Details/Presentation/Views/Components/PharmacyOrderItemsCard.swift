@@ -17,6 +17,7 @@ struct PharmacyOrderItemsCard: View {
             Text("pharmacy.request.requested_medicines".localized)
                 .font(PharmacyColor.sans(16, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 2)
 
             VStack(spacing: 0) {
@@ -43,7 +44,7 @@ struct PharmacyOrderItemsCard: View {
                                 .font(PharmacyColor.sans(15, .bold))
                                 .foregroundStyle(PharmacyColor.textPrimary)
 
-                            Text("pharmacy.request.currency_egp".localized(Int(item.price)))
+                            Text("\(Int(item.price)) \("pharmacy.request.currency_unit".localized)")
                                 .font(PharmacyColor.sans(14, .bold))
                                 .foregroundStyle(PharmacyColor.textPrimary)
                         }

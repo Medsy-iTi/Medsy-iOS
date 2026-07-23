@@ -30,7 +30,7 @@ struct PharmacyOrderTotalCard: View {
 
             Spacer()
 
-            Text("pharmacy.request.currency_egp".localized(Int(total)))
+            Text("\(Int(total)) \("pharmacy.request.currency_unit".localized)")
                 .font(PharmacyColor.sans(20, .bold))
                 .foregroundStyle(PharmacyColor.primary)
         }
