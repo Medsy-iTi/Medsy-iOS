@@ -157,6 +157,7 @@ final class ProfileViewModel {
     func onAppear() async {
         guard profile == nil else { return }
         await loadProfile()
+        heartbeatService.startHeartbeat()
         if dutyStatusStore.isOnDuty {
             await restoreOnDuty()
         }
@@ -171,7 +172,6 @@ final class ProfileViewModel {
             let entity = try await goOnDutyUseCase.execute()
             isOnDuty = entity.onDuty
             dutyStatusStore.isOnDuty = entity.onDuty
-            heartbeatService.startHeartbeat()
             print("[ProfileViewModel] ✅ Restored on-duty state")
         } catch {
             print("[ProfileViewModel] ❌ Failed to restore on-duty: \(error)")
@@ -186,14 +186,12 @@ final class ProfileViewModel {
                 let entity = try await goOffDutyUseCase.execute()
                 isOnDuty = entity.onDuty
                 dutyStatusStore.isOnDuty = entity.onDuty
-                heartbeatService.stopHeartbeat()
-                print("[ProfileViewModel] 🔴 Went off duty")
+                print("[ProfileViewModel] 🔴 Went off duty — heartbeat still running")
             } else {
                 let entity = try await goOnDutyUseCase.execute()
                 isOnDuty = entity.onDuty
                 dutyStatusStore.isOnDuty = entity.onDuty
-                heartbeatService.startHeartbeat()
-                print("[ProfileViewModel] 🟢 Went on duty")
+                print("[ProfileViewModel] 🟢 Went on duty — heartbeat still running")
             }
         } catch {
             print("[ProfileViewModel] ❌ toggleDuty failed: \(error)")

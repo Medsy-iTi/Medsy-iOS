@@ -28,7 +28,7 @@ final class PharmacyHeartbeatService {
                 await self?.ping()
             }
         }
-        print("[PharmacyHeartbeatService] ❤️ Heartbeat started (every 60s)")
+        print("[PharmacyHeartbeatService] ❤️ Heartbeat started — fires every 60s regardless of duty status")
     }
 
     func stopHeartbeat() {
@@ -38,10 +38,11 @@ final class PharmacyHeartbeatService {
     }
 
     private func ping() async {
+        print("[PharmacyHeartbeatService] 📡 Sending heartbeat...")
         do {
             let entity = try await sendHeartbeatUseCase.execute()
             lastHeartbeatAt = entity.lastHeartbeatAt
-            print("[PharmacyHeartbeatService] ✅ Heartbeat sent — lastHeartbeatAt: \(entity.lastHeartbeatAt)")
+            print("[PharmacyHeartbeatService] ✅ Heartbeat sent — onDuty: \(entity.onDuty) | lastHeartbeatAt: \(entity.lastHeartbeatAt)")
         } catch {
             print("[PharmacyHeartbeatService] ❌ Heartbeat failed: \(error)")
         }
