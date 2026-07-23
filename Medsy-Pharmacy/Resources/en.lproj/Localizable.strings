@@ -344,6 +344,8 @@
 "pharmacy.request.accept_order_btn" = "Accept order";
 "pharmacy.request.min_ago" = "%d min ago";
 "pharmacy.request.customer_id_label" = "Customer #%@";
+"pharmacy.request.product_label" = "Product #%@";
+
 
 
 
