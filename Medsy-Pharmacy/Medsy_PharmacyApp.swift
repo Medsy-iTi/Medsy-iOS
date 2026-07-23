@@ -40,11 +40,6 @@ struct Medsy_PharmacyApp: App {
             getPagesUseCase: container.resolve(GetOnboardingPagesUseCaseProtocol.self)
         )
         coordinator = RootCoordinator(container: container)
-
-        Task { @MainActor in
-            heartbeatService.startHeartbeat()
-            print("[Medsy_PharmacyApp] 🚀 App launched — heartbeat started")
-        }
     }
 
     var body: some Scene {
@@ -56,6 +51,10 @@ struct Medsy_PharmacyApp: App {
                 ordersFactory: ordersFactory,
                 coordinator: coordinator
             )
+            .task {
+                heartbeatService.startHeartbeat()
+                print("[Medsy_PharmacyApp] 🚀 App launched — heartbeat started")
+            }
             .pharmacyLocalizedEnvironment()
             .environment(languageManager)
             .id("\(languageManager.currentLanguage.rawValue)-\(PharmacyAppSettings.shared.isDarkMode)")
