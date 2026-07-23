@@ -317,3 +317,10 @@
 "pharmacy.orders.detail_placeholder" = "Order details coming soon.";
 "pharmacy.orders.noData" = "No orders found.";
 "common.somethingWentWrong" = "Something went wrong.";
+
+/* Presence */
+"profile.presence.section_title" = "Availability";
+"profile.presence.on_duty_title" = "On Duty";
+"profile.presence.on_duty_badge" = "Active";
+"profile.presence.off_duty_badge" = "Off Duty";
+"profile.presence.error" = "Could not update your status. Please try again.";

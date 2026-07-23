@@ -28,6 +28,8 @@ final class ProfileCoordinator: Coordinator {
 			invitePharmacistUseCase: container.resolve(InvitePharmacistUseCaseProtocol.self),
 			updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
 			logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
+			goOnDutyUseCase: container.resolve(GoOnDutyUseCaseProtocol.self),
+			goOffDutyUseCase: container.resolve(GoOffDutyUseCaseProtocol.self),
 			languageManager: container.resolve(LanguageManager.self),
 			appSettings: container.resolve(PharmacyAppSettings.self)
 		)

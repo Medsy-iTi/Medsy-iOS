@@ -315,3 +315,10 @@
 "pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
+
+/* Presence */
+"profile.presence.section_title" = "حالة التوفر";
+"profile.presence.on_duty_title" = "في الخدمة";
+"profile.presence.on_duty_badge" = "نشط";
+"profile.presence.off_duty_badge" = "خارج الخدمة";
+"profile.presence.error" = "تعذر تحديث حالتك. حاول مرة أخرى.";
