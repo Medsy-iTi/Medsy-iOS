@@ -11,4 +11,4 @@ struct PresenceResponseDTO: Decodable {
     let onDuty: Bool
 }
 
-typealias PresenceEnvelope = APIEnvelope<PresenceResponseDTO>
+typealias PresenceEnvelope = APIResponseDTO<PresenceResponseDTO>
