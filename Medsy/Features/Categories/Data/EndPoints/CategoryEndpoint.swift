@@ -7,7 +7,7 @@ import Foundation
 import Alamofire
 
 enum CategoryEndpoint: ApiEndpoint {
-    case fetch(page: Int, size: Int)
+    case fetch(page: Int, size: Int, lang: String? = nil)
 
     var path: String {
         return "categories"
@@ -19,12 +19,16 @@ enum CategoryEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .fetch(page, size):
-            return [
+        case let .fetch(page, size, lang):
+            var params: [String: Any] = [
                 "page": page,
                 "size": size,
                 "sort": "name,ASC"
             ]
+            if let lang = lang {
+                params["lang"] = lang
+            }
+            return params
         }
     }
 

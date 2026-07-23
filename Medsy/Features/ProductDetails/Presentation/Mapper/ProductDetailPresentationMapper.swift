@@ -53,7 +53,7 @@ enum ProductDetailPresentationMapper {
             ))
         }
 
-        if !entity.strength.isEmpty {
+       /* if !entity.strength.isEmpty {
             rows.append(ProductInfoRow(
                 icon: "bolt",
                 label: "product.strength",
@@ -68,7 +68,7 @@ enum ProductDetailPresentationMapper {
                 value: entity.packSize
             ))
         }
-
+*/
         if !entity.scientificCategory.isEmpty {
             rows.append(ProductInfoRow(
                 icon: "book.circle",

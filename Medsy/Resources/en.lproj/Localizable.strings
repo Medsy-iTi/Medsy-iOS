@@ -117,7 +117,8 @@
 "sort.company_asc" = "Company";
 
 /* Filter */
-"filter.sort" = "Sort & Filter ";
+"filter.sort" = "Sort";
+"filter.title" = "Filter";
 "filter.sort_title" = "Sort By & Filter";
 "filter.sort_by" = "Sort options";
 "filter.clear" = "Clear filters";
@@ -125,6 +126,13 @@
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
+"company.lilly" = "Eli Lilly";
+"company.novartis" = "Novartis";
+"company.roche" = "Hoffmann-La Roche";
+"company.pfizer" = "Pfizer";
+"company.astrazeneca" = "AstraZeneca";
+"company.novonordisk" = "Novo Nordisk";
+"company.eva_pharm" = "Eva Pharma > Andalus Pharma";
 
 
 /* Empty state */
