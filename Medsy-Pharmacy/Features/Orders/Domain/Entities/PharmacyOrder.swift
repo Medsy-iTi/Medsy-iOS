@@ -1,11 +1,3 @@
-//
-//  PharmacyOrder.swift
-//  Medsy
-//
-//  Created by Shahudaa on 21/07/2026.
-//
-
-
 import Foundation
 
 struct PharmacyOrder: Identifiable, Equatable, Sendable {
@@ -14,6 +6,7 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable {
     let pharmacyId: Int
     let totalPrice: Double
     let deliveryCoordinate: (latitude: Double, longitude: Double)
+    let deliveryAddress: String
     let status: PharmacyOrderAPIStatus
     let date: Date
     let items: [PharmacyOrderLineItem]
@@ -23,6 +16,7 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable {
             && lhs.status == rhs.status
             && lhs.totalPrice == rhs.totalPrice
             && lhs.items == rhs.items
+            && lhs.deliveryAddress == rhs.deliveryAddress
     }
 }
 
@@ -32,7 +26,6 @@ struct PharmacyOrderLineItem: Identifiable, Equatable, Sendable {
     let quantity: Int
     let unitPrice: Double
 }
-
 
 enum PharmacyOrderAPIStatus: Equatable, Sendable {
     case pending

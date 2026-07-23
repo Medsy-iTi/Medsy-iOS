@@ -1,11 +1,3 @@
-//
-//  PharmacyOrdersEndpoint.swift
-//  Medsy
-//
-//  Created by Shahudaa on 21/07/2026.
-//
-
-
 import Alamofire
 import Foundation
 
@@ -14,8 +6,8 @@ enum PharmacyOrdersEndpoint: ApiEndpoint {
 
     var path: String {
         switch self {
-        case .fetchOrders(let pharmacyId, _, _, _):
-            return "orders/pharmacy/\(pharmacyId)"
+        case .fetchOrders:
+            return "pharmacies/requests"
         }
     }
 
@@ -36,6 +28,3 @@ enum PharmacyOrdersEndpoint: ApiEndpoint {
 
     var requiresAuthentication: Bool { true }
 }
-
-
-
