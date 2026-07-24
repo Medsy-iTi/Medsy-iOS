@@ -20,9 +20,10 @@ final class CompleteRequestViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.showsVisaForm)
     }
 
-    func testPickupHidesDeliveryStateAndSubmitsWithoutLocationOrPayment() async {
+    func testPickupDoesNotCallDeliveryRequestEndpoint() async {
         var capturedSubmission: CompleteRequestSubmission?
-        let viewModel = makeViewModel { submission in
+        let submitUseCase = CompleteRequestSubmitUseCaseFake()
+        let viewModel = makeViewModel(submitUseCase: submitUseCase) { submission in
             capturedSubmission = submission
             return true
         }
@@ -30,10 +31,11 @@ final class CompleteRequestViewModelTests: XCTestCase {
         viewModel.selectReceiveMethod(.pickup)
         let succeeded = await viewModel.submit()
 
-        XCTAssertTrue(succeeded)
+        XCTAssertFalse(succeeded)
         XCTAssertFalse(viewModel.showsDeliveryDetails)
-        XCTAssertNil(capturedSubmission?.deliveryLocation)
-        XCTAssertNil(capturedSubmission?.paymentMethod)
+        XCTAssertNil(capturedSubmission)
+        XCTAssertTrue(viewModel.validationErrors.contains(.pickupUnsupported))
+        XCTAssertEqual(submitUseCase.inputs.count, 0)
     }
 
     func testSavedProfileAddressIsUsedOnlyWithValidCoordinates() async {
@@ -87,7 +89,8 @@ final class CompleteRequestViewModelTests: XCTestCase {
 
     func testValidVisaSubmitsOnlyNonSensitivePaymentSelection() async {
         var capturedSubmission: CompleteRequestSubmission?
-        let viewModel = makeViewModel { submission in
+        let submitUseCase = CompleteRequestSubmitUseCaseFake()
+        let viewModel = makeViewModel(submitUseCase: submitUseCase) { submission in
             capturedSubmission = submission
             return true
         }
@@ -104,6 +107,14 @@ final class CompleteRequestViewModelTests: XCTestCase {
         XCTAssertEqual(capturedSubmission?.paymentMethod, .visa)
         XCTAssertEqual(capturedSubmission?.deliveryLocation, validLocation)
         XCTAssertEqual(capturedSubmission?.itemCount, 2)
+        XCTAssertEqual(submitUseCase.inputs, [
+            SubmitCompleteRequestInput(
+                deliveryLatitude: validLocation.latitude,
+                deliveryLongitude: validLocation.longitude,
+                deliveryAddress: validLocation.address
+            )
+        ])
+        XCTAssertEqual(viewModel.submittedRequest?.id, 50)
     }
 
     func testInvalidVisaReportsImportantFieldErrors() async {
@@ -131,13 +142,47 @@ final class CompleteRequestViewModelTests: XCTestCase {
 
     func testSubmissionFailureKeepsCheckoutStateAndShowsError() async {
         let viewModel = makeViewModel { _ in false }
-        viewModel.selectReceiveMethod(.pickup)
+        viewModel.confirmLocation(validLocation)
 
         let succeeded = await viewModel.submit()
 
         XCTAssertFalse(succeeded)
         XCTAssertNotNil(viewModel.submissionErrorMessage)
-        XCTAssertEqual(viewModel.receiveMethod, .pickup)
+        XCTAssertEqual(viewModel.deliveryLocation, validLocation)
+        XCTAssertNotNil(viewModel.submittedRequest)
+    }
+
+    func testRetryAfterCartCleanupFailureDoesNotCreateDuplicateRequest() async {
+        var cleanupAttempts = 0
+        let submitUseCase = CompleteRequestSubmitUseCaseFake()
+        let viewModel = makeViewModel(submitUseCase: submitUseCase) { _ in
+            cleanupAttempts += 1
+            return cleanupAttempts == 2
+        }
+        viewModel.confirmLocation(validLocation)
+
+        let firstSucceeded = await viewModel.submit()
+        let retrySucceeded = await viewModel.submit()
+
+        XCTAssertFalse(firstSucceeded)
+        XCTAssertTrue(retrySucceeded)
+        XCTAssertEqual(cleanupAttempts, 2)
+        XCTAssertEqual(submitUseCase.inputs.count, 1)
+    }
+
+    func testBackendFailureMessageIsPresented() async {
+        let message = "A request cannot be created from an empty cart"
+        let submitUseCase = CompleteRequestSubmitUseCaseFake(
+            result: .failure(NetworkError.validationError(message))
+        )
+        let viewModel = makeViewModel(submitUseCase: submitUseCase)
+        viewModel.confirmLocation(validLocation)
+
+        let succeeded = await viewModel.submit()
+
+        XCTAssertFalse(succeeded)
+        XCTAssertEqual(viewModel.submissionErrorMessage, message)
+        XCTAssertNil(viewModel.submittedRequest)
     }
 
     func testDuplicateSubmissionIsRejectedWhileFirstSubmissionIsRunning() async {
@@ -145,7 +190,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
             try? await Task.sleep(for: .milliseconds(50))
             return true
         }
-        viewModel.selectReceiveMethod(.pickup)
+        viewModel.confirmLocation(validLocation)
 
         let firstSubmission = Task { await viewModel.submit() }
         await Task.yield()
@@ -192,6 +237,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
 
     private func makeViewModel(
         profile: CustomerProfile? = nil,
+        submitUseCase: CompleteRequestSubmitUseCaseFake = CompleteRequestSubmitUseCaseFake(),
         onSubmit: @escaping (CompleteRequestSubmission) async -> Bool = { _ in true }
     ) -> CompleteRequestViewModel {
         CompleteRequestViewModel(
@@ -208,12 +254,13 @@ final class CompleteRequestViewModelTests: XCTestCase {
                 prescriptionCount: 0
             ),
             getCustomerProfileUseCase: CompleteRequestProfileUseCaseFake(profile: profile),
+            submitCompleteRequestUseCase: submitUseCase,
             now: {
                 Calendar(identifier: .gregorian).date(
                     from: DateComponents(year: 2026, month: 7, day: 24)
                 )!
             },
-            onSubmit: onSubmit
+            onRequestCreated: onSubmit
         )
     }
 }
@@ -235,4 +282,31 @@ private final class CompleteRequestProfileUseCaseFake: GetCustomerProfileUseCase
 
 private enum CompleteRequestProfileUseCaseFakeError: Error {
     case missingProfile
+}
+
+private final class CompleteRequestSubmitUseCaseFake: SubmitCompleteRequestUseCaseProtocol {
+    private(set) var inputs: [SubmitCompleteRequestInput] = []
+    let result: Result<SubmittedMedicineRequest, Error>
+
+    init(
+        result: Result<SubmittedMedicineRequest, Error> = .success(
+            SubmittedMedicineRequest(
+                id: 50,
+                customerID: 12,
+                deliveryLatitude: 30.0444,
+                deliveryLongitude: 31.2357,
+                deliveryAddress: "Tahrir Square, Cairo",
+                status: "PENDING",
+                createdAt: Date(timeIntervalSince1970: 0),
+                items: []
+            )
+        )
+    ) {
+        self.result = result
+    }
+
+    func execute(input: SubmitCompleteRequestInput) async throws -> SubmittedMedicineRequest {
+        inputs.append(input)
+        return try result.get()
+    }
 }
