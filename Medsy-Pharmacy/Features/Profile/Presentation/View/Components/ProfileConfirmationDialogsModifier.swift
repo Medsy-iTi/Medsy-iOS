@@ -52,6 +52,20 @@ struct ProfileConfirmationDialogsModifier: ViewModifier {
             } message: {
                 Text("pharmacy_card.delete_confirm_message".localized)
             }
+    }
+}
+
+extension View {
+    func profileConfirmationDialogs(viewModel: ProfileViewModel) -> some View {
+        modifier(ProfileConfirmationDialogsModifier(viewModel: viewModel))
+    }
+}
+
+struct RemovePharmacistConfirmationDialogModifier: ViewModifier {
+    @Bindable var viewModel: ProfileViewModel
+
+    func body(content: Content) -> some View {
+        content
             .confirmationDialog(
                 "pharmacy_team.remove_confirm_title".localized,
                 isPresented: $viewModel.showRemovePharmacistConfirmation,
@@ -77,7 +91,7 @@ struct ProfileConfirmationDialogsModifier: ViewModifier {
 }
 
 extension View {
-    func profileConfirmationDialogs(viewModel: ProfileViewModel) -> some View {
-        modifier(ProfileConfirmationDialogsModifier(viewModel: viewModel))
+    func removePharmacistConfirmationDialog(viewModel: ProfileViewModel) -> some View {
+        modifier(RemovePharmacistConfirmationDialogModifier(viewModel: viewModel))
     }
 }

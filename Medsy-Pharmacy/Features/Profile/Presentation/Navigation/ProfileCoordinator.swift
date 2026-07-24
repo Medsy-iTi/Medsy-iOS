@@ -107,6 +107,7 @@ final class ProfileCoordinator: Coordinator {
 					onEdit: { self.viewModel.didTapEditPharmacist(member) },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
+				.removePharmacistConfirmationDialog(viewModel: viewModel)
 
 			case .editPharmacy:
 				EmptyView()
@@ -119,6 +120,7 @@ final class ProfileCoordinator: Coordinator {
 					onEdit: { self.viewModel.didTapEditPharmacist(member) },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
+				.removePharmacistConfirmationDialog(viewModel: viewModel)
 
 			case .settings:
 				ProfileSettingsView(viewModel: viewModel)
@@ -260,6 +262,7 @@ final class ProfileCoordinator: Coordinator {
 				}
 			}
 		)
+		.removePharmacistConfirmationDialog(viewModel: viewModel)
 	}
 
 	@ViewBuilder
