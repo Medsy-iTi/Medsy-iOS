@@ -324,3 +324,5 @@
 "profile.presence.on_duty_badge" = "Active";
 "profile.presence.off_duty_badge" = "Off Duty";
 "profile.presence.error" = "Could not update your status. Please try again.";
+"profile.presence.toast.on" = "You are now receiving requests";
+"profile.presence.toast.off" = "You are not receiving requests anymore";
