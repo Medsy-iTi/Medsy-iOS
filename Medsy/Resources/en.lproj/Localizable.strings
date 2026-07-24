@@ -537,6 +537,7 @@
 "complete_request.card.cvv" = "CVV";
 "complete_request.card.security" = "Card details are validated on this device and are not saved.";
 "complete_request.validation.location" = "Confirm a delivery location to continue.";
+"complete_request.validation.pickup_unsupported" = "Pickup requests are not supported by the current request service yet. Choose delivery to continue.";
 "complete_request.validation.cardholder_name" = "Enter the name shown on the card.";
 "complete_request.validation.card_number" = "Enter a valid 16-digit Visa card number.";
 "complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";

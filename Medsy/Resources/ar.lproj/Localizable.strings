@@ -535,6 +535,7 @@
 "complete_request.card.cvv" = "رمز الأمان";
 "complete_request.card.security" = "يتم التحقق من بيانات البطاقة على هذا الجهاز ولا يتم حفظها.";
 "complete_request.validation.location" = "أكّد موقع التوصيل للمتابعة.";
+"complete_request.validation.pickup_unsupported" = "خدمة الطلب الحالية لا تدعم الاستلام من الصيدلية بعد. اختر التوصيل للمتابعة.";
 "complete_request.validation.cardholder_name" = "أدخل الاسم المكتوب على البطاقة.";
 "complete_request.validation.card_number" = "أدخل رقم بطاقة فيزا صالحًا مكوّنًا من 16 رقمًا.";
 "complete_request.validation.expiry" = "أدخل تاريخ انتهاء صالحًا وغير منتهي بصيغة شهر/سنة.";
