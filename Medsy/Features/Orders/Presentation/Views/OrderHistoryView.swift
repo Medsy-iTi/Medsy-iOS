@@ -73,7 +73,11 @@ struct OrderHistoryView: View {
         case .loaded(let sections):
             let orders = sections.flatMap(\.orders)
             if orders.isEmpty {
-                OrdersEmptyView(filter: activeFilters.statusFilter, onSearch: onSearch)
+                OrdersEmptyView(
+                    activeFilters: activeFilters,
+                    onSearch: onSearch,
+                    onClearFilters: { onApplyFilters(.default) }
+                )
             } else {
                 ordersListView(sections: sections)
             }

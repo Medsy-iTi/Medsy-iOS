@@ -468,6 +468,9 @@
 "orders.empty.completed.subtitle"    = "Orders that have been delivered will appear here.";
 "orders.empty.cancelled.title"       = "No cancelled orders";
 "orders.empty.cancelled.subtitle"    = "Cancelled orders will appear here.";
+"orders.empty.filtered.title"        = "No matching orders";
+"orders.empty.filtered.subtitle"     = "No orders match your current filters. Try adjusting or clearing them.";
+"orders.empty.clear_filters"         = "Clear filters";
 "orders.error.title"                 = "Couldn't load orders";
 "orders.error.subtitle"              = "Check your internet connection and try again.";
 "orders.loading"                     = "Loading orders…";

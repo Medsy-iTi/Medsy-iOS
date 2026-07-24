@@ -467,6 +467,9 @@
 "orders.empty.completed.subtitle"    = "ستظهر هنا الطلبات التي تم تسليمها.";
 "orders.empty.cancelled.title"       = "لا توجد طلبات ملغاة";
 "orders.empty.cancelled.subtitle"    = "ستظهر هنا الطلبات التي تم إلغاؤها.";
+"orders.empty.filtered.title"        = "لا توجد طلبات مطابقة";
+"orders.empty.filtered.subtitle"     = "لا توجد طلبات تطابق الفلاتير الحالية. جرّب تعديلها أو مسحها.";
+"orders.empty.clear_filters"         = "مسح الفلاتير";
 "orders.error.title"                 = "تعذر تحميل الطلبات";
 "orders.error.subtitle"              = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "orders.loading"                     = "جاري تحميل الطلبات…";
