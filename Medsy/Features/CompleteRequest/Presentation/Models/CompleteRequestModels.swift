@@ -76,6 +76,7 @@ enum CompleteRequestCardField: Hashable {
 
 enum CompleteRequestValidationError: Hashable {
     case locationRequired
+    case pickupUnsupported
     case cardholderNameRequired
     case invalidCardNumber
     case invalidExpiry
@@ -85,6 +86,8 @@ enum CompleteRequestValidationError: Hashable {
         switch self {
         case .locationRequired:
             "complete_request.validation.location".localized
+        case .pickupUnsupported:
+            "complete_request.validation.pickup_unsupported".localized
         case .cardholderNameRequired:
             "complete_request.validation.cardholder_name".localized
         case .invalidCardNumber:

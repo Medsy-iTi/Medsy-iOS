@@ -23,6 +23,7 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
     var isSubmitting: Bool { get }
     var submissionErrorMessage: String? { get }
     var validationErrors: [CompleteRequestValidationError] { get }
+    var submittedRequest: SubmittedMedicineRequest? { get }
     var showsDeliveryDetails: Bool { get }
     var showsVisaForm: Bool { get }
     var canSubmit: Bool { get }
