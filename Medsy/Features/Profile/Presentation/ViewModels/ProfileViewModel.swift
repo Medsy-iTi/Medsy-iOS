@@ -41,6 +41,14 @@ final class ProfileViewModel {
         return profile.fullName
     }
 
+    var firstName: String {
+        profile?.firstName ?? ""
+    }
+
+    var lastName: String {
+        profile?.lastName ?? ""
+    }
+
     var phoneNumber: String {
         profile?.phoneNumber ?? ""
     }
@@ -79,14 +87,20 @@ final class ProfileViewModel {
         await loadProfile()
     }
 
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+    func updateProfile(
+        firstName: String,
+        lastName: String,
+        homeAddress: String,
+        dateOfBirth: Date?
+    ) async -> Bool {
         guard canSave else { return false }
         isSaving = true
         saveErrorMessage = nil
 
-        let trimmedAddress = homeAddress?.trimmingCharacters(in: .whitespacesAndNewlines)
         let input = UpdateCustomerProfileInput(
-            homeAddress: trimmedAddress?.isEmpty == true ? nil : trimmedAddress,
+            firstName: firstName,
+            lastName: lastName,
+            homeAddress: homeAddress,
             dateOfBirth: dateOfBirth
         )
 

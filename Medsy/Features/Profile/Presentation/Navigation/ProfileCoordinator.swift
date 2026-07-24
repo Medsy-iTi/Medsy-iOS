@@ -47,6 +47,22 @@ final class ProfileCoordinator {
         viewModel.displayName
     }
 
+    var firstName: String {
+        viewModel.firstName
+    }
+
+    var lastName: String {
+        viewModel.lastName
+    }
+
+    var homeAddress: String {
+        viewModel.homeAddress
+    }
+
+    var dateOfBirth: Date? {
+        viewModel.dateOfBirth
+    }
+
     var phoneNumber: String {
         viewModel.phoneNumber
     }
@@ -63,6 +79,21 @@ final class ProfileCoordinator {
     func showLanguagePicker() { activePresentation = .language }
     func showThemePicker() { activePresentation = .theme }
     func dismissPresentation() { activePresentation = nil }
+
+    func saveProfile(
+        firstName: String,
+        lastName: String,
+        homeAddress: String,
+        dateOfBirth: Date?
+    ) async {
+        let saved = await viewModel.updateProfile(
+            firstName: firstName,
+            lastName: lastName,
+            homeAddress: homeAddress,
+            dateOfBirth: dateOfBirth
+        )
+        if saved { dismissPresentation() }
+    }
     func requestLogout() { showsLogoutConfirmation = true }
     func cancelLogout() { showsLogoutConfirmation = false }
 
