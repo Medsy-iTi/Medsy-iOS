@@ -8,17 +8,20 @@
 @MainActor
 final class CompleteRequestFactory {
     private let getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol
+    private let submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol
     private let searchAddressUseCase: SearchAddressUseCaseProtocol
     private let reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol
     private let locationProvider: CompleteRequestLocationProviderProtocol
 
     init(
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
+        submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
         searchAddressUseCase: SearchAddressUseCaseProtocol,
         reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol,
         locationProvider: CompleteRequestLocationProviderProtocol
     ) {
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
+        self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
         self.searchAddressUseCase = searchAddressUseCase
         self.reverseGeocodeAddressUseCase = reverseGeocodeAddressUseCase
         self.locationProvider = locationProvider
@@ -31,7 +34,8 @@ final class CompleteRequestFactory {
         CompleteRequestViewModel(
             draft: draft,
             getCustomerProfileUseCase: getCustomerProfileUseCase,
-            onSubmit: onSubmit
+            submitCompleteRequestUseCase: submitCompleteRequestUseCase,
+            onRequestCreated: onSubmit
         )
     }
 
