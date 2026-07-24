@@ -72,32 +72,33 @@ struct ContentView: View {
 
 private struct PharmacyAuthenticationRootView: View {
     @State private var coordinator: PharmacyAuthenticationCoordinator
-    @State private var hasAttemptedSessionResume = false
-    private let shouldResumeStoredSession: Bool
+	@State private var hasAttemptedSessionResume = false
+	private let shouldResumeStoredSession: Bool
+
 
     init(
         factory: PharmacyAuthenticationFactory,
-        shouldResumeStoredSession: Bool,
-        onAuthenticated: @escaping () -> Void,
-        onSignedOut: @escaping () -> Void
+		shouldResumeStoredSession: Bool,
+		onAuthenticated: @escaping () -> Void,
+		onSignedOut: @escaping () -> Void
     ) {
-        self.shouldResumeStoredSession = shouldResumeStoredSession
-        _coordinator = State(
-            initialValue: factory.makeCoordinator(
-                onAuthenticated: onAuthenticated,
-                onSignedOut: onSignedOut
-            )
-        )
+		self.shouldResumeStoredSession = shouldResumeStoredSession
+		_coordinator = State(
+			initialValue: factory.makeCoordinator(
+				onAuthenticated: onAuthenticated,
+				onSignedOut: onSignedOut
+			)
+		)
     }
 
-    var body: some View {
-        PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
-            .task {
-                guard shouldResumeStoredSession, !hasAttemptedSessionResume else { return }
-                hasAttemptedSessionResume = true
-                coordinator.resolveAuthenticatedDestination()
-            }
-    }
+	var body: some View {
+		PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
+			.task {
+				guard shouldResumeStoredSession, !hasAttemptedSessionResume else { return }
+				hasAttemptedSessionResume = true
+				coordinator.resolveAuthenticatedDestination()
+			}
+	}
 }
 
 #Preview {
@@ -134,6 +135,9 @@ private struct PreviewGetProfileUseCase: GetPharmacyProfileUseCaseProtocol {
 private final class PreviewIdentityProvider: PharmacyIdentityProviding {
 	var currentPharmacyId: Int? = 1
 }
+
+
+
 
 @MainActor
 private final class PreviewContentLocationProvider: PharmacyLocationProviding {

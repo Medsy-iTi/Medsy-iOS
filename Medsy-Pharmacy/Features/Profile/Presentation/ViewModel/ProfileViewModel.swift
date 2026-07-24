@@ -23,8 +23,10 @@ final class ProfileViewModel {
     private(set) var state: ViewState = .loading
     private(set) var profile: PharmacyProfile?
 
-    // Order receiving status (local until API is available)
-    var isAcceptingOrders = true
+    // Presence (on-duty / heartbeat)
+    private(set) var isOnDuty = false
+    var isTogglingPresence = false
+    var presenceErrorMessage: String?
 
     // Logout
     var showLogoutConfirmation = false
@@ -72,8 +74,15 @@ final class ProfileViewModel {
     private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
     private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
+    private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
+    private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
+
+    // MARK: - Heartbeat
+
+    /// Periodic task that keeps the server informed the pharmacist is still on-duty.
+    private var heartbeatTask: Task<Void, Never>?
 
     // MARK: - Navigation
 
@@ -93,6 +102,8 @@ final class ProfileViewModel {
         invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
         updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
+        goOnDutyUseCase: GoOnDutyUseCaseProtocol,
+        goOffDutyUseCase: GoOffDutyUseCaseProtocol,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -105,6 +116,8 @@ final class ProfileViewModel {
         self.invitePharmacistUseCase = invitePharmacistUseCase
         self.updatePharmacistUseCase = updatePharmacistUseCase
         self.logoutUseCase = logoutUseCase
+        self.goOnDutyUseCase = goOnDutyUseCase
+        self.goOffDutyUseCase = goOffDutyUseCase
         self.languageManager = languageManager
         self.appSettings = appSettings
     }
@@ -439,9 +452,53 @@ final class ProfileViewModel {
         onLoggedOut?()
     }
 
+    // MARK: - Presence
+
+    /// Toggles on-duty / off-duty state, calling the appropriate API endpoint
+    /// and starting/stopping the heartbeat task.
+    func togglePresence() async {
+        isTogglingPresence = true
+        presenceErrorMessage = nil
+        do {
+            let status: PresenceStatus
+            if isOnDuty {
+                status = try await goOffDutyUseCase.execute()
+                stopHeartbeat()
+            } else {
+                status = try await goOnDutyUseCase.execute()
+                startHeartbeat()
+            }
+            isOnDuty = status.onDuty
+        } catch {
+            presenceErrorMessage = "profile.presence.error".localized
+        }
+        isTogglingPresence = false
+    }
+
     // MARK: - Helpers
 
     private static func userFacingMessage(for error: Error) -> String {
         "profile_generic_error".localized
+    }
+
+    // MARK: - Heartbeat
+
+    /// Starts a repeating 30-second heartbeat that keeps the pharmacist's
+    /// on-duty status alive on the server.
+    private func startHeartbeat() {
+        heartbeatTask?.cancel()
+        heartbeatTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(30))
+                guard !Task.isCancelled, self?.isOnDuty == true else { break }
+                _ = try? await self?.goOnDutyUseCase.execute()
+            }
+        }
+    }
+
+    /// Cancels the running heartbeat task.
+    private func stopHeartbeat() {
+        heartbeatTask?.cancel()
+        heartbeatTask = nil
     }
 }
