@@ -493,6 +493,24 @@
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
 
+"orders.filter.title"                 = "تصفية الطلبات";
+"orders.filter.reset"                 = "إعادة ضبط";
+"orders.filter.apply"                 = "تطبيق";
+"orders.filter.button.accessibility" = "تصفية الطلبات";
+"orders.filter.section.fulfillment"  = "طريقة الاستلام";
+"orders.filter.section.date"         = "نطاق التاريخ";
+"orders.filter.fulfillment.all"      = "الكل";
+"orders.filter.fulfillment.delivery" = "توصيل";
+"orders.filter.fulfillment.pickup"   = "استلام";
+"orders.date_range.anytime"          = "أي وقت";
+"orders.date_range.today"            = "اليوم";
+"orders.date_range.last_7_days"      = "آخر 7 أيام";
+"orders.date_range.last_30_days"     = "آخر 30 يومًا";
+"orders.date_range.last_3_months"    = "آخر 3 أشهر";
+"orders.date_range.custom"           = "مخصص";
+"orders.filter.date.from"            = "من";
+"orders.filter.date.to"              = "إلى";
+
 /* Address Picker */
 "address.title" = "اختر عنوانك";
 "address.search_placeholder" = "ابحث عن موقع";

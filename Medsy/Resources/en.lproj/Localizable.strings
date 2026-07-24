@@ -494,6 +494,24 @@
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
 
+"orders.filter.title"                 = "Filter Orders";
+"orders.filter.reset"                 = "Reset";
+"orders.filter.apply"                 = "Apply";
+"orders.filter.button.accessibility" = "Filter orders";
+"orders.filter.section.fulfillment"  = "Fulfillment Type";
+"orders.filter.section.date"         = "Date Range";
+"orders.filter.fulfillment.all"      = "All";
+"orders.filter.fulfillment.delivery" = "Delivery";
+"orders.filter.fulfillment.pickup"   = "Pickup";
+"orders.date_range.anytime"          = "Anytime";
+"orders.date_range.today"            = "Today";
+"orders.date_range.last_7_days"      = "Last 7 days";
+"orders.date_range.last_30_days"     = "Last 30 days";
+"orders.date_range.last_3_months"    = "Last 3 months";
+"orders.date_range.custom"           = "Custom";
+"orders.filter.date.from"            = "From";
+"orders.filter.date.to"              = "To";
+
 /* Address Picker */
 
 "address.title" = "Select your address";

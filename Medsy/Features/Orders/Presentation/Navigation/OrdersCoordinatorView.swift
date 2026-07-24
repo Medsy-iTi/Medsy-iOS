@@ -9,7 +9,6 @@ import SwiftUI
 
 struct OrdersCoordinatorView: View {
     @State private var coordinator = OrdersCoordinator()
-    @State private var selectedFilter: OrderFilter = .all
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
     private let onSearch: () -> Void
@@ -40,16 +39,14 @@ struct OrdersCoordinatorView: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             OrderHistoryView(
-                selectedFilter: $selectedFilter,
+                activeFilters: historyViewModel.activeFilters,
                 state: historyViewModel.historyState,
+                onApplyFilters: { historyViewModel.handle(.applyFilters($0)) },
                 onSelectOrder: { order in coordinator.showDetail(orderId: order.id) },
                 onRetry: { historyViewModel.handle(.retry) },
                 onLoadNextPage: { historyViewModel.handle(.loadNextPage) },
                 onSearch: onSearch
             )
-            .onChange(of: selectedFilter) { _, newFilter in
-                historyViewModel.handle(.selectFilter(newFilter))
-            }
             .task {
                 historyViewModel.handle(.load)
             }
