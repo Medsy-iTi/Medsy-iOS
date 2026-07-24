@@ -29,6 +29,7 @@ struct MedsyApp: App {
             ProfileAssembly(),
             OrdersAssembly(),
             PrescriptionAssembly(),
+            MedicineAnalyzeAssembly(),
             PharmacyProfileAssembly()
         ])
 

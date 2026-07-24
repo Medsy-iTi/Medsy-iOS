@@ -22,7 +22,7 @@ final class PrescriptionAnalysisContractTests: XCTestCase {
             "en"
         )
         XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer access-token")
-        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Gemini-Api-Key"), Constants.geminiKey)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-AI-Api-Key"), Constants.aiKey)
         XCTAssertTrue(request.value(forHTTPHeaderField: "Content-Type")?.hasPrefix("multipart/form-data; boundary=") == true)
 
         let body = try XCTUnwrap(request.httpBody)
