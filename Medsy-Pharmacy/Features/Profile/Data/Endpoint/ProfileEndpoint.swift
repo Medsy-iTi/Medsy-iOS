@@ -22,6 +22,10 @@ enum ProfileEndpoint: ApiEndpoint {
     case removePharmacist(pharmacistId: Int, pharmacyId: Int)
     case invitePharmacist(pharmacyId: Int, request: InvitePharmacistRequestDTO)
 
+    // MARK: Presence
+    case goOnDuty
+    case goOffDuty
+
     // MARK: Auth
     case logout(refreshToken: String)
 
@@ -44,6 +48,10 @@ enum ProfileEndpoint: ApiEndpoint {
             return "pharmacists/\(pharmacistId)/pharmacy/\(pharmacyId)"
         case let .invitePharmacist(pharmacyId, _):
             return "pharmacy-invitations/pharmacy/\(pharmacyId)"
+        case .goOnDuty:
+            return "pharmacists/me/presence/on-duty"
+        case .goOffDuty:
+            return "pharmacists/me/presence/off-duty"
         case .logout:
             return "auth/logout"
         }
@@ -60,6 +68,8 @@ enum ProfileEndpoint: ApiEndpoint {
             return .delete
         case .invitePharmacist:
             return .post
+        case .goOnDuty, .goOffDuty:
+            return .post
         case .logout:
             return .post
         }
@@ -68,7 +78,8 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: - Body
     var body: Data? {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy, .removePharmacist:
+        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy,
+             .removePharmacist, .goOnDuty, .goOffDuty:
             return nil
         case let .invitePharmacist(_, request):
             return try? JSONEncoder().encode(request)

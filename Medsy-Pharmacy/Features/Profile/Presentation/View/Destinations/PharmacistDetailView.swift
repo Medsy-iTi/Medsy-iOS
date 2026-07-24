@@ -13,52 +13,22 @@ struct PharmacistDetailView: View {
     let canRemove: Bool
     let onEdit: () -> Void
     let onRemove: () -> Void
-    let onBack: () -> Void
 
     var body: some View {
-        ZStack {
-            PharmacyColor.bg.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                header
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: PharmacySpacing.lg) {
-                        pharmacistInfoCard
-                        
-                        if canEdit || canRemove {
-                            actionsSection
-                        }
-                    }
-                    .padding(.horizontal, PharmacySpacing.md)
-                    .padding(.top, PharmacySpacing.sm)
-                    .padding(.bottom, PharmacySpacing.xl)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: PharmacySpacing.lg) {
+                pharmacistInfoCard
+
+                if canEdit || canRemove {
+                    actionsSection
                 }
             }
+            .padding(.horizontal, PharmacySpacing.md)
+            .padding(.vertical, PharmacySpacing.md)
         }
-    }
-    
-    private var header: some View {
-        HStack {
-            Button(action: onBack) {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
-                    .background(PharmacyColor.surface)
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-            
-            Text("profile.user_profile".localized)
-                .font(PharmacyColor.sans(17, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity)
-            
-            Color.clear.frame(width: 36, height: 36)
-        }
-        .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
+        .background(PharmacyColor.bg.ignoresSafeArea())
+        .navigationTitle("profile.user_profile".localized)
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     private var pharmacistInfoCard: some View {
@@ -177,7 +147,6 @@ struct PharmacistDetailView: View {
         canEdit: true,
         canRemove: true,
         onEdit: {},
-        onRemove: {},
-        onBack: {}
+        onRemove: {}
     )
 }

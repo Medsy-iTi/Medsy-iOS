@@ -53,5 +53,13 @@ struct ProfileAssembly: PharmacyModuleAssembly {
 				pharmacyIdentityProvidor: container.resolve(PharmacyIdentityProviding.self)
             )
         }
+
+        container.register(GoOnDutyUseCaseProtocol.self) { container in
+            GoOnDutyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
+        container.register(GoOffDutyUseCaseProtocol.self) { container in
+            GoOffDutyUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
     }
 }

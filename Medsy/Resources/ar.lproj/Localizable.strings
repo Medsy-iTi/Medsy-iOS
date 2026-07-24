@@ -47,6 +47,36 @@
 "home.uploadPrescriptionDesc" = "ارفع صورة الروشتة وسنقوم بمراجعتها";
 "home.searchForMedicine" = "ابحث عن دواء";
 "home.searchForMedicineDesc" = "ابحث عن أي دواء تحتاجه بسهولة";
+"medicineAnalyze.title" = "تحليل الدواء";
+"medicineAnalyze.heading" = "تعرّف على دوائك";
+"medicineAnalyze.message" = "التقط صورة واضحة لعبوة الدواء وسنساعدك على التعرّف عليها.";
+"medicineAnalyze.camera.title" = "التقاط صورة";
+"medicineAnalyze.camera.message" = "استخدم الكاميرا لتصوير عبوة الدواء";
+"medicineAnalyze.gallery.title" = "اختيار من المعرض";
+"medicineAnalyze.gallery.message" = "اختر صورة دواء محفوظة على جهازك";
+"medicineAnalyze.tips.title" = "لأفضل نتيجة";
+"medicineAnalyze.tips.clear" = "اجعل اسم الدواء والعبوة ظاهرين بوضوح";
+"medicineAnalyze.tips.single" = "التقط عبوة دواء واحدة في كل صورة";
+"medicineAnalyze.tips.light" = "استخدم إضاءة جيدة وتجنب الانعكاسات";
+"medicineAnalyze.preview.heading" = "راجع صورة الدواء";
+"medicineAnalyze.preview.message" = "تأكد من وضوح تفاصيل العبوة قبل المتابعة.";
+"medicineAnalyze.changeImage" = "اختر صورة أخرى";
+"medicineAnalyze.analyze" = "تحليل الدواء";
+"medicineAnalyze.cameraUnavailable.title" = "الكاميرا غير متاحة";
+"medicineAnalyze.cameraUnavailable.message" = "استخدم جهازًا مزودًا بكاميرا أو اختر صورة من المعرض.";
+"medicineAnalyze.imageError.message" = "تعذر تجهيز هذه الصورة. يرجى اختيار صورة أخرى.";
+"medicineAnalyze.loading.title" = "جارٍ التعرّف على الدواء";
+"medicineAnalyze.loading.message" = "نتحقق من تفاصيل العبوة ونبحث عن المنتجات المطابقة.";
+"medicineAnalyze.results.recognized" = "اكتمل التحليل";
+"medicineAnalyze.results.count" = "%d منتجات مطابقة";
+"medicineAnalyze.results.message" = "راجع النتائج واختر الدواء الذي تحتاجه.";
+"medicineAnalyze.results.match" = "نتيجة محتملة";
+"medicineAnalyze.results.guidance.title" = "ماذا تريد أن تفعل؟";
+"medicineAnalyze.results.guidance.details" = "اضغط على الدواء لمراجعة جميع تفاصيله.";
+"medicineAnalyze.results.guidance.cart" = "استخدم زر الإضافة لإضافة الدواء مباشرةً إلى السلة.";
+"medicineAnalyze.empty.title" = "لم يتم العثور على دواء";
+"medicineAnalyze.empty.message" = "تعذر التعرّف على منتج من هذه الصورة. جرّب صورة أوضح يظهر فيها اسم العبوة.";
+"medicineAnalyze.failure.title" = "فشل التحليل";
 "home.shopByCategories" = "تسوق من الفئات";
 "home.viewAll" = "عرض الكل";
 "home.category.medicines" = "أدوية";
@@ -118,6 +148,7 @@
 
 /* Filter */
 "filter.sort" = "ترتيب";
+"filter.title" = "تصفية";
 "filter.sort_title" = "رتب حسب";
 "filter.sort_by" = "خيارات الترتيب";
 "filter.clear" = "مسح التصفية";
@@ -125,6 +156,13 @@
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
+"company.lilly" = "إيلي ليلي";
+"company.novartis" = "نوفارتيس";
+"company.roche" = "فهوفمان لا روتش";
+"company.pfizer" = "بفيزير";
+"company.astrazeneca" = "أسترا زينيكا";
+"company.novonordisk" = "نوفو نورديسك";
+"company.eva_pharm" = "إيفا فارما > أندالاوس فارما";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";
@@ -144,6 +182,11 @@
 
 /* Product detail */
 "product.info_title" = "معلومات المنتج";
+"product.form" = "الشكل الدوائي";
+"product.strength" = "التركيز";
+"product.pack_size" = "حجم العبوة";
+"product.scientific_category" = "الفئة العلمية";
+"product.consumer_category" = "فئة المستهلك";
 "product.add_to_cart" = "أضف إلى السلة";
 "product.consult_pharmacist" = "استشارة صيدلي";
 "product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
@@ -369,6 +412,10 @@
 "prescription.review.edit" = "تعديل";
 "prescription.review.unclearMessage" = "الدواء غير واضح وقد يكون مشابهًا لـ:";
 "prescription.review.blocked" = "أكد الأدوية غير الواضحة أولًا لتفعيل الإضافة";
+"prescription.review.showCandidates" = "مراجعة البدائل";
+"prescription.review.hideCandidates" = "إخفاء البدائل";
+"prescription.review.noCandidates" = "لم يتم اقتراح منتجات مطابقة. ابحث في قائمة الأدوية لاختيار هذا الدواء.";
+"prescription.review.searchCatalog" = "البحث في قائمة الأدوية";
 "prescription.needsReview" = "تحتاج مراجعة";
 "prescription.added.title" = "تمت الإضافة إلى السلة!";
 "prescription.added.message" = "يمكنك مراجعة الكميات وإتمام طلبك من السلة.";
@@ -377,6 +424,7 @@
 "prescription.uploadFailed.title" = "فشل الرفع";
 "prescription.uploadFailed.message" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "prescription.retry" = "إعادة المحاولة";
+"prescription.analysisFailed.title" = "تعذر تحليل الروشتة";
 "prescription.readingFailed.title" = "تعذرت قراءة الروشتة";
 "prescription.readingFailed.message" = "جرّب صورة أوضح أو تابع ليتمكن الصيدلي من مراجعتها.";
 "prescription.readingFailed.continue" = "المتابعة بالروشتة";

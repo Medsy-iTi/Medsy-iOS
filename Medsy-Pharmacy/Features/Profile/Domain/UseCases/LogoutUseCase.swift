@@ -7,20 +7,19 @@
 import Foundation
 
 
-protocol LogoutUseCaseProtocol {
-    func execute() async
-}
+protocol LogoutUseCaseProtocol {func execute() async}
 
 struct LogoutUseCase: LogoutUseCaseProtocol {
-    let repository: ProfileRepositoryProtocol
-    let tokenStore: TokenStoreProtocol
+	let repository: ProfileRepositoryProtocol
+	let tokenStore: TokenStoreProtocol
 	let pharmacyIdentityProvidor: PharmacyIdentityProviding
 
 
-    func execute() async {
-        try? await repository.logout()
+	func execute() async {
+		try? await repository.logout()
 		try? tokenStore.clearTokens()
-		pharmacyIdentityProvidor.currentPharmacyId = nil
-
-    }
+		await MainActor.run {
+			pharmacyIdentityProvidor.currentPharmacyId = nil
+		}
+	}
 }

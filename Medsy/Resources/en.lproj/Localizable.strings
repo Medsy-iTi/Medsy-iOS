@@ -47,6 +47,36 @@
 "home.uploadPrescriptionDesc" = "Upload prescription photo and we will review it";
 "home.searchForMedicine" = "Search for Medicine";
 "home.searchForMedicineDesc" = "Search for any medicine you need easily";
+"medicineAnalyze.title" = "Analyze Medicine";
+"medicineAnalyze.heading" = "Identify your medicine";
+"medicineAnalyze.message" = "Take a clear photo of a medicine package and we will help you identify it.";
+"medicineAnalyze.camera.title" = "Take a photo";
+"medicineAnalyze.camera.message" = "Use your camera to capture the medicine package";
+"medicineAnalyze.gallery.title" = "Choose from gallery";
+"medicineAnalyze.gallery.message" = "Select a medicine photo already saved on your device";
+"medicineAnalyze.tips.title" = "For the best result";
+"medicineAnalyze.tips.clear" = "Keep the medicine name and package visible";
+"medicineAnalyze.tips.single" = "Capture one medicine package at a time";
+"medicineAnalyze.tips.light" = "Use good lighting and avoid reflections";
+"medicineAnalyze.preview.heading" = "Review your medicine photo";
+"medicineAnalyze.preview.message" = "Make sure the package details are clear before continuing.";
+"medicineAnalyze.changeImage" = "Choose another image";
+"medicineAnalyze.analyze" = "Analyze medicine";
+"medicineAnalyze.cameraUnavailable.title" = "Camera unavailable";
+"medicineAnalyze.cameraUnavailable.message" = "Use a device with a camera or choose an image from your gallery.";
+"medicineAnalyze.imageError.message" = "This image could not be prepared. Please choose another image.";
+"medicineAnalyze.loading.title" = "Identifying your medicine";
+"medicineAnalyze.loading.message" = "We are checking the package details and looking for matching products.";
+"medicineAnalyze.results.recognized" = "Analysis complete";
+"medicineAnalyze.results.count" = "%d matching products";
+"medicineAnalyze.results.message" = "Review the matches and choose the medicine you need.";
+"medicineAnalyze.results.match" = "Possible match";
+"medicineAnalyze.results.guidance.title" = "What would you like to do?";
+"medicineAnalyze.results.guidance.details" = "Tap a medicine to review its full details.";
+"medicineAnalyze.results.guidance.cart" = "Use the plus button to add the medicine directly to your cart.";
+"medicineAnalyze.empty.title" = "No medicine found";
+"medicineAnalyze.empty.message" = "We could not identify a product from this image. Try a clearer photo with the package name visible.";
+"medicineAnalyze.failure.title" = "Analysis failed";
 "home.shopByCategories" = "Shop by Categories";
 "home.viewAll" = "View All";
 "home.category.medicines" = "Medicines";
@@ -117,7 +147,8 @@
 "sort.company_asc" = "Company";
 
 /* Filter */
-"filter.sort" = "Sort & Filter ";
+"filter.sort" = "Sort";
+"filter.title" = "Filter";
 "filter.sort_title" = "Sort By & Filter";
 "filter.sort_by" = "Sort options";
 "filter.clear" = "Clear filters";
@@ -125,6 +156,13 @@
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
+"company.lilly" = "Eli Lilly";
+"company.novartis" = "Novartis";
+"company.roche" = "Hoffmann-La Roche";
+"company.pfizer" = "Pfizer";
+"company.astrazeneca" = "AstraZeneca";
+"company.novonordisk" = "Novo Nordisk";
+"company.eva_pharm" = "Eva Pharma > Andalus Pharma";
 
 
 /* Empty state */
@@ -145,6 +183,11 @@
 
 /* Product detail */
 "product.info_title" = "Product Information";
+"product.form" = "Form";
+"product.strength" = "Strength";
+"product.pack_size" = "Pack Size";
+"product.scientific_category" = "Scientific Category";
+"product.consumer_category" = "Consumer Category";
 "product.add_to_cart" = "Add to Cart";
 "product.consult_pharmacist" = "Consult a Pharmacist";
 "product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
@@ -370,6 +413,10 @@
 "prescription.review.edit" = "Edit";
 "prescription.review.unclearMessage" = "The medicine is unclear and may be similar to:";
 "prescription.review.blocked" = "Confirm unclear medicines first to enable adding";
+"prescription.review.showCandidates" = "Review candidates";
+"prescription.review.hideCandidates" = "Hide candidates";
+"prescription.review.noCandidates" = "No matching products were suggested. Search the catalog to select this medicine.";
+"prescription.review.searchCatalog" = "Search catalog";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";
@@ -378,6 +425,7 @@
 "prescription.uploadFailed.title" = "Upload failed";
 "prescription.uploadFailed.message" = "Check your internet connection and try again.";
 "prescription.retry" = "Try again";
+"prescription.analysisFailed.title" = "Prescription analysis failed";
 "prescription.readingFailed.title" = "Couldn't read the prescription";
 "prescription.readingFailed.message" = "Try a clearer image, or continue so the pharmacist can review it.";
 "prescription.readingFailed.continue" = "Continue with prescription";
