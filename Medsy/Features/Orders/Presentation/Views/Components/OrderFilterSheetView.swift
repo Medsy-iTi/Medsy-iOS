@@ -20,6 +20,8 @@ struct OrderFilterSheetView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.xl) {
+                    statusSection
+                    Divider().background(AppColor.border)
                     fulfillmentSection
                     Divider().background(AppColor.border)
                     dateRangeSection
@@ -47,6 +49,16 @@ struct OrderFilterSheetView: View {
                     .foregroundStyle(AppColor.green)
                 }
             }
+        }
+    }
+
+    private var statusSection: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Text("orders.filter.section.status".localized)
+                .font(AppColor.sans(14, .semibold))
+                .foregroundStyle(AppColor.textSec)
+            OrderFilterChipBar(filters: OrderFilter.allCases, selected: $draft.statusFilter)
+                .padding(.horizontal, -MedsySpacing.md)
         }
     }
 

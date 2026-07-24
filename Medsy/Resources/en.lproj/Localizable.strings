@@ -498,6 +498,7 @@
 "orders.filter.reset"                 = "Reset";
 "orders.filter.apply"                 = "Apply";
 "orders.filter.button.accessibility" = "Filter orders";
+"orders.filter.section.status"       = "Status";
 "orders.filter.section.fulfillment"  = "Fulfillment Type";
 "orders.filter.section.date"         = "Date Range";
 "orders.filter.fulfillment.all"      = "All";

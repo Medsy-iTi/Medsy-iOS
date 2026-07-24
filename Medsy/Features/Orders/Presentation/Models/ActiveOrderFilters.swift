@@ -17,7 +17,7 @@ struct ActiveOrderFilters: Equatable {
     static let `default` = ActiveOrderFilters()
 
     var hasActiveFilters: Bool {
-        dateRangeFilter != .anytime || fulfillmentType != nil
+        statusFilter != .all || dateRangeFilter != .anytime || fulfillmentType != nil
     }
 
     func resolvedDateRange() -> (from: Date?, to: Date?) {

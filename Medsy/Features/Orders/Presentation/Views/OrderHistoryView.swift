@@ -21,21 +21,7 @@ struct OrderHistoryView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-
-            OrderFilterChipBar(
-                filters: OrderFilter.allCases,
-                selected: Binding(
-                    get: { activeFilters.statusFilter },
-                    set: { newStatus in
-                        var updated = activeFilters
-                        updated.statusFilter = newStatus
-                        onApplyFilters(updated)
-                    }
-                )
-            )
-
             Divider().background(AppColor.border)
-
             content
         }
         .background(AppColor.bg)
