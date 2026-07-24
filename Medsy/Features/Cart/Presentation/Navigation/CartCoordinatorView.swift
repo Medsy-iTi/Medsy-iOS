@@ -11,6 +11,7 @@ import SwiftUI
 enum CartRoute: Hashable {
     case productDetail(String)
     case completeRequest
+    case search(String)
 }
 
 @MainActor
@@ -28,6 +29,10 @@ final class CartCoordinator {
         path.append(CartRoute.completeRequest)
     }
 
+    func showSearch(query: String = "") {
+        path.append(CartRoute.search(query))
+    }
+
     func pop() {
         guard !path.isEmpty else { return }
         path.removeLast()
@@ -42,18 +47,15 @@ final class CartCoordinator {
 struct CartCoordinatorView: View {
     @State private var coordinator = CartCoordinator()
     let viewModel: CartViewModel
-    let onSearch: () -> Void
     let onTabBarHiddenChange: (Bool) -> Void
     let onRequestCompleted: () -> Void
 
     init(
         viewModel: CartViewModel,
-        onSearch: @escaping () -> Void = {},
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
         onRequestCompleted: @escaping () -> Void = {}
     ) {
         self.viewModel = viewModel
-        self.onSearch = onSearch
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onRequestCompleted = onRequestCompleted
     }
@@ -62,7 +64,7 @@ struct CartCoordinatorView: View {
         NavigationStack(path: $coordinator.path) {
             CartView(
                 viewModel: viewModel,
-                onSearch: onSearch,
+                onSearch: { coordinator.showSearch() },
                 onContinue: coordinator.showCompleteRequest,
                 onProductSelected: coordinator.showProductDetail
             )
@@ -82,7 +84,16 @@ struct CartCoordinatorView: View {
                             }
                         )
                     }
+                case let .search(query):
+                    SearchCoordinatorView(
+                        query: query,
+                        onBack: { coordinator.pop() },
+                        onPush: { dest in coordinator.path.append(dest) }
+                    )
                 }
+            }
+            .navigationDestination(for: ProductDetailDestination.self) { destination in
+                ProductDetailView(productId: destination.productId)
             }
         }
         .onAppear {
