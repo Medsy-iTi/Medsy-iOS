@@ -13,7 +13,7 @@ struct ContentView: View {
     let homeFactory: PharmacyHomeFactory
     let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
-    @State private var coordinator: RootCoordinator
+    @Bindable var coordinator: RootCoordinator
 
     init(
         onboardingFactory: PharmacyOnboardingFactory,
@@ -26,7 +26,7 @@ struct ContentView: View {
         self.authenticationFactory = authenticationFactory
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
-        _coordinator = State(initialValue: coordinator)
+        self.coordinator = coordinator
     }
 
     var body: some View {
@@ -57,7 +57,7 @@ struct ContentView: View {
 
             case .main:
                 PharmacyMainTabView(
-                    coordinator: PharmacyMainTabCoordinator(),
+                    coordinator: coordinator.mainTabCoordinator,
                     homeFactory: homeFactory,
                     ordersFactory: ordersFactory,
                     onLoggedOut: coordinator.logout

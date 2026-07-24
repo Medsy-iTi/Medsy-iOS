@@ -322,3 +322,5 @@
 "profile.presence.on_duty_badge" = "نشط";
 "profile.presence.off_duty_badge" = "خارج الخدمة";
 "profile.presence.error" = "تعذر تحديث حالتك. حاول مرة أخرى.";
+"profile.presence.toast.on" = "أنت الآن تستقبل الطلبات";
+"profile.presence.toast.off" = "أنت لم تعد تستقبل الطلبات";
