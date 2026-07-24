@@ -48,7 +48,7 @@ struct MainTabBarView: View {
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
-                    OrdersCoordinatorView()
+                    OrdersCoordinatorView(onSearch: openSearch)
                         .onAppear { isTabBarHidden = false }
                 case .favorites, .offers:
                     VStack {
