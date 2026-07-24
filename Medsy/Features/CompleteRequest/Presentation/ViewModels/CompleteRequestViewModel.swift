@@ -25,22 +25,26 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private(set) var isSubmitting = false
     private(set) var submissionErrorMessage: String?
     private(set) var validationErrors: [CompleteRequestValidationError] = []
+    private(set) var submittedRequest: SubmittedMedicineRequest?
 
     private let getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol
-    private let onSubmit: (CompleteRequestSubmission) async -> Bool
+    private let submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol
+    private let onRequestCreated: (CompleteRequestSubmission) async -> Bool
     private let now: () -> Date
     private var hasLoadedAddress = false
 
     init(
         draft: CompleteRequestDraft,
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
+        submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
         now: @escaping () -> Date = Date.init,
-        onSubmit: @escaping (CompleteRequestSubmission) async -> Bool
+        onRequestCreated: @escaping (CompleteRequestSubmission) async -> Bool
     ) {
         self.draft = draft
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
+        self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
         self.now = now
-        self.onSubmit = onSubmit
+        self.onRequestCreated = onRequestCreated
     }
 
     var showsDeliveryDetails: Bool {
@@ -155,21 +159,48 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         let errors = currentValidationErrors
         validationErrors = errors
         submissionErrorMessage = nil
-        guard errors.isEmpty else { return false }
+        guard errors.isEmpty else {
+            if errors.contains(.pickupUnsupported) {
+                submissionErrorMessage = CompleteRequestValidationError
+                    .pickupUnsupported
+                    .localizedMessage
+            }
+            return false
+        }
 
         isSubmitting = true
         defer { isSubmitting = false }
 
+        guard let deliveryLocation else {
+            validationErrors = [.locationRequired]
+            return false
+        }
+
         let submission = CompleteRequestSubmission(
             receiveMethod: receiveMethod,
-            deliveryLocation: receiveMethod == .delivery ? deliveryLocation : nil,
-            paymentMethod: receiveMethod == .delivery ? paymentMethod : nil,
+            deliveryLocation: deliveryLocation,
+            paymentMethod: paymentMethod,
             itemCount: draft.itemCount,
             prescriptionCount: draft.prescriptionCount,
             estimatedTotal: draft.estimatedTotal
         )
 
-        guard await onSubmit(submission) else {
+        if submittedRequest == nil {
+            do {
+                submittedRequest = try await submitCompleteRequestUseCase.execute(
+                    input: SubmitCompleteRequestInput(
+                        deliveryLatitude: deliveryLocation.latitude,
+                        deliveryLongitude: deliveryLocation.longitude,
+                        deliveryAddress: deliveryLocation.address
+                    )
+                )
+            } catch {
+                submissionErrorMessage = error.localizedDescription
+                return false
+            }
+        }
+
+        guard await onRequestCreated(submission) else {
             submissionErrorMessage = "complete_request.submit_error".localized
             return false
         }
@@ -177,7 +208,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     }
 
     private var currentValidationErrors: [CompleteRequestValidationError] {
-        guard receiveMethod == .delivery else { return [] }
+        guard receiveMethod == .delivery else { return [.pickupUnsupported] }
 
         var errors: [CompleteRequestValidationError] = []
         if deliveryLocation == nil {
