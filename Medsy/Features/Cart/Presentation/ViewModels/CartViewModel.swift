@@ -247,6 +247,35 @@ final class CartViewModel: CartViewModelProtocol {
         return nil
     }
 
+    func clearAfterCompletedRequest() async -> Bool {
+        guard canMutate, hasContent else { return !hasContent }
+
+        guard let clearCartUseCase else {
+            replaceItems([])
+            prescriptions = []
+            clearRemoval()
+            syncState = .synced
+            feedback = nil
+            return true
+        }
+
+        syncState = .syncing
+        do {
+            try await clearCartUseCase.execute()
+            replaceItems([])
+            prescriptions = []
+            clearRemoval()
+            syncState = .synced
+            feedback = nil
+            return true
+        } catch {
+            let message = error.localizedDescription
+            syncState = .failed(message)
+            feedback = .operationFailed(message)
+            return false
+        }
+    }
+
     private var items: [CartDisplayItem] {
         guard case let .loaded(items) = state else { return [] }
         return items
