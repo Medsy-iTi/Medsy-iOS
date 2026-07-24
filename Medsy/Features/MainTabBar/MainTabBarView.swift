@@ -26,7 +26,7 @@ struct MainTabBarView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-            switch coordinator.selectedTab {
+                switch coordinator.selectedTab {
                 case .home:
                     HomeCoordinatorView(
                         requestedRoute: $requestedHomeRoute,
@@ -40,7 +40,11 @@ struct MainTabBarView: View {
                     CartCoordinatorView(
                         viewModel: cartViewModel,
                         onSearch: openSearchFromCart,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                        onTabBarHiddenChange: { isTabBarHidden = $0 },
+                        onRequestCompleted: {
+                            isTabBarHidden = false
+                            coordinator.select(.orders)
+                        }
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
@@ -57,9 +61,8 @@ struct MainTabBarView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(AppColor.bg)
                     .onAppear { isTabBarHidden = false }
-                case .orders:
-                    OrdersCoordinatorView(onSearch: openSearch)
-                        .onAppear { isTabBarHidden = false }
+                case .chatbot:
+                    ChatbotRootView { hidden in isTabBarHidden = hidden }
                 }
             }
             .environment(cartViewModel)
@@ -74,6 +77,7 @@ struct MainTabBarView: View {
                         tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
                         tabItem(tab: .favorites, labelKey: "tab.favorites", activeIcon: "heart.fill", inactiveIcon: "heart")
                         tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.distinctProductCount)
+                        chatbotTabButton
                         tabItem(tab: .offers, labelKey: "tab.offers", activeIcon: "tag.fill", inactiveIcon: "tag")
                         tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
                         tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
@@ -133,7 +137,32 @@ struct MainTabBarView: View {
             cartViewModel.handle(.dismissFeedback)
         }
     }
-    
+    private var chatbotTabButton: some View {
+            Button {
+                isTabBarHidden = false
+                coordinator.select(.chatbot)
+            } label: {
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(AppColor.green)
+                            .frame(width: 44, height: 44)
+                            .shadow(color: AppColor.green.opacity(0.3), radius: 6, x: 0, y: 3)
+
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                    .offset(y: -12)
+
+                    Text("tab.medsy_chatbot".localized)
+                        .font(AppColor.sans(10, coordinator.selectedTab == .chatbot ? .bold : .medium))
+                        .foregroundStyle(coordinator.selectedTab == .chatbot ? AppColor.green : AppColor.textSec)
+                        .offset(y: -8)
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {
         let isActive = coordinator.selectedTab == tab
         return Button {

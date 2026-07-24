@@ -18,6 +18,7 @@ enum AppTab: Int, CaseIterable {
     case home
     case favorites
     case cart
+    case chatbot
     case offers
     case orders
     case profile

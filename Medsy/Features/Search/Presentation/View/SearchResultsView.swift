@@ -17,6 +17,7 @@ struct SearchResultsView: View {
 	private let onSelect: ((MedsyProduct) -> Void)?
 
 	@State private var showSortSheet = false
+	@State private var showFilterSheet = false
 
 	init(
 		query: String,
@@ -52,7 +53,13 @@ struct SearchResultsView: View {
 						showSortSheet = true
 					}
 
-
+					FilterChip(
+						title: "filter.title".localized,
+						systemIcon: "line.3.horizontal.decrease",
+						isSelected: viewModel.selectedCategory != nil || viewModel.selectedCompany != nil
+					) {
+						showFilterSheet = true
+					}
 				}
 
 				if viewModel.state == .loaded {
@@ -73,6 +80,9 @@ struct SearchResultsView: View {
 		.onAppear { viewModel.load() }
 		.sheet(isPresented: $showSortSheet) {
 			SortFilterSheet(viewModel: viewModel, isPresented: $showSortSheet)
+		}
+		.sheet(isPresented: $showFilterSheet) {
+			FilterSheet(viewModel: viewModel, isPresented: $showFilterSheet)
 		}
 	}
 

@@ -197,6 +197,11 @@ final class CartViewModel: CartViewModelProtocol {
         return items.first(where: { $0.productID == productID })?.quantity ?? 0
     }
 
+    func itemID(forProductID productID: Int64?) -> String? {
+        guard let productID else { return nil }
+        return items.first(where: { $0.productID == productID })?.id
+    }
+
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect? {
         switch event {
@@ -240,6 +245,35 @@ final class CartViewModel: CartViewModelProtocol {
         }
 
         return nil
+    }
+
+    func clearAfterCompletedRequest() async -> Bool {
+        guard canMutate, hasContent else { return !hasContent }
+
+        guard let clearCartUseCase else {
+            replaceItems([])
+            prescriptions = []
+            clearRemoval()
+            syncState = .synced
+            feedback = nil
+            return true
+        }
+
+        syncState = .syncing
+        do {
+            try await clearCartUseCase.execute()
+            replaceItems([])
+            prescriptions = []
+            clearRemoval()
+            syncState = .synced
+            feedback = nil
+            return true
+        } catch {
+            let message = error.localizedDescription
+            syncState = .failed(message)
+            feedback = .operationFailed(message)
+            return false
+        }
     }
 
     private var items: [CartDisplayItem] {

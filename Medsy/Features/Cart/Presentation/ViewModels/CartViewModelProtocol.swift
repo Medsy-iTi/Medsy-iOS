@@ -60,4 +60,5 @@ protocol CartViewModelProtocol: AnyObject {
 
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect?
+    func clearAfterCompletedRequest() async -> Bool
 }

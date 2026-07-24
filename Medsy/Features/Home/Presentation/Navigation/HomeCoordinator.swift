@@ -11,6 +11,7 @@ import SwiftUI
 enum HomeRoute: Hashable {
     case search(String)
     case prescription
+    case medicineAnalyze
 }
 
 @MainActor
@@ -24,6 +25,10 @@ final class HomeCoordinator {
 
     func showPrescription() {
         path.append(HomeRoute.prescription)
+    }
+
+    func showMedicineAnalyze() {
+        path.append(HomeRoute.medicineAnalyze)
     }
 
     func open(_ route: HomeRoute) {
@@ -57,7 +62,11 @@ struct HomeCoordinatorView: View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            HomeView(onSearchTap: coordinator.openSearch, onPrescription: coordinator.showPrescription)
+            HomeView(
+                onSearchTap: coordinator.openSearch,
+                onMedicineAnalyze: coordinator.showMedicineAnalyze,
+                onPrescription: coordinator.showPrescription
+            )
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
@@ -70,6 +79,15 @@ struct HomeCoordinatorView: View {
                             onViewCart: {
                                 coordinator.goBack()
                                 onOpenCart()
+                            }
+                        )
+                    case .medicineAnalyze:
+                        MedicineAnalyzeView(
+                            onBack: coordinator.goBack,
+                            onProductSelected: { productID in
+                                coordinator.path.append(
+                                    ProductDetailDestination(productId: productID)
+                                )
                             }
                         )
                     }

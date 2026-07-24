@@ -22,11 +22,11 @@ struct PrescriptionCoordinatorView: View {
     private let onViewCart: () -> Void
 
     init(
-        mockOutcome: PrescriptionMockOutcome = .success,
+        viewModel: PrescriptionViewModel = DIContainer.shared.resolve(PrescriptionViewModel.self),
         onExit: @escaping () -> Void,
         onViewCart: @escaping () -> Void = {}
     ) {
-        _viewModel = State(initialValue: PrescriptionViewModel(mockOutcome: mockOutcome))
+        _viewModel = State(initialValue: viewModel)
         self.onExit = onExit
         self.onViewCart = onViewCart
     }
@@ -48,8 +48,8 @@ struct PrescriptionCoordinatorView: View {
                     onDelete: { send(.deleteImage) },
                     onBack: { send(.back) }
                 )
-            case let .reading(stage):
-                PrescriptionReadingView(stage: stage, onCancel: { send(.cancelReading) })
+            case .reading:
+                PrescriptionReadingView(onCancel: { send(.cancelReading) })
             case .review:
                 PrescriptionReviewView(
                     imageData: viewModel.selectedImageData,
@@ -59,20 +59,22 @@ struct PrescriptionCoordinatorView: View {
                     canAddToCart: viewModel.canAddToCart,
                     isAddingToCart: viewModel.isAddingToCart,
                     cartErrorMessage: viewModel.cartErrorMessage,
-                    onConfirm: { send(.confirmMedicine($0)) },
-                    onChooseAlternative: { send(.chooseAlternative($0)) },
+                    expandedMedicineID: viewModel.expandedMedicineID,
+                    onToggleCandidates: { send(.toggleCandidates($0)) },
+                    onSelectCandidate: { send(.selectCandidate(medicineID: $0, candidateID: $1)) },
+                    onSearchCatalog: { send(.searchCatalog($0)) },
                     onIncreaseQuantity: { send(.increaseQuantity($0)) },
                     onDecreaseQuantity: { send(.decreaseQuantity($0)) },
                     onDelete: { send(.deleteMedicine($0)) },
                     onAddToCart: addToCart,
                     onBack: { send(.back) }
                 )
-            case let .medicineSearch(medicineID):
+            case let .medicineSearch(context):
                 SearchCoordinatorView(
-                    query: "",
+                    query: context.query,
                     onBack: { send(.cancelMedicineSearch) },
                     onPush: { _ in },
-                    onSelect: { send(.replaceMedicine(medicineID, $0)) }
+                    onSelect: { send(.selectSearchedMedicine($0)) }
                 )
             case let .result(result):
                 PrescriptionResultView(
@@ -113,8 +115,13 @@ struct PrescriptionCoordinatorView: View {
         guard let item else { return }
 
         Task {
-            guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-            send(.imageSelected(data, .gallery))
+            guard let data = try? await item.loadTransferable(type: Data.self),
+                  let image = UIImage(data: data),
+                  let jpegData = image.jpegData(compressionQuality: 0.85) else {
+                selectedPhotoItem = nil
+                return
+            }
+            send(.imageSelected(jpegData, .gallery))
             selectedPhotoItem = nil
         }
     }
@@ -168,9 +175,9 @@ struct PrescriptionCoordinatorView: View {
         switch result {
         case .added:
             .backHome
-        case .uploadFailed:
+        case .analysisFailed:
             .retry
-        case .readingFailed, .noMedicines:
+        case .noMedicines:
             .changeImage
         }
     }
@@ -179,10 +186,8 @@ struct PrescriptionCoordinatorView: View {
         switch result {
         case .added:
             .backHome
-        case .uploadFailed:
+        case .analysisFailed:
             .changeImage
-        case .readingFailed:
-            .continueWithoutReading
         case .noMedicines:
             .addMedicineManually
         }

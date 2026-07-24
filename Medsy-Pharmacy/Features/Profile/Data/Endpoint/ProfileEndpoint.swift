@@ -68,7 +68,8 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: - Body
     var body: Data? {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy, .removePharmacist:
+        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy,
+             .removePharmacist:
             return nil
         case let .invitePharmacist(_, request):
             return try? JSONEncoder().encode(request)

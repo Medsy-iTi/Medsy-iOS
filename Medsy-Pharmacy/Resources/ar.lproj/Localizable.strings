@@ -189,7 +189,7 @@
 "profile_generic_error" = "تعذر تحميل البيانات، حاول مرة أخرى";
 "coming_soon" = "قريباً";
 
-// Edit Profile
+	// Edit Profile
 "profile.edit.title" = "تعديل الملف الشخصي";
 "profile.change_photo" = "تغيير الصورة";
 "profile.full_name" = "الاسم الكامل";
@@ -203,7 +203,7 @@
 "profile.date_of_birth" = "تاريخ الميلاد";
 "profile.save_changes" = "حفظ التغييرات";
 
-// Pharmacy Card
+	// Pharmacy Card
 "pharmacy_card.your_pharmacy" = "صيدليتك";
 "pharmacy_card.unknown" = "صيدلية بدون اسم";
 "pharmacy_card.edit" = "تعديل بيانات الصيدلية";
@@ -214,7 +214,7 @@
 "pharmacy_card.not_assigned" = "غير مسجّل في صيدلية";
 "pharmacy_card.not_assigned_subtitle" = "تواصل مع مدير الصيدلية لإضافتك.";
 
-// Edit Pharmacy
+	// Edit Pharmacy
 "pharmacy_edit.title" = "تعديل بيانات الصيدلية";
 "pharmacy_edit.name" = "اسم الصيدلية";
 "pharmacy_edit.name.placeholder" = "أدخل اسم الصيدلية";
@@ -223,7 +223,7 @@
 "pharmacy_edit.phone" = "رقم الهاتف";
 "pharmacy_edit.phone.placeholder" = "أدخل رقم هاتف الصيدلية";
 
-// Pharmacy Team (admin)
+	// Pharmacy Team (admin)
 "pharmacy_team.title" = "فريق الصيدلية";
 "pharmacy_team.empty" = "لا يوجد صيادلة آخرون للإدارة.";
 "pharmacy_team.edit" = "تعديل الصيدلي";
@@ -238,18 +238,24 @@
 "profile.first_name" = "الاسم الأول";
 "profile.last_name" = "اسم العائلة";
 
-// Delete Pharmacy (admin)
+	// Delete Pharmacy (admin)
 "pharmacy_card.delete" = "حذف الصيدلية";
 "pharmacy_card.delete_confirm_title" = "حذف الصيدلية";
 "pharmacy_card.delete_confirm_message" = "سيؤدي هذا إلى حذف الصيدلية نهائياً وإزالة جميع الصيادلة. سيتم تسجيل خروجك.";
 "pharmacy_card.delete_confirm_action" = "حذف";
 
-// User Profile
+	// User Profile
 "profile.user_profile" = "الملف الشخصي";
 "profile.pharmacy_profile" = "ملف الصيدلية";
 "profile.pharmacists_count" = "%d صيدلي";
+"profile.my_pharmacy" = "صيدليتي";
+"profile.personal_information" = "معلومات الصيدلي";
+"profile.role_pharmacist" = "صيدلي مرخص";
+"profile.experience_years" = "خبرة %d سنوات";
+"profile.add_date_of_birth" = "إضافة تاريخ الميلاد";
+"profile.remove_date_of_birth" = "إزالة تاريخ الميلاد";
 
-// Invite Pharmacist
+	// Invite Pharmacist
 "pharmacy_team.invite" = "دعوة صيدلي";
 "pharmacy_team.invite_header" = "دعوة صيدلي";
 "pharmacy_team.invite_title" = "دعوة صيدلي للانضمام";
@@ -257,8 +263,19 @@
 "pharmacy_team.invite_email" = "البريد الإلكتروني";
 "pharmacy_team.invite_email_placeholder" = "أدخل بريد الصيدلي الإلكتروني";
 "pharmacy_team.invite_button" = "إرسال الدعوة";
+"pharmacy_team.invite_short_description" = "ادعُ صيدليًا للانضمام إلى صيدليتك";
+"pharmacy_team.menu_title" = "الصيادلة في الصيدلية";
+"pharmacy_team.section_header" = "الصيادلة (%d)";
+"pharmacy_team.admin_badge" = "مدير";
+"pharmacy_team.view_profile" = "عرض الملف الشخصي";
+"pharmacy_team.invite_success_title" = "تم إرسال الدعوة بنجاح";
+"pharmacy_team.invite_success_subtitle" = "سيتم إشعار الصيدلي ويمكنه قبول دعوتك.";
+"pharmacy_team.invite_pending" = "بانتظار قبول الدعوة";
+"pharmacy_team.invite_another" = "دعوة صيدلي آخر";
+"pharmacy_team.back_to_profile" = "العودة للملف الشخصي";
+"pharmacy_invite.validation_email" = "يرجى إدخال بريد إلكتروني صحيح.";
 
-// Remove Pharmacist
+	// Remove Pharmacist
 "pharmacy_team.remove_header" = "إزالة الصيدلي";
 "pharmacy_team.remove_title" = "إزالة الصيدلي";
 "pharmacy_team.remove_message" = "هل أنت متأكد من رغبتك في إزالة %@ من الصيدلية؟";
@@ -299,7 +316,14 @@
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
 
-/* On Duty */
+/* Presence & On Duty */
+"profile.presence.section_title" = "حالة التوفر";
+"profile.presence.on_duty_title" = "في الخدمة";
+"profile.presence.on_duty_badge" = "نشط";
+"profile.presence.off_duty_badge" = "خارج الخدمة";
+"profile.presence.error" = "تعذر تحديث حالتك. حاول مرة أخرى.";
+"profile.presence.toast.on" = "أنت الآن تستقبل الطلبات";
+"profile.presence.toast.off" = "أنت لم تعد تستقبل الطلبات";
 "profile.on_duty.title" = "حالة الدوام";
 "profile.on_duty.on" = "في الخدمة";
 "profile.on_duty.off" = "خارج الخدمة";
