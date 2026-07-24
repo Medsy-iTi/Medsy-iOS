@@ -71,10 +71,6 @@ final class ProfileCoordinator {
         viewModel.email
     }
 
-    var homeAddress: String {
-        viewModel.homeAddress
-    }
-
 
     var displayHomeAddress: String {
         viewModel.displayHomeAddress
@@ -88,10 +84,6 @@ final class ProfileCoordinator {
 		viewModel.homeLongitude
 	}
 
-
-    var dateOfBirth: Date? {
-        viewModel.dateOfBirth
-    }
 
     var displayDateOfBirth: String {
         viewModel.displayDateOfBirth
@@ -118,12 +110,16 @@ final class ProfileCoordinator {
     }
 
 	func updateProfile(
+		firstName: String,
+		lastName: String,
 		homeAddress: String?,
 		latitude: Double?,
 		longitude: Double?,
 		dateOfBirth: Date?
 	) async -> Bool {
 		await viewModel.updateProfile(
+			firstName: firstName,
+			lastName: lastName,
 			homeAddress: homeAddress,
 			latitude: latitude,
 			longitude: longitude,
@@ -136,20 +132,7 @@ final class ProfileCoordinator {
     func showThemePicker() { activePresentation = .theme }
     func dismissPresentation() { activePresentation = nil }
 
-    func saveProfile(
-        firstName: String,
-        lastName: String,
-        homeAddress: String,
-        dateOfBirth: Date?
-    ) async {
-        let saved = await viewModel.updateProfile(
-            firstName: firstName,
-            lastName: lastName,
-            homeAddress: homeAddress,
-            dateOfBirth: dateOfBirth
-        )
-        if saved { dismissPresentation() }
-    }
+
     func requestLogout() { showsLogoutConfirmation = true }
     func cancelLogout() { showsLogoutConfirmation = false }
 

@@ -57,7 +57,8 @@ struct ProfileCoordinatorView: View {
         switch presentation {
         case .editProfile:
             EditProfileScreen(
-                name: coordinator.patientName,
+                firstName: coordinator.firstName,
+                lastName: coordinator.lastName,
                 phoneNumber: coordinator.phoneNumber,
                 email: coordinator.email,
                 homeAddress: coordinator.homeAddress,

@@ -114,6 +114,8 @@ final class ProfileViewModel {
     }
 
     func updateProfile(
+        firstName: String,
+        lastName: String,
         homeAddress: String?,
         latitude: Double?,
         longitude: Double?,

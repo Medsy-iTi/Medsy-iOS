@@ -358,6 +358,11 @@
 "profile.change_photo" = "تغيير الصورة";
 "profile.full_name" = "الاسم بالكامل";
 "profile.full_name.placeholder" = "اكتب الاسم بالكامل";
+"profile.first_name" = "الاسم الأول";
+"profile.first_name.placeholder" = "أدخل الاسم الأول";
+"profile.last_name" = "اسم العائلة";
+"profile.last_name.placeholder" = "أدخل اسم العائلة";
+"profile.name_required_error" = "هذا الحقل مطلوب";
 "profile.email" = "البريد الإلكتروني";
 "profile.phone" = "رقم الهاتف";
 "profile.home_address" = "عنوان المنزل";
