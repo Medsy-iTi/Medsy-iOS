@@ -10,7 +10,7 @@ import Foundation
 enum OrderHistoryEvent {
     case load
     case retry
-    case selectFilter(OrderFilter)
+    case applyFilters(ActiveOrderFilters)
     case loadNextPage
 }
 
@@ -22,6 +22,7 @@ enum OrderDetailEvent {
 @MainActor
 protocol OrderHistoryViewModelProtocol: AnyObject {
     var historyState: OrderHistoryViewState { get }
+    var activeFilters: ActiveOrderFilters { get }
     var isLoadingNextPage: Bool { get }
 
     func handle(_ event: OrderHistoryEvent)
