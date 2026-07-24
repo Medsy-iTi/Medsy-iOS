@@ -22,6 +22,7 @@ struct ProfileScreen: View {
     let onEditProfile: () -> Void
     let onLanguage: () -> Void
     let onTheme: () -> Void
+    let onOrders: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -104,28 +105,6 @@ struct ProfileScreen: View {
         ]
     }
 
-    private var aboutRows: [ProfileRowItem] {
-        [
-            ProfileRowItem(
-                id: "about",
-                titleKey: "profile.about_medsy",
-                iconName: "info.circle",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "terms",
-                titleKey: "profile.terms",
-                iconName: "doc.text",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "privacy",
-                titleKey: "profile.privacy",
-                iconName: "shield",
-                iconColor: Color(hex: "#94A3B8")
-            )
-        ]
-    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -141,7 +120,7 @@ struct ProfileScreen: View {
                         ProfileSectionView(titleKey: "profile.section.account", rows: accountRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.preferences", rows: preferenceRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.support", rows: supportRows, onSelect: handleRowSelection)
-                        ProfileSectionView(titleKey: "profile.section.about", rows: aboutRows, onSelect: handleRowSelection)
+
                         logoutButton
                         footer
                     }
@@ -258,6 +237,8 @@ struct ProfileScreen: View {
             onLanguage()
         case "theme":
             onTheme()
+        case "orders":
+            onOrders()
         default:
             break
         }
@@ -273,7 +254,7 @@ struct ProfileScreen: View {
         dateOfBirthText: "Jun 15, 1995",
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onLanguage: {}, onTheme: {}, onLogout: {}
+        onEditProfile: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }

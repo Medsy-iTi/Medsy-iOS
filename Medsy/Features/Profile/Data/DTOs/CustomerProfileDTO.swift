@@ -22,12 +22,16 @@ struct CustomerProfileDTO: Decodable, Equatable {
 }
 
 struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
+    let firstName: String
+    let lastName: String
     let homeAddress: String?
 	let latitude: Double?
 	let longitude: Double?
     let dob: String?
 
     init(input: UpdateCustomerProfileInput) {
+        firstName = input.firstName
+        lastName = input.lastName
         homeAddress = input.homeAddress
 		latitude = input.homeLatitude
 		longitude = input.homeLongitude
@@ -36,6 +40,8 @@ struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(firstName, forKey: .firstName)
+        try container.encode(lastName, forKey: .lastName)
         try container.encodeIfPresent(homeAddress, forKey: .homeAddress)
 		try container.encodeIfPresent(latitude, forKey: .latitude)
 		try container.encodeIfPresent(longitude, forKey: .longitude)
@@ -43,6 +49,8 @@ struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
+        case firstName
+        case lastName
         case homeAddress
 		case latitude
 		case longitude
