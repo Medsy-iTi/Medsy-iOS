@@ -69,6 +69,7 @@ struct ProductDTO: Decodable {
 	
 	let barcode: String?
 	let dosageForm: String?
+	let form: String?
 	let strength: String?
 	let packSize: String?
 	let isPrescription: Bool?
@@ -76,4 +77,8 @@ struct ProductDTO: Decodable {
 	let description: String?
 	let badgeText: String?
 	let badgeColor: String?
+	
+	let productName: String?
+	let scientificCategory: String?
+	let consumerCategory: String?
 }

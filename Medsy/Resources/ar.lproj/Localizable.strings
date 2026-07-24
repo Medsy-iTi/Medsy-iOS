@@ -118,6 +118,7 @@
 
 /* Filter */
 "filter.sort" = "ترتيب";
+"filter.title" = "تصفية";
 "filter.sort_title" = "رتب حسب";
 "filter.sort_by" = "خيارات الترتيب";
 "filter.clear" = "مسح التصفية";
@@ -125,6 +126,13 @@
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
+"company.lilly" = "إيلي ليلي";
+"company.novartis" = "نوفارتيس";
+"company.roche" = "فهوفمان لا روتش";
+"company.pfizer" = "بفيزير";
+"company.astrazeneca" = "أسترا زينيكا";
+"company.novonordisk" = "نوفو نورديسك";
+"company.eva_pharm" = "إيفا فارما > أندالاوس فارما";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";
@@ -144,6 +152,11 @@
 
 /* Product detail */
 "product.info_title" = "معلومات المنتج";
+"product.form" = "الشكل الدوائي";
+"product.strength" = "التركيز";
+"product.pack_size" = "حجم العبوة";
+"product.scientific_category" = "الفئة العلمية";
+"product.consumer_category" = "فئة المستهلك";
 "product.add_to_cart" = "أضف إلى السلة";
 "product.consult_pharmacist" = "استشارة صيدلي";
 "product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";

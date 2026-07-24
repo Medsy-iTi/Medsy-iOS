@@ -12,7 +12,8 @@ protocol ProductRepositoryProtocol {
         page: Int,
         size: Int,
         sort: [ProductSort],
-		lang: String? 
+		lang: String?,
+		company: String?
     ) async throws -> PagedResult<Product>
 
     func searchProducts(
@@ -20,7 +21,8 @@ protocol ProductRepositoryProtocol {
         page: Int,
         size: Int,
         sort: [ProductSort],
-		lang: String?
+		lang: String?,
+		company: String?
     ) async throws -> PagedResult<Product>
 
     func fetchProductsByCategory(
@@ -28,6 +30,7 @@ protocol ProductRepositoryProtocol {
         page: Int,
         size: Int,
         sort: [ProductSort],
-        lang: String?
+        lang: String?,
+		company: String?
     ) async throws -> PagedResult<Product>
 }

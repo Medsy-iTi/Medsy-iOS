@@ -61,6 +61,8 @@ struct ProfileCoordinatorView: View {
                 phoneNumber: coordinator.phoneNumber,
                 email: coordinator.email,
                 homeAddress: coordinator.homeAddress,
+				latitude: coordinator.homeLatitude,
+				longitude: coordinator.homeLongitude,
                 dateOfBirth: coordinator.dateOfBirth,
                 isSaving: coordinator.isSaving,
                 errorMessage: coordinator.saveErrorMessage,

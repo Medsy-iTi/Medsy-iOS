@@ -59,9 +59,19 @@ final class ProfileCoordinator {
         viewModel.homeAddress
     }
 
+
     var displayHomeAddress: String {
         viewModel.displayHomeAddress
     }
+
+	var homeLatitude: Double? {
+		viewModel.homeLatitude
+	}
+
+	var homeLongitude: Double? {
+		viewModel.homeLongitude
+	}
+
 
     var dateOfBirth: Date? {
         viewModel.dateOfBirth
@@ -91,9 +101,19 @@ final class ProfileCoordinator {
         await viewModel.refreshProfile()
     }
 
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
-        await viewModel.updateProfile(homeAddress: homeAddress, dateOfBirth: dateOfBirth)
-    }
+	func updateProfile(
+		homeAddress: String?,
+		latitude: Double?,
+		longitude: Double?,
+		dateOfBirth: Date?
+	) async -> Bool {
+		await viewModel.updateProfile(
+			homeAddress: homeAddress,
+			latitude: latitude,
+			longitude: longitude,
+			dateOfBirth: dateOfBirth
+		)
+	}
 
     func showEditProfile() { activePresentation = .editProfile }
     func showLanguagePicker() { activePresentation = .language }

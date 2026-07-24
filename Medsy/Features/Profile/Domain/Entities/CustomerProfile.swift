@@ -14,6 +14,8 @@ struct CustomerProfile: Equatable {
     let lastName: String
     let homeAddress: String?
     let dateOfBirth: Date?
+	let homeLatitude: Double?
+	let homeLongitude: Double?
     let phoneNumber: String
 
     var fullName: String {
@@ -25,5 +27,7 @@ struct CustomerProfile: Equatable {
 
 struct UpdateCustomerProfileInput: Equatable {
     let homeAddress: String?
+	let homeLatitude: Double?
+	let homeLongitude: Double?
     let dateOfBirth: Date?
 }
