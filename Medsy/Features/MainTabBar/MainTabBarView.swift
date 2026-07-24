@@ -26,7 +26,7 @@ struct MainTabBarView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
-            switch coordinator.selectedTab {
+                switch coordinator.selectedTab {
                 case .home:
                     HomeCoordinatorView(
                         requestedRoute: $requestedHomeRoute,
@@ -63,6 +63,7 @@ struct MainTabBarView: View {
                     .onAppear { isTabBarHidden = false }
                 case .chatbot:
                     ChatbotRootView { hidden in isTabBarHidden = hidden }
+                }
             }
             .environment(cartViewModel)
             .padding(.bottom, isTabBarHidden ? 0 : 80)
