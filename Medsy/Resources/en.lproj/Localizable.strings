@@ -503,6 +503,55 @@
 "profile.pick_on_map" = "Pick on map";
 "address.permission_denied" = "Location access is needed to pick your address";
 
+/* Complete Request */
+"complete_request.title" = "Complete request";
+"complete_request.summary.title" = "Request summary";
+"complete_request.summary.items_count" = "%d medicines";
+"complete_request.summary.prescriptions_count" = "%d prescriptions";
+"complete_request.summary.show_items" = "Show selected medicines";
+"complete_request.summary.hide_items" = "Hide selected medicines";
+"complete_request.receive.title" = "How would you like to receive it?";
+"complete_request.receive.subtitle" = "Choose delivery to your address or pickup from the selected pharmacy later.";
+"complete_request.receive.delivery" = "Delivery";
+"complete_request.receive.delivery.subtitle" = "Delivered to your selected location";
+"complete_request.receive.pickup" = "Pickup";
+"complete_request.receive.pickup.subtitle" = "Collect it from the pharmacy";
+"complete_request.address.title" = "Delivery address";
+"complete_request.address.loading" = "Loading your saved address…";
+"complete_request.address.empty" = "No saved address was found. Choose an address and confirm its map location for this request.";
+"complete_request.address.saved_unconfirmed" = "This is your saved profile address. Confirm its location on the map before submitting the request.";
+"complete_request.address.confirm_on_map" = "Confirm address on map";
+"complete_request.address.choose" = "Choose map location";
+"complete_request.address.change" = "Change map location";
+"complete_request.address.confirmed" = "Map location confirmed";
+"complete_request.payment.title" = "How would you like to pay?";
+"complete_request.payment.subtitle" = "Select one payment option for this request.";
+"complete_request.payment.cash" = "Cash";
+"complete_request.payment.cash.subtitle" = "Pay when you receive the request";
+"complete_request.payment.visa" = "Visa";
+"complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.card.title" = "Visa card details";
+"complete_request.card.cardholder" = "Cardholder name";
+"complete_request.card.number" = "Card number";
+"complete_request.card.expiry" = "Expiry (MM/YY)";
+"complete_request.card.cvv" = "CVV";
+"complete_request.card.security" = "Card details are validated on this device and are not saved.";
+"complete_request.validation.location" = "Confirm a delivery location to continue.";
+"complete_request.validation.pickup_unsupported" = "Pickup requests are not supported by the current request service yet. Choose delivery to continue.";
+"complete_request.validation.cardholder_name" = "Enter the name shown on the card.";
+"complete_request.validation.card_number" = "Enter a valid 16-digit Visa card number.";
+"complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";
+"complete_request.validation.cvv" = "Enter the three-digit security code.";
+"complete_request.submit" = "Submit medicine request";
+"complete_request.submit_error.title" = "Couldn't complete request";
+"complete_request.submit_error" = "Your request wasn't completed because the cart couldn't be cleared. Please try again.";
+"complete_request.location.title" = "Choose delivery location";
+"complete_request.location.pin" = "Delivery location";
+"complete_request.location.preview" = "Map preview of the confirmed delivery location";
+"complete_request.location.unavailable" = "Your current location is unavailable. Search for an address or place a pin instead.";
+"complete_request.location.search_error" = "We couldn't search for that address. Please try again.";
+"complete_request.location.resolve_error" = "We couldn't identify this address. Try another point on the map.";
+
 "NSLocationWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
 

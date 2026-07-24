@@ -40,7 +40,11 @@ struct MainTabBarView: View {
                     CartCoordinatorView(
                         viewModel: cartViewModel,
                         onSearch: openSearchFromCart,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                        onTabBarHiddenChange: { isTabBarHidden = $0 },
+                        onRequestCompleted: {
+                            isTabBarHidden = false
+                            coordinator.select(.orders)
+                        }
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
@@ -59,7 +63,6 @@ struct MainTabBarView: View {
                     .onAppear { isTabBarHidden = false }
                 case .chatbot:
                     ChatbotRootView { hidden in isTabBarHidden = hidden }
-            }
             }
             .environment(cartViewModel)
             .padding(.bottom, isTabBarHidden ? 0 : 80)

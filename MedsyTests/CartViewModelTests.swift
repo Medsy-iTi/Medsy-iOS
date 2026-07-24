@@ -165,6 +165,42 @@ final class CartViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.hasContent)
     }
 
+    func testCompletingRequestClearsLocalCartBeforeNavigation() async {
+        let attachment = CartPrescriptionAttachment(
+            imageData: Data([1, 2, 3]),
+            source: .camera
+        )
+        let viewModel = CartViewModel(
+            items: [item(id: "first", productID: 10, quantity: 2)],
+            prescriptions: [attachment]
+        )
+
+        let succeeded = await viewModel.clearAfterCompletedRequest()
+
+        XCTAssertTrue(succeeded)
+        XCTAssertEqual(viewModel.state, .empty)
+        XCTAssertTrue(viewModel.prescriptions.isEmpty)
+        XCTAssertEqual(viewModel.syncState, .synced)
+    }
+
+    func testFinishingCompleteRequestResetsCartNavigation() {
+        let coordinator = CartCoordinator()
+        coordinator.showCompleteRequest(
+            draft: CartRequestDraft(
+                items: [item(id: "first", productID: 10, quantity: 1)],
+                prescriptions: []
+            )
+        )
+
+        XCTAssertEqual(coordinator.path.count, 1)
+        XCTAssertNotNil(coordinator.requestDraft)
+
+        coordinator.finishCompleteRequest()
+
+        XCTAssertTrue(coordinator.path.isEmpty)
+        XCTAssertNil(coordinator.requestDraft)
+    }
+
     func testRealProductMappingAddsProductDataAndSynchronizesQuantity() {
         let product = MedsyProduct(
             id: "42",
