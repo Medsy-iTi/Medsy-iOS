@@ -8,6 +8,6 @@
 import Foundation
 
 protocol OrdersRepositoryProtocol {
-    func fetchOrders(status: String?, page: Int, size: Int) async throws -> PagedResult<OrderEntity>
+    func fetchOrders(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity>
     func fetchOrderDetail(id: Int) async throws -> OrderDetailEntity
 }
