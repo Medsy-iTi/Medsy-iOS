@@ -12,6 +12,13 @@ final class PharmacyAuthenticationRepository: PharmacyAuthenticationRepositoryPr
         self.remoteDataSource = remoteDataSource
     }
 
+    func login(input: PharmacyLoginInput) async throws -> PharmacyAuthenticatedSession {
+        let session = try await remoteDataSource.login(
+            request: PharmacyLoginRequestDTO(input: input)
+        )
+        return session.toDomain()
+    }
+
     func register(input: PharmacyRegistrationInput) async throws {
         try await remoteDataSource.register(
             request: PharmacyRegistrationRequestDTO(input: input)
@@ -21,6 +28,13 @@ final class PharmacyAuthenticationRepository: PharmacyAuthenticationRepositoryPr
     func verify(input: PharmacyVerificationInput) async throws -> PharmacyAuthenticatedSession {
         let session = try await remoteDataSource.verify(
             request: PharmacyVerificationRequestDTO(input: input)
+        )
+        return session.toDomain()
+    }
+
+    func refresh(refreshToken: String) async throws -> PharmacyAuthenticatedSession {
+        let session = try await remoteDataSource.refresh(
+            request: PharmacyRefreshTokenRequestDTO(refreshToken: refreshToken)
         )
         return session.toDomain()
     }

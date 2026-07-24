@@ -33,7 +33,7 @@ struct FilterChip: View {
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? .clear : AppColor.border, lineWidth: 1)
+					.stroke(AppColor.green, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

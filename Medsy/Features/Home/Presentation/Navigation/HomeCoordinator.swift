@@ -11,6 +11,7 @@ import SwiftUI
 enum HomeRoute: Hashable {
     case search(String)
     case prescription
+    case medicineAnalyze
 }
 
 @MainActor
@@ -26,6 +27,14 @@ final class HomeCoordinator {
         path.append(HomeRoute.prescription)
     }
 
+    func showMedicineAnalyze() {
+        path.append(HomeRoute.medicineAnalyze)
+    }
+
+    func open(_ route: HomeRoute) {
+        path.append(route)
+    }
+
     func goBack() {
         if !path.isEmpty {
             path.removeLast()
@@ -35,28 +44,51 @@ final class HomeCoordinator {
 
 struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
+    @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
+    private let onOpenCart: () -> Void
 
-    init(onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }) {
+    init(
+        requestedRoute: Binding<HomeRoute?> = .constant(nil),
+        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
+        onOpenCart: @escaping () -> Void = {}
+    ) {
+        _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
+        self.onOpenCart = onOpenCart
     }
 
     var body: some View {
         @Bindable var coordinator = coordinator
 
         NavigationStack(path: $coordinator.path) {
-            HomeView(onSearchTap: coordinator.openSearch, onPrescription: coordinator.showPrescription)
+            HomeView(
+                onSearchTap: coordinator.openSearch,
+                onMedicineAnalyze: coordinator.showMedicineAnalyze,
+                onPrescription: coordinator.showPrescription
+            )
                 .navigationDestination(for: HomeRoute.self) { route in
                     switch route {
                     case let .search(query):
-                        SearchCoordinatorView(query: query, onBack: coordinator.goBack) { dest in
+                        SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                             coordinator.path.append(dest)
-                        }
+                        })
                     case .prescription:
-                        PrescriptionUploadView(
-                            onCamera: {},
-                            onGallery: {},
-                            onBack: coordinator.goBack
+                        PrescriptionCoordinatorView(
+                            onExit: coordinator.goBack,
+                            onViewCart: {
+                                coordinator.goBack()
+                                onOpenCart()
+                            }
+                        )
+                    case .medicineAnalyze:
+                        MedicineAnalyzeView(
+                            onBack: coordinator.goBack,
+                            onProductSelected: { productID in
+                                coordinator.path.append(
+                                    ProductDetailDestination(productId: productID)
+                                )
+                            }
                         )
                     }
                 }
@@ -65,10 +97,20 @@ struct HomeCoordinatorView: View {
                 }
         }
         .onAppear {
+            openRequestedRoute()
             onTabBarHiddenChange(!coordinator.path.isEmpty)
+        }
+        .onChange(of: requestedRoute) { _, _ in
+            openRequestedRoute()
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
         }
+    }
+
+    private func openRequestedRoute() {
+        guard let requestedRoute else { return }
+        coordinator.open(requestedRoute)
+        self.requestedRoute = nil
     }
 }

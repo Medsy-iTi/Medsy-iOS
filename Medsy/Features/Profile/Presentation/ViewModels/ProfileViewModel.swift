@@ -26,7 +26,7 @@ final class ProfileViewModel {
     private let getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol
     private let updateCustomerProfileUseCase: UpdateCustomerProfileUseCaseProtocol
 
-    init(
+    nonisolated init(
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         updateCustomerProfileUseCase: UpdateCustomerProfileUseCaseProtocol
     ) {
@@ -61,13 +61,39 @@ final class ProfileViewModel {
         profile?.homeAddress ?? ""
     }
 
+    var displayHomeAddress: String {
+        homeAddress.isEmpty ? "profile.not_set".localized : homeAddress
+    }
+
+	var homeLatitude: Double? {
+		profile?.homeLatitude
+	}
+
+	var homeLongitude: Double? {
+		profile?.homeLongitude
+	}
+
     var dateOfBirth: Date? {
         profile?.dateOfBirth
+    }
+
+    var displayDateOfBirth: String {
+        guard let dateOfBirth else {
+            return "profile.not_set".localized
+        }
+        return ProfileViewModel.dateFormatter.string(from: dateOfBirth)
     }
 
     var canSave: Bool {
         !isSaving
     }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
 
     func loadProfile() async {
         guard state != .loading else { return }
@@ -88,19 +114,23 @@ final class ProfileViewModel {
     }
 
     func updateProfile(
-        firstName: String,
-        lastName: String,
-        homeAddress: String,
+        homeAddress: String?,
+        latitude: Double?,
+        longitude: Double?,
         dateOfBirth: Date?
     ) async -> Bool {
         guard canSave else { return false }
         isSaving = true
         saveErrorMessage = nil
 
+        let trimmedAddress = homeAddress?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedAddress = trimmedAddress?.isEmpty == true ? nil : trimmedAddress
         let input = UpdateCustomerProfileInput(
             firstName: firstName,
             lastName: lastName,
-            homeAddress: homeAddress,
+            homeAddress: normalizedAddress,
+            homeLatitude: normalizedAddress == nil ? nil : latitude,
+            homeLongitude: normalizedAddress == nil ? nil : longitude,
             dateOfBirth: dateOfBirth
         )
 

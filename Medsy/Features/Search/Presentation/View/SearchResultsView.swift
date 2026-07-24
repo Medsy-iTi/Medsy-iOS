@@ -10,16 +10,25 @@ import SwiftUI
 struct SearchResultsView: View {
 	@StateObject private var viewModel: SearchResultsViewModel
 	@Environment(LanguageManager.self) private var languageManager
+	@Environment(CartViewModel.self) private var cartViewModel
 	@ObservedObject private var appSettings = AppSettings.shared
 	private let coordinator: SearchCoordinator
 	private let onBack: () -> Void
+	private let onSelect: ((MedsyProduct) -> Void)?
 
 	@State private var showSortSheet = false
+	@State private var showFilterSheet = false
 
-	init(query: String, onBack: @escaping () -> Void = {}, coordinator: SearchCoordinator) {
+	init(
+		query: String,
+		onBack: @escaping () -> Void = {},
+		coordinator: SearchCoordinator,
+		onSelect: ((MedsyProduct) -> Void)? = nil
+	) {
 		_viewModel = StateObject(wrappedValue: SearchResultsViewModel(query: query))
 		self.onBack = onBack
 		self.coordinator = coordinator
+		self.onSelect = onSelect
 	}
 
 	var body: some View {
@@ -35,7 +44,7 @@ struct SearchResultsView: View {
 				}
 
 				ChipsRow {
-					
+
 					FilterChip(
 						title: sortChipTitle,
 						systemIcon: "slider.horizontal.3",
@@ -44,28 +53,12 @@ struct SearchResultsView: View {
 						showSortSheet = true
 					}
 
-
 					FilterChip(
-						title: "sort.price_asc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .asc)
+						title: "filter.title".localized,
+						systemIcon: "line.3.horizontal.decrease",
+						isSelected: viewModel.selectedCategory != nil || viewModel.selectedCompany != nil
 					) {
-						viewModel.toggleSort(ProductSort(field: .price, direction: .asc))
-					}
-
-
-					FilterChip(
-						title: "sort.price_desc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .price, direction: .desc)
-					) {
-						viewModel.toggleSort(ProductSort(field: .price, direction: .desc))
-					}
-
-
-					FilterChip(
-						title: "sort.name_asc".localized,
-						isSelected: viewModel.selectedSort == ProductSort(field: .name, direction: .asc)
-					) {
-						viewModel.toggleSort(ProductSort(field: .name, direction: .asc))
+						showFilterSheet = true
 					}
 				}
 
@@ -88,6 +81,9 @@ struct SearchResultsView: View {
 		.sheet(isPresented: $showSortSheet) {
 			SortFilterSheet(viewModel: viewModel, isPresented: $showSortSheet)
 		}
+		.sheet(isPresented: $showFilterSheet) {
+			FilterSheet(viewModel: viewModel, isPresented: $showFilterSheet)
+		}
 	}
 
 	// MARK: – Computed
@@ -107,7 +103,7 @@ struct SearchResultsView: View {
 			Button {
 				onBack()
 			} label: {
-				Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
+				Image(systemName: languageManager.isRTL ?  "chevron.right" : "chevron.left")
 					.foregroundStyle(AppColor.textPrim)
 					.imageScale(.large)
 			}
@@ -140,10 +136,31 @@ struct SearchResultsView: View {
 				ScrollView {
 					LazyVStack(spacing: MedsySpacing.sm) {
 						ForEach($viewModel.products) { $product in
-							SearchedProductCard(product: $product, onTap: {
-								coordinator.showProductDetail(productId: product.id)
-							})
+							SearchedProductCard(
+								product: $product,
+								onAdd: {
+									addOneToCart(product)
+									product.quantity = cartQuantity(for: product)
+								},
+								onIncrement: {
+									addOneToCart(product)
+									product.quantity = cartQuantity(for: product)
+								},
+								onDecrement: {
+									cartViewModel.handle(.decreaseQuantity(itemID: product.id))
+									product.quantity = cartQuantity(for: product)
+								},
+								isSelectionMode: onSelect != nil,
+								onTap: {
+									if let onSelect {
+										onSelect(product)
+									} else {
+										coordinator.showProductDetail(productId: product.id)
+									}
+								}
+							)
 							.onAppear {
+								product.quantity = cartQuantity(for: product)
 								viewModel.loadNextPageIfNeeded(currentItem: product)
 							}
 						}
@@ -164,5 +181,13 @@ struct SearchResultsView: View {
 					config: .noConnection(onRetry: { viewModel.load() })
 				)
 		}
+	}
+
+	private func addOneToCart(_ product: MedsyProduct) {
+		cartViewModel.handle(.addItem(CartItemPresentationMapper.map(product)))
+	}
+
+	private func cartQuantity(for product: MedsyProduct) -> Int {
+		cartViewModel.quantity(forProductID: Int64(product.id))
 	}
 }

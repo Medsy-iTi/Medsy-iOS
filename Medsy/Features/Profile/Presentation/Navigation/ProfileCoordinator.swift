@@ -67,6 +67,48 @@ final class ProfileCoordinator {
         viewModel.phoneNumber
     }
 
+    var email: String {
+        viewModel.email
+    }
+
+    var homeAddress: String {
+        viewModel.homeAddress
+    }
+
+
+    var displayHomeAddress: String {
+        viewModel.displayHomeAddress
+    }
+
+	var homeLatitude: Double? {
+		viewModel.homeLatitude
+	}
+
+	var homeLongitude: Double? {
+		viewModel.homeLongitude
+	}
+
+
+    var dateOfBirth: Date? {
+        viewModel.dateOfBirth
+    }
+
+    var displayDateOfBirth: String {
+        viewModel.displayDateOfBirth
+    }
+
+    var state: ProfileViewState {
+        viewModel.state
+    }
+
+    var isSaving: Bool {
+        viewModel.isSaving
+    }
+
+    var saveErrorMessage: String? {
+        viewModel.saveErrorMessage
+    }
+
     func loadProfile() async {
         await viewModel.loadProfile()
     }
@@ -74,6 +116,20 @@ final class ProfileCoordinator {
     func refreshProfile() async {
         await viewModel.refreshProfile()
     }
+
+	func updateProfile(
+		homeAddress: String?,
+		latitude: Double?,
+		longitude: Double?,
+		dateOfBirth: Date?
+	) async -> Bool {
+		await viewModel.updateProfile(
+			homeAddress: homeAddress,
+			latitude: latitude,
+			longitude: longitude,
+			dateOfBirth: dateOfBirth
+		)
+	}
 
     func showEditProfile() { activePresentation = .editProfile }
     func showLanguagePicker() { activePresentation = .language }

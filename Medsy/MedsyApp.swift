@@ -13,6 +13,7 @@ struct MedsyApp: App {
     private let languageManager: LanguageManager
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
+    private let logoutUseCase: LogoutUseCaseProtocol
     private let appCoordinator: AppCoordinator
 
     init() {
@@ -21,15 +22,30 @@ struct MedsyApp: App {
             OnboardingAssembly(),
             AuthenticationAssembly(),
             CategoriesAssembly(),
-			ProductsAssembly(),
+			      ProductsAssembly(),
+            ProductDetailAssembly(),
             ProductsFeatureAssembly(),
-            ProfileAssembly()
+            CartAssembly(),
+            ProfileAssembly(),
+            CompleteRequestAssembly(),
+            PharmacyProfileAssembly(),
+            OrdersAssembly(),
+            ChatbotAssembly(),
+            PrescriptionAssembly(),
+            MedicineAnalyzeAssembly(),
+            PharmacyProfileAssembly()
+
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
-        appCoordinator = AppCoordinator(shouldShowOnboarding: onboardingFactory.shouldShow())
+        logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
+        appCoordinator = AppCoordinator(
+            shouldShowOnboarding: onboardingFactory.shouldShow(),
+            authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
+            logoutUseCase: logoutUseCase
+        )
     }
 
     var body: some Scene {

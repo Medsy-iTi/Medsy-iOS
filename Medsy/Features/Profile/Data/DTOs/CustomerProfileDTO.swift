@@ -10,25 +10,31 @@ import Foundation
 typealias CustomerProfileResponseDTO = APIResponseDTO<CustomerProfileDTO>
 
 struct CustomerProfileDTO: Decodable, Equatable {
-    let id: Int
-    let email: String
-    let firstName: String
-    let lastName: String
-    let homeAddress: String?
-    let dob: String?
-    let phoneNumber: String
+	let id: Int
+	let email: String
+	let firstName: String
+	let lastName: String
+	let homeAddress: String?
+	let latitude: Double?
+	let longitude: Double?
+	let dob: String?
+	let phoneNumber: String
 }
 
 struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
     let firstName: String
     let lastName: String
-    let homeAddress: String
+    let homeAddress: String?
+	let latitude: Double?
+	let longitude: Double?
     let dob: String?
 
     init(input: UpdateCustomerProfileInput) {
         firstName = input.firstName
         lastName = input.lastName
         homeAddress = input.homeAddress
+		latitude = input.homeLatitude
+		longitude = input.homeLongitude
         dob = input.dateOfBirth.map(ProfileDateMapper.string)
     }
 
@@ -36,7 +42,9 @@ struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(firstName, forKey: .firstName)
         try container.encode(lastName, forKey: .lastName)
-        try container.encode(homeAddress, forKey: .homeAddress)
+        try container.encodeIfPresent(homeAddress, forKey: .homeAddress)
+		try container.encodeIfPresent(latitude, forKey: .latitude)
+		try container.encodeIfPresent(longitude, forKey: .longitude)
         try container.encodeIfPresent(dob, forKey: .dob)
     }
 
@@ -44,6 +52,8 @@ struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
         case firstName
         case lastName
         case homeAddress
+		case latitude
+		case longitude
         case dob
     }
 }

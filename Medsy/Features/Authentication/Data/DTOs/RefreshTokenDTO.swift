@@ -8,3 +8,8 @@
 struct RefreshTokenRequestDTO: Encodable, Equatable {
     let refreshToken: String
 }
+
+typealias LogoutRequestDTO = RefreshTokenRequestDTO
+typealias LogoutResponseDTO = APIResponseDTO<LogoutResponseDataDTO>
+
+struct LogoutResponseDataDTO: Decodable, Equatable {}
