@@ -263,6 +263,16 @@
 "profile.phone_support_note" = "لتغيير رقم الهاتف، يرجى التواصل مع الدعم";
 "profile.save_changes" = "حفظ التغييرات";
 "profile.name_error" = "يجب ألا يقل الاسم عن حرفين";
+"profile.name_required_error" = "هذا الحقل مطلوب";
+"profile.address_required_error" = "العنوان مطلوب";
+"profile.first_name" = "الاسم الأول";
+"profile.first_name.placeholder" = "أدخل الاسم الأول";
+"profile.last_name" = "اسم العائلة";
+"profile.last_name.placeholder" = "أدخل اسم العائلة";
+"profile.home_address" = "عنوان المنزل";
+"profile.home_address.placeholder" = "أدخل عنوان منزلك";
+"profile.date_of_birth" = "تاريخ الميلاد";
+"profile.date_of_birth.placeholder" = "اختر تاريخ الميلاد";
 
 "prescription.upload.title" = "ارفع الروشتة";
 "prescription.upload.heading" = "ارفع روشتتك";

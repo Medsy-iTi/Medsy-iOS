@@ -263,6 +263,16 @@
 "profile.phone_support_note" = "To change your phone number, please contact support";
 "profile.save_changes" = "Save changes";
 "profile.name_error" = "Name must be at least 2 characters";
+"profile.name_required_error" = "This field is required";
+"profile.address_required_error" = "Address is required";
+"profile.first_name" = "First name";
+"profile.first_name.placeholder" = "Enter your first name";
+"profile.last_name" = "Last name";
+"profile.last_name.placeholder" = "Enter your last name";
+"profile.home_address" = "Home address";
+"profile.home_address.placeholder" = "Enter your home address";
+"profile.date_of_birth" = "Date of birth";
+"profile.date_of_birth.placeholder" = "Select date of birth";
 
 "prescription.upload.title" = "Upload Prescription";
 "prescription.upload.heading" = "Upload your prescription";

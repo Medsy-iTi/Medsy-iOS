@@ -52,10 +52,20 @@ struct ProfileCoordinatorView: View {
         switch presentation {
         case .editProfile:
             EditProfileScreen(
-                name: .constant(coordinator.patientName),
+                firstName: coordinator.firstName,
+                lastName: coordinator.lastName,
+                homeAddress: coordinator.homeAddress,
+                dateOfBirth: coordinator.dateOfBirth,
                 phoneNumber: coordinator.phoneNumber,
                 onCancel: coordinator.dismissPresentation,
-                onSave: coordinator.dismissPresentation
+                onSave: { firstName, lastName, homeAddress, dateOfBirth in
+                    await coordinator.saveProfile(
+                        firstName: firstName,
+                        lastName: lastName,
+                        homeAddress: homeAddress,
+                        dateOfBirth: dateOfBirth
+                    )
+                }
             )
             .environment(languageManager)
             .localizedEnvironment()
