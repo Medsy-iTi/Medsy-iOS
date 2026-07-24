@@ -383,6 +383,10 @@
 "prescription.review.edit" = "Edit";
 "prescription.review.unclearMessage" = "The medicine is unclear and may be similar to:";
 "prescription.review.blocked" = "Confirm unclear medicines first to enable adding";
+"prescription.review.showCandidates" = "Review candidates";
+"prescription.review.hideCandidates" = "Hide candidates";
+"prescription.review.noCandidates" = "No matching products were suggested. Search the catalog to select this medicine.";
+"prescription.review.searchCatalog" = "Search catalog";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";
@@ -391,6 +395,7 @@
 "prescription.uploadFailed.title" = "Upload failed";
 "prescription.uploadFailed.message" = "Check your internet connection and try again.";
 "prescription.retry" = "Try again";
+"prescription.analysisFailed.title" = "Prescription analysis failed";
 "prescription.readingFailed.title" = "Couldn't read the prescription";
 "prescription.readingFailed.message" = "Try a clearer image, or continue so the pharmacist can review it.";
 "prescription.readingFailed.continue" = "Continue with prescription";

@@ -35,10 +35,29 @@ final class NetworkRequestBuilder {
         }
 
         if let queryParameters = endpoint.queryParameters {
-            request = try URLEncoding.default.encode(request, with: queryParameters)
+            request = try URLEncoding.queryString.encode(request, with: queryParameters)
         }
 
-        request.httpBody = endpoint.body
+        if let parts = endpoint.multipartFormParts {
+            let multipartFormData = MultipartFormData()
+            for part in parts {
+                if let fileName = part.fileName, let mimeType = part.mimeType {
+                    multipartFormData.append(
+                        part.data,
+                        withName: part.name,
+                        fileName: fileName,
+                        mimeType: mimeType
+                    )
+                } else {
+                    multipartFormData.append(part.data, withName: part.name)
+                }
+            }
+
+            request.setValue(multipartFormData.contentType, forHTTPHeaderField: "Content-Type")
+            request.httpBody = try multipartFormData.encode()
+        } else {
+            request.httpBody = endpoint.body
+        }
         return request
     }
 }

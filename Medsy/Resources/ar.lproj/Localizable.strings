@@ -382,6 +382,10 @@
 "prescription.review.edit" = "تعديل";
 "prescription.review.unclearMessage" = "الدواء غير واضح وقد يكون مشابهًا لـ:";
 "prescription.review.blocked" = "أكد الأدوية غير الواضحة أولًا لتفعيل الإضافة";
+"prescription.review.showCandidates" = "مراجعة البدائل";
+"prescription.review.hideCandidates" = "إخفاء البدائل";
+"prescription.review.noCandidates" = "لم يتم اقتراح منتجات مطابقة. ابحث في قائمة الأدوية لاختيار هذا الدواء.";
+"prescription.review.searchCatalog" = "البحث في قائمة الأدوية";
 "prescription.needsReview" = "تحتاج مراجعة";
 "prescription.added.title" = "تمت الإضافة إلى السلة!";
 "prescription.added.message" = "يمكنك مراجعة الكميات وإتمام طلبك من السلة.";
@@ -390,6 +394,7 @@
 "prescription.uploadFailed.title" = "فشل الرفع";
 "prescription.uploadFailed.message" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "prescription.retry" = "إعادة المحاولة";
+"prescription.analysisFailed.title" = "تعذر تحليل الروشتة";
 "prescription.readingFailed.title" = "تعذرت قراءة الروشتة";
 "prescription.readingFailed.message" = "جرّب صورة أوضح أو تابع ليتمكن الصيدلي من مراجعتها.";
 "prescription.readingFailed.continue" = "المتابعة بالروشتة";
