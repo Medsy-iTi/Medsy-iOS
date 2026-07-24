@@ -27,6 +27,21 @@ struct ProfileView: View {
 				ProfileBlockingProgressOverlay()
 			}
 		}
+		.overlay(alignment: .bottom) {
+			if viewModel.showPresenceToast, let message = viewModel.presenceToastMessage {
+				Text(message)
+					.font(PharmacyColor.sans(14, .medium))
+					.foregroundStyle(Color.white)
+					.padding(.horizontal, PharmacySpacing.lg)
+					.padding(.vertical, PharmacySpacing.sm)
+					.background(PharmacyColor.primary)
+					.clipShape(Capsule())
+					.shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+					.padding(.bottom, PharmacySpacing.xl)
+					.transition(.move(edge: .bottom).combined(with: .opacity))
+			}
+		}
+		.animation(.easeInOut, value: viewModel.showPresenceToast)
 		.task { await viewModel.onAppear() }
 	}
 

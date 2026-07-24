@@ -27,6 +27,10 @@ final class ProfileViewModel {
     private(set) var isOnDuty = false
     var isTogglingPresence = false
     var presenceErrorMessage: String?
+    
+    // Presence Toast
+    var showPresenceToast = false
+    var presenceToastMessage: String?
 
     // Logout
     var showLogoutConfirmation = false
@@ -469,6 +473,12 @@ final class ProfileViewModel {
                 startHeartbeat()
             }
             isOnDuty = status.onDuty
+            presenceToastMessage = isOnDuty ? "profile.presence.toast.on".localized : "profile.presence.toast.off".localized
+            showPresenceToast = true
+            Task {
+                try? await Task.sleep(for: .seconds(3))
+                showPresenceToast = false
+            }
         } catch {
             presenceErrorMessage = "profile.presence.error".localized
         }
