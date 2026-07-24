@@ -502,3 +502,107 @@
 "address.permission_denied" = "يجب السماح بالوصول إلى الموقع لاختيار عنوانك";
 "NSLocationWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+
+"tab.medsy_chatbot" = "شات بوت";
+
+/* شخصية الذكاء الاصطناعي */
+"chatbot.ai.name"          = "Medsy AI";
+"chatbot.ai.status.online" = "متصل";
+
+/* تبويبات السيناريو */
+"chatbot.scenario.symptom"      = "الأعراض";
+"chatbot.scenario.prescription" = "الروشتة";
+"chatbot.scenario.pharmacy"     = "الصيدليات";
+"chatbot.scenario.reorder"      = "إعادة الطلب";
+
+/* إخلاء المسؤولية */
+"chatbot.disclaimer" = "معلومات فقط — وليست تشخيصاً طبياً. تأكد دائماً مع الصيدلي أو الطبيب.";
+
+/* أزرار الإجراءات السريعة */
+"chatbot.chip.how_to_take"         = "كيف أتناوله؟";
+"chatbot.chip.side_effects"        = "الآثار الجانبية؟";
+"chatbot.chip.cheaper"             = "بديل أرخص";
+"chatbot.chip.side_effects_concor" = "آثار جانبية كونكور؟";
+"chatbot.chip.remind_daily"        = "ذكرني يومياً";
+"chatbot.chip.nearest_hospital"    = "أقرب مستشفى";
+"chatbot.chip.share_location"      = "مشاركة الموقع";
+"chatbot.chip.switch_to_ator"      = "التحويل لأتور — وفر ١٢٢ جنيه";
+"chatbot.chip.keep_lipitor"        = "الاحتفاظ بليبيتور";
+
+/* تسميات الأزرار الشائعة */
+"chatbot.action.add_to_cart"  = "+ أضف للسلة";
+"chatbot.action.details"      = "التفاصيل";
+"chatbot.action.add_both"     = "أضف كليهما للسلة";
+"chatbot.action.review_each"  = "مراجعة كل منهما";
+"chatbot.action.end_call"     = "إنهاء المكالمة";
+"chatbot.action.take_over"    = "التحكم في المكالمة";
+
+/* شريط الإدخال */
+"chatbot.input.placeholder" = "اكتب رسالتك لـ Medsy AI...";
+
+/* ── سيناريو ١: الأعراض ── */
+"chatbot.demo.symptom.q1" = "عندي صداع شديد من الصبح وعيني بتتأذى لما بشوف الشاشات";
+"chatbot.demo.symptom.a1" = "آسف على ذلك يا عمر. بعض الأسئلة السريعة — هل الألم يشبه الضغط حول الجبهة، وهل كنت أمام الشاشات وقتاً طويلاً اليوم؟";
+"chatbot.demo.symptom.q2" = "نعم، ضغط حول الجبهة. شغلت على اللاب توب طول اليوم";
+"chatbot.demo.symptom.a2" = "يبدو أن هذا صداع توتر ناتج عن إجهاد العين — عادةً غير خطير. مسكن للألم بدون وصفة يمكن أن يساعد. إذا استمر الصداع، أنصح بزيارة طبيب عيون لفحصها.";
+
+/* ── سيناريو ١: المنتجات ── */
+"chatbot.demo.product.eyebrow.otc"      = "مقترح · بدون وصفة";
+"chatbot.demo.product.panadol.name"     = "بنادول إكسترا";
+"chatbot.demo.product.panadol.subtitle" = "٥٠٠ ملجم · ٢٤ قرص";
+"chatbot.demo.product.panadol.price"    = "٦٨ جنيه";
+"chatbot.demo.product.panadol.footnote" = "استشر الصيدلي للتأكد من الجرعة المناسبة لحالتك.";
+
+/* ── سيناريو ٢: الروشتة ── */
+"chatbot.demo.rx.q1"      = "ممكن تقرأ ده وتشرحه بكلام بسيط؟";
+"chatbot.demo.rx.a1"      = "قرأت الروشتة — للضغط العالي والكوليسترول. بكلام بسيط: دواء يضبط ضغط الدم والآخر ينظف الشرايين. وجدت كليهما في كتالوج Medsy:";
+"chatbot.demo.rx.lowconf" = "عنصر واحد ثقة التعرف عليه منخفضة — أكد ليبيتور قبل إضافته. ستراجع كل شيء في السلة قبل إرسال أي طلب.";
+
+"chatbot.demo.product.concor.name"     = "كونكور ٥ ملجم";
+"chatbot.demo.product.concor.subtitle" = "لضغط الدم · قرص واحد كل صباح";
+"chatbot.demo.product.concor.price"    = "٩٦ جنيه";
+"chatbot.demo.product.concor.badge"    = "✓ تطابق ٩٨٪";
+"chatbot.demo.product.lipitor.name"    = "ليبيتور ٢٠ ملجم";
+"chatbot.demo.product.lipitor.subtitle"= "للكوليسترول · قرص واحد ليلاً";
+"chatbot.demo.product.lipitor.price"   = "٢١٠ جنيه";
+"chatbot.demo.product.lipitor.badge"   = "⚠ تحقق";
+
+/* ── سيناريو ٣: الصيدليات ── */
+"chatbot.demo.pharmacy.q1" = "أي صيدليات قريبة مني مفتوحة دلوقتي؟";
+"chatbot.demo.pharmacy.a1" = "وجدت ٣ صيدليات مفتوحة الآن بالقرب من شارع النيل، المعادي:";
+"chatbot.demo.pharmacy.a2" = "تريد مني أتصل بالعزبي وأسأل إذا كان بنادول إكسترا متاح؟";
+"chatbot.demo.pharmacy.q2" = "نعم، اتصل بهم من فضلك";
+
+"chatbot.demo.pharmacy.elezaby.name"     = "صيدلية العزبي";
+"chatbot.demo.pharmacy.elezaby.distance" = "٣٥٠ م · ١٢ شارع النيل · ~٤ دقائق مشياً";
+"chatbot.demo.pharmacy.misr.name"        = "صيدلية مصر";
+"chatbot.demo.pharmacy.misr.distance"    = "٦٠٠ م · طريق ٩ · تغلق ١٢ ص";
+"chatbot.demo.pharmacy.seif.name"        = "صيدلية سيف";
+"chatbot.demo.pharmacy.seif.distance"    = "١٫١ كم · كورنيش النيل · تغلق ١١ م";
+"chatbot.demo.pharmacy.open"             = "مفتوح";
+"chatbot.demo.pharmacy.open24h"          = "مفتوح ٢٤ ساعة";
+
+"chatbot.demo.call.title"    = "جارٍ الاتصال بصيدلية العزبي...";
+"chatbot.demo.call.subtitle" = "الاستفسار عن توفر بنادول إكسترا ٥٠٠ ملجم";
+
+/* ── سيناريو ٤: إعادة الطلب ── */
+"chatbot.demo.interaction.title"          = "تحذير: تفاعل دوائي";
+"chatbot.demo.interaction.message"        = "عصير الجريب فروت قد يقلل من تأثير كونكور. توجد خيارات أفضل — استشر الصيدلي قبل الجمع بينهما.";
+"chatbot.demo.interaction.action_title"   = "تواصل مع الصيدلي — ١٦٦٦٧";
+"chatbot.demo.interaction.action_subtitle"= "خط هيئة الدواء المصرية";
+
+"chatbot.demo.reorder.a1" = "أيضاً — ستنفد كمية كونكور لديك خلال ٣ أيام. تريد إعادة طلب أدوية ضغط الدم المعتادة؟";
+"chatbot.demo.reorder.q1" = "نعم أعد الطلب، وذكرني بأخذه يومياً الساعة ٩ صباحاً";
+
+"chatbot.demo.reminder.title"    = "تم ضبط التذكير اليومي";
+"chatbot.demo.reminder.subtitle" = "كونكور ٥ ملجم · كل يوم الساعة ٩:٠٠ صباحاً";
+
+"chatbot.demo.order.label"    = "إعادة طلب · طلب";
+"chatbot.demo.order.status"   = "جارٍ البحث عن صيدليات";
+"chatbot.demo.order.items"    = "كونكور ٥ ملجم ×١ · ليبيتور ٢٠ ملجم ×١";
+"chatbot.demo.order.subtotal" = "إجمالي ثابت ٣٠٦ جنيه · البحث في نطاق ٥٠٠ م";
+"chatbot.demo.order.phase"    = "المرحلة ١";
+"chatbot.demo.order.time_left"= "٧:١٢ متبقية";
+
+"chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
+

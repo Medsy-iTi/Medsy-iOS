@@ -27,10 +27,13 @@ struct MedsyApp: App {
             ProductsFeatureAssembly(),
             CartAssembly(),
             ProfileAssembly(),
+            PharmacyProfileAssembly(),
             OrdersAssembly(),
+            ChatbotAssembly(),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
             PharmacyProfileAssembly()
+
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
