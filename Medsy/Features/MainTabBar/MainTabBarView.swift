@@ -40,7 +40,11 @@ struct MainTabBarView: View {
                     CartCoordinatorView(
                         viewModel: cartViewModel,
                         onSearch: openSearchFromCart,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 }
+                        onTabBarHiddenChange: { isTabBarHidden = $0 },
+                        onRequestCompleted: {
+                            isTabBarHidden = false
+                            coordinator.select(.orders)
+                        }
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
@@ -57,9 +61,6 @@ struct MainTabBarView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(AppColor.bg)
                     .onAppear { isTabBarHidden = false }
-                case .orders:
-                    OrdersCoordinatorView(onSearch: openSearch)
-                        .onAppear { isTabBarHidden = false }
                 }
             }
             .environment(cartViewModel)
