@@ -75,12 +75,12 @@ struct ProfileView: View {
 				onTap: viewModel.didTapPersonalProfile
 			)
 
-            ProfilePresenceSection(
-                isOnDuty: viewModel.isOnDuty,
-                isLoading: viewModel.isTogglingPresence,
-                errorMessage: viewModel.presenceErrorMessage,
-                onToggle: { Task { await viewModel.togglePresence() } }
-            )
+			ProfilePresenceSection(
+				isOnDuty: viewModel.isOnDuty,
+				isLoading: viewModel.isTogglingPresence,
+				errorMessage: viewModel.presenceErrorMessage,
+				onToggle: { Task { await viewModel.togglePresence() } }
+			)
 
 			ProfilePharmacySection(
 				profile: profile,

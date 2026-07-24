@@ -316,7 +316,7 @@
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
 
-/* Presence */
+/* Presence & On Duty */
 "profile.presence.section_title" = "حالة التوفر";
 "profile.presence.on_duty_title" = "في الخدمة";
 "profile.presence.on_duty_badge" = "نشط";
@@ -324,3 +324,6 @@
 "profile.presence.error" = "تعذر تحديث حالتك. حاول مرة أخرى.";
 "profile.presence.toast.on" = "أنت الآن تستقبل الطلبات";
 "profile.presence.toast.off" = "أنت لم تعد تستقبل الطلبات";
+"profile.on_duty.title" = "حالة الدوام";
+"profile.on_duty.on" = "في الخدمة";
+"profile.on_duty.off" = "خارج الخدمة";

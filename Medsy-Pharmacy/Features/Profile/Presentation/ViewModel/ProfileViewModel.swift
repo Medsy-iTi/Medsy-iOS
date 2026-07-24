@@ -27,7 +27,7 @@ final class ProfileViewModel {
     private(set) var isOnDuty = false
     var isTogglingPresence = false
     var presenceErrorMessage: String?
-    
+
     // Presence Toast
     var showPresenceToast = false
     var presenceToastMessage: String?
@@ -80,6 +80,7 @@ final class ProfileViewModel {
     private let logoutUseCase: LogoutUseCaseProtocol
     private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
     private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
+
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
 
@@ -108,6 +109,7 @@ final class ProfileViewModel {
         logoutUseCase: LogoutUseCaseProtocol,
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
         goOffDutyUseCase: GoOffDutyUseCaseProtocol,
+
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -464,7 +466,7 @@ final class ProfileViewModel {
         isTogglingPresence = true
         presenceErrorMessage = nil
         do {
-            let status: PresenceStatus
+            let status: PresenceEntity
             if isOnDuty {
                 status = try await goOffDutyUseCase.execute()
                 stopHeartbeat()
