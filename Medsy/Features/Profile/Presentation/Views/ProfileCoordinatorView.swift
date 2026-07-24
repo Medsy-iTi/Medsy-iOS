@@ -12,10 +12,14 @@ struct ProfileCoordinatorView: View {
     @ObservedObject private var appSettings = AppSettings.shared
     @State private var coordinator: ProfileCoordinator
 
+    let onOrders: () -> Void
+
     init(
+        onOrders: @escaping () -> Void,
         onLogout: @escaping () -> Void,
         viewModel: ProfileViewModel = DIContainer.shared.resolve(ProfileViewModel.self)
     ) {
+        self.onOrders = onOrders
         _coordinator = State(initialValue: ProfileCoordinator(viewModel: viewModel, onLogout: onLogout))
     }
 
@@ -33,6 +37,7 @@ struct ProfileCoordinatorView: View {
             onEditProfile: coordinator.showEditProfile,
             onLanguage: coordinator.showLanguagePicker,
             onTheme: coordinator.showThemePicker,
+            onOrders: onOrders,
             onLogout: coordinator.requestLogout
         )
         .task {
@@ -57,7 +62,8 @@ struct ProfileCoordinatorView: View {
         switch presentation {
         case .editProfile:
             EditProfileScreen(
-                name: coordinator.patientName,
+                firstName: coordinator.firstName,
+                lastName: coordinator.lastName,
                 phoneNumber: coordinator.phoneNumber,
                 email: coordinator.email,
                 homeAddress: coordinator.homeAddress,
