@@ -161,32 +161,6 @@ final class ProfileRepository: ProfileRepositoryProtocol {
             endpoint: ProfileEndpoint.logout(refreshToken: refreshToken)
         )
     }
-
-    // MARK: - Presence
-
-    func goOnDuty() async throws -> PresenceStatus {
-        let envelope: PresenceEnvelope = try await networkService.request(
-            endpoint: ProfileEndpoint.goOnDuty
-        )
-        return presenceStatus(from: envelope.data)
-    }
-
-    func goOffDuty() async throws -> PresenceStatus {
-        let envelope: PresenceEnvelope = try await networkService.request(
-            endpoint: ProfileEndpoint.goOffDuty
-        )
-        return presenceStatus(from: envelope.data)
-    }
-
-    // MARK: - Helpers
-
-    private func presenceStatus(from dto: PresenceResponseDTO) -> PresenceStatus {
-        var heartbeat: Date?
-        if let raw = dto.lastHeartbeatAt {
-            heartbeat = ISO8601DateFormatter().date(from: raw)
-        }
-        return PresenceStatus(onDuty: dto.onDuty, lastHeartbeatAt: heartbeat)
-    }
 }
 
 struct EmptyResponse: Decodable {}
