@@ -22,6 +22,7 @@ struct ProfileScreen: View {
     let onEditProfile: () -> Void
     let onLanguage: () -> Void
     let onTheme: () -> Void
+    let onOrders: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -236,6 +237,8 @@ struct ProfileScreen: View {
             onLanguage()
         case "theme":
             onTheme()
+        case "orders":
+            onOrders()
         default:
             break
         }
@@ -251,7 +254,7 @@ struct ProfileScreen: View {
         dateOfBirthText: "Jun 15, 1995",
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onLanguage: {}, onTheme: {}, onLogout: {}
+        onEditProfile: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }
