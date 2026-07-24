@@ -24,6 +24,8 @@ struct CustomerProfile: Equatable {
 }
 
 struct UpdateCustomerProfileInput: Equatable {
-    let homeAddress: String?
+    let firstName: String
+    let lastName: String
+    let homeAddress: String
     let dateOfBirth: Date?
 }

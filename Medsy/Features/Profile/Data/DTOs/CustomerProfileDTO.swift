@@ -20,21 +20,29 @@ struct CustomerProfileDTO: Decodable, Equatable {
 }
 
 struct UpdateCustomerProfileRequestDTO: Encodable, Equatable {
-    let homeAddress: String?
+    let firstName: String
+    let lastName: String
+    let homeAddress: String
     let dob: String?
 
     init(input: UpdateCustomerProfileInput) {
+        firstName = input.firstName
+        lastName = input.lastName
         homeAddress = input.homeAddress
         dob = input.dateOfBirth.map(ProfileDateMapper.string)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(homeAddress, forKey: .homeAddress)
+        try container.encode(firstName, forKey: .firstName)
+        try container.encode(lastName, forKey: .lastName)
+        try container.encode(homeAddress, forKey: .homeAddress)
         try container.encodeIfPresent(dob, forKey: .dob)
     }
 
     private enum CodingKeys: String, CodingKey {
+        case firstName
+        case lastName
         case homeAddress
         case dob
     }
