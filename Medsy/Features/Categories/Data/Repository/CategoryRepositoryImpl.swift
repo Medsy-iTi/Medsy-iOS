@@ -12,9 +12,9 @@ final class CategoryRepositoryImpl: CategoryRepository {
         self.networkService = networkService
     }
 
-    func getCategories(page: Int, size: Int) async throws -> PagedResult<Category> {
+    func getCategories(page: Int, size: Int, lang: String? = nil) async throws -> PagedResult<Category> {
         let response: APIResponseDTO<PageDTO<CategoryDTO>> = try await networkService.request(
-            endpoint: CategoryEndpoint.fetch(page: page, size: size)
+            endpoint: CategoryEndpoint.fetch(page: page, size: size, lang: lang)
         )
         guard response.success, let data = response.data else {
             throw NetworkError.validationError(response.message)

@@ -11,9 +11,12 @@ import Foundation
 protocol SearchProductsUseCaseProtocol {
     func execute(
         keyword: String,
+        categoryId: Int?,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String?,
+		company: String?
     ) async throws -> PagedResult<Product>
 }
 
@@ -27,15 +30,41 @@ final class SearchProductsUseCase: SearchProductsUseCaseProtocol {
 
     func execute(
         keyword: String,
+        categoryId: Int? = nil,
         page: Int,
         size: Int,
-        sort: [ProductSort]
+        sort: [ProductSort],
+		lang: String? = nil,
+		company: String? = nil
     ) async throws -> PagedResult<Product> {
-        try await repository.searchProducts(
-            keyword: keyword,
-            page: page,
-            size: size,
-            sort: sort
-        )
+        if keyword.isEmpty {
+            if let categoryId = categoryId {
+                return try await repository.fetchProductsByCategory(
+                    categoryId: categoryId,
+                    page: page,
+                    size: size,
+                    sort: sort,
+                    lang: lang,
+                    company: company
+                )
+            } else {
+                return try await repository.fetchProducts(
+                    page: page,
+                    size: size,
+                    sort: sort,
+                    lang: lang,
+                    company: company
+                )
+            }
+        } else {
+            return try await repository.searchProducts(
+                keyword: keyword,
+                page: page,
+                size: size,
+                sort: sort,
+                lang: lang,
+                company: company
+            )
+        }
     }
 }

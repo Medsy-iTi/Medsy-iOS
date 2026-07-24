@@ -45,15 +45,24 @@ struct ProductDetailDestination: Hashable, Equatable {
 struct SearchCoordinatorView: View {
     @State private var coordinator: SearchCoordinator
 
-    init(query: String, onBack: @escaping () -> Void, onPush: @escaping (ProductDetailDestination) -> Void) {
+    init(
+        query: String,
+        onBack: @escaping () -> Void,
+        onPush: @escaping (ProductDetailDestination) -> Void,
+        onSelect: ((MedsyProduct) -> Void)? = nil
+    ) {
         _coordinator = State(initialValue: SearchCoordinator(query: query, onBack: onBack, onPush: onPush))
+        self.onSelect = onSelect
     }
+
+    private let onSelect: ((MedsyProduct) -> Void)?
 
     var body: some View {
         SearchResultsView(
             query: coordinator.query,
             onBack: coordinator.goBack,
-            coordinator: coordinator
+            coordinator: coordinator,
+            onSelect: onSelect
         )
         .navigationBarHidden(true)
     }

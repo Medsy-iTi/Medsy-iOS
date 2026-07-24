@@ -37,10 +37,10 @@ struct SearchBar: View {
         .padding(.vertical, MedsySpacing.sm)
         .background(
             RoundedRectangle(cornerRadius: MedsyRadius.pill)
-                .fill(AppColor.card)
+                .fill(isFocused ? AppColor.green.opacity(0.05) : AppColor.card)
                 .overlay(
                     RoundedRectangle(cornerRadius: MedsyRadius.pill)
-                        .stroke(AppColor.border, lineWidth: 1)
+                        .stroke( AppColor.green , lineWidth: 1)
                 )
         )
     }
@@ -50,7 +50,7 @@ struct SearchBar: View {
     @ViewBuilder
     private var searchIcon: some View {
         Image(systemName: "magnifyingglass")
-            .foregroundStyle(AppColor.textSec)
+            .foregroundStyle(isFocused ? AppColor.green : AppColor.textSec)
     }
 
     @ViewBuilder

@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct SearchedProductCard: View {
+	@State private var showsRemovalConfirmation = false
+
 	@Binding var product: MedsyProduct
 	var onAdd: (() -> Void)? = nil
 	var onIncrement: (() -> Void)? = nil
 	var onDecrement: (() -> Void)? = nil
 	var onToggleFavorite: (() -> Void)? = nil
+	var isSelectionMode = false
 	var onTap: (() -> Void)?
 
 	@Environment(\.layoutDirection) private var layoutDirection
@@ -24,7 +27,14 @@ struct SearchedProductCard: View {
 		HStack(alignment: .top, spacing: MedsySpacing.sm) {
 			productImage
 			textContent
-			actionColumn
+			if isSelectionMode {
+				Image(systemName: "chevron.forward")
+					.font(.footnote.weight(.semibold))
+					.foregroundStyle(AppColor.textSec)
+					.frame(maxHeight: .infinity)
+			} else {
+				actionColumn
+			}
 		}
 		.padding(MedsySpacing.sm)
 		.background(
@@ -38,6 +48,15 @@ struct SearchedProductCard: View {
 		.contentShape(Rectangle())
 		.onTapGesture {
 			onTap?()
+		}
+		.alert("cart.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
+			Button("common.cancel".localized, role: .cancel) {}
+			Button("cart.remove_confirmation.action".localized, role: .destructive) {
+				product.quantity = 0
+				onDecrement?()
+			}
+		} message: {
+			Text("cart.remove_confirmation.message".localized(product.name))
 		}
 	}
 
@@ -107,7 +126,7 @@ struct SearchedProductCard: View {
 		}
 	}
 
-	private var badgeFallback: some View {
+	var badgeFallback: some View {
 		RoundedRectangle(cornerRadius: MedsyRadius.md)
 			.fill(product.badgeColor.opacity(0.15))
 			.frame(width: 72, height: 72)
@@ -116,6 +135,9 @@ struct SearchedProductCard: View {
 					.font(.system(size: 10, weight: .bold))
 					.multilineTextAlignment(.center)
 					.foregroundStyle(product.badgeColor)
+					.lineLimit(2)
+					.minimumScaleFactor(0.7)
+					.truncationMode(.tail)
 					.padding(4)
 			)
 	}
@@ -132,8 +154,12 @@ struct SearchedProductCard: View {
 					.font(MedsyFont.bodyMedium(14))
 					.foregroundStyle(AppColor.textPrim)
 				stepperButton(icon: "minus") {
-					if product.quantity > 0 { product.quantity -= 1 }
-					onDecrement?()
+					if product.quantity == 1 {
+						showsRemovalConfirmation = true
+					} else {
+						product.quantity -= 1
+						onDecrement?()
+					}
 				}
 			}
 		} else {

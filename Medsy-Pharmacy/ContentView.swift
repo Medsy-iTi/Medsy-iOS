@@ -8,47 +8,144 @@
 import SwiftUI
 
 struct ContentView: View {
+    let onboardingFactory: PharmacyOnboardingFactory
     let authenticationFactory: PharmacyAuthenticationFactory
-    @State private var isAuthenticated = false
+    let homeFactory: PharmacyHomeFactory
+    let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+    @Bindable var coordinator: RootCoordinator
+
+    init(
+        onboardingFactory: PharmacyOnboardingFactory,
+        authenticationFactory: PharmacyAuthenticationFactory,
+        homeFactory: PharmacyHomeFactory,
+        ordersFactory: PharmacyOrdersFactory,
+        coordinator: RootCoordinator
+    ) {
+        self.onboardingFactory = onboardingFactory
+        self.authenticationFactory = authenticationFactory
+        self.homeFactory = homeFactory
+        self.ordersFactory = ordersFactory
+        self.coordinator = coordinator
+    }
 
     var body: some View {
         Group {
-            if isAuthenticated {
-                PharmacyMainTabView(coordinator: PharmacyMainTabCoordinator())
-            } else {
+            switch coordinator.flow {
+            case .splash:
+                SplashView {
+                    coordinator.finishSplash()
+                }
+                .transition(.opacity)
+
+            case .onboarding:
+                onboardingFactory.makeCoordinator(onComplete: coordinator.finishOnboarding)
+                    .makeView()
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .trailing)),
+                    removal: .opacity
+                ))
+
+            case .authentication:
                 PharmacyAuthenticationRootView(
                     factory: authenticationFactory,
-                    onAuthenticated: { isAuthenticated = true }
+                    shouldResumeStoredSession: coordinator.isAuthenticated,
+                    onAuthenticated: coordinator.finishAuthentication,
+                    onSignedOut: coordinator.returnToSignIn
                 )
+                .transition(.opacity)
+
+            case .main:
+                PharmacyMainTabView(
+                    coordinator: coordinator.mainTabCoordinator,
+                    homeFactory: homeFactory,
+                    ordersFactory: ordersFactory,
+                    onLoggedOut: coordinator.logout
+                )
+                .transition(.opacity.combined(with: .move(edge: .trailing)))
             }
         }
+        .animation(.easeInOut(duration: 0.45), value: coordinator.flow)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 }
 
 private struct PharmacyAuthenticationRootView: View {
     @State private var coordinator: PharmacyAuthenticationCoordinator
+	@State private var hasAttemptedSessionResume = false
+	private let shouldResumeStoredSession: Bool
+
 
     init(
         factory: PharmacyAuthenticationFactory,
-        onAuthenticated: @escaping () -> Void
+		shouldResumeStoredSession: Bool,
+		onAuthenticated: @escaping () -> Void,
+		onSignedOut: @escaping () -> Void
     ) {
-        _coordinator = State(
-            initialValue: factory.makeCoordinator(
-                onAuthenticated: onAuthenticated
-            )
-        )
+		self.shouldResumeStoredSession = shouldResumeStoredSession
+		_coordinator = State(
+			initialValue: factory.makeCoordinator(
+				onAuthenticated: onAuthenticated,
+				onSignedOut: onSignedOut
+			)
+		)
     }
 
-    var body: some View {
-        PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
-    }
+	var body: some View {
+		PharmacyAuthenticationCoordinatorView(coordinator: coordinator)
+			.task {
+				guard shouldResumeStoredSession, !hasAttemptedSessionResume else { return }
+				hasAttemptedSessionResume = true
+				coordinator.resolveAuthenticatedDestination()
+			}
+	}
 }
 
 #Preview {
-    ContentView(
-        authenticationFactory: PharmacyAuthenticationFactory(actions: .placeholder)
-    )
-        .environment(LanguageManager.shared)
+	ContentView(
+		onboardingFactory: PharmacyOnboardingFactory(getPagesUseCase: GetOnboardingPagesUseCase(repository: OnboardingRepository())),
+		authenticationFactory: PharmacyAuthenticationFactory(
+			actions: .placeholder,
+			locationProvider: PreviewContentLocationProvider()
+		),
+		homeFactory: PharmacyHomeFactory(),
+		ordersFactory: PharmacyOrdersFactory(
+			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
+			getProfileUseCase: PreviewGetProfileUseCase(),
+			appSettings: .shared,
+			identityProvider: PreviewIdentityProvider()
+		),
+		coordinator: RootCoordinator(container: PharmacyDIContainer())
+	)
+	.environment(LanguageManager.shared)
+}
+
+private struct PreviewFetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
+	func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
+		PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
+	}
+}
+
+private struct PreviewGetProfileUseCase: GetPharmacyProfileUseCaseProtocol {
+	func execute() async throws -> PharmacyProfile {
+		.preview
+	}
+}
+
+private final class PreviewIdentityProvider: PharmacyIdentityProviding {
+	var currentPharmacyId: Int? = 1
+}
+
+
+
+
+@MainActor
+private final class PreviewContentLocationProvider: PharmacyLocationProviding {
+	func currentLocation() async throws -> PharmacyLocation {
+		PharmacyLocation(latitude: 30.0444, longitude: 31.2357, city: "Cairo", province: "Cairo")
+	}
+
+	func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
+		PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
+	}
 }

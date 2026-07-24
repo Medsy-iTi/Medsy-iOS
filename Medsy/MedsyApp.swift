@@ -22,9 +22,19 @@ struct MedsyApp: App {
             OnboardingAssembly(),
             AuthenticationAssembly(),
             CategoriesAssembly(),
-			ProductsAssembly(),
+			      ProductsAssembly(),
+            ProductDetailAssembly(),
             ProductsFeatureAssembly(),
-            ProfileAssembly()
+            CartAssembly(),
+            ProfileAssembly(),
+            CompleteRequestAssembly(),
+            PharmacyProfileAssembly(),
+            OrdersAssembly(),
+            ChatbotAssembly(),
+            PrescriptionAssembly(),
+            MedicineAnalyzeAssembly(),
+            PharmacyProfileAssembly()
+
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
@@ -33,6 +43,7 @@ struct MedsyApp: App {
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
+            authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
             logoutUseCase: logoutUseCase
         )
     }

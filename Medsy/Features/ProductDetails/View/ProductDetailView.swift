@@ -1,6 +1,7 @@
 //
 //  ProductDetailView.swift
 //  Medsy
+//  Created by Shahudaa on 15/07/2026.
 //
 
 import SwiftUI
@@ -8,6 +9,7 @@ import SwiftUI
 struct ProductDetailView: View {
     @StateObject private var viewModel: ProductDetailViewModel
     @Environment(LanguageManager.self) private var languageManager
+    @Environment(CartViewModel.self) private var cartViewModel
     @ObservedObject private var appSettings = AppSettings.shared
     @Environment(\.dismiss) private var dismiss
 
@@ -77,7 +79,7 @@ struct ProductDetailView: View {
     // MARK: - Loaded content
 
     @ViewBuilder
-    private func loadedContent(product: ProductDetail) -> some View {
+    private func loadedContent(product: ProductDetailDisplayModel) -> some View {
         ScrollView {
             VStack(spacing: MedsySpacing.md) {
 
@@ -95,10 +97,10 @@ struct ProductDetailView: View {
                 )
                 .padding(.horizontal, MedsySpacing.md)
 
-                if product.requiresPharmacistReview {
+
                     WarningBanner(text: "product.pharmacist_review_notice".localized)
                         .padding(.horizontal, MedsySpacing.md)
-                }
+                
 
                 VStack(
                     alignment: .leading,
@@ -123,7 +125,9 @@ struct ProductDetailView: View {
                         systemImage: "cart",
                         style: .primary
                     ) {
-                        viewModel.addToCart()
+                        cartViewModel.handle(
+                            .addItem(CartItemPresentationMapper.map(product))
+                        )
                     }
 
                     PrimaryButton(

@@ -8,6 +8,7 @@ import SwiftUI
 
 struct HomeOrderOptionsView: View {
     @Environment(LanguageManager.self) private var languageManager
+    let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
     
     var body: some View {
@@ -20,6 +21,7 @@ struct HomeOrderOptionsView: View {
             
             HStack(spacing: 12) {
                 Button {
+                    onMedicineAnalyze()
                 } label: {
                     VStack(spacing: 8) {
                         ZStack {
