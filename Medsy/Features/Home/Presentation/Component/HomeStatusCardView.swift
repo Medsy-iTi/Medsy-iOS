@@ -269,8 +269,10 @@ struct HomeFirstOfferStatusView: View {
     var offerTotalMedsCount: Int = 0
     var requestId: Int = 0
     var onCompareOffers: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
 
     @State private var secondsElapsed: Int = 0
+    @State private var showingDeleteAlert = false
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var formattedTime: String {
@@ -283,7 +285,7 @@ struct HomeFirstOfferStatusView: View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
                 Button {
-                    selectedStatus = .home
+                    showingDeleteAlert = true
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
@@ -430,6 +432,14 @@ struct HomeFirstOfferStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
+            Button("home.deleteOffer.cancel".localized, role: .cancel) { }
+            Button("home.deleteOffer.confirm".localized, role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("home.deleteOffer.message".localized)
+        }
     }
 
     private func updateTime() {

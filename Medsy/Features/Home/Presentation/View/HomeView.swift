@@ -45,6 +45,11 @@ struct HomeView: View {
                             } else {
                                 onCompareOffers?()
                             }
+                        },
+                        onDelete: {
+                            if let reqId = viewModel.firstAvailableRequestId {
+                                viewModel.clearCompletedRequest(requestId: reqId)
+                            }
                         }
                     )
                 case .multipleOffers:
