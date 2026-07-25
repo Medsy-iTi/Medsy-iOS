@@ -501,6 +501,14 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.reorder.go_to_cart"          = "Go to Cart";
+"orders.reorder.continue_shopping"   = "Continue Shopping";
+"orders.reorder.success.title"       = "Added Successfully";
+"orders.reorder.partial.title"       = "Partially Added";
+"orders.reorder.failed.title"        = "Failed to Add";
+"orders.reorder.success.message"     = "All items have been added to your cart.";
+"orders.reorder.partial.message"     = "Added %d out of %d items to your cart.";
+"orders.reorder.failed.message"      = "We couldn't add the items to your cart. Please try again.";
 
 "orders.filter.title"                 = "Filter Orders";
 "orders.filter.reset"                 = "Reset";

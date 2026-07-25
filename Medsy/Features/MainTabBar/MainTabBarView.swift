@@ -50,7 +50,9 @@ struct MainTabBarView: View {
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
-                    OrdersCoordinatorView()
+                    OrdersCoordinatorView(
+                        onGoToCart: { coordinator.select(.cart) }
+                    )
                         .onAppear { isTabBarHidden = false }
                 case .favorites, .offers:
                     VStack {

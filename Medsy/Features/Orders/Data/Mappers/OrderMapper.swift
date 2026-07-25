@@ -69,6 +69,7 @@ enum OrderMapper {
     private static func mapToDetailItemEntity(_ dto: OrderItemDTO) -> OrderDetailItemEntity {
         OrderDetailItemEntity(
             id: dto.id,
+            productId: dto.productId,
             productName: dto.productName ?? String(
                 format: "orders.product_fallback".localized,
                 dto.productId
