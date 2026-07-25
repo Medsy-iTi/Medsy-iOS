@@ -6,12 +6,13 @@
 import SwiftUI
 
 struct PharmacyEditProfileScreen: View {
-	let firstName: String
-	let lastName: String
 	let isSaving: Bool
 	let errorMessage: String?
 	let onCancel: () -> Void
-	let onSave: (String?, Date?) async -> Bool
+	let onSave: (String, String, String?, Date?) async -> Bool
+
+	@State private var draftFirstName: String
+	@State private var draftLastName: String
 
 	@State private var draftAddress: String
 	@State private var includesDateOfBirth: Bool
@@ -26,14 +27,15 @@ struct PharmacyEditProfileScreen: View {
 		isSaving: Bool = false,
 		errorMessage: String? = nil,
 		onCancel: @escaping () -> Void = {},
-		onSave: @escaping (String?, Date?) async -> Bool = { _, _ in true }
+		onSave: @escaping (String , String ,String?, Date?) async -> Bool = { _, _ ,_, _ in true }
 	) {
-		self.firstName = firstName
-		self.lastName = lastName
+
 		self.isSaving = isSaving
 		self.errorMessage = errorMessage
 		self.onCancel = onCancel
 		self.onSave = onSave
+		_draftFirstName = State(initialValue: firstName)
+		_draftLastName = State(initialValue: lastName)
 		_draftAddress = State(initialValue: homeAddress)
 		_includesDateOfBirth = State(initialValue: dateOfBirth != nil)
 		_draftDateOfBirth = State(
@@ -48,15 +50,15 @@ struct PharmacyEditProfileScreen: View {
 					.font(.title3.weight(.bold))
 					.foregroundStyle(PharmacyColor.textPrimary)
 
-				readonlyField(
+				editableField(
 					title: "profile.first_name".localized,
-					value: firstName,
+					text: $draftFirstName,
 					icon: "person"
 				)
 
-				readonlyField(
+				editableField(
 					title: "profile.last_name".localized,
-					value: lastName,
+					text: $draftLastName,
 					icon: "person"
 				)
 
@@ -79,7 +81,7 @@ struct PharmacyEditProfileScreen: View {
 		}
 	}
 
-	private func readonlyField(title: String, value: String, icon: String) -> some View {
+	private func editableField(title: String, text: Binding<String>, icon: String) -> some View {
 		VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
 			Text(title)
 				.font(.caption.weight(.semibold))
@@ -90,15 +92,12 @@ struct PharmacyEditProfileScreen: View {
 					.foregroundStyle(PharmacyColor.textSecondary)
 					.frame(width: 24)
 
-				Text(value)
+				TextField(title, text: text)
 					.font(.body)
 					.foregroundStyle(PharmacyColor.textPrimary)
+					.textInputAutocapitalization(.words)
 
 				Spacer()
-
-				Image(systemName: "lock.fill")
-					.font(.caption2)
-					.foregroundStyle(PharmacyColor.textSecondary)
 			}
 			.padding(.horizontal, PharmacySpacing.md)
 			.frame(minHeight: 56)
@@ -239,7 +238,15 @@ struct PharmacyEditProfileScreen: View {
 	}
 
 	private func save() {
+		let trimmedFirstName = draftFirstName.trimmingCharacters(in: .whitespacesAndNewlines)
+		let trimmedLastName = draftLastName.trimmingCharacters(in: .whitespacesAndNewlines)
 		let trimmedAddress = draftAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		guard !trimmedFirstName.isEmpty, !trimmedLastName.isEmpty else {
+			addressError = "pharmacy_team.validation_name".localized // reusing error state for simplicity or you can add a separate error state
+			return
+		}
+
 		guard trimmedAddress.isEmpty || trimmedAddress.count >= 4 else {
 			addressError = "profile.address_error".localized
 			return
@@ -247,6 +254,8 @@ struct PharmacyEditProfileScreen: View {
 
 		Task {
 			let success = await onSave(
+				trimmedFirstName,
+				trimmedLastName,
 				trimmedAddress.isEmpty ? nil : trimmedAddress,
 				includesDateOfBirth ? draftDateOfBirth : nil
 			)
