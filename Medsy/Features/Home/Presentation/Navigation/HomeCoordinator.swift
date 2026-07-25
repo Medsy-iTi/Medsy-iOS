@@ -150,5 +150,7 @@ struct HomeCoordinatorView: View {
         coordinator.open(requestedRoute)
         self.requestedRoute = nil
     }
+}
+
 
 
