@@ -16,6 +16,8 @@ enum CompleteRequestMapper {
         return SubmittedMedicineRequest(
             id: dto.id,
             customerID: dto.customerId,
+            customerName: dto.customerName,
+            customerPhone: dto.customerPhone,
             deliveryLatitude: dto.deliveryLatitude,
             deliveryLongitude: dto.deliveryLongitude,
             deliveryAddress: dto.deliveryAddress,
@@ -25,9 +27,17 @@ enum CompleteRequestMapper {
                 SubmittedMedicineRequestItem(
                     id: $0.id,
                     productID: $0.productId,
-                    quantity: $0.quantity
+                    quantity: $0.quantity,
+                    imageURL: $0.imageUrl,
+                    productName: $0.productName,
+                    strength: $0.strength,
+                    packSize: $0.packSize,
+                    form: $0.form,
+                    unitPrice: $0.unitPrice
                 )
-            }
+            },
+            prescriptionURL: dto.prescriptionUrl,
+            notes: dto.notes
         )
     }
     
