@@ -82,7 +82,7 @@ enum PharmacyMedicineRequestMapper {
                 address: entity.deliveryAddress
             ),
             items: presentationItems,
-            deliveryFee: 15.0,
+            deliveryFee: 0.0,
             notes: "",
             prescriptionImageUrl: makeFullImageUrl(entity.prescriptionUrl)
         )

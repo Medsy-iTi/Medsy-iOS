@@ -147,7 +147,7 @@ enum PharmacyOrderMapper {
                 address: order.deliveryAddress
             ),
             items: presentationItems,
-            deliveryFee: 15.0,
+            deliveryFee: 0.0,
             notes: "",
             prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl)
         )

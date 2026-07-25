@@ -12,6 +12,13 @@ public final class PharmacySubmittedOffersStore: @unchecked Sendable {
     public static let shared = PharmacySubmittedOffersStore()
     private var submittedIds: Set<Int> = []
     private let lock = NSLock()
+    private let userDefaultsKey = "com.medsy.pharmacy.submitted_offer_request_ids"
+
+    private init() {
+        if let savedArray = UserDefaults.standard.array(forKey: userDefaultsKey) as? [Int] {
+            submittedIds = Set(savedArray)
+        }
+    }
 
     public func contains(_ id: Int) -> Bool {
         lock.lock()
@@ -21,7 +28,11 @@ public final class PharmacySubmittedOffersStore: @unchecked Sendable {
 
     public func insert(_ id: Int) {
         lock.lock()
-        defer { lock.unlock() }
+        defer {
+            let array = Array(submittedIds)
+            UserDefaults.standard.set(array, forKey: userDefaultsKey)
+            lock.unlock()
+        }
         submittedIds.insert(id)
     }
 }
