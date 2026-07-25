@@ -9,13 +9,45 @@ import SwiftUI
 
 struct PharmacyOrderItem: Identifiable {
     let id: String
+    let requestItemId: Int
+    let productId: Int
     let name: String
     let spec: String
     let quantity: Int
     var price: Double
     let imageName: String?
+    let imageUrl: String?
     var isAvailable: Bool = true
+    var selectedOfferProductId: Int
     var alternativeMedicine: String? = nil
+
+    init(
+        id: String,
+        requestItemId: Int = 0,
+        productId: Int = 0,
+        name: String,
+        spec: String,
+        quantity: Int,
+        price: Double,
+        imageName: String? = nil,
+        imageUrl: String? = nil,
+        isAvailable: Bool = true,
+        selectedOfferProductId: Int? = nil,
+        alternativeMedicine: String? = nil
+    ) {
+        self.id = id
+        self.requestItemId = requestItemId != 0 ? requestItemId : (Int(id) ?? 0)
+        self.productId = productId
+        self.name = name
+        self.spec = spec
+        self.quantity = quantity
+        self.price = price
+        self.imageName = imageName
+        self.imageUrl = imageUrl
+        self.isAvailable = isAvailable
+        self.selectedOfferProductId = selectedOfferProductId ?? productId
+        self.alternativeMedicine = alternativeMedicine
+    }
 }
 
 struct PharmacyCustomerInfo {
@@ -108,7 +140,9 @@ extension PharmacyRequestDetailsModel {
             customer: PharmacyCustomerInfo(
                 name: "pharmacy.request.customer_id_label".localized(String(order.userId)),
                 phone: "—",
-                address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress
+                // OLD:
+                // address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress
+                address: "pharmacy.orders.address.fallback".localized
             ),
             items: mappedItems,
             deliveryFee: 0.0,

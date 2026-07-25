@@ -60,11 +60,16 @@ enum PharmacyMedicineRequestMapper {
         let presentationItems = entity.items.map { item in
             PharmacyOrderItem(
                 id: String(item.id),
+                requestItemId: item.id,
+                productId: item.productId,
                 name: item.productName,
                 spec: "\(item.quantity) قطعة",
                 quantity: item.quantity,
                 price: item.unitPrice,
-                imageName: nil
+                imageName: nil,
+                imageUrl: item.imageUrl,
+                isAvailable: true,
+                selectedOfferProductId: item.productId
             )
         }
 
