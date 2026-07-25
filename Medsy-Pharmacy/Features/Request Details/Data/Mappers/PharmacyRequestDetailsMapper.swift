@@ -70,6 +70,8 @@ enum PharmacyRequestDetailsMapper {
         case .preparing: return "قيد التحضير"
         case .outForDelivery: return "جاري التوصيل"
         case .delivered: return "تم التوصيل"
+        case .completed: return "مكتمل"
+        case .expired: return "منتهي الصلاحية"
         case .cancelled: return "ملغي"
         case .unknown(let val): return val
         }
