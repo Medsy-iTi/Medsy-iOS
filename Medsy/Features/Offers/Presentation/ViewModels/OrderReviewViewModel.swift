@@ -49,8 +49,8 @@ final class OrderReviewViewModel {
                 imageName: "leaf.fill"
             )
         ]
-        let subtotal = offerDetail?.totalPrice ?? 48
-        let deliveryFee = 20
+        let subtotal = offerDetail?.totalPrice ?? 48.0
+        let deliveryFee = 20.0
         let total = subtotal + deliveryFee
 
         self.orderReview = OrderReviewPresentationModel(
