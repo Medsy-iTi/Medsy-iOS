@@ -10,7 +10,9 @@ struct OfferDetailsView: View {
     @State private var viewModel: OfferDetailsViewModel
     let onBack: () -> Void
     var onPrescriptionTap: (() -> Void)? = nil
-    var onSelectOffer: (() -> Void)? = nil
+    // OLD:
+    // var onSelectOffer: (() -> Void)? = nil
+    var onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
 
     init(
         offer: OfferPresentationModel? = nil,
@@ -18,7 +20,7 @@ struct OfferDetailsView: View {
         requestId: Int? = nil,
         onBack: @escaping () -> Void,
         onPrescriptionTap: (() -> Void)? = nil,
-        onSelectOffer: (() -> Void)? = nil
+        onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
     ) {
         _viewModel = State(
             initialValue: OfferDetailsViewModel(
@@ -49,7 +51,12 @@ struct OfferDetailsView: View {
                             .padding(.horizontal, 16)
                     }
 
-                    OfferMedicinesCardView(medicines: viewModel.offerDetail.medicines)
+                    OfferMedicinesCardView(
+                        medicines: viewModel.offerDetail.medicines,
+                        onToggleSelection: { id in
+                            viewModel.toggleItemSelection(id: id)
+                        }
+                    )
 
                     PharmacistCommentCardView(comment: viewModel.offerDetail.pharmacistComment)
 
@@ -64,19 +71,17 @@ struct OfferDetailsView: View {
 
             VStack(spacing: 0) {
                 Button {
-                    Task {
-                        let success = await viewModel.selectOffer()
-                        if success {
-                            onSelectOffer?()
-                        }
-                    }
+                    onSelectOffer?(viewModel.offerDetail)
                 } label: {
                     HStack {
                         if viewModel.isConfirming {
                             ProgressView()
                                 .tint(.white)
                         } else {
-                            Text("offers.details.selectOffer".localized)
+                            // OLD:
+                            // Text("offers.details.selectOffer".localized)
+
+                            Text("متابعة الطلب")
                                 .font(AppColor.sans(16, .bold))
                                 .foregroundStyle(AppColor.white)
                         }

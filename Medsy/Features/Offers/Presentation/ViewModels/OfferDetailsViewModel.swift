@@ -26,8 +26,12 @@ final class OfferDetailsViewModel {
         statusStore: UserDefaultsStatusStoreProtocol? = nil
     ) {
         self.requestId = requestId
-        self.confirmOfferUseCase = confirmOfferUseCase
-        self.statusStore = statusStore
+        // OLD:
+        // self.confirmOfferUseCase = confirmOfferUseCase
+        // self.statusStore = statusStore
+
+        self.confirmOfferUseCase = confirmOfferUseCase ?? DIContainer.shared.resolve(ConfirmOfferUseCaseProtocol.self)
+        self.statusStore = statusStore ?? DIContainer.shared.resolve(UserDefaultsStatusStoreProtocol.self)
 
         if let offerResult {
             let items = offerResult.items.map { item in
@@ -100,6 +104,27 @@ final class OfferDetailsViewModel {
         }
     }
 
+    func toggleItemSelection(id: String) {
+        guard let index = offerDetail.medicines.firstIndex(where: { $0.id == id }) else { return }
+        guard offerDetail.medicines[index].isAvailable else { return }
+
+        var updatedMedicines = offerDetail.medicines
+        updatedMedicines[index].isSelected.toggle()
+
+        let newTotal = updatedMedicines
+            .filter { $0.isAvailable && $0.isSelected }
+            .reduce(0.0) { $0 + $1.price }
+
+        offerDetail = OfferDetailPresentationModel(
+            id: offerDetail.id,
+            pharmacyName: offerDetail.pharmacyName,
+            managerName: offerDetail.managerName,
+            medicines: updatedMedicines,
+            pharmacistComment: offerDetail.pharmacistComment,
+            totalPrice: newTotal
+        )
+    }
+
     func selectOffer() async -> Bool {
         guard let requestId else {
             isConfirmed = true
@@ -115,9 +140,15 @@ final class OfferDetailsViewModel {
         confirmErrorMessage = nil
         defer { isConfirming = false }
 
-        let itemIds = offerDetail.medicines.filter(\.isAvailable).map(\.requestItemId)
+        // OLD:
+        // let itemIds = offerDetail.medicines.filter(\.isAvailable).map(\.requestItemId)
+
+        let selectedItemIds = offerDetail.medicines
+            .filter { $0.isAvailable && $0.isSelected }
+            .map(\.requestItemId)
+
         do {
-            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: itemIds)
+            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
             statusStore?.clearPendingRequestId()
             isConfirmed = true
             return true
