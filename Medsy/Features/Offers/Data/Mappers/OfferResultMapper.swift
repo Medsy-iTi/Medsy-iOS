@@ -25,7 +25,8 @@ enum OfferResultMapper {
 
         return OfferResult(
             items: items,
-            totalPrice: total
+            totalPrice: total,
+            prescriptionUrl: dto.prescriptionUrl
         )
     }
 
