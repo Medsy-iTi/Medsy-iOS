@@ -41,16 +41,12 @@ final class NetworkRequestBuilder {
         if let parts = endpoint.multipartFormParts {
             let multipartFormData = MultipartFormData()
             for part in parts {
-                if let fileName = part.fileName, let mimeType = part.mimeType {
-                    multipartFormData.append(
-                        part.data,
-                        withName: part.name,
-                        fileName: fileName,
-                        mimeType: mimeType
-                    )
-                } else {
-                    multipartFormData.append(part.data, withName: part.name)
-                }
+                multipartFormData.append(
+                    part.data,
+                    withName: part.name,
+                    fileName: part.fileName,
+                    mimeType: part.mimeType
+                )
             }
 
             request.setValue(multipartFormData.contentType, forHTTPHeaderField: "Content-Type")
