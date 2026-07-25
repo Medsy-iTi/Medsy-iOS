@@ -348,3 +348,8 @@
 "pharmacy.request.no_customer_notes" = "لا توجد ملاحظات من العميل";
 "pharmacy.request.order_total_header" = "إجمالي الطلب";
 "pharmacy.request.view_payment_summary" = "عرض ملخص الدفع";
+
+"pharmacy.orders.action.send_offer" = "إرسال العرض";
+"pharmacy.orders.action.expired" = "منتهي";
+"pharmacy.orders.status.completed" = "مكتمل";
+"pharmacy.orders.status.expired" = "منتهي الصلاحية";
