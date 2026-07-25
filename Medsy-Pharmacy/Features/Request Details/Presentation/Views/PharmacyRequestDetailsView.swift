@@ -105,19 +105,9 @@ struct PharmacyRequestDetailsView: View {
                     isSubmitting: viewModel?.isSubmitting ?? false,
                     buttonTitle: viewModel?.bottomButtonTitle ?? "",
                     isButtonDisabled: viewModel?.isBottomButtonDisabled ?? false,
-                    showSecondaryButtons: viewModel?.showSecondaryButtons ?? false,
                     onSendOffer: {
                         Task {
                             await viewModel?.sendOffer()
-                        }
-                    },
-                    onReject: {
-                        dismiss()
-                    },
-                    onContact: {
-                        if let model = viewModel?.requestModel ?? requestModel,
-                           let url = URL(string: "tel://\(model.customer.phone.replacingOccurrences(of: " ", with: ""))") {
-                            UIApplication.shared.open(url)
                         }
                     }
                 )
