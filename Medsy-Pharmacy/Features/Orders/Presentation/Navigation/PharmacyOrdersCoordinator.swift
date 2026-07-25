@@ -45,16 +45,16 @@ final class PharmacyOrdersCoordinator: Coordinator {
 		)
 	}
 
-	func showRequestDetails(id: Int) {
-		path.append(PharmacyOrdersRoute.details(id: id))
+	func showRequestDetails(order: PharmacyOrder) {
+		path.append(PharmacyOrdersRoute.details(order: order))
 	}
 
 	@ViewBuilder
 	func destination(for route: PharmacyOrdersRoute) -> some View {
 		switch route {
-		case .details(let id):
+		case .details(let order):
 			PharmacyRequestDetailsView(
-				viewModel: PharmacyRequestDetailsViewModel(requestId: id)
+				viewModel: PharmacyRequestDetailsViewModel(order: order)
 			)
 		}
 	}
