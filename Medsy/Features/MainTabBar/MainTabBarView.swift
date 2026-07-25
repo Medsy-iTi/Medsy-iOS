@@ -13,6 +13,7 @@ struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
+    @State private var profileViewModel: ProfileViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
@@ -22,6 +23,9 @@ struct MainTabBarView: View {
         _cartViewModel = State(
             initialValue: DIContainer.shared.resolve(CartViewModel.self)
         )
+        _profileViewModel = State(
+            initialValue: DIContainer.shared.resolve(ProfileViewModel.self)
+        )
     }
 
     var body: some View {
@@ -29,7 +33,9 @@ struct MainTabBarView: View {
             HomeCoordinatorView(
                 requestedRoute: $requestedHomeRoute,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
-                onOpenCart: { coordinator.select(.cart) }
+                onOpenCart: { coordinator.select(.cart) },
+                homeAddress: profileViewModel.displayHomeAddress,
+                onOpenProfile: { coordinator.select(.profile) }
             )
             .tabItem {
                 Label("tab.home".localized, systemImage: "house")
@@ -70,7 +76,8 @@ struct MainTabBarView: View {
 
             ProfileCoordinatorView(
                 onOrders: { coordinator.select(.orders) },
-                onLogout: coordinator.logout
+                onLogout: coordinator.logout,
+                viewModel: profileViewModel
             )
             .onAppear { isTabBarHidden = false }
             .tabItem {
@@ -101,6 +108,7 @@ struct MainTabBarView: View {
         }
         .task {
             cartViewModel.handle(.load)
+            await profileViewModel.loadProfile()
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
     }
