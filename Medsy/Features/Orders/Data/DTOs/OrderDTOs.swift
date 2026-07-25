@@ -23,8 +23,6 @@ struct OrderDTO: Decodable {
     let date: String
     let items: [OrderItemDTO]
 
-    // Snapshot/display fields supplied by the expanded order-history contract.
-    // They remain optional so the app also decodes the currently deployed payload.
     let pharmacyName: String?
     let fulfillmentType: String?
     let deliveryFee: Double?

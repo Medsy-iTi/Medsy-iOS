@@ -47,16 +47,28 @@ final class ProfileCoordinator {
         viewModel.displayName
     }
 
+    var firstName: String {
+        viewModel.firstName
+    }
+
+    var lastName: String {
+        viewModel.lastName
+    }
+
+    var homeAddress: String {
+        viewModel.homeAddress
+    }
+
+    var dateOfBirth: Date? {
+        viewModel.dateOfBirth
+    }
+
     var phoneNumber: String {
         viewModel.phoneNumber
     }
 
     var email: String {
         viewModel.email
-    }
-
-    var homeAddress: String {
-        viewModel.homeAddress
     }
 
 
@@ -72,10 +84,6 @@ final class ProfileCoordinator {
 		viewModel.homeLongitude
 	}
 
-
-    var dateOfBirth: Date? {
-        viewModel.dateOfBirth
-    }
 
     var displayDateOfBirth: String {
         viewModel.displayDateOfBirth
@@ -102,12 +110,16 @@ final class ProfileCoordinator {
     }
 
 	func updateProfile(
+		firstName: String,
+		lastName: String,
 		homeAddress: String?,
 		latitude: Double?,
 		longitude: Double?,
 		dateOfBirth: Date?
 	) async -> Bool {
 		await viewModel.updateProfile(
+			firstName: firstName,
+			lastName: lastName,
 			homeAddress: homeAddress,
 			latitude: latitude,
 			longitude: longitude,
@@ -119,6 +131,8 @@ final class ProfileCoordinator {
     func showLanguagePicker() { activePresentation = .language }
     func showThemePicker() { activePresentation = .theme }
     func dismissPresentation() { activePresentation = nil }
+
+
     func requestLogout() { showsLogoutConfirmation = true }
     func cancelLogout() { showsLogoutConfirmation = false }
 

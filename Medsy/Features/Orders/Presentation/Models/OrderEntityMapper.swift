@@ -40,6 +40,7 @@ enum OrderEntityMapper {
     private static func mapItem(_ entity: OrderDetailItemEntity) -> OrderDetailItemModel {
         OrderDetailItemModel(
             id: entity.id,
+            productId: entity.productId,
             productName: entity.productName,
             originalProductName: entity.originalProductName,
             quantity: entity.quantity,
@@ -48,7 +49,29 @@ enum OrderEntityMapper {
     }
 }
 
-extension OrderFilter {
+extension ActiveOrderFilters {
+    func toDomainFilter() -> OrdersFilter {
+        let range = resolvedDateRange()
+        return OrdersFilter(
+            statuses: statusFilter.domainStatuses,
+            fulfillmentType: fulfillmentType,
+            dateFrom: range.from,
+            dateTo: range.to
+        )
+    }
+
+    func matches(_ order: OrderPresentationModel) -> Bool {
+        if let requiredFulfillment = fulfillmentType, order.fulfillmentType != requiredFulfillment {
+            return false
+        }
+        let range = resolvedDateRange()
+        if let from = range.from, order.date < from { return false }
+        if let to = range.to, order.date > to { return false }
+        return statusFilter.matches(order.status)
+    }
+}
+
+private extension OrderFilter {
     var domainStatuses: [OrderStatus]? {
         switch self {
         case .all:       return nil
@@ -58,9 +81,25 @@ extension OrderFilter {
         }
     }
 
-    func matches(_ status: OrderStatus) -> Bool {
+    func matches(_ status: OrderStatusPresentation) -> Bool {
         guard let domainStatuses else { return true }
         let acceptedValues = Set(domainStatuses.map(\.rawValue))
         return acceptedValues.contains(status.rawValue)
     }
 }
+
+private extension OrderStatusPresentation {
+    var rawValue: String {
+        switch self {
+        case .pending:         return "PENDING"
+        case .confirmed:       return "CONFIRMED"
+        case .preparing:       return "PREPARING"
+        case .readyForPickup:  return "READY_FOR_PICKUP"
+        case .outForDelivery:  return "OUT_FOR_DELIVERY"
+        case .delivered:       return "DELIVERED"
+        case .cancelled:       return "CANCELLED"
+        case .unknown(let r):  return r
+        }
+    }
+}
+

@@ -318,7 +318,7 @@
 "pharmacy.orders.noData" = "No orders found.";
 "common.somethingWentWrong" = "Something went wrong.";
 
-/* Presence */
+/* Presence & On Duty */
 "profile.presence.section_title" = "Availability";
 "profile.presence.on_duty_title" = "On Duty";
 "profile.presence.on_duty_badge" = "Active";
@@ -326,3 +326,6 @@
 "profile.presence.error" = "Could not update your status. Please try again.";
 "profile.presence.toast.on" = "You are now receiving requests";
 "profile.presence.toast.off" = "You are not receiving requests anymore";
+"profile.on_duty.title" = "On Duty";
+"profile.on_duty.on" = "On Duty";
+"profile.on_duty.off" = "Off Duty";

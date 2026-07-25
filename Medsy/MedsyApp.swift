@@ -15,6 +15,7 @@ struct MedsyApp: App {
     private let authenticationFactory: AuthenticationFactory
     private let logoutUseCase: LogoutUseCaseProtocol
     private let appCoordinator: AppCoordinator
+    private let heartbeatService: HeartbeatService
 
     init() {
         AppAssembler.shared.assemble(modules: [
@@ -22,7 +23,8 @@ struct MedsyApp: App {
             OnboardingAssembly(),
             AuthenticationAssembly(),
             CategoriesAssembly(),
-			      ProductsAssembly(),
+            ProductsAssembly(),
+            ProductsAssembly(),
             ProductDetailAssembly(),
             ProductsFeatureAssembly(),
             CartAssembly(),
@@ -30,6 +32,7 @@ struct MedsyApp: App {
             CompleteRequestAssembly(),
             PharmacyProfileAssembly(),
             OrdersAssembly(),
+            PresenceAssembly(),
             ChatbotAssembly(),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
@@ -41,6 +44,7 @@ struct MedsyApp: App {
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
+        heartbeatService = AppAssembler.shared.container.resolve(HeartbeatService.self)
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
             authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
@@ -55,10 +59,13 @@ struct MedsyApp: App {
                 authenticationFactory: authenticationFactory,
                 coordinator: appCoordinator
             )
-                .localizedEnvironment()
-                .environment(languageManager)
-                .id(languageManager.currentLanguage)
-			
+            .task {
+                heartbeatService.startHeartbeat()
+                print("[MedsyApp] 🚀 Customer App launched — heartbeat started")
+            }
+            .localizedEnvironment()
+            .environment(languageManager)
+            .id(languageManager.currentLanguage)
         }
     }
 }
