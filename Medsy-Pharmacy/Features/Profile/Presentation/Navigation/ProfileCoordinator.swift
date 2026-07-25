@@ -102,9 +102,9 @@ final class ProfileCoordinator: Coordinator {
 			case let .pharmacistProfile(member):
 				PharmacistDetailView(
 					member: member,
-					canEdit: viewModel.canManage(member),
+					canEdit: false,
 					canRemove: viewModel.canManage(member),
-					onEdit: { self.viewModel.didTapEditPharmacist(member) },
+					onEdit: { },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
 				.removePharmacistConfirmationDialog(viewModel: viewModel)
@@ -115,9 +115,9 @@ final class ProfileCoordinator: Coordinator {
 			case let .editPharmacist(member):
 				PharmacistDetailView(
 					member: member,
-					canEdit: viewModel.canManage(member),
+					canEdit: false,
 					canRemove: viewModel.canManage(member),
-					onEdit: { self.viewModel.didTapEditPharmacist(member) },
+					onEdit: { },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
 				.removePharmacistConfirmationDialog(viewModel: viewModel)
@@ -213,8 +213,10 @@ final class ProfileCoordinator: Coordinator {
 				isSaving: viewModel.isSaving,
 				errorMessage: viewModel.saveErrorMessage,
 				onCancel: pop,
-				onSave: { homeAddress, dateOfBirth in
+				onSave: { firstName, lastName, homeAddress, dateOfBirth in
 					await self.viewModel.updateProfile(
+						firstName: firstName,
+						lastName: lastName,
 						homeAddress: homeAddress,
 						dateOfBirth: dateOfBirth
 					)
