@@ -54,6 +54,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
     case outForDelivery
     case delivered
     case cancelled
+    case completed
+    case expired
     case unknown(String)
 
     init(rawValue: String) {
@@ -64,6 +66,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
         case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED": self = .delivered
         case "CANCELLED", "CANCELED": self = .cancelled
+        case "COMPLETED": self = .completed
+        case "EXPIRED": self = .expired
         default: self = .unknown(rawValue)
         }
     }
