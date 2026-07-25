@@ -35,8 +35,8 @@ final class PharmacyRequestDetailsViewModel {
         sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = requestId
-        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyDIContainer.shared.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
-        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyDIContainer.shared.resolve(SendOfferUseCaseProtocol.self)
+        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
+        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
     }
 
     func loadDetails() async {
