@@ -9,47 +9,39 @@ import SwiftUI
 
 struct OrdersCoordinatorView: View {
     @State private var coordinator = OrdersCoordinator()
-    @State private var selectedFilter: OrderFilter = .all
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
-    private let onSearch: () -> Void
     private let onSelectPharmacy: (Int) -> Void
 
     init(
-        onSearch: @escaping () -> Void = {},
         onSelectPharmacy: @escaping (Int) -> Void = { _ in }
     ) {
         _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
         _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
-        self.onSearch = onSearch
         self.onSelectPharmacy = onSelectPharmacy
     }
 
     init(
         historyViewModel: OrderHistoryViewModel,
         detailViewModel: OrderDetailViewModel,
-        onSearch: @escaping () -> Void = {},
         onSelectPharmacy: @escaping (Int) -> Void = { _ in }
     ) {
         _historyViewModel = State(initialValue: historyViewModel)
         _detailViewModel = State(initialValue: detailViewModel)
-        self.onSearch = onSearch
         self.onSelectPharmacy = onSelectPharmacy
     }
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             OrderHistoryView(
-                selectedFilter: $selectedFilter,
+                activeFilters: historyViewModel.activeFilters,
                 state: historyViewModel.historyState,
+                onApplyFilters: { historyViewModel.handle(.applyFilters($0)) },
                 onSelectOrder: { order in coordinator.showDetail(orderId: order.id) },
                 onRetry: { historyViewModel.handle(.retry) },
                 onLoadNextPage: { historyViewModel.handle(.loadNextPage) },
-                onSearch: onSearch
+                onSearch: { coordinator.showSearch() }
             )
-            .onChange(of: selectedFilter) { _, newFilter in
-                historyViewModel.handle(.selectFilter(newFilter))
-            }
             .task {
                 historyViewModel.handle(.load)
             }
@@ -65,7 +57,16 @@ struct OrdersCoordinatorView: View {
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))
                     }
+                case let .search(query):
+                    SearchCoordinatorView(
+                        query: query,
+                        onBack: { coordinator.pop() },
+                        onPush: { dest in coordinator.path.append(dest) }
+                    )
                 }
+            }
+            .navigationDestination(for: ProductDetailDestination.self) { destination in
+                ProductDetailView(productId: destination.productId)
             }
         }
     }

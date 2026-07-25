@@ -6,274 +6,259 @@
 import SwiftUI
 
 struct PharmacyEditProfileScreen: View {
+	let firstName: String
+	let lastName: String
+	let isSaving: Bool
+	let errorMessage: String?
+	let onCancel: () -> Void
+	let onSave: (String?, Date?) async -> Bool
 
-    let name: String
-    let phoneNumber: String
-    let email: String
-    let isSaving: Bool
-    let errorMessage: String?
-    let onCancel: () -> Void
-    let onSave: (String?, Date?) async -> Bool
+	@State private var draftAddress: String
+	@State private var includesDateOfBirth: Bool
+	@State private var draftDateOfBirth: Date
+	@State private var addressError: String?
 
-    @State private var draftAddress: String
-    @State private var includesDateOfBirth: Bool
-    @State private var draftDateOfBirth: Date
-    @State private var addressError: String?
+	init(
+		firstName: String,
+		lastName: String,
+		homeAddress: String,
+		dateOfBirth: Date?,
+		isSaving: Bool = false,
+		errorMessage: String? = nil,
+		onCancel: @escaping () -> Void = {},
+		onSave: @escaping (String?, Date?) async -> Bool = { _, _ in true }
+	) {
+		self.firstName = firstName
+		self.lastName = lastName
+		self.isSaving = isSaving
+		self.errorMessage = errorMessage
+		self.onCancel = onCancel
+		self.onSave = onSave
+		_draftAddress = State(initialValue: homeAddress)
+		_includesDateOfBirth = State(initialValue: dateOfBirth != nil)
+		_draftDateOfBirth = State(
+			initialValue: dateOfBirth ?? Self.defaultDateOfBirth
+		)
+	}
 
-    init(
-        name: String,
-        phoneNumber: String,
-        email: String,
-        homeAddress: String,
-        dateOfBirth: Date?,
-        isSaving: Bool = false,
-        errorMessage: String? = nil,
-        onCancel: @escaping () -> Void = {},
-        onSave: @escaping (String?, Date?) async -> Bool = { _, _ in true }
-    ) {
-        self.name = name
-        self.phoneNumber = phoneNumber
-        self.email = email
-        self.isSaving = isSaving
-        self.errorMessage = errorMessage
-        self.onCancel = onCancel
-        self.onSave = onSave
-        _draftAddress = State(initialValue: homeAddress)
-        _includesDateOfBirth = State(initialValue: dateOfBirth != nil)
-        _draftDateOfBirth = State(initialValue: dateOfBirth ?? PharmacyEditProfileScreen.defaultDateOfBirth)
-    }
+	var body: some View {
+		ScrollView {
+			VStack(alignment: .leading, spacing: PharmacySpacing.lg) {
+				Text("profile.personal_information".localized)
+					.font(.title3.weight(.bold))
+					.foregroundStyle(PharmacyColor.textPrimary)
 
-    var body: some View {
-        ZStack {
-            PharmacyColor.bg
-                .ignoresSafeArea()
+				readonlyField(
+					title: "profile.first_name".localized,
+					value: firstName,
+					icon: "person"
+				)
 
-            VStack(spacing: 0) {
-                header
+				readonlyField(
+					title: "profile.last_name".localized,
+					value: lastName,
+					icon: "person"
+				)
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: PharmacySpacing.lg) {
-                        avatarBlock
-                        readonlyField(titleKey: "profile.full_name", value: name, iconName: "person")
-                        readonlyField(titleKey: "profile.email", value: email.isEmpty ? "profile.not_set".localized : email, iconName: "envelope")
-                        readonlyField(titleKey: "profile.phone", value: phoneNumber.isEmpty ? "profile.not_set".localized : phoneNumber, iconName: "phone", noteKey: "profile.phone_support_note")
-                        addressField
-                        dateOfBirthField
-                        errorBlock
-                        saveButton
-                    }
-                    .padding(.horizontal, PharmacySpacing.md)
-                    .padding(.top, PharmacySpacing.sm)
-                    .padding(.bottom, PharmacySpacing.xl)
-                }
-            }
-        }
-    }
+				addressField
+				dateOfBirthField
+				errorBlock
+			}
+			.padding(.horizontal, PharmacySpacing.md)
+			.padding(.vertical, PharmacySpacing.lg)
+		}
+		.background(PharmacyColor.bg.ignoresSafeArea())
+		.navigationTitle("profile.edit.title".localized)
+		.navigationBarTitleDisplayMode(.inline)
+		.interactiveDismissDisabled(isSaving)
+		.safeAreaInset(edge: .bottom) {
+			saveButton
+				.padding(.horizontal, PharmacySpacing.md)
+				.padding(.vertical, PharmacySpacing.sm)
+				.background(PharmacyColor.bg)
+		}
+	}
 
-    private var header: some View {
-        HStack {
-            Button {
-                onCancel()
-            } label: {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
-            }
-            .buttonStyle(.plain)
+	private func readonlyField(title: String, value: String, icon: String) -> some View {
+		VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
+			Text(title)
+				.font(.caption.weight(.semibold))
+				.foregroundStyle(PharmacyColor.textSecondary)
 
-            Text("profile.edit.title".localized)
-                .font(PharmacyColor.sans(17, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity)
+			HStack(spacing: PharmacySpacing.sm) {
+				Image(systemName: icon)
+					.foregroundStyle(PharmacyColor.textSecondary)
+					.frame(width: 24)
 
-            Color.clear
-                .frame(width: 36, height: 36)
-        }
-        .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
-    }
+				Text(value)
+					.font(.body)
+					.foregroundStyle(PharmacyColor.textPrimary)
 
-    private var avatarBlock: some View {
-        VStack(spacing: PharmacySpacing.sm) {
-            Image(systemName: "person.circle.fill")
-                .resizable()
-                .foregroundStyle(PharmacyColor.primary)
-                .frame(width: 80, height: 80)
-                .background(Circle().fill(PharmacyColor.surface))
-                .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "camera.fill")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.white)
-                        .padding(6)
-                        .background(PharmacyColor.primary)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(PharmacyColor.surface, lineWidth: 2))
-                        .offset(x: -2, y: -2)
-                }
+				Spacer()
 
-            Button("profile.change_photo".localized) {}
-                .font(PharmacyColor.sans(12, .semibold))
-                .foregroundStyle(PharmacyColor.primary)
-                .buttonStyle(.plain)
-        }
-        .frame(maxWidth: .infinity)
-    }
+				Image(systemName: "lock.fill")
+					.font(.caption2)
+					.foregroundStyle(PharmacyColor.textSecondary)
+			}
+			.padding(.horizontal, PharmacySpacing.md)
+			.frame(minHeight: 56)
+			.background(PharmacyColor.card)
+			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+			.overlay {
+				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+					.stroke(PharmacyColor.border, lineWidth: 1)
+			}
+		}
+	}
 
-    private func readonlyField(titleKey: String, value: String, iconName: String, noteKey: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(titleKey.localized)
-                .font(PharmacyColor.sans(13, .semibold))
-                .foregroundStyle(PharmacyColor.textPrimary)
+	private var addressField: some View {
+		VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
+			Text("profile.home_address".localized)
+				.font(.caption.weight(.semibold))
+				.foregroundStyle(PharmacyColor.textSecondary)
 
-            HStack(spacing: 10) {
-                Image(systemName: iconName)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textSecondary)
+			HStack(alignment: .top, spacing: PharmacySpacing.sm) {
+				Image(systemName: "house")
+					.foregroundStyle(PharmacyColor.textSecondary)
+					.frame(width: 24)
+					.padding(.top, 2)
 
-                Text(value)
-                    .font(PharmacyColor.sans(15, .medium))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+				TextField(
+					"profile.home_address.placeholder".localized,
+					text: $draftAddress,
+					axis: .vertical
+				)
+				.font(.body)
+				.foregroundStyle(PharmacyColor.textPrimary)
+				.textInputAutocapitalization(.words)
+				.lineLimit(2...4)
+				.onChange(of: draftAddress) {
+					addressError = nil
+				}
+			}
+			.padding(PharmacySpacing.md)
+			.frame(minHeight: 64)
+			.background(PharmacyColor.card)
+			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+			.overlay {
+				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+					.stroke(
+						addressError == nil ? PharmacyColor.border : PharmacyColor.danger,
+						lineWidth: 1
+					)
+			}
 
-                Spacer(minLength: 8)
+			if let addressError {
+				Text(addressError)
+					.font(.caption)
+					.foregroundStyle(PharmacyColor.danger)
+			}
+		}
+	}
 
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(PharmacyColor.textSecondary.opacity(0.75))
-            }
-            .padding(.horizontal, 17)
-            .frame(height: 51)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            }
+	private var dateOfBirthField: some View {
+		VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
+			Text("profile.date_of_birth".localized)
+				.font(.caption.weight(.semibold))
+				.foregroundStyle(PharmacyColor.textSecondary)
 
-            if let noteKey {
-                Text(noteKey.localized)
-                    .font(PharmacyColor.sans(11, .medium))
-                    .foregroundStyle(PharmacyColor.textSecondary)
-                    .padding(.horizontal, 4)
-            }
-        }
-    }
+			HStack(spacing: PharmacySpacing.sm) {
+				Image(systemName: "calendar")
+					.foregroundStyle(PharmacyColor.textSecondary)
+					.frame(width: 24)
 
-    private var addressField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("profile.home_address".localized)
-                .font(PharmacyColor.sans(13, .semibold))
-                .foregroundStyle(PharmacyColor.textPrimary)
+				if includesDateOfBirth {
+					DatePicker(
+						"profile.date_of_birth".localized,
+						selection: $draftDateOfBirth,
+						in: ...Date(),
+						displayedComponents: .date
+					)
+					.labelsHidden()
+					.datePickerStyle(.compact)
+				} else {
+					Button("profile.add_date_of_birth".localized) {
+						includesDateOfBirth = true
+					}
+					.foregroundStyle(PharmacyColor.primary)
+				}
 
-            TextField("profile.home_address.placeholder".localized, text: $draftAddress, axis: .vertical)
-                .font(PharmacyColor.sans(15, .medium))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .textInputAutocapitalization(.words)
-                .lineLimit(2...4)
-                .padding(.horizontal, 17)
-                .padding(.vertical, 14)
-                .background(PharmacyColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                        .stroke(addressError == nil ? PharmacyColor.border : PharmacyColor.danger, lineWidth: 1)
-                }
-                .onChange(of: draftAddress) {
-                    addressError = nil
-                }
+				Spacer()
 
-            if let addressError {
-                Text(addressError)
-                    .font(PharmacyColor.sans(11, .medium))
-                    .foregroundStyle(PharmacyColor.danger)
-            }
-        }
-    }
+				if includesDateOfBirth {
+					Button {
+						includesDateOfBirth = false
+					} label: {
+						Image(systemName: "xmark.circle.fill")
+							.foregroundStyle(PharmacyColor.textSecondary)
+					}
+					.buttonStyle(.plain)
+					.accessibilityLabel("profile.remove_date_of_birth".localized)
+				}
+			}
+			.padding(.horizontal, PharmacySpacing.md)
+			.frame(minHeight: 56)
+			.background(PharmacyColor.card)
+			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+			.overlay {
+				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+					.stroke(PharmacyColor.border, lineWidth: 1)
+			}
+		}
+	}
 
-    private var dateOfBirthField: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Toggle(isOn: $includesDateOfBirth) {
-                Text("profile.date_of_birth".localized)
-                    .font(PharmacyColor.sans(13, .semibold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-            }
-            .tint(PharmacyColor.primary)
+	@ViewBuilder
+	private var errorBlock: some View {
+		if let errorMessage {
+			Text(errorMessage)
+				.font(.caption)
+				.foregroundStyle(PharmacyColor.danger)
+				.frame(maxWidth: .infinity, alignment: .leading)
+		}
+	}
 
-            if includesDateOfBirth {
-                DatePicker(
-                    "profile.date_of_birth".localized,
-                    selection: $draftDateOfBirth,
-                    in: ...Date(),
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.compact)
-                .labelsHidden()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 17)
-                .frame(height: 51)
-                .background(PharmacyColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                        .stroke(PharmacyColor.border, lineWidth: 1)
-                }
-            }
-        }
-    }
+	private var saveButton: some View {
+		Button(action: save) {
+			Group {
+				if isSaving {
+					ProgressView().tint(.white)
+				} else {
+					Text("profile.save_changes".localized)
+						.font(.headline)
+				}
+			}
+			.foregroundStyle(.white)
+			.frame(maxWidth: .infinity, minHeight: 52)
+		}
+		.buttonStyle(.plain)
+		.background(
+			isSaving ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary,
+			in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+		)
+		.disabled(isSaving)
+	}
 
-    @ViewBuilder
-    private var errorBlock: some View {
-        if let errorMessage {
-            Text(errorMessage)
-                .font(PharmacyColor.sans(12, .medium))
-                .foregroundStyle(PharmacyColor.danger)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 4)
-        }
-    }
+	private func save() {
+		let trimmedAddress = draftAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard trimmedAddress.isEmpty || trimmedAddress.count >= 4 else {
+			addressError = "profile.address_error".localized
+			return
+		}
 
-    private var saveButton: some View {
-        Button {
-            save()
-        } label: {
-            Group {
-                if isSaving {
-                    ProgressView()
-                        .tint(.white)
-                } else {
-                    Text("profile.save_changes".localized)
-                        .font(PharmacyColor.sans(15, .bold))
-                }
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(isSaving ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .disabled(isSaving)
-        .padding(.top, 8)
-    }
+		Task {
+			let success = await onSave(
+				trimmedAddress.isEmpty ? nil : trimmedAddress,
+				includesDateOfBirth ? draftDateOfBirth : nil
+			)
+			if success {
+				onCancel()
+			}
+		}
+	}
 
-    private func save() {
-        let trimmedAddress = draftAddress.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedAddress.isEmpty || trimmedAddress.count >= 4 else {
-            addressError = "profile.address_error".localized
-            return
-        }
-
-        Task {
-            let success = await onSave(trimmedAddress.isEmpty ? nil : trimmedAddress, includesDateOfBirth ? draftDateOfBirth : nil)
-            if success {
-                onCancel()
-            }
-        }
-    }
-
-    private static var defaultDateOfBirth: Date {
-        Calendar.current.date(from: DateComponents(year: 1995, month: 1, day: 1)) ?? Date()
-    }
+	private static var defaultDateOfBirth: Date {
+		Calendar.current.date(
+			from: DateComponents(year: 1995, month: 1, day: 1)
+		) ?? Date()
+	}
 }

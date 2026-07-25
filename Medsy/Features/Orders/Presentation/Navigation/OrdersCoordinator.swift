@@ -11,16 +11,21 @@ import Observation
 
 enum OrdersRoute: Hashable {
     case detail(orderId: Int)
+    case search(String)
 }
 
 
 @MainActor
 @Observable
 final class OrdersCoordinator {
-    var path: [OrdersRoute] = []
+    var path = NavigationPath()
 
     func showDetail(orderId: Int) {
-        path.append(.detail(orderId: orderId))
+        path.append(OrdersRoute.detail(orderId: orderId))
+    }
+
+    func showSearch(query: String = "") {
+        path.append(OrdersRoute.search(query))
     }
 
     func pop() {
@@ -29,6 +34,6 @@ final class OrdersCoordinator {
     }
 
     func popToRoot() {
-        path.removeAll()
+        path = NavigationPath()
     }
 }
