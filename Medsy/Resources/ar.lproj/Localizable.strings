@@ -13,6 +13,12 @@
 "common.welcome"  = "مرحباً، %@!";
 "common.language" = "اللغة";
 
+/* Splash */
+"splash.brand" = "ميدسي";
+"splash.tagline" = "صحتك، أولويتنا";
+"splash.subtitle" = "الدواء والرعاية الصحية بكل سهولة.";
+"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا. الدواء والرعاية الصحية بكل سهولة.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "الملف الشخصي للصيدلية";
 "pharmacyProfile.badge" = "صيدلية";
