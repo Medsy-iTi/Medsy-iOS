@@ -12,23 +12,28 @@ struct OrdersCoordinatorView: View {
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
     private let onSelectPharmacy: (Int) -> Void
+    private let onGoToCart: () -> Void
 
     init(
-        onSelectPharmacy: @escaping (Int) -> Void = { _ in }
+        onSelectPharmacy: @escaping (Int) -> Void = { _ in },
+        onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
         _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
         self.onSelectPharmacy = onSelectPharmacy
+        self.onGoToCart = onGoToCart
     }
 
     init(
         historyViewModel: OrderHistoryViewModel,
         detailViewModel: OrderDetailViewModel,
-        onSelectPharmacy: @escaping (Int) -> Void = { _ in }
+        onSelectPharmacy: @escaping (Int) -> Void = { _ in },
+        onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: historyViewModel)
         _detailViewModel = State(initialValue: detailViewModel)
         self.onSelectPharmacy = onSelectPharmacy
+        self.onGoToCart = onGoToCart
     }
 
     var body: some View {
@@ -50,9 +55,13 @@ struct OrdersCoordinatorView: View {
                 case .detail(let orderId):
                     OrderDetailView(
                         state: detailViewModel.detailState,
+                        reorderState: detailViewModel.reorderState,
                         onRetry: { detailViewModel.handle(.retry(orderId: orderId)) },
                         onBack: { coordinator.pop() },
-                        onSelectPharmacy: onSelectPharmacy
+                        onReorder: { detailViewModel.handle(.reorder) },
+                        onSelectPharmacy: onSelectPharmacy,
+                        onDismissReorderAlert: { detailViewModel.handle(.dismissReorderAlert) },
+                        onGoToCart: onGoToCart
                     )
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))

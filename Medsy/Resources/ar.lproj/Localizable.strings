@@ -500,6 +500,14 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.reorder.go_to_cart"          = "الذهاب للسلة";
+"orders.reorder.continue_shopping"   = "متابعة التصفح";
+"orders.reorder.success.title"       = "تمت الإضافة بنجاح";
+"orders.reorder.partial.title"       = "تمت إضافة بعض المنتجات";
+"orders.reorder.failed.title"        = "تعذرت الإضافة";
+"orders.reorder.success.message"     = "تمت إضافة جميع المنتجات إلى السلة بنجاح.";
+"orders.reorder.partial.message"     = "تمت إضافة %d من إجمالي %d منتجات إلى السلة.";
+"orders.reorder.failed.message"      = "حدث خطأ ولم نتمكن من إضافة المنتجات إلى السلة. يرجى المحاولة مرة أخرى.";
 
 "orders.filter.title"                 = "تصفية الطلبات";
 "orders.filter.reset"                 = "إعادة ضبط";
