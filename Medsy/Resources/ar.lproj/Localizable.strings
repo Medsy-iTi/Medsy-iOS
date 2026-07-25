@@ -558,6 +558,19 @@
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
 
 /* Offers */
+"order_complete.thank_you" = "شكرًا لك!";
+"order_complete.success_message" = "تمت الموافقة وتأكيد طلبك بنجاح. سنوافيك بالتحديثات قريبًا.";
+"order_complete.summary_title" = "تفاصيل الطلب المؤكد";
+"order_complete.pharmacy" = "الصيدلية";
+"order_complete.medicines_count" = "عدد الأدوية";
+"order_complete.medicines_count_value" = "%d أدوية";
+"order_complete.order_id" = "رقم الطلب";
+"order_complete.total" = "الإجمالي المؤكد";
+"order_complete.back_home" = "العودة للرئيسية";
+"common.egp" = "جنيه";
+"home.status.firstOffer.currency" = "جنيه";
+"home.status.firstOffer.medsUnit" = "دواء";
+
 "offers.list.title" = "العروض المتاحة";
 "offers.list.subtitleFormat" = "%d عروض متاحة لطلبك";
 "offers.list.badge.full" = "عرض كامل";

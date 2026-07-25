@@ -264,6 +264,9 @@ struct HomeSearchingStatusView: View {
 struct HomeFirstOfferStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var offerTotalPrice: Double = 0
+    var offerAvailableMedsCount: Int = 0
+    var offerTotalMedsCount: Int = 0
     var onCompareOffers: (() -> Void)? = nil
 
     var body: some View {
@@ -346,7 +349,7 @@ struct HomeFirstOfferStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.firstOffer.priceValue".localized)
+                    Text("\(Int(offerTotalPrice)) " + "home.status.firstOffer.currency".localized)
                         .font(AppColor.sans(15, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
@@ -360,7 +363,7 @@ struct HomeFirstOfferStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.firstOffer.medsCount".localized)
+                    Text("\(offerAvailableMedsCount) / \(offerTotalMedsCount) " + "home.status.firstOffer.medsUnit".localized)
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.green)
                 }

@@ -12,8 +12,8 @@ import Observation
 @Observable
 final class HomeViewModel {
     var selectedStatus: HomeSearchStatus = .home
-    private(set) var offerResult: OfferResult?
-    private(set) var activeRequestId: Int?
+    private(set) var offerResults: [Int: OfferResult] = [:]
+    private(set) var activeRequestIds: [Int] = []
 
     private let getOfferResultUseCase: GetOfferResultUseCaseProtocol
     private let statusStore: UserDefaultsStatusStoreProtocol
@@ -27,16 +27,42 @@ final class HomeViewModel {
         self.statusStore = statusStore
     }
 
+    // MARK: - Computed properties for UI
+
+    var firstAvailableOfferResult: OfferResult? {
+        offerResults.values.first(where: { $0.isAvailable })
+    }
+
+    var firstAvailableRequestId: Int? {
+        offerResults.first(where: { $0.value.isAvailable })?.key
+    }
+
+    var offerTotalPrice: Double {
+        firstAvailableOfferResult?.totalPrice ?? 0
+    }
+
+    var offerAvailableMedsCount: Int {
+        firstAvailableOfferResult?.items.filter(\.isAvailable).count ?? 0
+    }
+
+    var offerTotalMedsCount: Int {
+        firstAvailableOfferResult?.items.count ?? 0
+    }
+
+    // MARK: - Polling
+
     func checkAndStartPolling() {
-        guard let pendingId = statusStore.pendingRequestId else {
-            if offerResult == nil {
-                selectedStatus = .home
-            }
+        let pendingIds = statusStore.pendingRequestIds
+        guard !pendingIds.isEmpty else {
+            activeRequestIds = []
+            offerResults = [:]
+            selectedStatus = .home
+            stopPolling()
             return
         }
 
-        activeRequestId = pendingId
-        if offerResult == nil {
+        activeRequestIds = pendingIds
+        if offerResults.values.first(where: { $0.isAvailable }) == nil {
             selectedStatus = .searching
         }
 
@@ -44,32 +70,40 @@ final class HomeViewModel {
 
         pollingTask = Task {
             while !Task.isCancelled {
-                guard let reqId = statusStore.pendingRequestId else {
-                    break
-                }
+                let ids = statusStore.pendingRequestIds
+                guard !ids.isEmpty else { break }
 
-                do {
-                    let result = try await getOfferResultUseCase.execute(requestId: reqId)
-                    if !Task.isCancelled {
-                        if result.isAvailable {
-                            self.offerResult = result
-                            self.selectedStatus = .firstOffer
-                            break
-                        } else {
-                            if self.offerResult == nil {
-                                self.selectedStatus = .searching
+                await withTaskGroup(of: (Int, OfferResult?).self) { group in
+                    for reqId in ids {
+                        group.addTask {
+                            do {
+                                let result = try await self.getOfferResultUseCase.execute(requestId: reqId)
+                                return (reqId, result)
+                            } catch {
+                                return (reqId, nil)
                             }
                         }
                     }
-                } catch {
-                    // Do not show error UI for temporary failures, keep polling searching state
-                    if self.offerResult == nil {
+
+                    for await (reqId, result) in group {
+                        if Task.isCancelled { return }
+                        if let result, result.isAvailable {
+                            self.offerResults[reqId] = result
+                        }
+                    }
+                }
+
+                if !Task.isCancelled {
+                    if offerResults.values.contains(where: { $0.isAvailable }) {
+                        self.selectedStatus = .firstOffer
+                        break
+                    } else {
                         self.selectedStatus = .searching
                     }
                 }
 
                 do {
-                    try await Task.sleep(for: .seconds(60))
+                    try await Task.sleep(for: .seconds(30))
                 } catch {
                     break
                 }
@@ -86,8 +120,18 @@ final class HomeViewModel {
     func clearActiveRequest() {
         stopPolling()
         statusStore.clearPendingRequestId()
-        activeRequestId = nil
-        offerResult = nil
+        activeRequestIds = []
+        offerResults = [:]
         selectedStatus = .home
+    }
+
+    func clearCompletedRequest(requestId: Int) {
+        statusStore.clearPendingRequestId(requestId)
+        offerResults.removeValue(forKey: requestId)
+        activeRequestIds.removeAll { $0 == requestId }
+        if activeRequestIds.isEmpty {
+            selectedStatus = .home
+            stopPolling()
+        }
     }
 }

@@ -35,8 +35,11 @@ struct HomeView: View {
                 case .firstOffer:
                     HomeFirstOfferStatusView(
                         selectedStatus: $vm.selectedStatus,
+                        offerTotalPrice: viewModel.offerTotalPrice,
+                        offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
+                        offerTotalMedsCount: viewModel.offerTotalMedsCount,
                         onCompareOffers: {
-                            if let result = viewModel.offerResult, let reqId = viewModel.activeRequestId {
+                            if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)
                             } else {
                                 onCompareOffers?()
@@ -47,7 +50,7 @@ struct HomeView: View {
                     HomeMultipleOffersStatusView(
                         selectedStatus: $vm.selectedStatus,
                         onCompareOffers: {
-                            if let result = viewModel.offerResult, let reqId = viewModel.activeRequestId {
+                            if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)
                             } else {
                                 onCompareOffers?()

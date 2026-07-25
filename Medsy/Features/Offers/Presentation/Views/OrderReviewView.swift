@@ -9,13 +9,13 @@ struct OrderReviewView: View {
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: OrderReviewViewModel
     let onBack: () -> Void
-    var onConfirmOrder: (() -> Void)? = nil
+    var onConfirmOrder: ((ConfirmOfferResult) -> Void)? = nil
 
     init(
         offerDetail: OfferDetailPresentationModel? = nil,
         requestId: Int? = nil,
         onBack: @escaping () -> Void,
-        onConfirmOrder: (() -> Void)? = nil
+        onConfirmOrder: ((ConfirmOfferResult) -> Void)? = nil
     ) {
         _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail, requestId: requestId))
         self.onBack = onBack
@@ -61,8 +61,8 @@ struct OrderReviewView: View {
                 Button {
                     Task {
                         let success = await viewModel.confirmOrder()
-                        if success {
-                            onConfirmOrder?()
+                        if success, let result = viewModel.confirmOfferResult {
+                            onConfirmOrder?(result)
                         }
                     }
                 } label: {

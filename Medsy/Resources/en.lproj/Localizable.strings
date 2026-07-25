@@ -561,6 +561,19 @@
 "NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
 
 /* Offers */
+"order_complete.thank_you" = "Thank you!";
+"order_complete.success_message" = "Your order has been confirmed successfully. We will update you soon.";
+"order_complete.summary_title" = "Confirmed Order Details";
+"order_complete.pharmacy" = "Pharmacy";
+"order_complete.medicines_count" = "Medicines Count";
+"order_complete.medicines_count_value" = "%d medicines";
+"order_complete.order_id" = "Order ID";
+"order_complete.total" = "Confirmed Total";
+"order_complete.back_home" = "Back to Home";
+"common.egp" = "EGP";
+"home.status.firstOffer.currency" = "EGP";
+"home.status.firstOffer.medsUnit" = "meds";
+
 "offers.list.title" = "Available Offers";
 "offers.list.subtitleFormat" = "%d offers available for your order";
 "offers.list.badge.full" = "Full Offer";
