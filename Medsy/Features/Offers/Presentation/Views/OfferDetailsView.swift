@@ -14,11 +14,19 @@ struct OfferDetailsView: View {
 
     init(
         offer: OfferPresentationModel? = nil,
+        offerResult: OfferResult? = nil,
+        requestId: Int? = nil,
         onBack: @escaping () -> Void,
         onPrescriptionTap: (() -> Void)? = nil,
         onSelectOffer: (() -> Void)? = nil
     ) {
-        _viewModel = State(initialValue: OfferDetailsViewModel(offer: offer))
+        _viewModel = State(
+            initialValue: OfferDetailsViewModel(
+                offer: offer,
+                offerResult: offerResult,
+                requestId: requestId
+            )
+        )
         self.onBack = onBack
         self.onPrescriptionTap = onPrescriptionTap
         self.onSelectOffer = onSelectOffer
@@ -34,6 +42,13 @@ struct OfferDetailsView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
+                    if let errorMessage = viewModel.confirmErrorMessage {
+                        Text(errorMessage)
+                            .font(AppColor.sans(12))
+                            .foregroundStyle(AppColor.danger)
+                            .padding(.horizontal, 16)
+                    }
+
                     OfferMedicinesCardView(medicines: viewModel.offerDetail.medicines)
 
                     PharmacistCommentCardView(comment: viewModel.offerDetail.pharmacistComment)
@@ -49,19 +64,31 @@ struct OfferDetailsView: View {
 
             VStack(spacing: 0) {
                 Button {
-                    viewModel.selectOffer()
-                    onSelectOffer?()
+                    Task {
+                        let success = await viewModel.selectOffer()
+                        if success {
+                            onSelectOffer?()
+                        }
+                    }
                 } label: {
-                    Text("offers.details.selectOffer".localized)
-                        .font(AppColor.sans(16, .bold))
-                        .foregroundStyle(AppColor.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(AppColor.green)
-                        )
+                    HStack {
+                        if viewModel.isConfirming {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("offers.details.selectOffer".localized)
+                                .font(AppColor.sans(16, .bold))
+                                .foregroundStyle(AppColor.white)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColor.green)
+                    )
                 }
+                .disabled(viewModel.isConfirming)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
