@@ -67,7 +67,7 @@ enum PharmacyMedicineRequestMapper {
                 quantity: item.quantity,
                 price: item.unitPrice,
                 imageName: nil,
-                imageUrl: item.imageUrl,
+                imageUrl: makeFullImageUrl(item.imageUrl),
                 isAvailable: true,
                 selectedOfferProductId: item.productId
             )
@@ -84,8 +84,16 @@ enum PharmacyMedicineRequestMapper {
             items: presentationItems,
             deliveryFee: 15.0,
             notes: "",
-            prescriptionImageUrl: entity.prescriptionUrl
+            prescriptionImageUrl: makeFullImageUrl(entity.prescriptionUrl)
         )
+    }
+
+    private static func makeFullImageUrl(_ urlString: String?) -> String? {
+        guard let urlString = urlString, !urlString.isEmpty else { return nil }
+        if urlString.hasPrefix("http") { return urlString }
+        let rootUrl = PharmacyConfiguration.apiBaseURL.replacingOccurrences(of: "api/v1/", with: "")
+        let path = urlString.hasPrefix("/") ? String(urlString.dropFirst()) : urlString
+        return rootUrl + path
     }
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {

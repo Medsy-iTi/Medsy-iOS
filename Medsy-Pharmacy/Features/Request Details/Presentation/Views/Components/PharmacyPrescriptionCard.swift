@@ -23,15 +23,27 @@ struct PharmacyPrescriptionCard: View {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                     .fill(PharmacyColor.mutedSurface)
                     .frame(height: 150)
+                
+                if let imageUrlStr = imageUrl, let url = URL(string: imageUrlStr) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 150)
+                            .clipped()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "cross.case.circle.fill")
+                            .font(.system(size: 44))
+                            .foregroundStyle(PharmacyColor.primary.opacity(0.8))
 
-                VStack(spacing: 8) {
-                    Image(systemName: "cross.case.circle.fill")
-                        .font(.system(size: 44))
-                        .foregroundStyle(PharmacyColor.primary.opacity(0.8))
-
-                    Text("pharmacy.request.prescription_handwritten".localized)
-                        .font(PharmacyColor.sans(14, .bold))
-                        .foregroundStyle(PharmacyColor.textPrimary)
+                        Text("pharmacy.request.prescription_handwritten".localized)
+                            .font(PharmacyColor.sans(14, .bold))
+                            .foregroundStyle(PharmacyColor.textPrimary)
+                    }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
