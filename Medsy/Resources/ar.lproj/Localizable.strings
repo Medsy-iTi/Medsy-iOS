@@ -570,6 +570,10 @@
 "common.egp" = "جنيه";
 "home.status.firstOffer.currency" = "جنيه";
 "home.status.firstOffer.medsUnit" = "دواء";
+"home.deleteOffer.title" = "حذف العرض";
+"home.deleteOffer.message" = "هل أنت متأكد من حذف العرض؟";
+"home.deleteOffer.confirm" = "حذف";
+"home.deleteOffer.cancel" = "إلغاء";
 
 "offers.list.title" = "العروض المتاحة";
 "offers.list.subtitleFormat" = "%d عروض متاحة لطلبك";

@@ -573,6 +573,10 @@
 "common.egp" = "EGP";
 "home.status.firstOffer.currency" = "EGP";
 "home.status.firstOffer.medsUnit" = "meds";
+"home.deleteOffer.title" = "Delete Offer";
+"home.deleteOffer.message" = "Are you sure you want to delete the offer?";
+"home.deleteOffer.confirm" = "Delete";
+"home.deleteOffer.cancel" = "Cancel";
 
 "offers.list.title" = "Available Offers";
 "offers.list.subtitleFormat" = "%d offers available for your order";
