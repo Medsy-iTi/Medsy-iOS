@@ -129,10 +129,9 @@ struct HomeCoordinatorView: View {
                     )
                 }
             }
+            .navigationDestination(for: ProductDetailDestination.self) { destination in
+                ProductDetailView(productId: destination.productId)
             }
-                .navigationDestination(for: ProductDetailDestination.self) { destination in
-                    ProductDetailView(productId: destination.productId)
-                }
         }
         .onAppear {
             openRequestedRoute()
@@ -151,4 +150,5 @@ struct HomeCoordinatorView: View {
         coordinator.open(requestedRoute)
         self.requestedRoute = nil
     }
-}
+
+
