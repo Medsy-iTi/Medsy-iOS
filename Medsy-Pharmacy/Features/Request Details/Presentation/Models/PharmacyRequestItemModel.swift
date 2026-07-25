@@ -90,7 +90,7 @@ struct PharmacyRequestDetailsModel {
     }
     
     var subtotal: Double {
-        items.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
+        items.filter { $0.isAvailable }.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
     }
     
     var total: Double {
