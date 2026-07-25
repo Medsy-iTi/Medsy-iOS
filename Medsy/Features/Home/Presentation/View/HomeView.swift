@@ -67,7 +67,7 @@ struct HomeView: View {
             }
         }
         .background(AppColor.bg)
-        .task {
+        .onAppear {
             viewModel.checkAndStartPolling()
         }
         .onDisappear {

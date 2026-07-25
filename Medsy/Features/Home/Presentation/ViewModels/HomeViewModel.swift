@@ -62,6 +62,13 @@ final class HomeViewModel {
         }
 
         activeRequestIds = pendingIds
+        // Clean up any old offer results that are no longer pending
+        for reqId in offerResults.keys {
+            if !pendingIds.contains(reqId) {
+                offerResults.removeValue(forKey: reqId)
+            }
+        }
+
         if offerResults.values.first(where: { $0.isAvailable }) == nil {
             selectedStatus = .searching
         }
