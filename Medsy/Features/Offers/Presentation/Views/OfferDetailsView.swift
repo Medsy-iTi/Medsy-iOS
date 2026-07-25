@@ -60,9 +60,37 @@ struct OfferDetailsView: View {
 
                     PharmacistCommentCardView(comment: viewModel.offerDetail.pharmacistComment)
 
-                    PrescriptionButtonView(onTap: {
-                        onPrescriptionTap?()
-                    })
+                    if let prescriptionUrl = viewModel.offerDetail.prescriptionUrl,
+                       let url = URL(string: prescriptionUrl) {
+                        VStack(alignment: .trailing, spacing: 12) {
+                            Text("الروشتة")
+                                .font(AppColor.sans(16, .bold))
+                                .foregroundStyle(AppColor.textPrim)
+                                .padding(.horizontal, 4)
+
+                            VStack {
+                                AsyncImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .cornerRadius(12)
+                                } placeholder: {
+                                    ProgressView()
+                                        .padding(.vertical, 20)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(AppColor.card)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppColor.border, lineWidth: 1)
+                                    )
+                            )
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
