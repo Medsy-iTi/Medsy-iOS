@@ -98,6 +98,10 @@ struct ProfileScreen: View {
         ]
     }
 
+    private var isProfileLoading: Bool {
+        state == .idle || state == .loading
+    }
+
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -134,35 +138,40 @@ struct ProfileScreen: View {
                 .foregroundStyle(ProfileStyle.primaryText)
                 .frame(maxWidth: .infinity)
 
-            HStack(spacing: 16) {
-                ProfileAvatarView(size: 64, showsBadge: true)
+            if isProfileLoading {
+                ProfileHeaderLoadingSkeleton()
+                    .padding(.horizontal, 20)
+            } else {
+                HStack(spacing: 16) {
+                    ProfileAvatarView(size: 64, showsBadge: true)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(patientName)
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(ProfileStyle.primaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(patientName)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(ProfileStyle.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
 
-                    Label(phoneNumber, systemImage: "checkmark.circle.fill")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(ProfileStyle.secondaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
+                        Label(phoneNumber, systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(ProfileStyle.secondaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
+                    }
+
+                    Spacer(minLength: 0)
                 }
-
-                Spacer(minLength: 0)
+                .padding(.horizontal, 21)
+                .padding(.vertical, 17)
+                .background(ProfileStyle.card)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(ProfileStyle.border, lineWidth: 1)
+                }
+                .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 21)
-            .padding(.vertical, 17)
-            .background(ProfileStyle.card)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(ProfileStyle.border, lineWidth: 1)
-            }
-            .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
-            .padding(.horizontal, 20)
         }
         .padding(.top, 16)
         .padding(.bottom, 20)
@@ -178,10 +187,8 @@ struct ProfileScreen: View {
     @ViewBuilder
     private var stateContent: some View {
         switch state {
-        case .idle:
-            EmptyView()
-        case .loading:
-            ProfileLoadingCard()
+        case .idle, .loading:
+            ProfileDetailsLoadingSkeleton()
         case .loaded:
             ProfileDetailsCard(items: profileDetails)
         case .failed(let message):
@@ -321,28 +328,6 @@ private struct ProfileDetailRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-    }
-}
-
-private struct ProfileLoadingCard: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            ProgressView()
-                .tint(ProfileStyle.green)
-
-            Text("profile.loading".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(ProfileStyle.secondaryText)
-
-            Spacer(minLength: 0)
-        }
-        .padding(16)
-        .background(ProfileStyle.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(ProfileStyle.border, lineWidth: 1)
-        }
     }
 }
 
