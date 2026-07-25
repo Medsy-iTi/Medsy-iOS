@@ -88,7 +88,7 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     private func logResponse(_ data: Data?, statusCode: Int?, endpoint: ApiEndpoint) {
-        guard let data else { return }
+        guard endpoint.allowsResponseLogging, let data else { return }
         print("[Network] \(endpoint.method.rawValue) \(endpoint.path) [Status: \(statusCode ?? 0)]")
         print(JsonHelper.prettyJSON(data))
     }

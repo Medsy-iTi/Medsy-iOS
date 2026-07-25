@@ -36,6 +36,7 @@ protocol ApiEndpoint {
     var body: Data? { get }
     var multipartFormParts: [MultipartFormPart]? { get }
     var requiresAuthentication: Bool { get }
+    var allowsResponseLogging: Bool { get }
 }
 
 extension ApiEndpoint {
@@ -57,5 +58,9 @@ extension ApiEndpoint {
 
     var multipartFormParts: [MultipartFormPart]? {
         nil
+    }
+
+    var allowsResponseLogging: Bool {
+        true
     }
 }
