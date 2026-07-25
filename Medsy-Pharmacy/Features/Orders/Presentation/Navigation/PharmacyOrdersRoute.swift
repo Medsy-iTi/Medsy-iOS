@@ -8,5 +8,5 @@
 import Foundation
 
 enum PharmacyOrdersRoute: Hashable {
-    case details(id: Int)
+    case details(order: PharmacyOrder)
 }
