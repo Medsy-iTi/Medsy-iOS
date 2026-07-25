@@ -7,7 +7,11 @@ import SwiftUI
 
 struct OrderReviewDeliveryDetailsCardView: View {
     @Environment(LanguageManager.self) private var languageManager
-    let fee: Int
+    let fee: Double
+
+    private var formattedFee: String {
+        fee.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(fee))" : String(format: "%.2f", fee)
+    }
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
@@ -17,7 +21,7 @@ struct OrderReviewDeliveryDetailsCardView: View {
                 .padding(.horizontal, 4)
 
             HStack(alignment: .center, spacing: 12) {
-                Text("\(fee) \("offers.list.currency".localized)")
+                Text("\(formattedFee) \("offers.list.currency".localized)")
                     .font(AppColor.sans(15, .bold))
                     .foregroundStyle(AppColor.textPrim)
 

@@ -7,14 +7,18 @@ import SwiftUI
 
 struct OrderReviewSummaryCardView: View {
     @Environment(LanguageManager.self) private var languageManager
-    let medicinesSubtotal: Int
-    let deliveryFee: Int
-    let totalPrice: Int
+    let medicinesSubtotal: Double
+    let deliveryFee: Double
+    let totalPrice: Double
+
+    private func formatAmount(_ amount: Double) -> String {
+        amount.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(amount))" : String(format: "%.2f", amount)
+    }
 
     var body: some View {
         VStack(spacing: 14) {
             HStack {
-                Text("\(medicinesSubtotal) \("offers.list.currency".localized)")
+                Text("\(formatAmount(medicinesSubtotal)) \("offers.list.currency".localized)")
                     .font(AppColor.sans(15, .bold))
                     .foregroundStyle(AppColor.textPrim)
 
@@ -26,7 +30,7 @@ struct OrderReviewSummaryCardView: View {
             }
 
             HStack {
-                Text("\(deliveryFee) \("offers.list.currency".localized)")
+                Text("\(formatAmount(deliveryFee)) \("offers.list.currency".localized)")
                     .font(AppColor.sans(15, .bold))
                     .foregroundStyle(AppColor.textPrim)
 
@@ -38,7 +42,7 @@ struct OrderReviewSummaryCardView: View {
             }
 
             HStack {
-                Text("\(totalPrice) \("offers.list.currency".localized)")
+                Text("\(formatAmount(totalPrice)) \("offers.list.currency".localized)")
                     .font(AppColor.sans(18, .bold))
                     .foregroundStyle(AppColor.green)
 
