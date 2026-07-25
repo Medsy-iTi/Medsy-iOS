@@ -47,7 +47,9 @@ struct PharmacyHomeView: View {
         }
         .background(PharmacyColor.bg)
         .fullScreenCover(item: $selectedOrder) { order in
-            PharmacyRequestDetailsView(requestModel: PharmacyRequestDetailsModel(homeOrder: order))
+            PharmacyRequestDetailsView(
+                viewModel: PharmacyRequestDetailsViewModel(requestId: Int(order.id) ?? 1)
+            )
         }
     }
 }
