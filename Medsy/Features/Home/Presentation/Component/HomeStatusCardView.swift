@@ -76,6 +76,23 @@ struct HomeStatusSelectorView: View {
 struct HomeSearchingStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    @State private var secondsElapsed: Int = 0
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private var currentStage: Int {
+        if secondsElapsed < 20 {
+            return 1
+        } else if secondsElapsed < 45 {
+            return 2
+        } else {
+            return 3
+        }
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -119,7 +136,12 @@ struct HomeSearchingStatusView: View {
             }
             
             HStack {
-                Text("00:41")
+                // OLD:
+                // Text("00:41")
+                //     .font(AppColor.sans(16, .bold))
+                //     .foregroundStyle(AppColor.green)
+
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
                 
@@ -147,33 +169,33 @@ struct HomeSearchingStatusView: View {
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage3".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 3 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage3Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 3 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                     
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage2".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.green)
+                            .foregroundStyle(currentStage >= 2 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage2Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.green)
+                            .foregroundStyle(currentStage >= 2 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                     
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage1".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 1 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage1Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 1 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -189,14 +211,14 @@ struct HomeSearchingStatusView: View {
                     
                     HStack(spacing: 0) {
                         Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 3)
-                            .background(Circle().fill(AppColor.card))
+                            .stroke(currentStage >= 3 ? AppColor.green : Color.gray.opacity(0.3), lineWidth: 3)
+                            .background(Circle().fill(currentStage >= 3 ? AppColor.green.opacity(0.2) : AppColor.card))
                             .frame(width: 14, height: 14)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Circle()
-                            .stroke(AppColor.green, lineWidth: 3)
-                            .background(Circle().fill(AppColor.green.opacity(0.2)))
+                            .stroke(currentStage >= 2 ? AppColor.green : Color.gray.opacity(0.3), lineWidth: 3)
+                            .background(Circle().fill(currentStage >= 2 ? AppColor.green.opacity(0.2) : AppColor.card))
                             .frame(width: 14, height: 14)
                             .frame(maxWidth: .infinity, alignment: .center)
                         
@@ -229,6 +251,13 @@ struct HomeSearchingStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                secondsElapsed += 1
+            }
+        }
     }
 }
 
