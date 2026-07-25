@@ -94,6 +94,7 @@ final class ProfileViewModel {
     var onNavigate: ((ProfileRoute) -> Void)?
     var onPresentSheet: ((ProfileSheet) -> Void)?
     var onLoggedOut: (() -> Void)?
+    var onPharmacistRemoved: (() -> Void)?
 
     // MARK: - Init
 
@@ -320,6 +321,7 @@ final class ProfileViewModel {
             isRemovingPharmacist = false
             selectedPharmacist = nil
             await loadProfile(showsSpinner: false)
+            onPharmacistRemoved?()
             return true
         } catch {
             isRemovingPharmacist = false

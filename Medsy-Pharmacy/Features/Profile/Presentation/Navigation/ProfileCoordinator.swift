@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 @MainActor
 final class ProfileCoordinator: Coordinator {
-	var path = NavigationPath()
+	var path: [ProfileRoute] = []
 	var activeSheet: ProfileSheet?
 
 	let viewModel: ProfileViewModel
@@ -47,6 +47,17 @@ final class ProfileCoordinator: Coordinator {
 		}
 		viewModel.onLoggedOut = { [weak self] in
 			self?.onLoggedOut?()
+		}
+		viewModel.onPharmacistRemoved = { [weak self] in
+			guard let self else { return }
+			if let last = path.last {
+				switch last {
+					case .pharmacistProfile, .editPharmacist:
+						pop()
+					default:
+						break
+				}
+			}
 		}
 	}
 
