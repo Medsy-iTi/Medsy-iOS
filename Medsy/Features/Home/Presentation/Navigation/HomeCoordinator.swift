@@ -13,6 +13,7 @@ enum HomeRoute: Hashable {
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
+    case offerResult(OfferResult, Int)
     case orderReview(OfferDetailPresentationModel)
     case medicineAnalyze
 }
@@ -36,6 +37,10 @@ final class HomeCoordinator {
 
     func openOfferDetails(_ offer: OfferPresentationModel) {
         path.append(HomeRoute.offerDetails(offer))
+    }
+
+    func openOfferResult(_ result: OfferResult, requestId: Int) {
+        path.append(HomeRoute.offerResult(result, requestId))
     }
 
     func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
@@ -81,7 +86,8 @@ struct HomeCoordinatorView: View {
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
-                onCompareOffers: coordinator.openOffersList
+                onCompareOffers: coordinator.openOffersList,
+                onOpenOfferResult: coordinator.openOfferResult
             )
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
@@ -111,6 +117,17 @@ struct HomeCoordinatorView: View {
                             coordinator.openOrderReview(
                                 OfferDetailsViewModel(offer: offer).offerDetail
                             )
+                        }
+                    )
+                case let .offerResult(result, requestId):
+                    OfferDetailsView(
+                        offerResult: result,
+                        requestId: requestId,
+                        onBack: coordinator.goBack,
+                        onPrescriptionTap: coordinator.showPrescription,
+                        onSelectOffer: {
+                            let vm = OfferDetailsViewModel(offerResult: result, requestId: requestId)
+                            coordinator.openOrderReview(vm.offerDetail)
                         }
                     )
                 case let .orderReview(offerDetail):

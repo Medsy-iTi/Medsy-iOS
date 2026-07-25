@@ -299,6 +299,7 @@ struct HomeFirstOfferStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
+                    onCompareOffers?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
@@ -451,6 +452,7 @@ struct HomeMultipleOffersStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
+                    onCompareOffers?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
