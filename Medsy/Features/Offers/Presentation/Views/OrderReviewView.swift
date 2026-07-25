@@ -44,8 +44,6 @@ struct OrderReviewView: View {
 
                     OrderReviewAddressCardView(address: viewModel.orderReview.deliveryAddress)
 
-                    OrderReviewDeliveryDetailsCardView(fee: viewModel.orderReview.deliveryFee)
-
                     OrderReviewSummaryCardView(
                         medicinesSubtotal: viewModel.orderReview.medicinesSubtotal,
                         deliveryFee: viewModel.orderReview.deliveryFee,
