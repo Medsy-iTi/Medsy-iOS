@@ -12,19 +12,22 @@ final class CompleteRequestFactory {
     private let searchAddressUseCase: SearchAddressUseCaseProtocol
     private let reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol
     private let locationProvider: CompleteRequestLocationProviderProtocol
+    private let statusStore: UserDefaultsStatusStoreProtocol?
 
     init(
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
         searchAddressUseCase: SearchAddressUseCaseProtocol,
         reverseGeocodeAddressUseCase: ReverseGeocodeAddressUseCaseProtocol,
-        locationProvider: CompleteRequestLocationProviderProtocol
+        locationProvider: CompleteRequestLocationProviderProtocol,
+        statusStore: UserDefaultsStatusStoreProtocol? = nil
     ) {
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
         self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
         self.searchAddressUseCase = searchAddressUseCase
         self.reverseGeocodeAddressUseCase = reverseGeocodeAddressUseCase
         self.locationProvider = locationProvider
+        self.statusStore = statusStore
     }
 
     func makeViewModel(
@@ -35,6 +38,7 @@ final class CompleteRequestFactory {
             draft: draft,
             getCustomerProfileUseCase: getCustomerProfileUseCase,
             submitCompleteRequestUseCase: submitCompleteRequestUseCase,
+            statusStore: statusStore,
             onRequestCreated: onSubmit
         )
     }
