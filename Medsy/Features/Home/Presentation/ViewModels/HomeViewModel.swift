@@ -53,12 +53,14 @@ final class HomeViewModel {
 
     func checkAndStartPolling() {
         var pendingIds = statusStore.pendingRequestIds
-        // Check for requests older than 5 minutes (300 seconds) and expire them immediately
+        // Check for requests older than 5 minutes (300 seconds) and expire them immediately (Disabled as per user request)
+        /*
         for reqId in pendingIds {
             if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
                 statusStore.clearPendingRequestId(reqId)
             }
         }
+        */
         
         pendingIds = statusStore.pendingRequestIds
         guard !pendingIds.isEmpty else {
@@ -86,7 +88,8 @@ final class HomeViewModel {
         pollingTask = Task {
             while !Task.isCancelled {
                 var ids = statusStore.pendingRequestIds
-                // Clean up expired requests in background loop
+                // Clean up expired requests in background loop (Disabled as per user request)
+                /*
                 var expiredIds: [Int] = []
                 for reqId in ids {
                     if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
@@ -98,6 +101,7 @@ final class HomeViewModel {
                     offerResults.removeValue(forKey: reqId)
                     activeRequestIds.removeAll { $0 == reqId }
                 }
+                */
                 
                 ids = statusStore.pendingRequestIds
                 guard !ids.isEmpty else {
