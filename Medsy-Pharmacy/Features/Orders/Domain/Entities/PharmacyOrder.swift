@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct PharmacyOrder: Identifiable, Equatable, Sendable {
+struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
     let id: Int
     let userId: Int
     let pharmacyId: Int
@@ -17,24 +17,37 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable {
     let status: PharmacyOrderAPIStatus
     let date: Date
     let items: [PharmacyOrderLineItem]
+    let deliveryAddress: String
+    let prescriptionUrl: String?
 
     static func == (lhs: PharmacyOrder, rhs: PharmacyOrder) -> Bool {
         lhs.id == rhs.id
-            && lhs.status == rhs.status
-            && lhs.totalPrice == rhs.totalPrice
-            && lhs.items == rhs.items
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
-struct PharmacyOrderLineItem: Identifiable, Equatable, Sendable {
+struct PharmacyOrderLineItem: Identifiable, Equatable, Sendable, Hashable {
     let id: Int
     let productId: Int
     let quantity: Int
     let unitPrice: Double
+    let productName: String?
+    let imageUrl: String?
+
+    static func == (lhs: PharmacyOrderLineItem, rhs: PharmacyOrderLineItem) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 
-enum PharmacyOrderAPIStatus: Equatable, Sendable {
+enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
     case pending
     case accepted
     case preparing
