@@ -31,7 +31,10 @@ struct HomeView: View {
                         onPrescription: onPrescription
                     )
                 case .searching:
-                    HomeSearchingStatusView(selectedStatus: $vm.selectedStatus)
+                    HomeSearchingStatusView(
+                        selectedStatus: $vm.selectedStatus,
+                        requestId: viewModel.activeRequestIds.first ?? 0
+                    )
                 case .firstOffer:
                     HomeFirstOfferStatusView(
                         selectedStatus: $vm.selectedStatus,
@@ -55,6 +58,7 @@ struct HomeView: View {
                 case .multipleOffers:
                     HomeMultipleOffersStatusView(
                         selectedStatus: $vm.selectedStatus,
+                        requestId: viewModel.firstAvailableRequestId ?? 0,
                         onCompareOffers: {
                             if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)

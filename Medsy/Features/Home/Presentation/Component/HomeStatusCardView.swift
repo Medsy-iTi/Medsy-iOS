@@ -76,6 +76,7 @@ struct HomeStatusSelectorView: View {
 struct HomeSearchingStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var requestId: Int = 0
     @State private var secondsElapsed: Int = 0
 
     private var formattedTime: String {
@@ -136,11 +137,6 @@ struct HomeSearchingStatusView: View {
             }
             
             HStack {
-                // OLD:
-                // Text("00:41")
-                //     .font(AppColor.sans(16, .bold))
-                //     .foregroundStyle(AppColor.green)
-
                 Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
@@ -252,11 +248,21 @@ struct HomeSearchingStatusView: View {
         )
         .padding(.horizontal)
         .task {
+            updateTime()
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { break }
-                secondsElapsed += 1
+                updateTime()
             }
+        }
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        } else {
+            secondsElapsed += 1
         }
     }
 }
@@ -453,7 +459,15 @@ struct HomeFirstOfferStatusView: View {
 struct HomeMultipleOffersStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var requestId: Int = 0
     var onCompareOffers: (() -> Void)? = nil
+    @State private var secondsElapsed: Int = 0
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -492,7 +506,7 @@ struct HomeMultipleOffersStatusView: View {
             }
             
             HStack {
-                Text("00:00")
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
                 
@@ -613,6 +627,23 @@ struct HomeMultipleOffersStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            updateTime()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                updateTime()
+            }
+        }
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        } else {
+            secondsElapsed += 1
+        }
     }
 }
 
