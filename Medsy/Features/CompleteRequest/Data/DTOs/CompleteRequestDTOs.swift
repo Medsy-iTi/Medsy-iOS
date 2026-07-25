@@ -9,15 +9,32 @@ import Foundation
 
 typealias SubmitCompleteRequestResponseDTO = APIResponseDTO<CompleteRequestResponseDTO>
 
+// OLD:
+// struct CompleteRequestDTO: Encodable, Equatable {
+//     let deliveryLatitude: Double
+//     let deliveryLongitude: Double
+//     let deliveryAddress: String
+// 
+//     init(input: SubmitCompleteRequestInput) {
+//         deliveryLatitude = input.deliveryLatitude
+//         deliveryLongitude = input.deliveryLongitude
+//         deliveryAddress = input.deliveryAddress
+//     }
+// }
+
 struct CompleteRequestDTO: Encodable, Equatable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let deliveryAddress: String
+    let notes: String
+    let paymentMethod: String
 
     init(input: SubmitCompleteRequestInput) {
         deliveryLatitude = input.deliveryLatitude
         deliveryLongitude = input.deliveryLongitude
         deliveryAddress = input.deliveryAddress
+        notes = input.notes
+        paymentMethod = input.paymentMethod
     }
 }
 
