@@ -327,3 +327,24 @@
 "profile.on_duty.title" = "حالة الدوام";
 "profile.on_duty.on" = "في الخدمة";
 "profile.on_duty.off" = "خارج الخدمة";
+
+/* Request Details */
+"pharmacy.request.details.title" = "تفاصيل الطلب";
+"pharmacy.request.min_ago" = "منذ %d دقيقة";
+"pharmacy.request.product_label" = "منتج رقم %@";
+"pharmacy.request.customer_id_label" = "عميل رقم %@";
+"pharmacy.request.loading" = "جاري التحميل...";
+"pharmacy.request.no_data" = "لا توجد بيانات للطلب";
+"pharmacy.request.preview_prescription" = "معاينة الروشتة";
+"pharmacy.request.requested_medicines" = "الأدوية المطلوبة";
+"pharmacy.request.currency_unit" = "جنيه";
+"pharmacy.request.reject_order_btn" = "رفض الطلب";
+"pharmacy.request.contact_customer_btn" = "تواصل مع العميل";
+"pharmacy.request.customer_prescription" = "روشتة العميل";
+"pharmacy.request.prescription_handwritten" = "روشتة مكتوبة بخط اليد";
+"pharmacy.request.notes_for_customer_header" = "ملاحظات للعميل";
+"pharmacy.request.notes_for_customer_placeholder" = "أضف ملاحظاتك هنا للعميل...";
+"pharmacy.request.customer_notes_header" = "ملاحظات العميل";
+"pharmacy.request.no_customer_notes" = "لا توجد ملاحظات من العميل";
+"pharmacy.request.order_total_header" = "إجمالي الطلب";
+"pharmacy.request.view_payment_summary" = "عرض ملخص الدفع";
