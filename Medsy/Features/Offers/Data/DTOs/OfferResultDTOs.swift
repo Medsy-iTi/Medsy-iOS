@@ -13,11 +13,13 @@ typealias ConfirmOfferResponseDTOContainer = APIResponseDTO<ConfirmOfferResponse
 struct OfferResultResponseDTO: Decodable, Equatable {
     let items: [OfferResultItemDTO]
     let totalPrice: Double
+    let prescriptionUrl: String?
 
     private enum CodingKeys: String, CodingKey {
         case items = "medicineRequestResultItemList"
         case fallbackItems = "items"
         case totalPrice
+        case prescriptionUrl
     }
 
     init(from decoder: Decoder) throws {
@@ -30,11 +32,13 @@ struct OfferResultResponseDTO: Decodable, Equatable {
             items = []
         }
         totalPrice = try container.decodeIfPresent(Double.self, forKey: .totalPrice) ?? 0.0
+        prescriptionUrl = try container.decodeIfPresent(String.self, forKey: .prescriptionUrl)
     }
 
-    init(items: [OfferResultItemDTO], totalPrice: Double) {
+    init(items: [OfferResultItemDTO], totalPrice: Double, prescriptionUrl: String? = nil) {
         self.items = items
         self.totalPrice = totalPrice
+        self.prescriptionUrl = prescriptionUrl
     }
 }
 
