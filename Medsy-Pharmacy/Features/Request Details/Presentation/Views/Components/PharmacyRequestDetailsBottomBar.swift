@@ -9,49 +9,53 @@ import SwiftUI
 
 struct PharmacyRequestDetailsBottomBar: View {
     var isSubmitting: Bool = false
-    var isOfferSubmitted: Bool = false
+    var buttonTitle: String
+    var isButtonDisabled: Bool
+    var showSecondaryButtons: Bool
     let onSendOffer: () -> Void
     let onReject: () -> Void
     let onContact: () -> Void
 
     var body: some View {
         VStack(spacing: PharmacySpacing.xs) {
-            HStack(spacing: PharmacySpacing.sm) {
-                Button(action: onReject) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .bold))
-                        Text("pharmacy.request.reject_order_btn".localized)
-                            .font(PharmacyColor.sans(14, .bold))
+            if showSecondaryButtons {
+                HStack(spacing: PharmacySpacing.sm) {
+                    Button(action: onReject) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 13, weight: .bold))
+                            Text("pharmacy.request.reject_order_btn".localized)
+                                .font(PharmacyColor.sans(14, .bold))
+                        }
+                        .foregroundStyle(PharmacyColor.danger)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+                                .stroke(PharmacyColor.danger.opacity(0.5), lineWidth: 1)
+                        )
                     }
-                    .foregroundStyle(PharmacyColor.danger)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                            .stroke(PharmacyColor.danger.opacity(0.5), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
+                    .buttonStyle(.plain)
 
-                Button(action: onContact) {
-                    HStack(spacing: 6) {
-                        Text("pharmacy.request.contact_customer_btn".localized)
-                            .font(PharmacyColor.sans(14, .bold))
-                        Image(systemName: "text.bubble")
-                            .font(.system(size: 14, weight: .medium))
+                    Button(action: onContact) {
+                        HStack(spacing: 6) {
+                            Text("pharmacy.request.contact_customer_btn".localized)
+                                .font(PharmacyColor.sans(14, .bold))
+                            Image(systemName: "text.bubble")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundStyle(PharmacyColor.primary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+                                .stroke(PharmacyColor.border, lineWidth: 1)
+                        )
                     }
-                    .foregroundStyle(PharmacyColor.primary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                            .stroke(PharmacyColor.border, lineWidth: 1)
-                    )
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
 
             Button(action: onSendOffer) {
@@ -60,19 +64,19 @@ struct PharmacyRequestDetailsBottomBar: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text(isOfferSubmitted ? "تم إرسال العرض" : "إرسال العرض")
+                        Text(buttonTitle)
                             .font(PharmacyColor.sans(16, .bold))
-                        Image(systemName: isOfferSubmitted ? "checkmark.circle.fill" : "paperplane.fill")
+                        Image(systemName: isButtonDisabled ? "checkmark.circle.fill" : "paperplane.fill")
                             .font(.system(size: 15, weight: .bold))
                     }
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(isOfferSubmitted ? PharmacyColor.textSecondary : PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+                .background(isButtonDisabled ? PharmacyColor.textSecondary : PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
             }
             .buttonStyle(.plain)
-            .disabled(isSubmitting || isOfferSubmitted)
+            .disabled(isButtonDisabled)
         }
         .padding(.horizontal, PharmacySpacing.md)
         .padding(.vertical, PharmacySpacing.sm)

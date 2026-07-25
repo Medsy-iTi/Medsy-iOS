@@ -21,6 +21,7 @@ extension PharmacyOrderListStatus {
         case .delivered: "pharmacy.orders.filter.delivered"
         case .completed: "pharmacy.orders.status.completed"
         case .expired: "pharmacy.orders.status.expired"
+        case .pendingApproval: "pharmacy.orders.status.pending"
         }
     }
 
@@ -31,6 +32,7 @@ extension PharmacyOrderListStatus {
         case .delivered: "pharmacy.orders.action.view"
         case .completed: "pharmacy.orders.action.view"
         case .expired: "pharmacy.orders.action.expired"
+        case .pendingApproval: "pharmacy.orders.status.pending"
         }
     }
 
@@ -41,6 +43,7 @@ extension PharmacyOrderListStatus {
         case .delivered: PharmacyColor.success
         case .completed: PharmacyColor.success
         case .expired: PharmacyColor.danger
+        case .pendingApproval: PharmacyColor.primary
         }
     }
 
@@ -48,7 +51,7 @@ extension PharmacyOrderListStatus {
         switch self {
         case .new: .filled
         case .preparing, .delivered, .completed: .soft
-        case .expired: .soft
+        case .expired, .pendingApproval: .soft
         }
     }
 }

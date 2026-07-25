@@ -351,5 +351,9 @@
 
 "pharmacy.orders.action.send_offer" = "إرسال العرض";
 "pharmacy.orders.action.expired" = "منتهي";
+"pharmacy.orders.action.view" = "عرض الطلب";
 "pharmacy.orders.status.completed" = "مكتمل";
 "pharmacy.orders.status.expired" = "منتهي الصلاحية";
+"pharmacy.orders.status.pending" = "بانتظار الموافقة";
+"pharmacy.orders.status.approved" = "تم الموافقة";
+"pharmacy.orders.status.offer_sent" = "تم إرسال العرض";

@@ -106,7 +106,9 @@ struct PharmacyRequestDetailsView: View {
             if viewModel?.showBottomBar == true {
                 PharmacyRequestDetailsBottomBar(
                     isSubmitting: viewModel?.isSubmitting ?? false,
-                    isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
+                    buttonTitle: viewModel?.bottomButtonTitle ?? "",
+                    isButtonDisabled: viewModel?.isBottomButtonDisabled ?? false,
+                    showSecondaryButtons: viewModel?.showSecondaryButtons ?? false,
                     onSendOffer: {
                         Task {
                             await viewModel?.sendOffer()

@@ -8,6 +8,24 @@
 
 import Foundation
 
+public final class PharmacySubmittedOffersStore: @unchecked Sendable {
+    public static let shared = PharmacySubmittedOffersStore()
+    private var submittedIds: Set<Int> = []
+    private let lock = NSLock()
+
+    public func contains(_ id: Int) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return submittedIds.contains(id)
+    }
+
+    public func insert(_ id: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        submittedIds.insert(id)
+    }
+}
+
 struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
     let id: Int
     let userId: Int

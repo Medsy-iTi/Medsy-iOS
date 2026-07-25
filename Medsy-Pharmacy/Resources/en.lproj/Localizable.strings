@@ -353,5 +353,9 @@
 
 "pharmacy.orders.action.send_offer" = "Send Offer";
 "pharmacy.orders.action.expired" = "Expired";
+"pharmacy.orders.action.view" = "View Details";
 "pharmacy.orders.status.completed" = "Completed";
 "pharmacy.orders.status.expired" = "Expired";
+"pharmacy.orders.status.pending" = "Pending Approval";
+"pharmacy.orders.status.approved" = "Approved";
+"pharmacy.orders.status.offer_sent" = "Offer Sent";

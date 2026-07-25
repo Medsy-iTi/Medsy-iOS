@@ -104,18 +104,19 @@ enum PharmacyOrderMapper {
             paymentMethod: .cash,
             amount: Int(order.totalPrice.rounded()),
             minutesAgo: Int(Date().timeIntervalSince(order.date) / 60),
-            status: mapStatus(order.status)
+            status: mapStatus(order.status, orderId: order.id)
         )
     }
 
-    private static func mapStatus(_ status: PharmacyOrderAPIStatus) -> PharmacyOrderListStatus {
+    private static func mapStatus(_ status: PharmacyOrderAPIStatus, orderId: Int) -> PharmacyOrderListStatus {
         switch status {
-        case .pending: .new
-        case .accepted, .preparing, .outForDelivery: .preparing
-        case .delivered: .delivered
-        case .completed: .completed
-        case .expired: .expired
-        case .cancelled, .unknown: .expired
+        case .pending:
+            return PharmacySubmittedOffersStore.shared.contains(orderId) ? .pendingApproval : .new
+        case .accepted, .preparing, .outForDelivery: return .preparing
+        case .delivered: return .delivered
+        case .completed: return .completed
+        case .expired: return .expired
+        case .cancelled, .unknown: return .expired
         }
     }
 

@@ -17,8 +17,6 @@ final class PharmacyRequestDetailsViewModel {
         case failed(String)
     }
 
-    private static var submittedOfferRequestIds = Set<Int>()
-
     private(set) var state: State = .idle
     var requestModel: PharmacyRequestDetailsModel?
     let requestId: Int
@@ -33,7 +31,28 @@ final class PharmacyRequestDetailsViewModel {
     private let sendOfferUseCase: SendOfferUseCaseProtocol?
 
     var showBottomBar: Bool {
-        orderStatus == .pending && !isOfferSubmitted
+        true
+    }
+
+    var bottomButtonTitle: String {
+        switch orderStatus {
+        case .pending:
+            return isOfferSubmitted ? "pharmacy.orders.status.pending".localized : "pharmacy.orders.action.send_offer".localized
+        case .accepted, .preparing, .outForDelivery, .delivered, .completed:
+            return "pharmacy.orders.status.completed".localized
+        case .cancelled, .expired:
+            return "pharmacy.orders.action.expired".localized
+        case .unknown(let val):
+            return val
+        }
+    }
+
+    var isBottomButtonDisabled: Bool {
+        return isOfferSubmitted || orderStatus != .pending || isSubmitting
+    }
+
+    var showSecondaryButtons: Bool {
+        return orderStatus == .pending && !isOfferSubmitted
     }
 
     init(
@@ -45,7 +64,7 @@ final class PharmacyRequestDetailsViewModel {
         self.orderStatus = .pending
         self.fetchRequestsUseCase = fetchRequestsUseCase
         self.sendOfferUseCase = sendOfferUseCase
-        if Self.submittedOfferRequestIds.contains(requestId) {
+        if PharmacySubmittedOffersStore.shared.contains(requestId) {
             self.isOfferSubmitted = true
         }
     }
@@ -61,7 +80,7 @@ final class PharmacyRequestDetailsViewModel {
         self.sendOfferUseCase = sendOfferUseCase
         self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
         self.state = .loaded
-        if order.status != .pending || Self.submittedOfferRequestIds.contains(order.id) {
+        if order.status != .pending || PharmacySubmittedOffersStore.shared.contains(order.id) {
             self.isOfferSubmitted = true
         }
     }
@@ -106,7 +125,7 @@ final class PharmacyRequestDetailsViewModel {
             let useCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
             let success = try await useCase.execute(requestId: requestId, items: offerItems)
             if success {
-                Self.submittedOfferRequestIds.insert(self.requestId)
+                PharmacySubmittedOffersStore.shared.insert(self.requestId)
                 self.isOfferSubmitted = true
                 self.alertMessage = "تم إرسال العرض بنجاح"
                 self.showSuccessAlert = true
@@ -114,7 +133,7 @@ final class PharmacyRequestDetailsViewModel {
                     currentModel = PharmacyRequestDetailsModel(
                         id: currentModel.id,
                         minutesAgo: currentModel.minutesAgo,
-                        statusTitle: "تم تقديم العرض",
+                        statusTitle: "pharmacy.orders.status.pending".localized,
                         customer: currentModel.customer,
                         items: currentModel.items,
                         deliveryFee: currentModel.deliveryFee,
