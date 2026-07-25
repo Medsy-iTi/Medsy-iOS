@@ -26,8 +26,8 @@ final class PharmacyRequestDetailsViewModel {
     var showSuccessAlert: Bool = false
     var alertMessage: String? = nil
 
-    private let fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol
-    private let sendOfferUseCase: SendOfferUseCaseProtocol
+    private let fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol?
+    private let sendOfferUseCase: SendOfferUseCaseProtocol?
 
     init(
         requestId: Int,
@@ -35,8 +35,8 @@ final class PharmacyRequestDetailsViewModel {
         sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = requestId
-        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
-        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
+        self.fetchRequestsUseCase = fetchRequestsUseCase
+        self.sendOfferUseCase = sendOfferUseCase
     }
 
     init(
@@ -45,8 +45,8 @@ final class PharmacyRequestDetailsViewModel {
         sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = order.id
-        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
-        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
+        self.fetchRequestsUseCase = fetchRequestsUseCase
+        self.sendOfferUseCase = sendOfferUseCase
         self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
         self.state = .loaded
     }
@@ -57,7 +57,8 @@ final class PharmacyRequestDetailsViewModel {
         }
         state = .loading
         do {
-            let entity = try await fetchRequestsUseCase.execute(requestId: requestId)
+            let useCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
+            let entity = try await useCase.execute(requestId: requestId)
             self.requestModel = PharmacyMedicineRequestMapper.mapToPresentationModel(entity)
             self.state = .loaded
         } catch {
@@ -81,7 +82,8 @@ final class PharmacyRequestDetailsViewModel {
             (requestItemId: item.requestItemId, productId: item.selectedOfferProductId)
         }
         do {
-            let success = try await sendOfferUseCase.execute(requestId: requestId, items: offerItems)
+            let useCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
+            let success = try await useCase.execute(requestId: requestId, items: offerItems)
             if success {
                 self.isOfferSubmitted = true
                 self.alertMessage = "تم إرسال العرض بنجاح"
