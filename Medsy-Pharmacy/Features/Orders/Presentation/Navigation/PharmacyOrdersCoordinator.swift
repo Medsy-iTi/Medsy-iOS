@@ -45,6 +45,20 @@ final class PharmacyOrdersCoordinator: Coordinator {
 		)
 	}
 
+	func showRequestDetails(id: Int) {
+		path.append(PharmacyOrdersRoute.details(id: id))
+	}
+
+	@ViewBuilder
+	func destination(for route: PharmacyOrdersRoute) -> some View {
+		switch route {
+		case .details(let id):
+			PharmacyRequestDetailsView(
+				viewModel: PharmacyRequestDetailsViewModel(requestId: id)
+			)
+		}
+	}
+
 	func pop() {
 		guard !path.isEmpty else { return }
 		path.removeLast()
