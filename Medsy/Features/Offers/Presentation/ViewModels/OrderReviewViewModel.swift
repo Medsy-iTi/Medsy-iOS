@@ -31,9 +31,9 @@ final class OrderReviewViewModel {
         let pharmacyName = offerDetail?.pharmacyName ?? "offers.list.pharmacy.nahda".localized
         let managerSuffix = "offers.details.managerSuffix".localized
         let managerName = offerDetail?.managerName ?? ("محمد أحمد" + managerSuffix)
-        let medicines = offerDetail?.medicines ?? []
-        let subtotal = offerDetail?.totalPrice ?? 0.0
-        let deliveryFee = 20.0
+        let medicines = (offerDetail?.medicines ?? []).filter { $0.isAvailable && $0.isSelected }
+        let subtotal = medicines.reduce(0.0) { $0 + $1.price }
+        let deliveryFee = 0.0
         let total = subtotal + deliveryFee
 
         self.orderReview = OrderReviewPresentationModel(
