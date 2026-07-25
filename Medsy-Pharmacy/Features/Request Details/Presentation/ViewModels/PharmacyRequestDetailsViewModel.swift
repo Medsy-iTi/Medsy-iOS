@@ -21,29 +21,75 @@ final class PharmacyRequestDetailsViewModel {
     var requestModel: PharmacyRequestDetailsModel?
     let requestId: Int
 
-    private let useCase: FetchPharmacyRequestDetailsUseCaseProtocol
+    var isSubmitting: Bool = false
+    var isOfferSubmitted: Bool = false
+    var showSuccessAlert: Bool = false
+    var alertMessage: String? = nil
+
+    private let fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol
+    private let sendOfferUseCase: SendOfferUseCaseProtocol
 
     init(
         requestId: Int,
-        useCase: FetchPharmacyRequestDetailsUseCaseProtocol
+        fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol? = nil,
+        sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = requestId
-        self.useCase = useCase
+        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyDIContainer.shared.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
+        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyDIContainer.shared.resolve(SendOfferUseCaseProtocol.self)
     }
 
     func loadDetails() async {
-        print("[PharmacyRequestDetails] 🚀 Opened screen & starting backend fetch")
         state = .loading
         do {
-            print("[PharmacyRequestDetails] 📡 Requesting details for Order ID: \(requestId)")
-            let entity = try await useCase.execute(requestId: requestId)
-            self.requestModel = PharmacyRequestDetailsMapper.mapToPresentationModel(entity)
+            let entity = try await fetchRequestsUseCase.execute(requestId: requestId)
+            self.requestModel = PharmacyMedicineRequestMapper.mapToPresentationModel(entity)
             self.state = .loaded
-            print("[PharmacyRequestDetails] ✅ Success: Loaded order details for ID \(entity.id)")
         } catch {
             let errMsg = (error as? NetworkError)?.errorDescription ?? error.localizedDescription
             self.state = .failed(errMsg)
-            print("[PharmacyRequestDetails] ❌ Request failed with error: \(error)")
         }
+    }
+
+    func updateSelectedProductId(for itemId: String, productId: Int) {
+        guard var model = requestModel else { return }
+        if let idx = model.items.firstIndex(where: { $0.id == itemId }) {
+            model.items[idx].selectedOfferProductId = productId
+            self.requestModel = model
+        }
+    }
+
+    func sendOffer() async {
+        guard !isSubmitting, !isOfferSubmitted, let model = requestModel else { return }
+        isSubmitting = true
+        let offerItems = model.items.map { item in
+            (requestItemId: item.requestItemId, productId: item.selectedOfferProductId)
+        }
+        do {
+            let success = try await sendOfferUseCase.execute(requestId: requestId, items: offerItems)
+            if success {
+                self.isOfferSubmitted = true
+                self.alertMessage = "تم إرسال العرض بنجاح"
+                self.showSuccessAlert = true
+                if var currentModel = self.requestModel {
+                    currentModel = PharmacyRequestDetailsModel(
+                        id: currentModel.id,
+                        minutesAgo: currentModel.minutesAgo,
+                        statusTitle: "تم تقديم العرض",
+                        customer: currentModel.customer,
+                        items: currentModel.items,
+                        deliveryFee: currentModel.deliveryFee,
+                        notes: currentModel.notes,
+                        prescriptionImageUrl: currentModel.prescriptionImageUrl
+                    )
+                    self.requestModel = currentModel
+                }
+            }
+        } catch {
+            let errMsg = (error as? NetworkError)?.errorDescription ?? error.localizedDescription
+            self.alertMessage = errMsg
+            self.showSuccessAlert = true
+        }
+        isSubmitting = false
     }
 }
