@@ -17,9 +17,12 @@ final class PharmacyRequestDetailsViewModel {
         case failed(String)
     }
 
+    private static var submittedOfferRequestIds = Set<Int>()
+
     private(set) var state: State = .idle
     var requestModel: PharmacyRequestDetailsModel?
     let requestId: Int
+    private let orderStatus: PharmacyOrderAPIStatus
 
     var isSubmitting: Bool = false
     var isOfferSubmitted: Bool = false
@@ -29,14 +32,22 @@ final class PharmacyRequestDetailsViewModel {
     private let fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol?
     private let sendOfferUseCase: SendOfferUseCaseProtocol?
 
+    var showBottomBar: Bool {
+        orderStatus == .pending && !isOfferSubmitted
+    }
+
     init(
         requestId: Int,
         fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol? = nil,
         sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = requestId
+        self.orderStatus = .pending
         self.fetchRequestsUseCase = fetchRequestsUseCase
         self.sendOfferUseCase = sendOfferUseCase
+        if Self.submittedOfferRequestIds.contains(requestId) {
+            self.isOfferSubmitted = true
+        }
     }
 
     init(
@@ -45,10 +56,14 @@ final class PharmacyRequestDetailsViewModel {
         sendOfferUseCase: SendOfferUseCaseProtocol? = nil
     ) {
         self.requestId = order.id
+        self.orderStatus = order.status
         self.fetchRequestsUseCase = fetchRequestsUseCase
         self.sendOfferUseCase = sendOfferUseCase
         self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
         self.state = .loaded
+        if order.status != .pending || Self.submittedOfferRequestIds.contains(order.id) {
+            self.isOfferSubmitted = true
+        }
     }
 
     func loadDetails() async {
@@ -91,6 +106,7 @@ final class PharmacyRequestDetailsViewModel {
             let useCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
             let success = try await useCase.execute(requestId: requestId, items: offerItems)
             if success {
+                Self.submittedOfferRequestIds.insert(self.requestId)
                 self.isOfferSubmitted = true
                 self.alertMessage = "تم إرسال العرض بنجاح"
                 self.showSuccessAlert = true
