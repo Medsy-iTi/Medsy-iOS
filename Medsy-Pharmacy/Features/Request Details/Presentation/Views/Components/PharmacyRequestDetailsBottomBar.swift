@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct PharmacyRequestDetailsBottomBar: View {
-    let onAccept: () -> Void
+    var isSubmitting: Bool = false
+    var isOfferSubmitted: Bool = false
+    let onSendOffer: () -> Void
     let onReject: () -> Void
     let onContact: () -> Void
 
@@ -52,19 +54,25 @@ struct PharmacyRequestDetailsBottomBar: View {
                 .buttonStyle(.plain)
             }
 
-            Button(action: onAccept) {
+            Button(action: onSendOffer) {
                 HStack(spacing: 8) {
-                    Text("pharmacy.request.accept_order_btn".localized)
-                        .font(PharmacyColor.sans(16, .bold))
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 15, weight: .bold))
+                    if isSubmitting {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Text(isOfferSubmitted ? "تم إرسال العرض" : "إرسال العرض")
+                            .font(PharmacyColor.sans(16, .bold))
+                        Image(systemName: isOfferSubmitted ? "checkmark.circle.fill" : "paperplane.fill")
+                            .font(.system(size: 15, weight: .bold))
+                    }
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+                .background(isOfferSubmitted ? PharmacyColor.textSecondary : PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
             }
             .buttonStyle(.plain)
+            .disabled(isSubmitting || isOfferSubmitted)
         }
         .padding(.horizontal, PharmacySpacing.md)
         .padding(.vertical, PharmacySpacing.sm)

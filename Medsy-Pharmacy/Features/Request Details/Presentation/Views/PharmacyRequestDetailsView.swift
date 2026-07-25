@@ -10,7 +10,7 @@ import SwiftUI
 struct PharmacyRequestDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    var viewModel: PharmacyRequestDetailsViewModel?
+    @State var viewModel: PharmacyRequestDetailsViewModel?
 
     @State private var requestModel: PharmacyRequestDetailsModel?
     @State private var notesForCustomerText: String = ""
@@ -18,14 +18,14 @@ struct PharmacyRequestDetailsView: View {
 
     init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
         self._requestModel = State(initialValue: requestModel)
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
         VStack(spacing: 0) {
             PharmacyRequestDetailsHeaderView(
-                orderId: requestModel?.id ?? "1",
-                statusTitle: requestModel?.statusTitle ?? "",
+                orderId: (viewModel?.requestModel?.id ?? requestModel?.id) ?? "1",
+                statusTitle: (viewModel?.requestModel?.statusTitle ?? requestModel?.statusTitle) ?? "",
                 onBack: {
                     dismiss()
                 }
@@ -40,7 +40,14 @@ struct PharmacyRequestDetailsView: View {
                         .foregroundStyle(PharmacyColor.textSecondary)
                     Spacer()
                 }
-            } else if let model = Binding($requestModel) {
+            } else if let model = Binding(get: {
+                viewModel?.requestModel ?? requestModel
+            }, set: { newValue in
+                if let newValue {
+                    viewModel?.requestModel = newValue
+                    requestModel = newValue
+                }
+            }) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.md) {
                         PharmacyCustomerInfoCard(
@@ -97,14 +104,18 @@ struct PharmacyRequestDetailsView: View {
             }
 
             PharmacyRequestDetailsBottomBar(
-                onAccept: {
-                    dismiss()
+                isSubmitting: viewModel?.isSubmitting ?? false,
+                isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
+                onSendOffer: {
+                    Task {
+                        await viewModel?.sendOffer()
+                    }
                 },
                 onReject: {
                     dismiss()
                 },
                 onContact: {
-                    if let model = requestModel,
+                    if let model = viewModel?.requestModel ?? requestModel,
                        let url = URL(string: "tel://\(model.customer.phone.replacingOccurrences(of: " ", with: ""))") {
                         UIApplication.shared.open(url)
                     }
@@ -113,19 +124,39 @@ struct PharmacyRequestDetailsView: View {
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
+        .alert("تنبيه", isPresented: Binding(get: {
+            viewModel?.showSuccessAlert ?? false
+        }, set: { newValue in
+            viewModel?.showSuccessAlert = newValue
+        })) {
+            Button("حسناً", role: .cancel) { }
+        } message: {
+            Text(viewModel?.alertMessage ?? "")
+        }
         .sheet(isPresented: $showFullPrescriptionImage) {
             NavigationStack {
                 VStack {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        VStack {
-                            Image(systemName: "doc.text.image.fill")
-                                .font(.system(size: 80))
-                                .foregroundStyle(.white.opacity(0.8))
-                            Text("pharmacy.request.preview_prescription".localized)
-                                .font(PharmacyColor.sans(16, .bold))
-                                .foregroundStyle(.white)
-                                .padding(.top, 16)
+                        if let imageUrlStr = viewModel?.requestModel?.prescriptionImageUrl ?? requestModel?.prescriptionImageUrl,
+                           let url = URL(string: imageUrlStr) {
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                        } else {
+                            VStack {
+                                Image(systemName: "doc.text.image.fill")
+                                    .font(.system(size: 80))
+                                    .foregroundStyle(.white.opacity(0.8))
+                                Text("pharmacy.request.preview_prescription".localized)
+                                    .font(PharmacyColor.sans(16, .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.top, 16)
+                            }
                         }
                     }
                 }
@@ -140,7 +171,7 @@ struct PharmacyRequestDetailsView: View {
             }
         }
         .task {
-            if requestModel == nil, let viewModel {
+            if let viewModel {
                 await viewModel.loadDetails()
                 if let model = viewModel.requestModel {
                     self.requestModel = model
@@ -148,23 +179,4 @@ struct PharmacyRequestDetailsView: View {
             }
         }
     }
-}
-
-#Preview("English") {
-    PharmacyRequestDetailsView(
-        requestModel: PharmacyRequestDetailsModel(
-            id: "1",
-            minutesAgo: 0,
-            statusTitle: "PENDING",
-            customer: PharmacyCustomerInfo(name: "Customer #11", phone: "01012345678", address: "string"),
-            items: [
-                PharmacyOrderItem(id: "1", name: "Product #1", spec: "1", quantity: 1, price: 0.0, imageName: nil),
-                PharmacyOrderItem(id: "2", name: "Product #2", spec: "1", quantity: 1, price: 0.0, imageName: nil)
-            ],
-            deliveryFee: 0.0,
-            notes: ""
-        )
-    )
-    .environment(LanguageManager.shared)
-    .pharmacyLocalizedEnvironment()
 }
