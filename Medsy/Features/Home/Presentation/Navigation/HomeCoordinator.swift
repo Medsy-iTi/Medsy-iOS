@@ -14,7 +14,9 @@ enum HomeRoute: Hashable {
     case offersList
     case offerDetails(OfferPresentationModel)
     case offerResult(OfferResult, Int)
-    case orderReview(OfferDetailPresentationModel)
+    // OLD:
+    // case orderReview(OfferDetailPresentationModel)
+    case orderReview(OfferDetailPresentationModel, Int? = nil)
     case medicineAnalyze
 }
 
@@ -43,8 +45,13 @@ final class HomeCoordinator {
         path.append(HomeRoute.offerResult(result, requestId))
     }
 
-    func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
-        path.append(HomeRoute.orderReview(offerDetail))
+    // OLD:
+    // func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
+    //     path.append(HomeRoute.orderReview(offerDetail))
+    // }
+
+    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil) {
+        path.append(HomeRoute.orderReview(offerDetail, requestId))
     }
 
     func showMedicineAnalyze() {
@@ -113,10 +120,8 @@ struct HomeCoordinatorView: View {
                         offer: offer,
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
-                        onSelectOffer: {
-                            coordinator.openOrderReview(
-                                OfferDetailsViewModel(offer: offer).offerDetail
-                            )
+                        onSelectOffer: { updatedDetail in
+                            coordinator.openOrderReview(updatedDetail)
                         }
                     )
                 case let .offerResult(result, requestId):
@@ -125,15 +130,18 @@ struct HomeCoordinatorView: View {
                         requestId: requestId,
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
-                        onSelectOffer: {
-                            let vm = OfferDetailsViewModel(offerResult: result, requestId: requestId)
-                            coordinator.openOrderReview(vm.offerDetail)
+                        onSelectOffer: { updatedDetail in
+                            coordinator.openOrderReview(updatedDetail, requestId: requestId)
                         }
                     )
-                case let .orderReview(offerDetail):
+                case let .orderReview(offerDetail, requestId):
                     OrderReviewView(
                         offerDetail: offerDetail,
-                        onBack: coordinator.goBack
+                        requestId: requestId,
+                        onBack: coordinator.goBack,
+                        onConfirmOrder: {
+                            coordinator.path = NavigationPath()
+                        }
                     )
                 case .medicineAnalyze:
                     MedicineAnalyzeView(

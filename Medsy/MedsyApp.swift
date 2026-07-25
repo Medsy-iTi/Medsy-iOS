@@ -59,10 +59,10 @@ struct MedsyApp: App {
                 authenticationFactory: authenticationFactory,
                 coordinator: appCoordinator
             )
-            .task {
-                heartbeatService.startHeartbeat()
-                print("[MedsyApp] 🚀 Customer App launched — heartbeat started")
-            }
+//            .task {
+//                heartbeatService.startHeartbeat()
+//                print("[MedsyApp] 🚀 Customer App launched — heartbeat started")
+//            }
             .localizedEnvironment()
             .environment(languageManager)
             .id(languageManager.currentLanguage)

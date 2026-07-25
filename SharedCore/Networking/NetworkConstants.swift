@@ -21,7 +21,7 @@ struct Constants {
         return values
     }()
 
-    static let baseURL = "http://localhost:8080/api/v1/"
+    static let baseURL = "https://dawanowbackend-production.up.railway.app/api/v1/"
     static let aiKey = secrets["AI_API_KEY"] as? String ?? ""
     static var customerId: String?
 }
