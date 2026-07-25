@@ -65,13 +65,13 @@ struct PharmacyOrdersView: View {
 						} else {
 							ForEach(viewModel.visibleOrders) { order in
 								PharmacyOrderCard(order: order, onAction: {
-									if let id = Int(order.id) {
-										coordinator.showRequestDetails(id: id)
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
 									}
 								})
 								.onTapGesture {
-									if let id = Int(order.id) {
-										coordinator.showRequestDetails(id: id)
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
 									}
 								}
 								.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
