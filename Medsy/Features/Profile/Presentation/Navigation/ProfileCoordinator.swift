@@ -47,6 +47,22 @@ final class ProfileCoordinator {
         viewModel.displayName
     }
 
+    var firstName: String {
+        viewModel.firstName
+    }
+
+    var lastName: String {
+        viewModel.lastName
+    }
+
+    var homeAddress: String {
+        viewModel.homeAddress
+    }
+
+    var dateOfBirth: Date? {
+        viewModel.dateOfBirth
+    }
+
     var phoneNumber: String {
         viewModel.phoneNumber
     }
@@ -55,17 +71,19 @@ final class ProfileCoordinator {
         viewModel.email
     }
 
-    var homeAddress: String {
-        viewModel.homeAddress
-    }
 
     var displayHomeAddress: String {
         viewModel.displayHomeAddress
     }
 
-    var dateOfBirth: Date? {
-        viewModel.dateOfBirth
-    }
+	var homeLatitude: Double? {
+		viewModel.homeLatitude
+	}
+
+	var homeLongitude: Double? {
+		viewModel.homeLongitude
+	}
+
 
     var displayDateOfBirth: String {
         viewModel.displayDateOfBirth
@@ -91,14 +109,30 @@ final class ProfileCoordinator {
         await viewModel.refreshProfile()
     }
 
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
-        await viewModel.updateProfile(homeAddress: homeAddress, dateOfBirth: dateOfBirth)
-    }
+	func updateProfile(
+		firstName: String,
+		lastName: String,
+		homeAddress: String?,
+		latitude: Double?,
+		longitude: Double?,
+		dateOfBirth: Date?
+	) async -> Bool {
+		await viewModel.updateProfile(
+			firstName: firstName,
+			lastName: lastName,
+			homeAddress: homeAddress,
+			latitude: latitude,
+			longitude: longitude,
+			dateOfBirth: dateOfBirth
+		)
+	}
 
     func showEditProfile() { activePresentation = .editProfile }
     func showLanguagePicker() { activePresentation = .language }
     func showThemePicker() { activePresentation = .theme }
     func dismissPresentation() { activePresentation = nil }
+
+
     func requestLogout() { showsLogoutConfirmation = true }
     func cancelLogout() { showsLogoutConfirmation = false }
 

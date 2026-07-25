@@ -19,4 +19,10 @@ struct ProductDetailEntity: Identifiable, Equatable {
     let route: String
     let isPrescription: Bool
     let descriptionText: String
+    let productName: String
+    let strength: String
+    let packSize: String
+    let form: String
+    let scientificCategory: String
+    let consumerCategory: String
 }

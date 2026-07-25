@@ -9,10 +9,11 @@ import SwiftUI
 
 @MainActor
 struct PharmacyMainTabView: View {
-    @State private var coordinator: PharmacyMainTabCoordinator
+    var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+	@ObservedObject private var identityProviding  = PharmacySessionSettings.shared
 	private let onLoggedOut: () -> Void
 
     init(
@@ -21,7 +22,7 @@ struct PharmacyMainTabView: View {
         ordersFactory: PharmacyOrdersFactory,
         onLoggedOut : @escaping () -> Void
     ) {
-        _coordinator = State(initialValue: coordinator)
+        self.coordinator = coordinator
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
         self.onLoggedOut = onLoggedOut
@@ -43,11 +44,11 @@ struct PharmacyMainTabView: View {
         switch coordinator.selectedTab {
         case .home:
             homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
-        case .orders:
-            ordersFactory.makeView()
+			case .orders:
+				OrdersTabRootView(factory: ordersFactory)
         case .more:
 				ProfileTabRootView(
-					container: PharmacyAppAssembler.shared.container,
+					coordinator: coordinator.profileCoordinator,
 					onLoggedOut: onLoggedOut
 				)
         case .products, .customers:

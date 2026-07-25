@@ -23,6 +23,22 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var selectedCategory: Category? = nil {
 		didSet { guard oldValue != selectedCategory else { return }; load() }
 	}
+    
+    @Published var selectedCompany: String? = nil {
+        didSet { guard oldValue != selectedCompany else { return }; load() }
+    }
+    
+    var availableCompanies: [String] {
+        [
+            "company.lilly".localized,
+            "company.novartis".localized,
+            "company.roche".localized,
+            "company.pfizer".localized,
+            "company.astrazeneca".localized,
+            "company.novonordisk".localized,
+            "company.eva_pharm".localized
+        ]
+    }
     @Published var categories: [Category] = []
 
 	private let useCase: SearchProductsUseCaseProtocol
@@ -48,7 +64,7 @@ final class SearchResultsViewModel: ObservableObject {
 		self.languageManager = languageManager
 
         Task {
-            if let result = try? await getCategoriesUseCase.execute(page: 0, size: 10) {
+            if let result = try? await getCategoriesUseCase.execute(page: 0, size: 100, lang: languageManager.currentLanguage.rawValue) {
                 self.categories = result.items
             }
         }
@@ -90,6 +106,7 @@ final class SearchResultsViewModel: ObservableObject {
 		products = []
 		selectedSort = nil
 		selectedCategory = nil
+        selectedCompany = nil
 		state = .empty
 	}
 
@@ -120,7 +137,8 @@ final class SearchResultsViewModel: ObservableObject {
 				page: currentPage,
 				size: pageSize,
 				sort: sort,
-				lang: languageManager.currentLanguage.rawValue
+				lang: languageManager.currentLanguage.rawValue,
+                company: selectedCompany
 			)
 			print(languageManager.currentLanguage.rawValue)
 			guard !Task.isCancelled else { return }

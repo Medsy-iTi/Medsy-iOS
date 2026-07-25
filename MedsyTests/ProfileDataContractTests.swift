@@ -44,6 +44,8 @@ final class ProfileDataContractTests: XCTestCase {
     func testUpdateRequestOmitsUnchangedValues() throws {
         let input = UpdateCustomerProfileInput(
             homeAddress: "Nasr City",
+            homeLatitude: nil,
+            homeLongitude: nil,
             dateOfBirth: nil
         )
         let request = UpdateCustomerProfileRequestDTO(input: input)
@@ -62,7 +64,12 @@ final class ProfileDataContractTests: XCTestCase {
 
     private func emptyUpdateRequest() -> UpdateCustomerProfileRequestDTO {
         UpdateCustomerProfileRequestDTO(
-            input: UpdateCustomerProfileInput(homeAddress: nil, dateOfBirth: nil)
+            input: UpdateCustomerProfileInput(
+                homeAddress: nil,
+                homeLatitude: nil,
+                homeLongitude: nil,
+                dateOfBirth: nil
+            )
         )
     }
 }

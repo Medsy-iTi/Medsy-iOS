@@ -19,12 +19,14 @@ struct PharmacyAuthenticationFactory {
 
     @MainActor
     func makeCoordinator(
-        onAuthenticated: @escaping () -> Void
+        onAuthenticated: @escaping () -> Void,
+        onSignedOut: @escaping () -> Void = {}
     ) -> PharmacyAuthenticationCoordinator {
         PharmacyAuthenticationCoordinator(
             actions: actions,
             locationProvider: locationProvider,
-            onAuthenticated: onAuthenticated
+            onAuthenticated: onAuthenticated,
+            onSignedOut: onSignedOut
         )
     }
 }

@@ -14,6 +14,7 @@ enum HomeRoute: Hashable {
     case offersList
     case offerDetails(OfferPresentationModel)
     case orderReview(OfferDetailPresentationModel)
+    case medicineAnalyze
 }
 
 @MainActor
@@ -41,6 +42,10 @@ final class HomeCoordinator {
         path.append(HomeRoute.orderReview(offerDetail))
     }
 
+    func showMedicineAnalyze() {
+        path.append(HomeRoute.medicineAnalyze)
+    }
+
     func open(_ route: HomeRoute) {
         path.append(route)
     }
@@ -56,13 +61,16 @@ struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
     @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
+    private let onOpenCart: () -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
-        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }
+        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
+        onOpenCart: @escaping () -> Void = {}
     ) {
         _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
+        self.onOpenCart = onOpenCart
     }
 
     var body: some View {
@@ -71,6 +79,7 @@ struct HomeCoordinatorView: View {
         NavigationStack(path: $coordinator.path) {
             HomeView(
                 onSearchTap: coordinator.openSearch,
+                onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
                 onCompareOffers: coordinator.openOffersList
             )
@@ -82,7 +91,11 @@ struct HomeCoordinatorView: View {
                     })
                 case .prescription:
                     PrescriptionCoordinatorView(
-                        onExit: coordinator.goBack
+                        onExit: coordinator.goBack,
+                        onViewCart: {
+                            coordinator.goBack()
+                            onOpenCart()
+                        }
                     )
                 case .offersList:
                     OffersListView(
@@ -105,7 +118,17 @@ struct HomeCoordinatorView: View {
                         offerDetail: offerDetail,
                         onBack: coordinator.goBack
                     )
+                case .medicineAnalyze:
+                    MedicineAnalyzeView(
+                        onBack: coordinator.goBack,
+                        onProductSelected: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
+                            )
+                        }
+                    )
                 }
+            }
             }
                 .navigationDestination(for: ProductDetailDestination.self) { destination in
                     ProductDetailView(productId: destination.productId)

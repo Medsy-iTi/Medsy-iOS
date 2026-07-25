@@ -11,9 +11,11 @@ import Observation
 @Observable
 final class PharmacyMainTabCoordinator {
     var selectedTab: PharmacyTab
+    let profileCoordinator: ProfileCoordinator
 
     init(selectedTab: PharmacyTab = .home) {
         self.selectedTab = selectedTab
+        self.profileCoordinator = ProfileCoordinator(container: PharmacyAppAssembler.shared.container)
     }
 
     func select(_ tab: PharmacyTab) {
