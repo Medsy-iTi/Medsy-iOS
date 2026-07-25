@@ -29,17 +29,6 @@ struct OrderReviewSummaryCardView: View {
                     .foregroundStyle(AppColor.textSec)
             }
 
-            HStack {
-                Text("\(formatAmount(deliveryFee)) \("offers.list.currency".localized)")
-                    .font(AppColor.sans(15, .bold))
-                    .foregroundStyle(AppColor.textPrim)
-
-                Spacer()
-
-                Text("orderReview.summary.deliveryFee".localized)
-                    .font(AppColor.sans(14))
-                    .foregroundStyle(AppColor.textSec)
-            }
 
             HStack {
                 Text("\(formatAmount(totalPrice)) \("offers.list.currency".localized)")
