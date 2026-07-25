@@ -103,24 +103,26 @@ struct PharmacyRequestDetailsView: View {
                 }
             }
 
-            PharmacyRequestDetailsBottomBar(
-                isSubmitting: viewModel?.isSubmitting ?? false,
-                isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
-                onSendOffer: {
-                    Task {
-                        await viewModel?.sendOffer()
+            if viewModel?.showBottomBar == true {
+                PharmacyRequestDetailsBottomBar(
+                    isSubmitting: viewModel?.isSubmitting ?? false,
+                    isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
+                    onSendOffer: {
+                        Task {
+                            await viewModel?.sendOffer()
+                        }
+                    },
+                    onReject: {
+                        dismiss()
+                    },
+                    onContact: {
+                        if let model = viewModel?.requestModel ?? requestModel,
+                           let url = URL(string: "tel://\(model.customer.phone.replacingOccurrences(of: " ", with: ""))") {
+                            UIApplication.shared.open(url)
+                        }
                     }
-                },
-                onReject: {
-                    dismiss()
-                },
-                onContact: {
-                    if let model = viewModel?.requestModel ?? requestModel,
-                       let url = URL(string: "tel://\(model.customer.phone.replacingOccurrences(of: " ", with: ""))") {
-                        UIApplication.shared.open(url)
-                    }
-                }
-            )
+                )
+            }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
