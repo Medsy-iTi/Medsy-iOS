@@ -13,6 +13,12 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Splash */
+"splash.brand" = "Medsy";
+"splash.tagline" = "Your health, our priority";
+"splash.subtitle" = "Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
 "pharmacyProfile.badge" = "Pharmacy";
