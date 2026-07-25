@@ -78,8 +78,14 @@ final class PharmacyRequestDetailsViewModel {
     func sendOffer() async {
         guard !isSubmitting, !isOfferSubmitted, let model = requestModel else { return }
         isSubmitting = true
-        let offerItems = model.items.map { item in
+        let offerItems = model.items.filter { $0.isAvailable }.map { item in
             (requestItemId: item.requestItemId, productId: item.selectedOfferProductId)
+        }
+        guard !offerItems.isEmpty else {
+            self.alertMessage = "يرجى تحديد صنف واحد على الأقل لتقديم العرض"
+            self.showSuccessAlert = true
+            isSubmitting = false
+            return
         }
         do {
             let useCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
