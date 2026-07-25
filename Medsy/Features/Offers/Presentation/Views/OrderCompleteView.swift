@@ -13,6 +13,15 @@ struct OrderCompleteView: View {
     let offerDetail: OfferDetailPresentationModel
     let onBackToHome: () -> Void
 
+    private var confirmedMedicines: [OfferMedicineItem] {
+        let confirmedItemIds = Set(result.orders.flatMap { $0.itemIds })
+        return offerDetail.medicines.filter { confirmedItemIds.contains($0.requestItemId) }
+    }
+
+    private var confirmedTotalPrice: Double {
+        confirmedMedicines.reduce(0.0) { $0 + $1.price }
+    }
+
     @State private var animateCheckmark = false
 
     var body: some View {
@@ -81,7 +90,7 @@ struct OrderCompleteView: View {
                         .font(AppColor.sans(14))
                         .foregroundStyle(AppColor.textSec)
                     Spacer()
-                    Text(String(format: "order_complete.medicines_count_value".localized, offerDetail.medicines.count))
+                    Text(String(format: "order_complete.medicines_count_value".localized, confirmedMedicines.count))
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
@@ -105,7 +114,7 @@ struct OrderCompleteView: View {
                         .font(AppColor.sans(16, .bold))
                         .foregroundStyle(AppColor.textPrim)
                     Spacer()
-                    Text(String(format: "%.2f %@", offerDetail.totalPrice, "common.egp".localized))
+                    Text(String(format: "%.2f %@", confirmedTotalPrice, "common.egp".localized))
                         .font(AppColor.sans(18, .bold))
                         .foregroundStyle(AppColor.green)
                 }
