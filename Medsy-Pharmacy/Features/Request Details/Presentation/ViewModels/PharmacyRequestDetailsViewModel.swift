@@ -39,7 +39,22 @@ final class PharmacyRequestDetailsViewModel {
         self.sendOfferUseCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
     }
 
+    init(
+        order: PharmacyOrder,
+        fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol? = nil,
+        sendOfferUseCase: SendOfferUseCaseProtocol? = nil
+    ) {
+        self.requestId = order.id
+        self.fetchRequestsUseCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
+        self.sendOfferUseCase = sendOfferUseCase ?? PharmacyAppAssembler.shared.container.resolve(SendOfferUseCaseProtocol.self)
+        self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
+        self.state = .loaded
+    }
+
     func loadDetails() async {
+        if requestModel != nil {
+            return
+        }
         state = .loading
         do {
             let entity = try await fetchRequestsUseCase.execute(requestId: requestId)
