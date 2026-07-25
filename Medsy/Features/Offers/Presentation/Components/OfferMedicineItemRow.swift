@@ -8,9 +8,19 @@ import SwiftUI
 struct OfferMedicineItemRow: View {
     @Environment(LanguageManager.self) private var languageManager
     let item: OfferMedicineItem
+    var onToggleSelection: (() -> Void)? = nil
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
+            if item.isAvailable {
+                Button {
+                    onToggleSelection?()
+                } label: {
+                    Image(systemName: item.isSelected ? "checkmark.square.fill" : "square")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(item.isSelected ? AppColor.green : AppColor.textSec)
+                }
+            }
             VStack(alignment: .leading, spacing: 6) {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(item.price.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(item.price))" : String(format: "%.2f", item.price))

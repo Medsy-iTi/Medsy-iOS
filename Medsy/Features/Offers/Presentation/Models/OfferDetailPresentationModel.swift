@@ -5,6 +5,19 @@
 
 import Foundation
 
+    // OLD:
+    // struct OfferMedicineItem: Identifiable, Hashable {
+    //     let id: String
+    //     let requestItemId: Int
+    //     let name: String
+    //     let dosage: String
+    //     let price: Double
+    //     let isAvailable: Bool
+    //     let isAlternative: Bool
+    //     let imageName: String
+    //     let imageUrl: String?
+    // }
+
 struct OfferMedicineItem: Identifiable, Hashable {
     let id: String
     let requestItemId: Int
@@ -15,6 +28,7 @@ struct OfferMedicineItem: Identifiable, Hashable {
     let isAlternative: Bool
     let imageName: String
     let imageUrl: String?
+    var isSelected: Bool
 
     init(
         id: String,
@@ -25,7 +39,8 @@ struct OfferMedicineItem: Identifiable, Hashable {
         isAvailable: Bool = true,
         isAlternative: Bool = false,
         imageName: String = "pill.fill",
-        imageUrl: String? = nil
+        imageUrl: String? = nil,
+        isSelected: Bool = true
     ) {
         self.id = id
         self.requestItemId = requestItemId
@@ -36,6 +51,7 @@ struct OfferMedicineItem: Identifiable, Hashable {
         self.isAlternative = isAlternative
         self.imageName = imageName
         self.imageUrl = imageUrl
+        self.isSelected = isAvailable ? isSelected : false
     }
 }
 

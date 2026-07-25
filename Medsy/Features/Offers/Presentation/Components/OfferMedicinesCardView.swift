@@ -8,6 +8,7 @@ import SwiftUI
 struct OfferMedicinesCardView: View {
     @Environment(LanguageManager.self) private var languageManager
     let medicines: [OfferMedicineItem]
+    var onToggleSelection: ((String) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 12) {
@@ -18,7 +19,12 @@ struct OfferMedicinesCardView: View {
 
             VStack(spacing: 0) {
                 ForEach(Array(medicines.enumerated()), id: \.element.id) { index, item in
-                    OfferMedicineItemRow(item: item)
+                    OfferMedicineItemRow(
+                        item: item,
+                        onToggleSelection: {
+                            onToggleSelection?(item.id)
+                        }
+                    )
 
                     if index < medicines.count - 1 {
                         Divider()
