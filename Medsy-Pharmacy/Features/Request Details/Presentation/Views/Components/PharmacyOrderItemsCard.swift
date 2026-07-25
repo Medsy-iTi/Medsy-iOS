@@ -64,15 +64,20 @@ struct PharmacyOrderItemsCard: View {
 
                             Spacer()
 
-                            ZStack {
-                                RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous)
-                                    .fill(PharmacyColor.primary.opacity(0.1))
-                                    .frame(width: 36, height: 36)
+                            Button {
+                                items[index].isAvailable.toggle()
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous)
+                                        .fill(item.isAvailable ? PharmacyColor.primary.opacity(0.1) : Color.clear)
+                                        .frame(width: 36, height: 36)
 
-                                Image(systemName: item.isAvailable ? "checkmark.circle.fill" : "circle")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(item.isAvailable ? PharmacyColor.primary : PharmacyColor.textSecondary)
+                                    Image(systemName: item.isAvailable ? "checkmark.circle.fill" : "circle")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(item.isAvailable ? PharmacyColor.primary : PharmacyColor.textSecondary)
+                                }
                             }
+                            .buttonStyle(.plain)
                         }
 
                         HStack(spacing: 8) {
