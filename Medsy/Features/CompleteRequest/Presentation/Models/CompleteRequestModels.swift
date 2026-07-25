@@ -44,6 +44,17 @@ struct CompleteRequestItem: Identifiable, Equatable {
 struct CompleteRequestDraft: Equatable {
     let items: [CompleteRequestItem]
     let prescriptionCount: Int
+    let prescriptionData: Data?
+
+    init(
+        items: [CompleteRequestItem],
+        prescriptionCount: Int,
+        prescriptionData: Data? = nil
+    ) {
+        self.items = items
+        self.prescriptionCount = prescriptionCount
+        self.prescriptionData = prescriptionData
+    }
 
     var itemCount: Int {
         items.reduce(0) { $0 + $1.quantity }

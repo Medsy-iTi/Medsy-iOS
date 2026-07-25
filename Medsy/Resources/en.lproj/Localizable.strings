@@ -565,6 +565,9 @@
 "complete_request.payment.cash.subtitle" = "Pay when you receive the request";
 "complete_request.payment.visa" = "Visa";
 "complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.notes.title" = "Request notes";
+"complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
+"complete_request.notes.placeholder" = "Add notes for the pharmacy";
 "complete_request.card.title" = "Visa card details";
 "complete_request.card.cardholder" = "Cardholder name";
 "complete_request.card.number" = "Card number";

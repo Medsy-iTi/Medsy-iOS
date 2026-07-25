@@ -73,6 +73,8 @@ struct CompleteRequestView: View {
                                 onCVVChange: viewModel.formatCVV
                             )
                         }
+
+                        CompleteRequestNotesView(notes: $viewModel.notes)
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)

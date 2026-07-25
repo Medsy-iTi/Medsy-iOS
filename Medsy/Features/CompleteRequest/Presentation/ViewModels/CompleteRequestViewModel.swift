@@ -16,6 +16,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     var paymentMethod: CompleteRequestPaymentMethod = .cash
     private(set) var savedAddress: String?
     private(set) var deliveryLocation: CompleteRequestLocation?
+    var notes = ""
     var cardholderName = ""
     var cardNumber = ""
     var expiry = ""
@@ -191,7 +192,10 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
                     input: SubmitCompleteRequestInput(
                         deliveryLatitude: deliveryLocation.latitude,
                         deliveryLongitude: deliveryLocation.longitude,
-                        deliveryAddress: deliveryLocation.address
+                        deliveryAddress: deliveryLocation.address,
+                        notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
+                        paymentMethod: paymentMethod.rawValue,
+                        prescriptionData: draft.prescriptionData
                     )
                 )
             } catch {

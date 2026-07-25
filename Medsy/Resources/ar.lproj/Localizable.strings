@@ -563,6 +563,9 @@
 "complete_request.payment.cash.subtitle" = "ادفع عند استلام الطلب";
 "complete_request.payment.visa" = "فيزا";
 "complete_request.payment.visa.subtitle" = "أدخل بيانات البطاقة";
+"complete_request.notes.title" = "ملاحظات الطلب";
+"complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
+"complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";
 "complete_request.card.title" = "بيانات بطاقة فيزا";
 "complete_request.card.cardholder" = "اسم حامل البطاقة";
 "complete_request.card.number" = "رقم البطاقة";
@@ -689,4 +692,3 @@
 "chatbot.demo.order.time_left"= "٧:١٢ متبقية";
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
-
