@@ -62,5 +62,6 @@ struct OfferDetailPresentationModel: Identifiable, Hashable {
     let medicines: [OfferMedicineItem]
     let pharmacistComment: String
     let totalPrice: Double
+    let prescriptionUrl: String?
 }
 
