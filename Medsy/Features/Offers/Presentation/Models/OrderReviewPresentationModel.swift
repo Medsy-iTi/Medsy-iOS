@@ -11,7 +11,7 @@ struct OrderReviewPresentationModel: Identifiable, Hashable {
     let managerName: String
     let medicines: [OfferMedicineItem]
     let deliveryAddress: String
-    let deliveryFee: Int
-    let medicinesSubtotal: Int
-    let totalPrice: Int
+    let deliveryFee: Double
+    let medicinesSubtotal: Double
+    let totalPrice: Double
 }
