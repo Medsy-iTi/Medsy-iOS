@@ -61,20 +61,22 @@ struct ProfileCoordinatorView: View {
     private func sheet(for presentation: ProfilePresentation, coordinator: ProfileCoordinator) -> some View {
         switch presentation {
         case .editProfile:
-            EditProfileScreen(
-                firstName: coordinator.firstName,
-                lastName: coordinator.lastName,
-                phoneNumber: coordinator.phoneNumber,
-                email: coordinator.email,
-                homeAddress: coordinator.homeAddress,
-				latitude: coordinator.homeLatitude,
-				longitude: coordinator.homeLongitude,
-                dateOfBirth: coordinator.dateOfBirth,
-                isSaving: coordinator.isSaving,
-                errorMessage: coordinator.saveErrorMessage,
-                onCancel: coordinator.dismissPresentation,
-                onSave: coordinator.updateProfile
-            )
+            NavigationStack {
+                EditProfileScreen(
+                    firstName: coordinator.firstName,
+                    lastName: coordinator.lastName,
+                    phoneNumber: coordinator.phoneNumber,
+                    email: coordinator.email,
+                    homeAddress: coordinator.homeAddress,
+                    latitude: coordinator.homeLatitude,
+                    longitude: coordinator.homeLongitude,
+                    dateOfBirth: coordinator.dateOfBirth,
+                    isSaving: coordinator.isSaving,
+                    errorMessage: coordinator.saveErrorMessage,
+                    onCancel: coordinator.dismissPresentation,
+                    onSave: coordinator.updateProfile
+                )
+            }
             .environment(languageManager)
             .localizedEnvironment()
         case .language:
