@@ -7,10 +7,19 @@
 
 import Foundation
 
+// OLD:
+// struct SubmitCompleteRequestInput: Equatable {
+//     let deliveryLatitude: Double
+//     let deliveryLongitude: Double
+//     let deliveryAddress: String
+// }
+
 struct SubmitCompleteRequestInput: Equatable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let deliveryAddress: String
+    let notes: String
+    let paymentMethod: String
 }
 
 struct SubmittedMedicineRequest: Equatable {

@@ -190,11 +190,25 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
 
         if submittedRequest == nil {
             do {
+                // OLD:
+                // let result = try await submitCompleteRequestUseCase.execute(
+                //     input: SubmitCompleteRequestInput(
+                //         deliveryLatitude: deliveryLocation.latitude,
+                //         deliveryLongitude: deliveryLocation.longitude,
+                //         deliveryAddress: deliveryLocation.address
+                //     )
+                // )
+
                 let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
-                        deliveryLatitude: deliveryLocation.latitude,
-                        deliveryLongitude: deliveryLocation.longitude,
-                        deliveryAddress: deliveryLocation.address
+                        deliveryLatitude:30,
+                                //deliveryLocation.latitude,
+                        deliveryLongitude:30,
+                            //deliveryLocation.longitude,
+                        deliveryAddress:"cairo",
+                            //deliveryLocation.address,
+                        notes: cardholderName,
+                        paymentMethod: paymentMethod.rawValue.uppercased()
                     )
                 )
                 submittedRequest = result
