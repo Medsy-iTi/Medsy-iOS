@@ -34,7 +34,7 @@
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.deliveryTo" = "Deliver to";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";

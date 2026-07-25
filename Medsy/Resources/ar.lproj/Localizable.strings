@@ -34,7 +34,7 @@
 "language.arabic"  = "العربية";
 
 /* Home */
-"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.deliveryTo" = "التوصيل إلى";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
 "home.promoTitle" = "صحتك تهمنا";
 "home.promoDiscount" = "خصم حتى 30%";
