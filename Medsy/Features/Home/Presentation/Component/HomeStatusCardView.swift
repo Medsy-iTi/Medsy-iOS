@@ -267,7 +267,17 @@ struct HomeFirstOfferStatusView: View {
     var offerTotalPrice: Double = 0
     var offerAvailableMedsCount: Int = 0
     var offerTotalMedsCount: Int = 0
+    var requestId: Int = 0
     var onCompareOffers: (() -> Void)? = nil
+
+    @State private var secondsElapsed: Int = 0
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -306,9 +316,15 @@ struct HomeFirstOfferStatusView: View {
             }
             
             HStack {
-                Text("00:36")
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
+                    .onAppear {
+                        updateTime()
+                    }
+                    .onReceive(timer) { _ in
+                        updateTime()
+                    }
                 
                 Spacer()
                 
@@ -414,6 +430,13 @@ struct HomeFirstOfferStatusView: View {
                 )
         )
         .padding(.horizontal)
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        }
     }
 }
 

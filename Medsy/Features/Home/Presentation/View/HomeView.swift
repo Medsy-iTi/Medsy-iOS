@@ -38,6 +38,7 @@ struct HomeView: View {
                         offerTotalPrice: viewModel.offerTotalPrice,
                         offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
                         offerTotalMedsCount: viewModel.offerTotalMedsCount,
+                        requestId: viewModel.firstAvailableRequestId ?? 0,
                         onCompareOffers: {
                             if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)
