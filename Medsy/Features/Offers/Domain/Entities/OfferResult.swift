@@ -21,6 +21,7 @@ struct OfferResultItem: Identifiable, Equatable, Hashable {
 struct OfferResult: Equatable, Hashable {
     let items: [OfferResultItem]
     let totalPrice: Double
+    let prescriptionUrl: String?
 
     var isAvailable: Bool {
         !items.isEmpty && items.contains(where: { $0.isAvailable })
