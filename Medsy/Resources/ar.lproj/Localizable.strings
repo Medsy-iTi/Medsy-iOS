@@ -472,6 +472,9 @@
 "orders.empty.completed.subtitle"    = "ستظهر هنا الطلبات التي تم تسليمها.";
 "orders.empty.cancelled.title"       = "لا توجد طلبات ملغاة";
 "orders.empty.cancelled.subtitle"    = "ستظهر هنا الطلبات التي تم إلغاؤها.";
+"orders.empty.filtered.title"        = "لا توجد طلبات مطابقة";
+"orders.empty.filtered.subtitle"     = "لا توجد طلبات تطابق الفلاتير الحالية. جرّب تعديلها أو مسحها.";
+"orders.empty.clear_filters"         = "مسح الفلاتير";
 "orders.error.title"                 = "تعذر تحميل الطلبات";
 "orders.error.subtitle"              = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "orders.loading"                     = "جاري تحميل الطلبات…";
@@ -497,6 +500,25 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+
+"orders.filter.title"                 = "تصفية الطلبات";
+"orders.filter.reset"                 = "إعادة ضبط";
+"orders.filter.apply"                 = "تطبيق";
+"orders.filter.button.accessibility" = "تصفية الطلبات";
+"orders.filter.section.status"       = "الحالة";
+"orders.filter.section.fulfillment"  = "طريقة الاستلام";
+"orders.filter.section.date"         = "نطاق التاريخ";
+"orders.filter.fulfillment.all"      = "الكل";
+"orders.filter.fulfillment.delivery" = "توصيل";
+"orders.filter.fulfillment.pickup"   = "استلام";
+"orders.date_range.anytime"          = "أي وقت";
+"orders.date_range.today"            = "اليوم";
+"orders.date_range.last_7_days"      = "آخر 7 أيام";
+"orders.date_range.last_30_days"     = "آخر 30 يومًا";
+"orders.date_range.last_3_months"    = "آخر 3 أشهر";
+"orders.date_range.custom"           = "مخصص";
+"orders.filter.date.from"            = "من";
+"orders.filter.date.to"              = "إلى";
 
 /* Address Picker */
 "address.title" = "اختر عنوانك";

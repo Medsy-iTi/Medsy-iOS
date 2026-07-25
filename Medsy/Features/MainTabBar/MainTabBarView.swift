@@ -42,7 +42,6 @@ struct MainTabBarView: View {
                 case .cart:
                     CartCoordinatorView(
                         viewModel: cartViewModel,
-                        onSearch: openSearchFromCart,
                         onTabBarHiddenChange: { isTabBarHidden = $0 },
                         onRequestCompleted: {
                             isTabBarHidden = false
@@ -112,15 +111,6 @@ struct MainTabBarView: View {
             cartViewModel.handle(.load)
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
-    }
-
-    private func openSearchFromCart() {
-        openSearch()
-    }
-
-    private func openSearch() {
-        requestedHomeRoute = .search("")
-        coordinator.select(.home)
     }
 
     private var addedProductName: String? {
