@@ -28,8 +28,17 @@ enum PharmacyOrderMapper {
             status: PharmacyOrderAPIStatus(rawValue: dto.status),
             date: dateFormatter.date(from: dto.date) ?? Date(),
             items: dto.items.map {
-                PharmacyOrderLineItem(id: $0.id, productId: $0.productId, quantity: $0.quantity, unitPrice: $0.unitPrice)
-            }
+                PharmacyOrderLineItem(
+                    id: $0.id,
+                    productId: $0.productId,
+                    quantity: $0.quantity,
+                    unitPrice: $0.unitPrice,
+                    productName: nil,
+                    imageUrl: nil
+                )
+            },
+            deliveryAddress: "pharmacy.orders.address.fallback".localized,
+            prescriptionUrl: nil
         )
     }
 
@@ -47,7 +56,9 @@ enum PharmacyOrderMapper {
                 id: item.id,
                 productId: item.productId,
                 quantity: item.quantity,
-                unitPrice: item.unitPrice ?? 0.0
+                unitPrice: item.unitPrice ?? 0.0,
+                productName: item.productName,
+                imageUrl: item.imageUrl
             )
         }
 
@@ -59,7 +70,9 @@ enum PharmacyOrderMapper {
             deliveryCoordinate: (dto.deliveryLatitude ?? 0.0, dto.deliveryLongitude ?? 0.0),
             status: PharmacyOrderAPIStatus(rawValue: dto.status),
             date: parsedDate,
-            items: items
+            items: items,
+            deliveryAddress: dto.deliveryAddress ?? "pharmacy.orders.address.fallback".localized,
+            prescriptionUrl: dto.prescriptionUrl
         )
     }
 
@@ -101,6 +114,49 @@ enum PharmacyOrderMapper {
         case .accepted, .preparing, .outForDelivery: .preparing
         case .delivered: .delivered
         case .cancelled, .unknown: .delivered
+        }
+    }
+
+    static func mapToDetailsPresentationModel(_ order: PharmacyOrder) -> PharmacyRequestDetailsModel {
+        let presentationItems = order.items.map { item in
+            PharmacyOrderItem(
+                id: String(item.id),
+                requestItemId: item.id,
+                productId: item.productId,
+                name: item.productName ?? "pharmacy.request.product_label".localized(String(item.productId)),
+                spec: "\(item.quantity) قطعة",
+                quantity: item.quantity,
+                price: item.unitPrice,
+                imageName: nil,
+                imageUrl: item.imageUrl,
+                isAvailable: true,
+                selectedOfferProductId: item.productId
+            )
+        }
+
+        return PharmacyRequestDetailsModel(
+            id: String(order.id),
+            minutesAgo: Int(Date().timeIntervalSince(order.date) / 60),
+            statusTitle: mapStatusTitle(order.status),
+            customer: PharmacyCustomerInfo(
+                name: "pharmacy.request.customer_id_label".localized(String(order.userId)),
+                phone: "—",
+                address: order.deliveryAddress
+            ),
+            items: presentationItems,
+            deliveryFee: 15.0,
+            notes: "",
+            prescriptionImageUrl: order.prescriptionUrl
+        )
+    }
+
+    private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
+        switch status {
+        case .pending: return "pharmacy.home.order_new".localized
+        case .accepted, .preparing, .outForDelivery: return "pharmacy.home.order_preparing".localized
+        case .delivered: return "pharmacy.home.order_delivered".localized
+        case .cancelled: return "pharmacy.home.order_delivered".localized
+        case .unknown(let val): return val
         }
     }
 }
