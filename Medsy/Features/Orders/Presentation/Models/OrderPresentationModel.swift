@@ -34,6 +34,7 @@ struct OrderDetailPresentationModel: Identifiable {
 
 struct OrderDetailItemModel: Identifiable {
     let id: Int
+    let productId: Int
     let productName: String
     let originalProductName: String?
     let quantity: Int
@@ -87,8 +88,8 @@ extension OrderDetailPresentationModel {
         fulfillmentType: .delivery,
         date: Calendar.current.date(byAdding: .hour, value: -2, to: .now)!,
         items: [
-            OrderDetailItemModel(id: 1, productName: "Panadol 500mg", originalProductName: nil, quantity: 2, unitPrice: 45),
-            OrderDetailItemModel(id: 2, productName: "Vitamin C 1000mg", originalProductName: "Vitamin C 500mg", quantity: 1, unitPrice: 90),
+            OrderDetailItemModel(id: 1, productId: 101, productName: "Panadol 500mg", originalProductName: nil, quantity: 2, unitPrice: 45),
+            OrderDetailItemModel(id: 2, productId: 102, productName: "Vitamin C 1000mg", originalProductName: "Vitamin C 500mg", quantity: 1, unitPrice: 90),
         ],
         itemsSubtotal: 180,
         deliveryFee: 25,
