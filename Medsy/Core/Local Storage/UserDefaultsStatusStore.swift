@@ -16,6 +16,7 @@ protocol UserDefaultsStatusStoreProtocol {
     func savePendingRequestId(_ requestId: Int)
     func clearPendingRequestId()
     func clearPendingRequestId(_ requestId: Int)
+    func getRequestAgeInSeconds(_ requestId: Int) -> Double?
 }
 
 final class UserDefaultsStatusStore: UserDefaultsStatusStoreProtocol {
@@ -54,9 +55,17 @@ final class UserDefaultsStatusStore: UserDefaultsStatusStoreProtocol {
             ids.append(requestId)
         }
         userDefaults.set(ids, forKey: Keys.pendingRequestIds)
+        
+        let dateKey = "request.creationDate.\(requestId)"
+        if userDefaults.object(forKey: dateKey) == nil {
+            userDefaults.set(Date(), forKey: dateKey)
+        }
     }
 
     func clearPendingRequestId() {
+        for id in pendingRequestIds {
+            userDefaults.removeObject(forKey: "request.creationDate.\(id)")
+        }
         userDefaults.removeObject(forKey: Keys.pendingRequestIds)
         userDefaults.removeObject(forKey: Keys.pendingRequestId)
     }
@@ -69,6 +78,12 @@ final class UserDefaultsStatusStore: UserDefaultsStatusStoreProtocol {
         } else {
             userDefaults.set(ids, forKey: Keys.pendingRequestIds)
         }
+        userDefaults.removeObject(forKey: "request.creationDate.\(requestId)")
+    }
+
+    func getRequestAgeInSeconds(_ requestId: Int) -> Double? {
+        guard let date = userDefaults.object(forKey: "request.creationDate.\(requestId)") as? Date else { return nil }
+        return Date().timeIntervalSince(date)
     }
 
     private func migrateIfNeeded() {

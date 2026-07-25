@@ -52,7 +52,15 @@ final class HomeViewModel {
     // MARK: - Polling
 
     func checkAndStartPolling() {
-        let pendingIds = statusStore.pendingRequestIds
+        var pendingIds = statusStore.pendingRequestIds
+        // Check for requests older than 5 minutes (300 seconds) and expire them immediately
+        for reqId in pendingIds {
+            if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
+                statusStore.clearPendingRequestId(reqId)
+            }
+        }
+        
+        pendingIds = statusStore.pendingRequestIds
         guard !pendingIds.isEmpty else {
             activeRequestIds = []
             offerResults = [:]
@@ -77,8 +85,25 @@ final class HomeViewModel {
 
         pollingTask = Task {
             while !Task.isCancelled {
-                let ids = statusStore.pendingRequestIds
-                guard !ids.isEmpty else { break }
+                var ids = statusStore.pendingRequestIds
+                // Clean up expired requests in background loop
+                var expiredIds: [Int] = []
+                for reqId in ids {
+                    if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
+                        expiredIds.append(reqId)
+                    }
+                }
+                for reqId in expiredIds {
+                    statusStore.clearPendingRequestId(reqId)
+                    offerResults.removeValue(forKey: reqId)
+                    activeRequestIds.removeAll { $0 == reqId }
+                }
+                
+                ids = statusStore.pendingRequestIds
+                guard !ids.isEmpty else {
+                    selectedStatus = .home
+                    break
+                }
 
                 await withTaskGroup(of: (Int, OfferResult?).self) { group in
                     for reqId in ids {
