@@ -53,7 +53,8 @@ final class OfferDetailsViewModel {
                 managerName: "محمد أحمد " + "offers.details.managerSuffix".localized,
                 medicines: items,
                 pharmacistComment: "offers.details.defaultComment".localized,
-                totalPrice: offerResult.totalPrice
+                totalPrice: offerResult.totalPrice,
+                prescriptionUrl: offerResult.prescriptionUrl
             )
         } else {
             self.offerDetail = OfferDetailPresentationModel(
@@ -62,7 +63,8 @@ final class OfferDetailsViewModel {
                 managerName: "محمد أحمد " + "offers.details.managerSuffix".localized,
                 medicines: [],
                 pharmacistComment: "offers.details.defaultComment".localized,
-                totalPrice: Double(offer?.price ?? 0)
+                totalPrice: Double(offer?.price ?? 0),
+                prescriptionUrl: nil
             )
         }
     }
@@ -84,7 +86,8 @@ final class OfferDetailsViewModel {
             managerName: offerDetail.managerName,
             medicines: updatedMedicines,
             pharmacistComment: offerDetail.pharmacistComment,
-            totalPrice: newTotal
+            totalPrice: newTotal,
+            prescriptionUrl: offerDetail.prescriptionUrl
         )
     }
 
