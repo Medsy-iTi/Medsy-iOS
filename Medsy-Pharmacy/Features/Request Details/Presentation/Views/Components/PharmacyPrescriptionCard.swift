@@ -25,7 +25,7 @@ struct PharmacyPrescriptionCard: View {
                     .frame(height: 150)
                 
                 if let imageUrlStr = imageUrl, let url = URL(string: imageUrlStr) {
-                    AsyncImage(url: url) { image in
+                    PharmacyAuthenticatedAsyncImage(url: url) { image in
                         image
                             .resizable()
                             .scaledToFill()

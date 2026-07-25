@@ -144,7 +144,7 @@ struct PharmacyRequestDetailsView: View {
                         Color.black.ignoresSafeArea()
                         if let imageUrlStr = viewModel?.requestModel?.prescriptionImageUrl ?? requestModel?.prescriptionImageUrl,
                            let url = URL(string: imageUrlStr) {
-                            AsyncImage(url: url) { image in
+                            PharmacyAuthenticatedAsyncImage(url: url) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
