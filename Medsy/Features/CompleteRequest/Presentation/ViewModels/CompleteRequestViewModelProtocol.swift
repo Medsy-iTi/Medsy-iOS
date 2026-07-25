@@ -14,6 +14,7 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
     var paymentMethod: CompleteRequestPaymentMethod { get set }
     var savedAddress: String? { get }
     var deliveryLocation: CompleteRequestLocation? { get }
+    var notes: String { get set }
     var cardholderName: String { get set }
     var cardNumber: String { get set }
     var expiry: String { get set }

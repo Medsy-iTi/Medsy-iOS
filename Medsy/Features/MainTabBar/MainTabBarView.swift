@@ -15,7 +15,7 @@ struct MainTabBarView: View {
     @State private var requestedHomeRoute: HomeRoute?
     @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
-
+    
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
         _cartViewModel = State(
@@ -38,11 +38,10 @@ struct MainTabBarView: View {
                         onOrders: { coordinator.select(.orders) },
                         onLogout: coordinator.logout
                     )
-                        .onAppear { isTabBarHidden = false }
+                    .onAppear { isTabBarHidden = false }
                 case .cart:
                     CartCoordinatorView(
                         viewModel: cartViewModel,
-                        onSearch: openSearchFromCart,
                         onTabBarHiddenChange: { isTabBarHidden = $0 },
                         onRequestCompleted: {
                             isTabBarHidden = false
@@ -51,8 +50,10 @@ struct MainTabBarView: View {
                     )
                     .onAppear { isTabBarHidden = false }
                 case .orders:
-                    OrdersCoordinatorView()
-                        .onAppear { isTabBarHidden = false }
+                    OrdersCoordinatorView(
+                        onGoToCart: { coordinator.select(.cart) }
+                    )
+                    .onAppear { isTabBarHidden = false }
                 case .favorites, .offers:
                     VStack {
                         Spacer()
@@ -113,25 +114,25 @@ struct MainTabBarView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
     }
-
+    
     private func openSearchFromCart() {
         openSearch()
     }
-
+    
     private func openSearch() {
         requestedHomeRoute = .search("")
         coordinator.select(.home)
     }
-
+    
     private var addedProductName: String? {
         guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
         return productName
     }
-
+    
     private func scheduleFeedbackDismissal() {
         cartFeedbackTask?.cancel()
         guard case .itemAdded = cartViewModel.feedback else { return }
-
+        
         cartFeedbackTask = Task {
             try? await Task.sleep(for: .seconds(2))
             guard !Task.isCancelled else { return }
@@ -139,31 +140,31 @@ struct MainTabBarView: View {
         }
     }
     private var chatbotTabButton: some View {
-            Button {
-                isTabBarHidden = false
-                coordinator.select(.chatbot)
-            } label: {
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(AppColor.green)
-                            .frame(width: 44, height: 44)
-                            .shadow(color: AppColor.green.opacity(0.3), radius: 6, x: 0, y: 3)
-
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(.white)
-                    }
-                    .offset(y: -12)
-
-                    Text("tab.medsy_chatbot".localized)
-                        .font(AppColor.sans(10, coordinator.selectedTab == .chatbot ? .bold : .medium))
-                        .foregroundStyle(coordinator.selectedTab == .chatbot ? AppColor.green : AppColor.textSec)
-                        .offset(y: -8)
+        Button {
+            isTabBarHidden = false
+            coordinator.select(.chatbot)
+        } label: {
+            VStack(spacing: 4) {
+                ZStack {
+                    Circle()
+                        .fill(AppColor.green)
+                        .frame(width: 44, height: 44)
+                        .shadow(color: AppColor.green.opacity(0.3), radius: 6, x: 0, y: 3)
+                    
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white)
                 }
-                .frame(maxWidth: .infinity)
+                .offset(y: -12)
+                
+                Text("tab.medsy_chatbot".localized)
+                    .font(AppColor.sans(10, coordinator.selectedTab == .chatbot ? .bold : .medium))
+                    .foregroundStyle(coordinator.selectedTab == .chatbot ? AppColor.green : AppColor.textSec)
+                    .offset(y: -8)
             }
+            .frame(maxWidth: .infinity)
         }
+    }
     private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {
         let isActive = coordinator.selectedTab == tab
         return Button {
@@ -176,7 +177,7 @@ struct MainTabBarView: View {
                         .font(.system(size: 20, weight: isActive ? .bold : .regular))
                         .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
                         .frame(width: 28, height: 24)
-
+                    
                     if let badgeCount, badgeCount > 0 {
                         Text("\(min(badgeCount, 99))")
                             .font(.system(size: 9, weight: .bold))
@@ -196,3 +197,4 @@ struct MainTabBarView: View {
         }
     }
 }
+

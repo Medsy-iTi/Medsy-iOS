@@ -9,10 +9,13 @@ import SwiftUI
 
 struct OrderDetailView: View {
     let state: OrderDetailViewState
+    let reorderState: ReorderState
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
     var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onDismissReorderAlert: (() -> Void)? = nil
+    var onGoToCart: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,7 +25,35 @@ struct OrderDetailView: View {
         }
         .background(AppColor.bg)
         .navigationBarHidden(true)
+        .alert(reorderAlertTitle, isPresented: reorderAlertBinding) {
+            if reorderState == .success || reorderState.isPartial {
+                Button("orders.reorder.go_to_cart".localized) {
+                    onDismissReorderAlert?()
+                    onGoToCart?()
+                }
+                Button("orders.reorder.continue_shopping".localized, role: .cancel) {
+                    onDismissReorderAlert?()
+                }
+            } else {
+                Button("common.ok".localized, role: .cancel) {
+                    onDismissReorderAlert?()
+                }
+            }
+        } message: {
+            Text(reorderAlertMessage)
+        }
     }
+
+    private var reorderAlertBinding: Binding<Bool> {
+        Binding(
+            get: { reorderState == .success || reorderState.isPartial || reorderState.isFailed },
+            set: { newValue in
+                if !newValue { onDismissReorderAlert?() }
+            }
+        )
+    }
+
+    // MARK: - Nav Bar
 
     private var navBar: some View {
         ZStack {
@@ -50,6 +81,8 @@ struct OrderDetailView: View {
         }
         return "orders.detail.title".localized
     }
+
+    // MARK: - Detail Content
 
     @ViewBuilder
     private var detailContent: some View {
@@ -115,6 +148,8 @@ struct OrderDetailView: View {
         }
     }
 
+    // MARK: - Status Header
+
     private func statusHeader(order: OrderDetailPresentationModel) -> some View {
         VStack(alignment: .leading, spacing: MedsySpacing.xs) {
             HStack(alignment: .center) {
@@ -151,7 +186,7 @@ struct OrderDetailView: View {
                     ? "orders.fulfillment.delivery".localized
                     : "orders.fulfillment.pickup".localized
             )
-                .font(AppColor.sans(13, .medium))
+            .font(AppColor.sans(13, .medium))
         }
         .foregroundStyle(AppColor.green)
         .padding(.horizontal, MedsySpacing.sm)
@@ -326,11 +361,41 @@ struct OrderDetailView: View {
     private var reorderButton: some View {
         PrimaryButton(
             title: "orders.detail.reorder".localized,
-            systemImage: "arrow.counterclockwise"
+            systemImage: reorderState == .loading ? nil : "arrow.counterclockwise",
+            isLoading: reorderState == .loading,
+            isDisabled: reorderState == .loading
         ) {
             onReorder?()
         }
     }
+
+
+    private var reorderAlertTitle: String {
+        switch reorderState {
+        case .success:
+            return "orders.reorder.success.title".localized
+        case .partial:
+            return "orders.reorder.partial.title".localized
+        case .failed:
+            return "orders.reorder.failed.title".localized
+        default:
+            return ""
+        }
+    }
+
+    private var reorderAlertMessage: String {
+        switch reorderState {
+        case .success:
+            return "orders.reorder.success.message".localized
+        case .partial(let added, let total):
+            return String(format: "orders.reorder.partial.message".localized, added, total)
+        case .failed:
+            return "orders.reorder.failed.message".localized
+        default:
+            return ""
+        }
+    }
+
 
     private func dateLabel(for date: Date) -> String {
         let calendar = Calendar.current
@@ -353,9 +418,23 @@ enum OrderDetailViewState {
 }
 
 
+extension ReorderState {
+    var isPartial: Bool {
+        if case .partial = self { return true }
+        return false
+    }
+
+    var isFailed: Bool {
+        if case .failed = self { return true }
+        return false
+    }
+}
+
+
 #Preview {
     OrderDetailView(
         state: .loaded(.mock),
+        reorderState: .idle,
         onRetry: {},
         onBack: {}
     )

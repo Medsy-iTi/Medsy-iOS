@@ -33,6 +33,12 @@ struct OrdersAssembly: ModuleAssembly {
             )
         }
 
+        container.register(ReorderUseCaseProtocol.self) { container in
+            ReorderUseCase(
+                addCartItemUseCase: container.resolve(AddCartItemUseCaseProtocol.self)
+            )
+        }
+
         container.register(OrderHistoryViewModel.self) { container in
             MainActor.assumeIsolated {
                 OrderHistoryViewModel(
@@ -44,9 +50,11 @@ struct OrdersAssembly: ModuleAssembly {
         container.register(OrderDetailViewModel.self) { container in
             MainActor.assumeIsolated {
                 OrderDetailViewModel(
-                    getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self)
+                    getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self),
+                    reorderUseCase: container.resolve(ReorderUseCaseProtocol.self)
                 )
             }
         }
     }
 }
+

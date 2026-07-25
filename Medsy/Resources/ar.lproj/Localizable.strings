@@ -472,6 +472,9 @@
 "orders.empty.completed.subtitle"    = "ستظهر هنا الطلبات التي تم تسليمها.";
 "orders.empty.cancelled.title"       = "لا توجد طلبات ملغاة";
 "orders.empty.cancelled.subtitle"    = "ستظهر هنا الطلبات التي تم إلغاؤها.";
+"orders.empty.filtered.title"        = "لا توجد طلبات مطابقة";
+"orders.empty.filtered.subtitle"     = "لا توجد طلبات تطابق الفلاتير الحالية. جرّب تعديلها أو مسحها.";
+"orders.empty.clear_filters"         = "مسح الفلاتير";
 "orders.error.title"                 = "تعذر تحميل الطلبات";
 "orders.error.subtitle"              = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "orders.loading"                     = "جاري تحميل الطلبات…";
@@ -497,6 +500,33 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.reorder.go_to_cart"          = "الذهاب للسلة";
+"orders.reorder.continue_shopping"   = "متابعة التصفح";
+"orders.reorder.success.title"       = "تمت الإضافة بنجاح";
+"orders.reorder.partial.title"       = "تمت إضافة بعض المنتجات";
+"orders.reorder.failed.title"        = "تعذرت الإضافة";
+"orders.reorder.success.message"     = "تمت إضافة جميع المنتجات إلى السلة بنجاح.";
+"orders.reorder.partial.message"     = "تمت إضافة %d من إجمالي %d منتجات إلى السلة.";
+"orders.reorder.failed.message"      = "حدث خطأ ولم نتمكن من إضافة المنتجات إلى السلة. يرجى المحاولة مرة أخرى.";
+
+"orders.filter.title"                 = "تصفية الطلبات";
+"orders.filter.reset"                 = "إعادة ضبط";
+"orders.filter.apply"                 = "تطبيق";
+"orders.filter.button.accessibility" = "تصفية الطلبات";
+"orders.filter.section.status"       = "الحالة";
+"orders.filter.section.fulfillment"  = "طريقة الاستلام";
+"orders.filter.section.date"         = "نطاق التاريخ";
+"orders.filter.fulfillment.all"      = "الكل";
+"orders.filter.fulfillment.delivery" = "توصيل";
+"orders.filter.fulfillment.pickup"   = "استلام";
+"orders.date_range.anytime"          = "أي وقت";
+"orders.date_range.today"            = "اليوم";
+"orders.date_range.last_7_days"      = "آخر 7 أيام";
+"orders.date_range.last_30_days"     = "آخر 30 يومًا";
+"orders.date_range.last_3_months"    = "آخر 3 أشهر";
+"orders.date_range.custom"           = "مخصص";
+"orders.filter.date.from"            = "من";
+"orders.filter.date.to"              = "إلى";
 
 /* Address Picker */
 "address.title" = "اختر عنوانك";
@@ -533,6 +563,9 @@
 "complete_request.payment.cash.subtitle" = "ادفع عند استلام الطلب";
 "complete_request.payment.visa" = "فيزا";
 "complete_request.payment.visa.subtitle" = "أدخل بيانات البطاقة";
+"complete_request.notes.title" = "ملاحظات الطلب";
+"complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
+"complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";
 "complete_request.card.title" = "بيانات بطاقة فيزا";
 "complete_request.card.cardholder" = "اسم حامل البطاقة";
 "complete_request.card.number" = "رقم البطاقة";
@@ -659,4 +692,3 @@
 "chatbot.demo.order.time_left"= "٧:١٢ متبقية";
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
-
