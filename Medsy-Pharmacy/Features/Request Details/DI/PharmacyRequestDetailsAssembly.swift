@@ -15,5 +15,17 @@ struct PharmacyRequestDetailsAssembly: PharmacyModuleAssembly {
         container.register(FetchPharmacyRequestDetailsUseCaseProtocol.self) { c in
             FetchPharmacyRequestDetailsUseCase(repository: c.resolve(PharmacyRequestDetailsRepositoryProtocol.self))
         }
+
+        container.register(PharmacyRequestsRepositoryProtocol.self) { c in
+            PharmacyRequestsRepository(networkService: c.resolve(NetworkServiceProtocol.self))
+        }
+
+        container.register(FetchPharmacyRequestsUseCaseProtocol.self) { c in
+            FetchPharmacyRequestsUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
+        }
+
+        container.register(SendOfferUseCaseProtocol.self) { c in
+            SendOfferUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
+        }
     }
 }
