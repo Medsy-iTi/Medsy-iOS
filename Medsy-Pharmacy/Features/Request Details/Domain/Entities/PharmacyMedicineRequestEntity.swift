@@ -10,6 +10,8 @@ import Foundation
 struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
     let id: Int
     let customerId: Int?
+    let customerName: String?
+    let customerPhone: String?
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let deliveryAddress: String
@@ -17,6 +19,7 @@ struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
     let createdAt: Date?
     let items: [PharmacyMedicineRequestItemEntity]
     let prescriptionUrl: String?
+    let notes: String?
 }
 
 struct PharmacyMedicineRequestItemEntity: Identifiable, Equatable, Sendable {
@@ -26,4 +29,7 @@ struct PharmacyMedicineRequestItemEntity: Identifiable, Equatable, Sendable {
     let productName: String
     let quantity: Int
     let unitPrice: Double
+    let form: String?
+    let strength: String?
+    let packSize: String?
 }

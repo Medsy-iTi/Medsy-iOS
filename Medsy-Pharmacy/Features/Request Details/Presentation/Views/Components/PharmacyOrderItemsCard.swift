@@ -57,6 +57,36 @@ struct PharmacyOrderItemsCard: View {
                                     .font(PharmacyColor.sans(15, .bold))
                                     .foregroundStyle(PharmacyColor.textPrimary)
 
+                                if item.form != nil || item.strength != nil || item.packSize != nil {
+                                    HStack(spacing: 6) {
+                                        if let form = item.form, !form.isEmpty {
+                                            Text(form)
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.primary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.primarySoft.opacity(0.5), in: Capsule())
+                                        }
+                                        if let strength = item.strength, !strength.isEmpty {
+                                            Text(strength)
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.textSecondary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.border, in: Capsule())
+                                        }
+                                        if let packSize = item.packSize, !packSize.isEmpty {
+                                            Text("\(packSize) tab")
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.textSecondary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.border, in: Capsule())
+                                        }
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+
                                 Text("\(item.quantity) x \(Int(item.price)) \("pharmacy.request.currency_unit".localized)")
                                     .font(PharmacyColor.sans(14, .bold))
                                     .foregroundStyle(PharmacyColor.textSecondary)

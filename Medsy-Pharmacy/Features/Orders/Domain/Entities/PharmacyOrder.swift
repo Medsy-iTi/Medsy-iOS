@@ -48,6 +48,9 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
     let items: [PharmacyOrderLineItem]
     let deliveryAddress: String
     let prescriptionUrl: String?
+    let customerName: String?
+    let customerPhone: String?
+    let notes: String?
 
     static func == (lhs: PharmacyOrder, rhs: PharmacyOrder) -> Bool {
         lhs.id == rhs.id
@@ -65,6 +68,9 @@ struct PharmacyOrderLineItem: Identifiable, Equatable, Sendable, Hashable {
     let unitPrice: Double
     let productName: String?
     let imageUrl: String?
+    let form: String?
+    let strength: String?
+    let packSize: String?
 
     static func == (lhs: PharmacyOrderLineItem, rhs: PharmacyOrderLineItem) -> Bool {
         lhs.id == rhs.id

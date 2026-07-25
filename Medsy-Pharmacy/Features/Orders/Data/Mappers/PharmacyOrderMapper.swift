@@ -34,11 +34,17 @@ enum PharmacyOrderMapper {
                     quantity: $0.quantity,
                     unitPrice: $0.unitPrice,
                     productName: nil,
-                    imageUrl: nil
+                    imageUrl: nil,
+                    form: nil,
+                    strength: nil,
+                    packSize: nil
                 )
             },
             deliveryAddress: "pharmacy.orders.address.fallback".localized,
-            prescriptionUrl: nil
+            prescriptionUrl: nil,
+            customerName: nil,
+            customerPhone: nil,
+            notes: nil
         )
     }
 
@@ -58,7 +64,10 @@ enum PharmacyOrderMapper {
                 quantity: item.quantity,
                 unitPrice: item.unitPrice ?? 0.0,
                 productName: item.productName,
-                imageUrl: item.imageUrl
+                imageUrl: item.imageUrl,
+                form: item.form,
+                strength: item.strength,
+                packSize: item.packSize
             )
         }
 
@@ -72,7 +81,10 @@ enum PharmacyOrderMapper {
             date: parsedDate,
             items: items,
             deliveryAddress: dto.deliveryAddress ?? "pharmacy.orders.address.fallback".localized,
-            prescriptionUrl: dto.prescriptionUrl
+            prescriptionUrl: dto.prescriptionUrl,
+            customerName: dto.customerName,
+            customerPhone: dto.customerPhone,
+            notes: dto.notes
         )
     }
 
@@ -98,9 +110,9 @@ enum PharmacyOrderMapper {
     static func mapToListItem(_ order: PharmacyOrder) -> PharmacyOrderListItem {
         PharmacyOrderListItem(
             id: String(order.id),
-            customerName: "pharmacy.orders.customer.fallback".localized(String(order.userId)),
-            phoneNumber: "—",
-            address: "pharmacy.orders.address.fallback".localized,
+            customerName: order.customerName ?? "pharmacy.orders.customer.fallback".localized(String(order.userId)),
+            phoneNumber: order.customerPhone ?? "—",
+            address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress,
             paymentMethod: .cash,
             amount: Int(order.totalPrice.rounded()),
             minutesAgo: Int(Date().timeIntervalSince(order.date) / 60),
@@ -133,7 +145,10 @@ enum PharmacyOrderMapper {
                 imageName: nil,
                 imageUrl: makeFullImageUrl(item.imageUrl),
                 isAvailable: true,
-                selectedOfferProductId: item.productId
+                selectedOfferProductId: item.productId,
+                form: item.form,
+                strength: item.strength,
+                packSize: item.packSize
             )
         }
 
@@ -142,14 +157,16 @@ enum PharmacyOrderMapper {
             minutesAgo: Int(Date().timeIntervalSince(order.date) / 60),
             statusTitle: mapStatusTitle(order.status),
             customer: PharmacyCustomerInfo(
-                name: "pharmacy.request.customer_id_label".localized(String(order.userId)),
-                phone: "—",
+                name: order.customerName ?? "pharmacy.request.customer_id_label".localized(String(order.userId)),
+                phone: order.customerPhone ?? "—",
                 address: order.deliveryAddress
             ),
             items: presentationItems,
             deliveryFee: 0.0,
-            notes: "",
-            prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl)
+            notes: order.notes ?? "",
+            prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl),
+            deliveryLatitude: order.deliveryCoordinate.latitude,
+            deliveryLongitude: order.deliveryCoordinate.longitude
         )
     }
 

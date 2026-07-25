@@ -20,6 +20,9 @@ struct PharmacyOrderItem: Identifiable {
     var isAvailable: Bool = true
     var selectedOfferProductId: Int
     var alternativeMedicine: String? = nil
+    let form: String?
+    let strength: String?
+    let packSize: String?
 
     init(
         id: String,
@@ -33,7 +36,10 @@ struct PharmacyOrderItem: Identifiable {
         imageUrl: String? = nil,
         isAvailable: Bool = true,
         selectedOfferProductId: Int? = nil,
-        alternativeMedicine: String? = nil
+        alternativeMedicine: String? = nil,
+        form: String? = nil,
+        strength: String? = nil,
+        packSize: String? = nil
     ) {
         self.id = id
         self.requestItemId = requestItemId != 0 ? requestItemId : (Int(id) ?? 0)
@@ -47,6 +53,9 @@ struct PharmacyOrderItem: Identifiable {
         self.isAvailable = isAvailable
         self.selectedOfferProductId = selectedOfferProductId ?? productId
         self.alternativeMedicine = alternativeMedicine
+        self.form = form
+        self.strength = strength
+        self.packSize = packSize
     }
 }
 
@@ -65,6 +74,8 @@ struct PharmacyRequestDetailsModel {
     let deliveryFee: Double
     let notes: String
     var prescriptionImageUrl: String? = nil
+    let deliveryLatitude: Double?
+    let deliveryLongitude: Double?
 
     init(
         id: String,
@@ -74,7 +85,9 @@ struct PharmacyRequestDetailsModel {
         items: [PharmacyOrderItem],
         deliveryFee: Double,
         notes: String,
-        prescriptionImageUrl: String? = nil
+        prescriptionImageUrl: String? = nil,
+        deliveryLatitude: Double? = nil,
+        deliveryLongitude: Double? = nil
     ) {
         self.id = id
         self.minutesAgo = minutesAgo
@@ -87,6 +100,8 @@ struct PharmacyRequestDetailsModel {
         self.deliveryFee = deliveryFee
         self.notes = notes
         self.prescriptionImageUrl = prescriptionImageUrl
+        self.deliveryLatitude = deliveryLatitude
+        self.deliveryLongitude = deliveryLongitude
     }
     
     var subtotal: Double {
@@ -114,7 +129,9 @@ extension PharmacyRequestDetailsModel {
                 PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
             ],
             deliveryFee: 0.0,
-            notes: ""
+            notes: "",
+            deliveryLatitude: nil,
+            deliveryLongitude: nil
         )
     }
 
@@ -129,7 +146,10 @@ extension PharmacyRequestDetailsModel {
                 spec: "\(item.quantity)",
                 quantity: item.quantity,
                 price: item.unitPrice,
-                imageName: nil
+                imageName: nil,
+                form: item.form,
+                strength: item.strength,
+                packSize: item.packSize
             )
         }
 
@@ -138,15 +158,15 @@ extension PharmacyRequestDetailsModel {
             minutesAgo: 0,
             statusTitle: order.status == .pending ? "pharmacy.home.order_new".localized : (order.status == .delivered ? "pharmacy.home.order_delivered".localized : "pharmacy.home.order_preparing".localized),
             customer: PharmacyCustomerInfo(
-                name: "pharmacy.request.customer_id_label".localized(String(order.userId)),
-                phone: "—",
-                // OLD:
-                // address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress
-                address: "pharmacy.orders.address.fallback".localized
+                name: order.customerName ?? "pharmacy.request.customer_id_label".localized(String(order.userId)),
+                phone: order.customerPhone ?? "—",
+                address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress
             ),
             items: mappedItems,
             deliveryFee: 0.0,
-            notes: ""
+            notes: order.notes ?? "",
+            deliveryLatitude: order.deliveryCoordinate.latitude,
+            deliveryLongitude: order.deliveryCoordinate.longitude
         )
     }
 
@@ -165,7 +185,9 @@ extension PharmacyRequestDetailsModel {
                 PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
             ],
             deliveryFee: 0.0,
-            notes: ""
+            notes: "",
+            deliveryLatitude: nil,
+            deliveryLongitude: nil
         )
     }
 }

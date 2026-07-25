@@ -39,20 +39,26 @@ enum PharmacyMedicineRequestMapper {
                 imageUrl: itemDTO.imageUrl,
                 productName: itemDTO.productName ?? "pharmacy.request.product_label".localized(String(itemDTO.productId)),
                 quantity: itemDTO.quantity,
-                unitPrice: itemDTO.unitPrice ?? 0.0
+                unitPrice: itemDTO.unitPrice ?? 0.0,
+                form: itemDTO.form,
+                strength: itemDTO.strength,
+                packSize: itemDTO.packSize
             )
         }
 
         return PharmacyMedicineRequestEntity(
             id: dto.id,
             customerId: dto.customerId,
+            customerName: dto.customerName,
+            customerPhone: dto.customerPhone,
             deliveryLatitude: dto.deliveryLatitude ?? 0.0,
             deliveryLongitude: dto.deliveryLongitude ?? 0.0,
             deliveryAddress: dto.deliveryAddress ?? "pharmacy.orders.address.fallback".localized,
             status: PharmacyOrderAPIStatus(rawValue: dto.status),
             createdAt: parsedDate,
             items: items,
-            prescriptionUrl: dto.prescriptionUrl
+            prescriptionUrl: dto.prescriptionUrl,
+            notes: dto.notes
         )
     }
 
@@ -69,7 +75,10 @@ enum PharmacyMedicineRequestMapper {
                 imageName: nil,
                 imageUrl: makeFullImageUrl(item.imageUrl),
                 isAvailable: true,
-                selectedOfferProductId: item.productId
+                selectedOfferProductId: item.productId,
+                form: item.form,
+                strength: item.strength,
+                packSize: item.packSize
             )
         }
 
@@ -77,14 +86,16 @@ enum PharmacyMedicineRequestMapper {
             id: String(entity.id),
             statusTitle: mapStatusTitle(entity.status),
             customer: PharmacyCustomerInfo(
-                name: "pharmacy.request.customer_id_label".localized(String(entity.customerId ?? 0)),
-                phone: "—",
+                name: entity.customerName ?? "pharmacy.request.customer_id_label".localized(String(entity.customerId ?? 0)),
+                phone: entity.customerPhone ?? "—",
                 address: entity.deliveryAddress
             ),
             items: presentationItems,
             deliveryFee: 0.0,
-            notes: "",
-            prescriptionImageUrl: makeFullImageUrl(entity.prescriptionUrl)
+            notes: entity.notes ?? "",
+            prescriptionImageUrl: makeFullImageUrl(entity.prescriptionUrl),
+            deliveryLatitude: entity.deliveryLatitude,
+            deliveryLongitude: entity.deliveryLongitude
         )
     }
 

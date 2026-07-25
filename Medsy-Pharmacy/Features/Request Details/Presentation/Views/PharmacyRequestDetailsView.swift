@@ -58,6 +58,13 @@ struct PharmacyRequestDetailsView: View {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
                                     UIApplication.shared.open(url)
                                 }
+                            },
+                            onLocationTap: {
+                                if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude {
+                                    if let url = URL(string: "maps://?q=\(lat),\(lon)") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
                             }
                         )
 
