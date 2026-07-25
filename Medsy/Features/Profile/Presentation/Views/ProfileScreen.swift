@@ -44,13 +44,6 @@ struct ProfileScreen: View {
                 iconColor: ProfileStyle.green
             ),
             ProfileRowItem(
-                id: "notifications",
-                titleKey: "profile.notifications",
-                subtitleKey: "profile.notifications.subtitle",
-                iconName: "bell",
-                iconColor: Color(hex: "#3B5BDB")
-            ),
-            ProfileRowItem(
                 id: "orders",
                 titleKey: "profile.order_history",
                 subtitleKey: "profile.order_history.subtitle",
