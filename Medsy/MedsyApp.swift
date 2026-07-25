@@ -15,7 +15,6 @@ struct MedsyApp: App {
     private let authenticationFactory: AuthenticationFactory
     private let logoutUseCase: LogoutUseCaseProtocol
     private let appCoordinator: AppCoordinator
-    private let heartbeatService: HeartbeatService
 
     init() {
         AppAssembler.shared.assemble(modules: [
@@ -44,7 +43,7 @@ struct MedsyApp: App {
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
-        heartbeatService = AppAssembler.shared.container.resolve(HeartbeatService.self)
+      
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
             authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
