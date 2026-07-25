@@ -13,10 +13,11 @@ struct OrderReviewView: View {
 
     init(
         offerDetail: OfferDetailPresentationModel? = nil,
+        requestId: Int? = nil,
         onBack: @escaping () -> Void,
         onConfirmOrder: (() -> Void)? = nil
     ) {
-        _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail))
+        _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail, requestId: requestId))
         self.onBack = onBack
         self.onConfirmOrder = onConfirmOrder
     }
@@ -27,6 +28,13 @@ struct OrderReviewView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
+                    if let errorMessage = viewModel.confirmErrorMessage {
+                        Text(errorMessage)
+                            .font(AppColor.sans(12))
+                            .foregroundStyle(AppColor.danger)
+                            .padding(.horizontal, 16)
+                    }
+
                     OrderReviewPharmacyCardView(
                         pharmacyName: viewModel.orderReview.pharmacyName,
                         managerName: viewModel.orderReview.managerName
@@ -51,19 +59,34 @@ struct OrderReviewView: View {
 
             VStack(spacing: 0) {
                 Button {
-                    viewModel.confirmOrder()
-                    onConfirmOrder?()
+                    Task {
+                        let success = await viewModel.confirmOrder()
+                        if success {
+                            onConfirmOrder?()
+                        }
+                    }
                 } label: {
-                    Text("orderReview.confirmOrder".localized)
-                        .font(AppColor.sans(16, .bold))
-                        .foregroundStyle(AppColor.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(AppColor.green)
-                        )
+                    HStack {
+                        if viewModel.isConfirming {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            // OLD:
+                            // Text("orderReview.confirmOrder".localized)
+
+                            Text("تأكيد الطلب")
+                                .font(AppColor.sans(16, .bold))
+                                .foregroundStyle(AppColor.white)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColor.green)
+                    )
                 }
+                .disabled(viewModel.isConfirming)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }

@@ -10,8 +10,24 @@ import Observation
 @Observable
 final class OrderReviewViewModel {
     var orderReview: OrderReviewPresentationModel
+    private(set) var isConfirming = false
+    private(set) var confirmErrorMessage: String?
+    private(set) var isConfirmed = false
 
-    init(offerDetail: OfferDetailPresentationModel? = nil) {
+    let requestId: Int?
+    private let confirmOfferUseCase: ConfirmOfferUseCaseProtocol?
+    private let statusStore: UserDefaultsStatusStoreProtocol?
+
+    init(
+        offerDetail: OfferDetailPresentationModel? = nil,
+        requestId: Int? = nil,
+        confirmOfferUseCase: ConfirmOfferUseCaseProtocol? = nil,
+        statusStore: UserDefaultsStatusStoreProtocol? = nil
+    ) {
+        self.requestId = requestId
+        self.confirmOfferUseCase = confirmOfferUseCase ?? DIContainer.shared.resolve(ConfirmOfferUseCaseProtocol.self)
+        self.statusStore = statusStore ?? DIContainer.shared.resolve(UserDefaultsStatusStoreProtocol.self)
+
         let pharmacyName = offerDetail?.pharmacyName ?? "offers.list.pharmacy.nahda".localized
         let managerSuffix = "offers.details.managerSuffix".localized
         let managerName = offerDetail?.managerName ?? ("محمد أحمد" + managerSuffix)
@@ -65,6 +81,37 @@ final class OrderReviewViewModel {
         )
     }
 
-    func confirmOrder() {
+    // OLD:
+    // func confirmOrder() {
+    // }
+
+    func confirmOrder() async -> Bool {
+        guard let requestId else {
+            isConfirmed = true
+            return true
+        }
+        guard let confirmOfferUseCase else {
+            statusStore?.clearPendingRequestId()
+            isConfirmed = true
+            return true
+        }
+
+        isConfirming = true
+        confirmErrorMessage = nil
+        defer { isConfirming = false }
+
+        let selectedItemIds = orderReview.medicines
+            .filter { $0.isAvailable && $0.isSelected }
+            .map(\.requestItemId)
+
+        do {
+            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            statusStore?.clearPendingRequestId()
+            isConfirmed = true
+            return true
+        } catch {
+            confirmErrorMessage = error.localizedDescription
+            return false
+        }
     }
 }
