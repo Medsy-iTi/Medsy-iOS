@@ -13,7 +13,7 @@ struct PharmacyRequestDetailsView: View {
     @State var viewModel: PharmacyRequestDetailsViewModel?
 
     @State private var requestModel: PharmacyRequestDetailsModel?
-    @State private var notesForCustomerText: String = ""
+
     @State private var showFullPrescriptionImage: Bool = false
 
     init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
@@ -78,9 +78,6 @@ struct PharmacyRequestDetailsView: View {
                             notes: model.wrappedValue.notes
                         )
 
-                        PharmacyNotesForCustomerCard(
-                            text: $notesForCustomerText
-                        )
 
                         PharmacyOrderTotalCard(
                             total: model.wrappedValue.total
