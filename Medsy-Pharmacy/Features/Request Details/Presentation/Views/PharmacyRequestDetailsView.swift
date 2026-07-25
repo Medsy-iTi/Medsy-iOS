@@ -40,14 +40,14 @@ struct PharmacyRequestDetailsView: View {
                         .foregroundStyle(PharmacyColor.textSecondary)
                     Spacer()
                 }
-            } else if let model = Binding(get: {
-                viewModel?.requestModel ?? requestModel
-            }, set: { newValue in
-                if let newValue {
-                    viewModel?.requestModel = newValue
-                    requestModel = newValue
-                }
-            }) {
+            } else if let activeModel = viewModel?.requestModel ?? requestModel {
+                let model = Binding(
+                    get: { viewModel?.requestModel ?? activeModel },
+                    set: {
+                        viewModel?.requestModel = $0
+                        requestModel = $0
+                    }
+                )
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.md) {
                         PharmacyCustomerInfoCard(
