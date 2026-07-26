@@ -109,28 +109,40 @@ final class HomeViewModel {
                     break
                 }
 
-                await withTaskGroup(of: (Int, OfferResult?).self) { group in
+                await withTaskGroup(of: (Int, OfferResult?, Bool).self) { group in
                     for reqId in ids {
                         group.addTask {
                             do {
                                 let result = try await self.getOfferResultUseCase.execute(requestId: reqId)
-                                return (reqId, result)
+                                return (reqId, result, false)
                             } catch {
-                                return (reqId, nil)
+                                var isExpired = false
+                                if case let NetworkError.validationError(message) = error {
+                                    isExpired = message.localizedCaseInsensitiveContains("EXPIRED")
+                                }
+                                return (reqId, nil, isExpired)
                             }
                         }
                     }
 
-                    for await (reqId, result) in group {
+                    for await (reqId, result, isExpired) in group {
                         if Task.isCancelled { return }
-                        if let result, result.isAvailable {
+                        if isExpired {
+                            self.statusStore.clearPendingRequestId(reqId)
+                            self.offerResults.removeValue(forKey: reqId)
+                            self.activeRequestIds.removeAll { $0 == reqId }
+                        } else if let result, result.isAvailable {
                             self.offerResults[reqId] = result
                         }
                     }
                 }
 
                 if !Task.isCancelled {
-                    if offerResults.values.contains(where: { $0.isAvailable }) {
+                    let currentPendingIds = statusStore.pendingRequestIds
+                    if currentPendingIds.isEmpty {
+                        self.selectedStatus = .home
+                        break
+                    } else if offerResults.values.contains(where: { $0.isAvailable }) {
                         self.selectedStatus = .firstOffer
                         break
                     } else {
