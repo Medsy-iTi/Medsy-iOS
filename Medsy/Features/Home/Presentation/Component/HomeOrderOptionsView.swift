@@ -10,6 +10,10 @@ struct HomeOrderOptionsView: View {
     @Environment(LanguageManager.self) private var languageManager
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
+
+    private let cardBackground = Color(hex: "#F5F7FA")
+    private let cardTitleColor = Color(hex: "#111827")
+    private let cardSubtitleColor = Color(hex: "#6B7280")
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -37,21 +41,21 @@ struct HomeOrderOptionsView: View {
                         
                         Text("home.searchForMedicine".localized)
                             .font(AppColor.sans(13, .bold))
-                            .foregroundStyle(AppColor.textPrim)
+                            .foregroundStyle(cardTitleColor)
                             .multilineTextAlignment(.center)
                             .minimumScaleFactor(0.8)
                             .lineLimit(1)
                         
                         Text("home.searchForMedicineDesc".localized)
                             .font(AppColor.sans(10))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(cardSubtitleColor)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                             .padding(.horizontal, 8)
                             .padding(.bottom, 16)
                     }
                     .frame(maxWidth: .infinity)
-                    .background(Color(hex: "#F5F7FA"))
+                    .background(cardBackground)
                     .cornerRadius(16)
                 }
                 
@@ -79,21 +83,21 @@ struct HomeOrderOptionsView: View {
                         
                         Text("home.orderByPrescription".localized)
                             .font(AppColor.sans(13, .bold))
-                            .foregroundStyle(AppColor.textPrim)
+                            .foregroundStyle(cardTitleColor)
                             .multilineTextAlignment(.center)
                             .minimumScaleFactor(0.8)
                             .lineLimit(1)
                         
                         Text("home.uploadPrescriptionDesc".localized)
                             .font(AppColor.sans(10))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(cardSubtitleColor)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                             .padding(.horizontal, 8)
                             .padding(.bottom, 16)
                     }
                     .frame(maxWidth: .infinity)
-                    .background(Color(hex: "#F5F7FA"))
+                    .background(cardBackground)
                     .cornerRadius(16)
                 }
             }
