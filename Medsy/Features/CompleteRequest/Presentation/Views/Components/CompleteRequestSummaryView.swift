@@ -54,7 +54,16 @@ struct CompleteRequestSummaryView: View {
                     Divider().background(AppColor.border)
 
                     ForEach(draft.items) { item in
-                        HStack(alignment: .top, spacing: MedsySpacing.sm) {
+                        HStack(alignment: .center, spacing: MedsySpacing.sm) {
+                            MedsyRemoteImage(urlString: item.imageURL, contentMode: .fit) {
+                                MedsyBrandImageFallback()
+                            } failure: {
+                                MedsyBrandImageFallback()
+                            }
+                            .frame(width: 44, height: 44)
+                            .background(AppColor.surface)
+                            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
+
                             Text("\(item.quantity)×")
                                 .font(MedsyFont.bodyMedium(14))
                                 .foregroundStyle(AppColor.green)

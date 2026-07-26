@@ -93,41 +93,14 @@ struct CartItemRow: View {
 
     @ViewBuilder
     private var productImage: some View {
-        if let imageUrl = item.imageUrl, let url = URL(string: imageUrl) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case let .success(image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .empty:
-                    ProgressView()
-                        .tint(AppColor.green)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(AppColor.lightGreen)
-                case .failure:
-                    productImageFallback
-                @unknown default:
-                    productImageFallback
-                }
-            }
-            .frame(width: 56, height: 56)
-            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
-        } else {
-            productImageFallback
-        }
-    }
-
-    private var productImageFallback: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
-                .fill(AppColor.lightGreen)
-
-            Image(systemName: "pills.fill")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(AppColor.green)
+        MedsyRemoteImage(urlString: item.imageUrl, contentMode: .fit) {
+            MedsyBrandImageFallback()
+        } failure: {
+            MedsyBrandImageFallback()
         }
         .frame(width: 56, height: 56)
+        .background(AppColor.surface)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
     }
 
     private var quantityStepper: some View {

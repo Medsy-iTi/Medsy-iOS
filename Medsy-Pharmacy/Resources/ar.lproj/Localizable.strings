@@ -87,8 +87,10 @@
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
 /* Splash */
+"pharmacy.splash.brand" = "ميدسي للصيدليات";
 "pharmacy.splash.subtitle" = "منصة شريكك الصيدلية";
 "pharmacy.splash.tagline" = "استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات — كل ذلك في مكان واحد.";
+"pharmacy.splash.accessibility_label" = "ميدسي للصيدليات. منصة شريكك الصيدلية. استقبل الطلبات القريبة، أرسل عروضك، وأكمل الطلبات، كل ذلك في مكان واحد.";
 
 /* Onboarding */
 "pharmacy.onboarding.skip" = "تخطي";

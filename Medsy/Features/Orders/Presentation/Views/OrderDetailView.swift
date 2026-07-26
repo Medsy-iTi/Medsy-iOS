@@ -9,10 +9,13 @@ import SwiftUI
 
 struct OrderDetailView: View {
     let state: OrderDetailViewState
+    let reorderState: ReorderState
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
     var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onDismissReorderFeedback: (() -> Void)? = nil
+    var onGoToCart: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,7 +25,27 @@ struct OrderDetailView: View {
         }
         .background(AppColor.bg)
         .navigationBarHidden(true)
+        .overlay(alignment: .bottom) {
+            if reorderState.showsFeedback {
+                ReorderToastView(
+                    state: reorderState,
+                    onGoToCart: {
+                        onDismissReorderFeedback?()
+                        onGoToCart?()
+                    },
+                    onDismiss: {
+                        onDismissReorderFeedback?()
+                    }
+                )
+                .padding(.horizontal, MedsySpacing.md)
+                .padding(.bottom, 104)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: reorderState)
     }
+
+    // MARK: - Nav Bar
 
     private var navBar: some View {
         ZStack {
@@ -51,6 +74,8 @@ struct OrderDetailView: View {
         return "orders.detail.title".localized
     }
 
+    // MARK: - Detail Content
+
     @ViewBuilder
     private var detailContent: some View {
         switch state {
@@ -66,13 +91,7 @@ struct OrderDetailView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: MedsySpacing.lg) {
-            ProgressView().tint(AppColor.green)
-            Text("orders.loading".localized)
-                .font(MedsyFont.caption())
-                .foregroundStyle(AppColor.textSec)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        OrderDetailLoadingSkeleton()
     }
 
     private var notFoundView: some View {
@@ -115,6 +134,8 @@ struct OrderDetailView: View {
         }
     }
 
+    // MARK: - Status Header
+
     private func statusHeader(order: OrderDetailPresentationModel) -> some View {
         VStack(alignment: .leading, spacing: MedsySpacing.xs) {
             HStack(alignment: .center) {
@@ -151,7 +172,7 @@ struct OrderDetailView: View {
                     ? "orders.fulfillment.delivery".localized
                     : "orders.fulfillment.pickup".localized
             )
-                .font(AppColor.sans(13, .medium))
+            .font(AppColor.sans(13, .medium))
         }
         .foregroundStyle(AppColor.green)
         .padding(.horizontal, MedsySpacing.sm)
@@ -326,11 +347,14 @@ struct OrderDetailView: View {
     private var reorderButton: some View {
         PrimaryButton(
             title: "orders.detail.reorder".localized,
-            systemImage: "arrow.counterclockwise"
+            systemImage: reorderState == .loading ? nil : "arrow.counterclockwise",
+            isLoading: reorderState == .loading,
+            isDisabled: reorderState == .loading
         ) {
             onReorder?()
         }
     }
+
 
     private func dateLabel(for date: Date) -> String {
         let calendar = Calendar.current
@@ -353,9 +377,22 @@ enum OrderDetailViewState {
 }
 
 
+extension ReorderState {
+    var showsFeedback: Bool {
+        switch self {
+        case .success, .partial, .failed:
+            return true
+        case .idle, .loading:
+            return false
+        }
+    }
+}
+
+
 #Preview {
     OrderDetailView(
         state: .loaded(.mock),
+        reorderState: .idle,
         onRetry: {},
         onBack: {}
     )

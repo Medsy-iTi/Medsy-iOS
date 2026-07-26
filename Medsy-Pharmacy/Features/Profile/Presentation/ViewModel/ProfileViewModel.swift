@@ -94,6 +94,7 @@ final class ProfileViewModel {
     var onNavigate: ((ProfileRoute) -> Void)?
     var onPresentSheet: ((ProfileSheet) -> Void)?
     var onLoggedOut: (() -> Void)?
+    var onPharmacistRemoved: (() -> Void)?
 
     // MARK: - Init
 
@@ -186,7 +187,7 @@ final class ProfileViewModel {
 
     // MARK: - Personal Profile
 
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+    func updateProfile(firstName: String, lastName: String, homeAddress: String?, dateOfBirth: Date?) async -> Bool {
         guard let profile, let id = Int(profile.id) else { return false }
         isSaving = true
         saveErrorMessage = nil
@@ -194,8 +195,8 @@ final class ProfileViewModel {
             try await updateProfileUseCase.execute(
                 id: id,
                 email: profile.email,
-                firstName: profile.firstName,
-                lastName: profile.lastName,
+                firstName: firstName,
+                lastName: lastName,
                 homeAddress: homeAddress,
                 dateOfBirth: dateOfBirth
             )
@@ -320,6 +321,7 @@ final class ProfileViewModel {
             isRemovingPharmacist = false
             selectedPharmacist = nil
             await loadProfile(showsSpinner: false)
+            onPharmacistRemoved?()
             return true
         } catch {
             isRemovingPharmacist = false

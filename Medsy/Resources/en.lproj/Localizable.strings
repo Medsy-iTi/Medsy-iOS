@@ -13,6 +13,12 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Splash */
+"splash.brand" = "Medsy";
+"splash.tagline" = "Your health, our priority";
+"splash.subtitle" = "Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
 "pharmacyProfile.badge" = "Pharmacy";
@@ -28,7 +34,7 @@
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.deliveryTo" = "Deliver to";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";
@@ -501,6 +507,14 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.reorder.go_to_cart"          = "Go to Cart";
+"orders.reorder.continue_shopping"   = "Continue Shopping";
+"orders.reorder.success.title"       = "Added Successfully";
+"orders.reorder.partial.title"       = "Partially Added";
+"orders.reorder.failed.title"        = "Failed to Add";
+"orders.reorder.success.message"     = "All items have been added to your cart.";
+"orders.reorder.partial.message"     = "Added %d out of %d items to your cart.";
+"orders.reorder.failed.message"      = "We couldn't add the items to your cart. Please try again.";
 
 "orders.filter.title"                 = "Filter Orders";
 "orders.filter.reset"                 = "Reset";
@@ -557,6 +571,9 @@
 "complete_request.payment.cash.subtitle" = "Pay when you receive the request";
 "complete_request.payment.visa" = "Visa";
 "complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.notes.title" = "Request notes";
+"complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
+"complete_request.notes.placeholder" = "Add notes for the pharmacy";
 "complete_request.card.title" = "Visa card details";
 "complete_request.card.cardholder" = "Cardholder name";
 "complete_request.card.number" = "Card number";

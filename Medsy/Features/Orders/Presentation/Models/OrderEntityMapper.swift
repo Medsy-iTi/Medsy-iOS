@@ -40,6 +40,7 @@ enum OrderEntityMapper {
     private static func mapItem(_ entity: OrderDetailItemEntity) -> OrderDetailItemModel {
         OrderDetailItemModel(
             id: entity.id,
+            productId: entity.productId,
             productName: entity.productName,
             originalProductName: entity.originalProductName,
             quantity: entity.quantity,

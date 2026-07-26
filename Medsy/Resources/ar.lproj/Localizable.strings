@@ -13,6 +13,12 @@
 "common.welcome"  = "مرحباً، %@!";
 "common.language" = "اللغة";
 
+/* Splash */
+"splash.brand" = "ميدسي";
+"splash.tagline" = "صحتك، أولويتنا";
+"splash.subtitle" = "الدواء والرعاية الصحية بكل سهولة.";
+"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا. الدواء والرعاية الصحية بكل سهولة.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "الملف الشخصي للصيدلية";
 "pharmacyProfile.badge" = "صيدلية";
@@ -28,7 +34,7 @@
 "language.arabic"  = "العربية";
 
 /* Home */
-"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.deliveryTo" = "التوصيل إلى";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
 "home.promoTitle" = "صحتك تهمنا";
 "home.promoDiscount" = "خصم حتى 30%";
@@ -500,6 +506,14 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.reorder.go_to_cart"          = "الذهاب للسلة";
+"orders.reorder.continue_shopping"   = "متابعة التصفح";
+"orders.reorder.success.title"       = "تمت الإضافة بنجاح";
+"orders.reorder.partial.title"       = "تمت إضافة بعض المنتجات";
+"orders.reorder.failed.title"        = "تعذرت الإضافة";
+"orders.reorder.success.message"     = "تمت إضافة جميع المنتجات إلى السلة بنجاح.";
+"orders.reorder.partial.message"     = "تمت إضافة %d من إجمالي %d منتجات إلى السلة.";
+"orders.reorder.failed.message"      = "حدث خطأ ولم نتمكن من إضافة المنتجات إلى السلة. يرجى المحاولة مرة أخرى.";
 
 "orders.filter.title"                 = "تصفية الطلبات";
 "orders.filter.reset"                 = "إعادة ضبط";
@@ -555,6 +569,9 @@
 "complete_request.payment.cash.subtitle" = "ادفع عند استلام الطلب";
 "complete_request.payment.visa" = "فيزا";
 "complete_request.payment.visa.subtitle" = "أدخل بيانات البطاقة";
+"complete_request.notes.title" = "ملاحظات الطلب";
+"complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
+"complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";
 "complete_request.card.title" = "بيانات بطاقة فيزا";
 "complete_request.card.cardholder" = "اسم حامل البطاقة";
 "complete_request.card.number" = "رقم البطاقة";
@@ -681,4 +698,3 @@
 "chatbot.demo.order.time_left"= "٧:١٢ متبقية";
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
-

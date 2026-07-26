@@ -11,11 +11,16 @@ struct HomeView: View {
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
+    let homeAddress: String
+    let onAddressTap: () -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
-                HomeHeaderView()
+                HomeHeaderView(
+                    homeAddress: homeAddress,
+                    onAddressTap: onAddressTap
+                )
                 HomeSearchBar(onTap: onSearchTap)
                 //HomeStatusSelectorView(selectedStatus: $selectedStatus)
                 HomePromoBanner()
