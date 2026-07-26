@@ -13,6 +13,12 @@
 "common.welcome"  = "مرحباً، %@!";
 "common.language" = "اللغة";
 
+/* Splash */
+"splash.brand" = "ميدسي";
+"splash.tagline" = "صحتك، أولويتنا";
+"splash.subtitle" = "الدواء والرعاية الصحية بكل سهولة.";
+"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا. الدواء والرعاية الصحية بكل سهولة.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "الملف الشخصي للصيدلية";
 "pharmacyProfile.badge" = "صيدلية";
@@ -28,7 +34,7 @@
 "language.arabic"  = "العربية";
 
 /* Home */
-"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.deliveryTo" = "التوصيل إلى";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
 "home.promoTitle" = "صحتك تهمنا";
 "home.promoDiscount" = "خصم حتى 30%";

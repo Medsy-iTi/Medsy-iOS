@@ -13,6 +13,12 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Splash */
+"splash.brand" = "Medsy";
+"splash.tagline" = "Your health, our priority";
+"splash.subtitle" = "Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
 "pharmacyProfile.badge" = "Pharmacy";
@@ -28,7 +34,7 @@
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.deliveryTo" = "Deliver to";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";
