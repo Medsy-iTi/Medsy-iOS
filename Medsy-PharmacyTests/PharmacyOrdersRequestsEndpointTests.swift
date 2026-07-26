@@ -73,7 +73,7 @@ final class PharmacyOrdersRequestsEndpointTests: XCTestCase {
         """
 
         let jsonData = try XCTUnwrap(jsonString.data(using: .utf8))
-        let envelope = try JSONDecoder().decode(APIEnvelope<PageResponseDTO<PharmacyOrderDTO>>.self, from: jsonData)
+        let envelope = try JSONDecoder().decode(APIEnvelope<PageResponseDTO<PharmacyMedicineRequestDTO>>.self, from: jsonData)
 
         XCTAssertTrue(envelope.success)
         XCTAssertEqual(envelope.message, "Pharmacy requests fetched successfully")
@@ -94,7 +94,7 @@ final class PharmacyOrdersRequestsEndpointTests: XCTestCase {
         XCTAssertEqual(firstItem.deliveryAddress, "Cairo")
         XCTAssertEqual(firstItem.status, "PENDING")
         XCTAssertEqual(firstItem.createdAt, "2026-07-23T17:10:31.250537")
-        XCTAssertEqual(firstItem.items.count, 3)
+        XCTAssertEqual(firstItem.items?.count, 3)
 
         let mappedPage = PharmacyOrderMapper.map(page)
         XCTAssertEqual(mappedPage.orders.count, 2)

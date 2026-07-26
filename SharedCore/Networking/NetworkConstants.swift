@@ -21,7 +21,7 @@ struct Constants {
         return values
     }()
 
-    static let baseURL = "https://dawanowbackend-production.up.railway.app/api/v1/"
+    static let baseURL =  secrets["API_BASE_URL"] as? String ?? ""
     static let aiKey = secrets["AI_API_KEY"] as? String ?? ""
     static var customerId: String?
 }
