@@ -302,10 +302,6 @@ struct PendingInvitationDetailView: View {
     private var detailCard: some View {
         VStack(spacing: 0) {
             detailRow(title: "pharmacy_pending_invitations.pharmacy".localized, value: invitation.pharmacyName)
-            ProfileRowDivider()
-            detailRow(title: "pharmacy_pending_invitations.pharmacist_id".localized, value: "\(invitation.pharmacistId)")
-            ProfileRowDivider()
-            detailRow(title: "pharmacy_pending_invitations.invitation_id".localized, value: "\(invitation.id)")
             if let createdAt = invitation.createdAt {
                 ProfileRowDivider()
                 detailRow(
