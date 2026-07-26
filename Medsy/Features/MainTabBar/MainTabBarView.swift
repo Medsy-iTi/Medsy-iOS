@@ -1,101 +1,98 @@
+//
 //  MainTabBarView.swift
 //  Medsy
 //
 //  Created by Antoneos Philip on 14/07/2026.
 //
 
-import SwiftUI
 import Observation
+import SwiftUI
 
 @MainActor
 struct MainTabBarView: View {
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
+    @State private var profileViewModel: ProfileViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var cartFeedbackTask: Task<Void, Never>?
     @ObservedObject private var appSettings = AppSettings.shared
-    
+
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
         _cartViewModel = State(
             initialValue: DIContainer.shared.resolve(CartViewModel.self)
         )
+        _profileViewModel = State(
+            initialValue: DIContainer.shared.resolve(ProfileViewModel.self)
+        )
     }
-    
+
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Group {
-                switch coordinator.selectedTab {
-                case .home:
-                    HomeCoordinatorView(
-                        requestedRoute: $requestedHomeRoute,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 },
-                        onOpenCart: { coordinator.select(.cart) }
-                    )
-                case .profile:
-                    ProfileCoordinatorView(
-                        onOrders: { coordinator.select(.orders) },
-                        onLogout: coordinator.logout
-                    )
-                    .onAppear { isTabBarHidden = false }
-                case .cart:
-                    CartCoordinatorView(
-                        viewModel: cartViewModel,
-                        onTabBarHiddenChange: { isTabBarHidden = $0 },
-                        onRequestCompleted: {
-                            isTabBarHidden = false
-                            coordinator.select(.orders)
-                        }
-                    )
-                    .onAppear { isTabBarHidden = false }
-                case .orders:
-                    OrdersCoordinatorView(
-                        onGoToCart: {
-                            cartViewModel.handle(.load)
-                            coordinator.select(.cart)
-                        }
-                    )
-                    .onAppear { isTabBarHidden = false }
-                case .favorites, .offers:
-                    VStack {
-                        Spacer()
-                        Text("Tab \(coordinator.selectedTab.rawValue)")
-                            .font(AppColor.sans(18, .medium))
-                            .foregroundStyle(AppColor.textSec)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(AppColor.bg)
-                    .onAppear { isTabBarHidden = false }
-                case .chatbot:
-                    ChatbotRootView { hidden in isTabBarHidden = hidden }
-                }
+        TabView(selection: selectedTabBinding) {
+            HomeCoordinatorView(
+                requestedRoute: $requestedHomeRoute,
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
+                onOpenCart: { coordinator.select(.cart) },
+                homeAddress: profileViewModel.displayHomeAddress,
+                onOpenProfile: { coordinator.select(.profile) }
+            )
+            .tabItem {
+                Label("tab.home".localized, systemImage: "house")
             }
-            .environment(cartViewModel)
-            .padding(.bottom, isTabBarHidden ? 0 : 80)
-            
-            if !isTabBarHidden {
-                VStack(spacing: 0) {
-                    Divider()
-                        .background(AppColor.border)
-                    
-                    HStack(spacing: 0) {
-                        tabItem(tab: .home, labelKey: "tab.home", activeIcon: "house.fill", inactiveIcon: "house")
-                        tabItem(tab: .cart, labelKey: "tab.cart", activeIcon: "cart.fill", inactiveIcon: "cart", badgeCount: cartViewModel.distinctProductCount)
-                        chatbotTabButton
-                        tabItem(tab: .orders, labelKey: "tab.orders", activeIcon: "doc.text.fill", inactiveIcon: "doc.text")
-                        tabItem(tab: .profile, labelKey: "tab.account", activeIcon: "person.fill", inactiveIcon: "person")
-                    }
-                    .padding(.top, 10)
-                    .padding(.bottom, 24)
-                    .background(AppColor.card)
+            .tag(AppTab.home)
+
+            CartCoordinatorView(
+                viewModel: cartViewModel,
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
+                onRequestCompleted: {
+                    isTabBarHidden = false
+                    coordinator.select(.orders)
                 }
-                .frame(height: 80)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+            )
+            .onAppear { isTabBarHidden = false }
+            .tabItem {
+                Label("tab.cart".localized, systemImage: "cart")
             }
+            .badge(cartViewModel.distinctProductCount)
+            .tag(AppTab.cart)
+
+            ChatbotRootView { hidden in
+                isTabBarHidden = hidden
+            }
+            .tabItem {
+                Label("tab.medsy_chatbot".localized, systemImage: "sparkles")
+            }
+            .tag(AppTab.chatbot)
+
+            OrdersCoordinatorView(
+                onGoToCart: {
+                    cartViewModel.handle(.load)
+                    coordinator.select(.cart)
+                }
+            )
+            .onAppear { isTabBarHidden = false }
+            .tabItem {
+                Label("tab.orders".localized, systemImage: "doc.text")
+            }
+            .tag(AppTab.orders)
+
+            ProfileCoordinatorView(
+                onOrders: { coordinator.select(.orders) },
+                onLogout: coordinator.logout,
+                viewModel: profileViewModel
+            )
+            .onAppear { isTabBarHidden = false }
+            .tabItem {
+                Label("tab.account".localized, systemImage: "person")
+            }
+            .tag(AppTab.profile)
         }
-        .ignoresSafeArea(edges: .bottom)
+        .environment(cartViewModel)
+        .tint(AppColor.green)
+        .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
+        .toolbarBackground(AppColor.card, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
         .overlay(alignment: .top) {
@@ -114,89 +111,34 @@ struct MainTabBarView: View {
         }
         .task {
             cartViewModel.handle(.load)
+            await profileViewModel.loadProfile()
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
     }
-    
-    private func openSearchFromCart() {
-        openSearch()
+
+    private var selectedTabBinding: Binding<AppTab> {
+        Binding(
+            get: { coordinator.selectedTab },
+            set: {
+                isTabBarHidden = false
+                coordinator.select($0)
+            }
+        )
     }
-    
-    private func openSearch() {
-        requestedHomeRoute = .search("")
-        coordinator.select(.home)
-    }
-    
+
     private var addedProductName: String? {
         guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
         return productName
     }
-    
+
     private func scheduleFeedbackDismissal() {
         cartFeedbackTask?.cancel()
         guard case .itemAdded = cartViewModel.feedback else { return }
-        
+
         cartFeedbackTask = Task {
             try? await Task.sleep(for: .seconds(2))
             guard !Task.isCancelled else { return }
             cartViewModel.handle(.dismissFeedback)
-        }
-    }
-    private var chatbotTabButton: some View {
-        Button {
-            isTabBarHidden = false
-            coordinator.select(.chatbot)
-        } label: {
-            VStack(spacing: 4) {
-                ZStack {
-                    Circle()
-                        .fill(AppColor.green)
-                        .frame(width: 44, height: 44)
-                        .shadow(color: AppColor.green.opacity(0.3), radius: 6, x: 0, y: 3)
-                    
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-                .offset(y: -12)
-                
-                Text("tab.medsy_chatbot".localized)
-                    .font(AppColor.sans(10, coordinator.selectedTab == .chatbot ? .bold : .medium))
-                    .foregroundStyle(coordinator.selectedTab == .chatbot ? AppColor.green : AppColor.textSec)
-                    .offset(y: -8)
-            }
-            .frame(maxWidth: .infinity)
-        }
-    }
-    private func tabItem(tab: AppTab, labelKey: String, activeIcon: String, inactiveIcon: String, badgeCount: Int? = nil) -> some View {
-        let isActive = coordinator.selectedTab == tab
-        return Button {
-            isTabBarHidden = false
-            coordinator.select(tab)
-        } label: {
-            VStack(spacing: 4) {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: isActive ? activeIcon : inactiveIcon)
-                        .font(.system(size: 20, weight: isActive ? .bold : .regular))
-                        .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
-                        .frame(width: 28, height: 24)
-                    
-                    if let badgeCount, badgeCount > 0 {
-                        Text("\(min(badgeCount, 99))")
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(minWidth: 16, minHeight: 16)
-                            .background(AppColor.danger)
-                            .clipShape(Capsule())
-                            .offset(x: 9, y: -7)
-                    }
-                }
-                
-                Text(labelKey.localized)
-                    .font(AppColor.sans(10, isActive ? .bold : .medium))
-                    .foregroundStyle(isActive ? AppColor.green : AppColor.textSec)
-            }
-            .frame(maxWidth: .infinity)
         }
     }
 }

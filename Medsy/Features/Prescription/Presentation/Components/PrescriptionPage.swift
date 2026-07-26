@@ -27,7 +27,5 @@ struct PrescriptionPage<Content: View>: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(AppColor.bg)
-        .toolbar(.hidden, for: .navigationBar)
-        .navigationBarHidden(true)
     }
 }
