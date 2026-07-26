@@ -86,19 +86,9 @@ struct ProfileView: View {
 				profile: profile,
 				pharmacistCountLabel: viewModel.pharmacistCountLabel,
 				errorMessages: pharmacyErrorMessages,
-				showsPendingInvitations: viewModel.showsPendingInvitations,
-				pendingInvitations: viewModel.pendingInvitations,
-				isLoadingPendingInvitations: viewModel.isLoadingPendingInvitations,
-				pendingInvitationDeletingId: viewModel.pendingInvitationDeletingId,
-				pendingInvitationsErrorMessage: viewModel.pendingInvitationsErrorMessage,
 				onPharmacyTap: viewModel.didTapPharmacyProfile,
 				onPharmacistsTap: viewModel.didTapPharmacistsList,
-				onInviteTap: viewModel.didTapInvitePharmacist,
-				onRefreshPendingInvitations: {
-					Task { await viewModel.loadPendingInvitations() }
-				},
-				onInvitationTap: viewModel.didTapPendingInvitation,
-				onDeleteInvitation: viewModel.requestDeletePendingInvitation
+				onInviteTap: viewModel.didTapInvitePharmacist
 			)
 
 			ProfilePreferencesSection(

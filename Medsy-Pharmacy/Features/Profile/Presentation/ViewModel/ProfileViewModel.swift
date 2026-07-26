@@ -68,7 +68,6 @@ final class ProfileViewModel {
     var inviteErrorMessage: String?
 
     // Pending invitations (admin)
-    var showsPendingInvitations = false
     private(set) var pendingInvitations: [PharmacyInvitation] = []
     var isLoadingPendingInvitations = false
     var pendingInvitationsErrorMessage: String?
@@ -417,17 +416,6 @@ final class ProfileViewModel {
         inviteErrorMessage = nil
     }
 
-    func togglePendingInvitations() {
-        guard profile?.isPharmacyAdmin == true else {
-            didTapPharmacyProfileDetails()
-            return
-        }
-
-        showsPendingInvitations.toggle()
-        guard showsPendingInvitations, pendingInvitations.isEmpty else { return }
-        Task { await loadPendingInvitations() }
-    }
-
     func loadPendingInvitations(showsSpinner: Bool = true) async {
         guard
             let pharmacyId = profile?.pharmacyId,
@@ -484,10 +472,6 @@ final class ProfileViewModel {
     }
 
     func didTapPharmacyProfile() {
-        togglePendingInvitations()
-    }
-
-    func didTapPharmacyProfileDetails() {
         onNavigate?(.pharmacyDetail)
     }
 

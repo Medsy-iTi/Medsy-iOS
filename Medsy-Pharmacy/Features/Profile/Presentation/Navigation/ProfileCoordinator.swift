@@ -264,6 +264,18 @@ final class ProfileCoordinator: Coordinator {
 				isLeaving: viewModel.isLeavingPharmacy,
 				deleteErrorMessage: viewModel.deletePharmacyErrorMessage,
 				leaveErrorMessage: viewModel.leavePharmacyErrorMessage,
+				pendingInvitations: viewModel.pendingInvitations,
+				isLoadingPendingInvitations: viewModel.isLoadingPendingInvitations,
+				pendingInvitationDeletingId: viewModel.pendingInvitationDeletingId,
+				pendingInvitationsErrorMessage: viewModel.pendingInvitationsErrorMessage,
+				onLoadPendingInvitations: {
+					Task { await self.viewModel.loadPendingInvitations() }
+				},
+				onRefreshPendingInvitations: {
+					Task { await self.viewModel.loadPendingInvitations() }
+				},
+				onInvitationTap: viewModel.didTapPendingInvitation,
+				onDeleteInvitation: viewModel.requestDeletePendingInvitation,
 				onEdit: viewModel.didTapEditPharmacy,
 				onDelete: {
 					Task { await self.viewModel.confirmDeletePharmacy() }
@@ -273,6 +285,7 @@ final class ProfileCoordinator: Coordinator {
 				},
 				onDismissError: {}
 			)
+			.pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
 		}
 	}
 
