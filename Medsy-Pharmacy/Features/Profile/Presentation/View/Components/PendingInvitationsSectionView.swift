@@ -12,7 +12,9 @@ struct PendingInvitationsSectionView: View {
     let errorMessage: String?
     let onRefresh: () -> Void
     let onInvitationTap: (PharmacyInvitation) -> Void
-    let onDeleteInvitation: (PharmacyInvitation) -> Void
+    let onDeleteInvitation: (PharmacyInvitation) async -> Void
+
+    @State private var pendingInvitationToDelete: PharmacyInvitation?
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
@@ -35,6 +37,41 @@ struct PendingInvitationsSectionView: View {
             RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                 .stroke(PharmacyColor.border, lineWidth: 1)
         }
+        .confirmationDialog(
+            "pharmacy_pending_invitations.delete_confirm_title".localized,
+            isPresented: pendingInvitationDeleteBinding,
+            titleVisibility: .visible
+        ) {
+            Button("pharmacy_pending_invitations.delete_confirm_action".localized, role: .destructive) {
+                if let invitation = pendingInvitationToDelete {
+                    Task { await onDeleteInvitation(invitation) }
+                }
+                pendingInvitationToDelete = nil
+            }
+            Button("cancel".localized, role: .cancel) {
+                pendingInvitationToDelete = nil
+            }
+        } message: {
+            if let invitation = pendingInvitationToDelete {
+                Text(
+                    String(
+                        format: "pharmacy_pending_invitations.delete_confirm_message".localized,
+                        invitation.pharmacistFullName
+                    )
+                )
+            }
+        }
+    }
+
+    private var pendingInvitationDeleteBinding: Binding<Bool> {
+        Binding(
+            get: { pendingInvitationToDelete != nil },
+            set: { isPresented in
+                if !isPresented {
+                    pendingInvitationToDelete = nil
+                }
+            }
+        )
     }
 
     private var header: some View {
@@ -90,7 +127,7 @@ struct PendingInvitationsSectionView: View {
                     invitation: invitation,
                     isDeleting: deletingInvitationId == invitation.id,
                     onTap: { onInvitationTap(invitation) },
-                    onDelete: { onDeleteInvitation(invitation) }
+                    onDelete: { pendingInvitationToDelete = invitation }
                 )
             }
         }
@@ -213,8 +250,10 @@ struct PendingInvitationDetailView: View {
     let invitation: PharmacyInvitation
     let isDeleting: Bool
     let errorMessage: String?
-    let onDelete: () -> Void
+    let onDelete: (PharmacyInvitation) async -> Void
     let onDismissError: () -> Void
+
+    @State private var pendingInvitationToDelete: PharmacyInvitation?
 
     var body: some View {
         ScrollView {
@@ -222,7 +261,9 @@ struct PendingInvitationDetailView: View {
                 summaryCard
                 detailCard
 
-                Button(role: .destructive, action: onDelete) {
+                Button(role: .destructive) {
+                    pendingInvitationToDelete = invitation
+                } label: {
                     HStack(spacing: PharmacySpacing.sm) {
                         if isDeleting {
                             ProgressView().tint(PharmacyColor.danger)
@@ -264,6 +305,41 @@ struct PendingInvitationDetailView: View {
         .background(PharmacyColor.bg.ignoresSafeArea())
         .navigationTitle("pharmacy_pending_invitations.details_title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog(
+            "pharmacy_pending_invitations.delete_confirm_title".localized,
+            isPresented: pendingInvitationDeleteBinding,
+            titleVisibility: .visible
+        ) {
+            Button("pharmacy_pending_invitations.delete_confirm_action".localized, role: .destructive) {
+                if let invitation = pendingInvitationToDelete {
+                    Task { await onDelete(invitation) }
+                }
+                pendingInvitationToDelete = nil
+            }
+            Button("cancel".localized, role: .cancel) {
+                pendingInvitationToDelete = nil
+            }
+        } message: {
+            if let invitation = pendingInvitationToDelete {
+                Text(
+                    String(
+                        format: "pharmacy_pending_invitations.delete_confirm_message".localized,
+                        invitation.pharmacistFullName
+                    )
+                )
+            }
+        }
+    }
+
+    private var pendingInvitationDeleteBinding: Binding<Bool> {
+        Binding(
+            get: { pendingInvitationToDelete != nil },
+            set: { isPresented in
+                if !isPresented {
+                    pendingInvitationToDelete = nil
+                }
+            }
+        )
     }
 
     private var summaryCard: some View {

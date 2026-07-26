@@ -21,7 +21,7 @@ struct PharmacyDetailView: View {
     let onLoadPendingInvitations: () -> Void
     let onRefreshPendingInvitations: () -> Void
     let onInvitationTap: (PharmacyInvitation) -> Void
-    let onDeleteInvitation: (PharmacyInvitation) -> Void
+    let onDeleteInvitation: (PharmacyInvitation) async -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onLeave: () -> Void
@@ -256,4 +256,3 @@ struct PharmacyDetailView: View {
         .background(PharmacyColor.danger.opacity(0.1), in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
     }
 }
-

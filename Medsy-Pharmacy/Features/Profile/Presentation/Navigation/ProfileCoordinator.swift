@@ -123,10 +123,9 @@ final class ProfileCoordinator: Coordinator {
 					invitation: invitation,
 					isDeleting: viewModel.pendingInvitationDeletingId == invitation.id,
 					errorMessage: viewModel.pendingInvitationsErrorMessage,
-					onDelete: { self.viewModel.requestDeletePendingInvitation(invitation) },
+					onDelete: { invitation in await self.viewModel.deletePendingInvitation(invitation) },
 					onDismissError: { self.viewModel.pendingInvitationsErrorMessage = nil }
 				)
-				.pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
 
 			case let .pharmacistProfile(member):
 				PharmacistDetailView(
@@ -275,7 +274,7 @@ final class ProfileCoordinator: Coordinator {
 					Task { await self.viewModel.loadPendingInvitations() }
 				},
 				onInvitationTap: viewModel.didTapPendingInvitation,
-				onDeleteInvitation: viewModel.requestDeletePendingInvitation,
+				onDeleteInvitation: { invitation in await self.viewModel.deletePendingInvitation(invitation) },
 				onEdit: viewModel.didTapEditPharmacy,
 				onDelete: {
 					Task { await self.viewModel.confirmDeletePharmacy() }
@@ -285,7 +284,6 @@ final class ProfileCoordinator: Coordinator {
 				},
 				onDismissError: {}
 			)
-			.pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
 		}
 	}
 

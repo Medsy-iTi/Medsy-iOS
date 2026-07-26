@@ -72,7 +72,6 @@ final class ProfileViewModel {
     var isLoadingPendingInvitations = false
     var pendingInvitationsErrorMessage: String?
     var selectedPendingInvitation: PharmacyInvitation?
-    var showDeletePendingInvitationConfirmation = false
     var pendingInvitationDeletingId: Int?
 
     // MARK: - Dependencies
@@ -438,21 +437,10 @@ final class ProfileViewModel {
         onNavigate?(.pendingInvitationDetail(invitation))
     }
 
-    func requestDeletePendingInvitation(_ invitation: PharmacyInvitation) {
+    func deletePendingInvitation(_ invitation: PharmacyInvitation) async {
         selectedPendingInvitation = invitation
-        showDeletePendingInvitationConfirmation = true
-    }
-
-    func cancelDeletePendingInvitation() {
-        showDeletePendingInvitationConfirmation = false
-        selectedPendingInvitation = nil
-    }
-
-    func confirmDeletePendingInvitation() async {
-        guard let invitation = selectedPendingInvitation else { return }
         pendingInvitationDeletingId = invitation.id
         pendingInvitationsErrorMessage = nil
-        showDeletePendingInvitationConfirmation = false
         do {
             try await deletePendingInvitationUseCase.execute(id: invitation.id)
             pendingInvitations.removeAll { $0.id == invitation.id }
