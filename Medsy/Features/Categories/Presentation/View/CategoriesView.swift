@@ -31,6 +31,7 @@ struct CategoriesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            MedsyNavBar(title: "categories.title".localized, onBack: {dismiss()})
             HStack {
                 TextField("", text: $searchText, prompt:
                     Text("categories.searchPlaceholder".localized)
@@ -139,20 +140,6 @@ struct CategoriesView: View {
             }
         }
         .background(AppColor.bg)
-        .navigationTitle("categories.title".localized)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(AppColor.textPrim)
-                }
-            }
-        }
         .task {
             await viewModel.loadCategories()
         }
