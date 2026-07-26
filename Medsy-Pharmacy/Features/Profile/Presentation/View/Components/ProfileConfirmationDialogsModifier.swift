@@ -52,7 +52,6 @@ struct ProfileConfirmationDialogsModifier: ViewModifier {
             } message: {
                 Text("pharmacy_card.delete_confirm_message".localized)
             }
-            .pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
     }
 }
 
