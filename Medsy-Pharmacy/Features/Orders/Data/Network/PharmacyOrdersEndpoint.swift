@@ -14,8 +14,10 @@ enum PharmacyOrdersEndpoint: ApiEndpoint {
 
     var path: String {
         switch self {
-        case .fetchOrders(let pharmacyId, _, _, _):
-            return "orders/pharmacy/\(pharmacyId)"
+        case .fetchOrders:
+            // OLD:
+            // return "orders/pharmacy/\(pharmacyId)"
+            return "pharmacies/requests"
         }
     }
 

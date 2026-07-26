@@ -14,6 +14,9 @@ struct PharmacyOrdersCoordinatorView: View {
 	var body: some View {
 		NavigationStack(path: $coordinator.path) {
 			coordinator.start()
+				.navigationDestination(for: PharmacyOrdersRoute.self) { route in
+					coordinator.destination(for: route)
+				}
 		}
 	}
 }
