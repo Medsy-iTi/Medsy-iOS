@@ -66,7 +66,10 @@ struct MainTabBarView: View {
             .tag(AppTab.chatbot)
 
             OrdersCoordinatorView(
-                onGoToCart: { coordinator.select(.cart) }
+                onGoToCart: {
+                    cartViewModel.handle(.load)
+                    coordinator.select(.cart)
+                }
             )
             .onAppear { isTabBarHidden = false }
             .tabItem {

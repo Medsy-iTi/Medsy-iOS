@@ -89,14 +89,7 @@ struct OrderHistoryView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: MedsySpacing.lg) {
-            ProgressView()
-                .tint(AppColor.green)
-            Text("orders.loading".localized)
-                .font(MedsyFont.caption())
-                .foregroundStyle(AppColor.textSec)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        OrderHistoryLoadingSkeleton()
     }
 
     private func ordersListView(sections: [OrderDateSection]) -> some View {

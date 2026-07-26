@@ -14,7 +14,7 @@ struct OrderDetailView: View {
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
     var onSelectPharmacy: ((Int) -> Void)? = nil
-    var onDismissReorderAlert: (() -> Void)? = nil
+    var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
 
     var body: some View {
@@ -25,32 +25,24 @@ struct OrderDetailView: View {
         }
         .background(AppColor.bg)
         .navigationBarHidden(true)
-        .alert(reorderAlertTitle, isPresented: reorderAlertBinding) {
-            if reorderState == .success || reorderState.isPartial {
-                Button("orders.reorder.go_to_cart".localized) {
-                    onDismissReorderAlert?()
-                    onGoToCart?()
-                }
-                Button("orders.reorder.continue_shopping".localized, role: .cancel) {
-                    onDismissReorderAlert?()
-                }
-            } else {
-                Button("common.ok".localized, role: .cancel) {
-                    onDismissReorderAlert?()
-                }
+        .overlay(alignment: .bottom) {
+            if reorderState.showsFeedback {
+                ReorderToastView(
+                    state: reorderState,
+                    onGoToCart: {
+                        onDismissReorderFeedback?()
+                        onGoToCart?()
+                    },
+                    onDismiss: {
+                        onDismissReorderFeedback?()
+                    }
+                )
+                .padding(.horizontal, MedsySpacing.md)
+                .padding(.bottom, 104)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-        } message: {
-            Text(reorderAlertMessage)
         }
-    }
-
-    private var reorderAlertBinding: Binding<Bool> {
-        Binding(
-            get: { reorderState == .success || reorderState.isPartial || reorderState.isFailed },
-            set: { newValue in
-                if !newValue { onDismissReorderAlert?() }
-            }
-        )
+        .animation(.easeInOut(duration: 0.25), value: reorderState)
     }
 
     // MARK: - Nav Bar
@@ -99,13 +91,7 @@ struct OrderDetailView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: MedsySpacing.lg) {
-            ProgressView().tint(AppColor.green)
-            Text("orders.loading".localized)
-                .font(MedsyFont.caption())
-                .foregroundStyle(AppColor.textSec)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        OrderDetailLoadingSkeleton()
     }
 
     private var notFoundView: some View {
@@ -370,33 +356,6 @@ struct OrderDetailView: View {
     }
 
 
-    private var reorderAlertTitle: String {
-        switch reorderState {
-        case .success:
-            return "orders.reorder.success.title".localized
-        case .partial:
-            return "orders.reorder.partial.title".localized
-        case .failed:
-            return "orders.reorder.failed.title".localized
-        default:
-            return ""
-        }
-    }
-
-    private var reorderAlertMessage: String {
-        switch reorderState {
-        case .success:
-            return "orders.reorder.success.message".localized
-        case .partial(let added, let total):
-            return String(format: "orders.reorder.partial.message".localized, added, total)
-        case .failed:
-            return "orders.reorder.failed.message".localized
-        default:
-            return ""
-        }
-    }
-
-
     private func dateLabel(for date: Date) -> String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) {
@@ -419,14 +378,13 @@ enum OrderDetailViewState {
 
 
 extension ReorderState {
-    var isPartial: Bool {
-        if case .partial = self { return true }
-        return false
-    }
-
-    var isFailed: Bool {
-        if case .failed = self { return true }
-        return false
+    var showsFeedback: Bool {
+        switch self {
+        case .success, .partial, .failed:
+            return true
+        case .idle, .loading:
+            return false
+        }
     }
 }
 

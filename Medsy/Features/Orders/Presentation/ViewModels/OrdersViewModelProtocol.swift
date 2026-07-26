@@ -18,7 +18,7 @@ enum OrderDetailEvent {
     case load(orderId: Int)
     case retry(orderId: Int)
     case reorder
-    case dismissReorderAlert
+    case dismissReorderFeedback
 }
 
 
