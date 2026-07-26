@@ -26,6 +26,7 @@ struct AddressPickerScreen: View {
 				MedsyNavBar(title: "address.title".localized, onBack: viewModel.onCancel)
 
 				searchField
+				locationPermissionBanner
 
 				if !viewModel.searchResults.isEmpty {
 					suggestionsList
@@ -39,6 +40,35 @@ struct AddressPickerScreen: View {
 		.onAppear {
 			viewModel.requestLocationPermission()
 			viewModel.resolveInitialLocationIfNeeded()
+		}
+	}
+
+
+	@ViewBuilder
+	private var locationPermissionBanner: some View {
+		if let message = viewModel.locationPermissionMessage {
+			HStack(spacing: 10) {
+				Image(systemName: "location.slash")
+					.font(.system(size: 13, weight: .bold))
+					.foregroundStyle(ProfileStyle.red)
+
+				Text(message)
+					.font(.system(size: 12, weight: .semibold))
+					.foregroundStyle(ProfileStyle.primaryText)
+					.lineLimit(2)
+
+				Spacer(minLength: 0)
+			}
+			.padding(.horizontal, 14)
+			.padding(.vertical, 10)
+			.background(ProfileStyle.redBackground)
+			.clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+			.overlay {
+				RoundedRectangle(cornerRadius: 14, style: .continuous)
+					.stroke(ProfileStyle.redBorder, lineWidth: 1)
+			}
+			.padding(.horizontal, 20)
+			.padding(.bottom, 12)
 		}
 	}
 
