@@ -240,9 +240,9 @@
 "cart.estimated_total_disclaimer" = "الأسعار تقريبية. السعر النهائي يتم تأكيده من الصيدلية.";
 "cart.continue" = "متابعة";
 "cart.empty.title" = "السلة فارغة";
-"cart.empty.message" = "ابحث عن الأدوية أو ارفع روشتة لبدء طلب.";
+"cart.empty.message" = "ابحث عن الأدوية أو امسح روشتة لإضافة الأدوية أولًا.";
 "cart.empty.search" = "ابحث عن أدوية";
-"cart.empty.upload" = "رفع روشتة";
+"cart.empty.scan_prescription" = "مسح الروشتة";
 "cart.error.title" = "تعذر تحميل السلة";
 "cart.removed_message" = "تم حذف %@";
 "cart.undo" = "تراجع";

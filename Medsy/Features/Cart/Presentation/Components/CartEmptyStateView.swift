@@ -9,21 +9,24 @@ import SwiftUI
 
 struct CartEmptyStateView: View {
     let onSearch: () -> Void
-    let onUploadPrescription: () -> Void
+    let onScanPrescription: () -> Void
 
     var body: some View {
         VStack(spacing: MedsySpacing.lg) {
             Spacer(minLength: MedsySpacing.xxl)
 
             ZStack {
-                Circle()
+                RoundedRectangle(cornerRadius: 36, style: .continuous)
                     .fill(AppColor.lightGreen)
 
-                Image(systemName: "cart")
+                Image(systemName: "cart.badge.plus")
                     .font(.system(size: 44, weight: .semibold))
                     .foregroundStyle(AppColor.green)
+
+                MedsyLottieView(animationName: "cart_empty_scan")
+                    .frame(width: 144, height: 144)
             }
-            .frame(width: 112, height: 112)
+            .frame(width: 160, height: 160)
 
             VStack(spacing: MedsySpacing.xs) {
                 Text("cart.empty.title".localized)
@@ -46,10 +49,10 @@ struct CartEmptyStateView: View {
                 )
 
                 PrimaryButton(
-                    title: "cart.empty.upload".localized,
-                    systemImage: "camera",
+                    title: "cart.empty.scan_prescription".localized,
+                    systemImage: "doc.text.viewfinder",
                     style: .secondary,
-                    action: onUploadPrescription
+                    action: onScanPrescription
                 )
             }
 
