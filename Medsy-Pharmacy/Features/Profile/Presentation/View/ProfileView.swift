@@ -109,7 +109,6 @@ struct ProfileView: View {
 			)
 
 			ProfileAccountActionsSection(
-				onEditProfile: viewModel.didTapPersonalProfile,
 				onLogout: viewModel.requestLogout
 			)
 		}
