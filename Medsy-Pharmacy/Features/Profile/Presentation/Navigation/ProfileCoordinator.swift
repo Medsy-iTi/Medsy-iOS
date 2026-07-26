@@ -26,6 +26,8 @@ final class ProfileCoordinator: Coordinator {
 			deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
 			removePharmacistUseCase: container.resolve(RemovePharmacistUseCaseProtocol.self),
 			invitePharmacistUseCase: container.resolve(InvitePharmacistUseCaseProtocol.self),
+			fetchPendingInvitationsUseCase: container.resolve(FetchPendingPharmacyInvitationsUseCaseProtocol.self),
+			deletePendingInvitationUseCase: container.resolve(DeletePendingPharmacyInvitationUseCaseProtocol.self),
 			updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
 			logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
 			goOnDutyUseCase: container.resolve(GoOnDutyUseCaseProtocol.self),
@@ -57,6 +59,12 @@ final class ProfileCoordinator: Coordinator {
 					default:
 						break
 				}
+			}
+		}
+		viewModel.onPendingInvitationDeleted = { [weak self] in
+			guard let self, let last = path.last else { return }
+			if case .pendingInvitationDetail = last {
+				pop()
 			}
 		}
 	}
@@ -109,6 +117,16 @@ final class ProfileCoordinator: Coordinator {
 					onInviteAnother: showAnotherInvitation,
 					onBack: popToRoot
 				)
+
+			case let .pendingInvitationDetail(invitation):
+				PendingInvitationDetailView(
+					invitation: invitation,
+					isDeleting: viewModel.pendingInvitationDeletingId == invitation.id,
+					errorMessage: viewModel.pendingInvitationsErrorMessage,
+					onDelete: { self.viewModel.requestDeletePendingInvitation(invitation) },
+					onDismissError: { self.viewModel.pendingInvitationsErrorMessage = nil }
+				)
+				.pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
 
 			case let .pharmacistProfile(member):
 				PharmacistDetailView(

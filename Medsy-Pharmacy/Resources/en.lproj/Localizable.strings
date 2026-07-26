@@ -361,3 +361,18 @@
 "pharmacy.orders.status.pending" = "Pending Approval";
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
+
+/* Pharmacy Pending Invitations */
+"refresh" = "Refresh";
+"pharmacy_pending_invitations.title" = "Pending invitations";
+"pharmacy_pending_invitations.subtitle" = "Review invited pharmacists before they join";
+"pharmacy_pending_invitations.empty" = "No pending invitations for this pharmacy.";
+"pharmacy_pending_invitations.details_title" = "Invitation Details";
+"pharmacy_pending_invitations.delete" = "Delete Invitation";
+"pharmacy_pending_invitations.delete_confirm_title" = "Delete pending invitation?";
+"pharmacy_pending_invitations.delete_confirm_action" = "Delete Invitation";
+"pharmacy_pending_invitations.delete_confirm_message" = "Delete %@'s pending invitation?";
+"pharmacy_pending_invitations.pharmacy" = "Pharmacy";
+"pharmacy_pending_invitations.pharmacist_id" = "Pharmacist ID";
+"pharmacy_pending_invitations.invitation_id" = "Invitation ID";
+"pharmacy_pending_invitations.created_at" = "Created at";

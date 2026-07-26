@@ -67,6 +67,15 @@ final class ProfileViewModel {
     var isInvitingPharmacist = false
     var inviteErrorMessage: String?
 
+    // Pending invitations (admin)
+    var showsPendingInvitations = false
+    private(set) var pendingInvitations: [PharmacyInvitation] = []
+    var isLoadingPendingInvitations = false
+    var pendingInvitationsErrorMessage: String?
+    var selectedPendingInvitation: PharmacyInvitation?
+    var showDeletePendingInvitationConfirmation = false
+    var pendingInvitationDeletingId: Int?
+
     // MARK: - Dependencies
 
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
@@ -76,6 +85,8 @@ final class ProfileViewModel {
     private let deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
     private let removePharmacistUseCase: RemovePharmacistUseCaseProtocol
     private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
+    private let fetchPendingInvitationsUseCase: FetchPendingPharmacyInvitationsUseCaseProtocol
+    private let deletePendingInvitationUseCase: DeletePendingPharmacyInvitationUseCaseProtocol
     private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
     private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
@@ -95,6 +106,7 @@ final class ProfileViewModel {
     var onPresentSheet: ((ProfileSheet) -> Void)?
     var onLoggedOut: (() -> Void)?
     var onPharmacistRemoved: (() -> Void)?
+    var onPendingInvitationDeleted: (() -> Void)?
 
     // MARK: - Init
 
@@ -106,6 +118,8 @@ final class ProfileViewModel {
         deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
         removePharmacistUseCase: RemovePharmacistUseCaseProtocol,
         invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
+        fetchPendingInvitationsUseCase: FetchPendingPharmacyInvitationsUseCaseProtocol,
+        deletePendingInvitationUseCase: DeletePendingPharmacyInvitationUseCaseProtocol,
         updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
@@ -121,6 +135,8 @@ final class ProfileViewModel {
         self.deletePharmacyUseCase = deletePharmacyUseCase
         self.removePharmacistUseCase = removePharmacistUseCase
         self.invitePharmacistUseCase = invitePharmacistUseCase
+        self.fetchPendingInvitationsUseCase = fetchPendingInvitationsUseCase
+        self.deletePendingInvitationUseCase = deletePendingInvitationUseCase
         self.updatePharmacistUseCase = updatePharmacistUseCase
         self.logoutUseCase = logoutUseCase
         self.goOnDutyUseCase = goOnDutyUseCase
@@ -383,8 +399,9 @@ final class ProfileViewModel {
             )
             isInvitingPharmacist = false
             inviteEmail = ""
+            await loadPendingInvitations(showsSpinner: false)
             onNavigate?(.inviteSuccess(InviteSuccessInfo(
-                email: invitation.invitedEmail,
+                email: invitation.invitedEmail ?? trimmedEmail,
                 pharmacyName: invitation.pharmacyName
             )))
             return true
@@ -400,6 +417,66 @@ final class ProfileViewModel {
         inviteErrorMessage = nil
     }
 
+    func togglePendingInvitations() {
+        guard profile?.isPharmacyAdmin == true else {
+            didTapPharmacyProfileDetails()
+            return
+        }
+
+        showsPendingInvitations.toggle()
+        guard showsPendingInvitations, pendingInvitations.isEmpty else { return }
+        Task { await loadPendingInvitations() }
+    }
+
+    func loadPendingInvitations(showsSpinner: Bool = true) async {
+        guard
+            let pharmacyId = profile?.pharmacyId,
+            profile?.isPharmacyAdmin == true
+        else { return }
+
+        if showsSpinner { isLoadingPendingInvitations = true }
+        pendingInvitationsErrorMessage = nil
+        do {
+            pendingInvitations = try await fetchPendingInvitationsUseCase.execute(pharmacyId: pharmacyId)
+            isLoadingPendingInvitations = false
+        } catch {
+            isLoadingPendingInvitations = false
+            pendingInvitationsErrorMessage = Self.userFacingMessage(for: error)
+        }
+    }
+
+    func didTapPendingInvitation(_ invitation: PharmacyInvitation) {
+        selectedPendingInvitation = invitation
+        onNavigate?(.pendingInvitationDetail(invitation))
+    }
+
+    func requestDeletePendingInvitation(_ invitation: PharmacyInvitation) {
+        selectedPendingInvitation = invitation
+        showDeletePendingInvitationConfirmation = true
+    }
+
+    func cancelDeletePendingInvitation() {
+        showDeletePendingInvitationConfirmation = false
+        selectedPendingInvitation = nil
+    }
+
+    func confirmDeletePendingInvitation() async {
+        guard let invitation = selectedPendingInvitation else { return }
+        pendingInvitationDeletingId = invitation.id
+        pendingInvitationsErrorMessage = nil
+        showDeletePendingInvitationConfirmation = false
+        do {
+            try await deletePendingInvitationUseCase.execute(id: invitation.id)
+            pendingInvitations.removeAll { $0.id == invitation.id }
+            pendingInvitationDeletingId = nil
+            selectedPendingInvitation = nil
+            onPendingInvitationDeleted?()
+        } catch {
+            pendingInvitationDeletingId = nil
+            pendingInvitationsErrorMessage = Self.userFacingMessage(for: error)
+        }
+    }
+
     // MARK: - Navigation
 
     func didTapPersonalProfile() {
@@ -407,6 +484,10 @@ final class ProfileViewModel {
     }
 
     func didTapPharmacyProfile() {
+        togglePendingInvitations()
+    }
+
+    func didTapPharmacyProfileDetails() {
         onNavigate?(.pharmacyDetail)
     }
 

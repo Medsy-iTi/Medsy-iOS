@@ -42,6 +42,14 @@ struct ProfileAssembly: PharmacyModuleAssembly {
             InvitePharmacistUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
         }
 
+        container.register(FetchPendingPharmacyInvitationsUseCaseProtocol.self) { container in
+            FetchPendingPharmacyInvitationsUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
+        container.register(DeletePendingPharmacyInvitationUseCaseProtocol.self) { container in
+            DeletePendingPharmacyInvitationUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
+        }
+
         container.register(UpdatePharmacistUseCaseProtocol.self) { container in
             UpdatePharmacistUseCase(repository: container.resolve(ProfileRepositoryProtocol.self))
         }

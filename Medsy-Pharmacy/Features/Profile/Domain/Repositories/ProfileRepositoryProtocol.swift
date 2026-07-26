@@ -25,6 +25,8 @@ protocol ProfileRepositoryProtocol {
     func deletePharmacy(id: Int) async throws
     func removePharmacist(pharmacistId: Int, pharmacyId: Int) async throws
     func invitePharmacist(pharmacyId: Int, email: String) async throws -> PharmacyInvitation
+    func fetchPendingInvitations(pharmacyId: Int) async throws -> [PharmacyInvitation]
+    func deletePendingInvitation(id: Int) async throws
 
     // Admin pharmacist management
     func updatePharmacist(

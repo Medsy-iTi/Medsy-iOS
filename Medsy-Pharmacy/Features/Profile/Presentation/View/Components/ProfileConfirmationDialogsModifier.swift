@@ -52,6 +52,7 @@ struct ProfileConfirmationDialogsModifier: ViewModifier {
             } message: {
                 Text("pharmacy_card.delete_confirm_message".localized)
             }
+            .pendingInvitationDeleteConfirmationDialog(viewModel: viewModel)
     }
 }
 
@@ -93,5 +94,40 @@ struct RemovePharmacistConfirmationDialogModifier: ViewModifier {
 extension View {
     func removePharmacistConfirmationDialog(viewModel: ProfileViewModel) -> some View {
         modifier(RemovePharmacistConfirmationDialogModifier(viewModel: viewModel))
+    }
+}
+
+struct PendingInvitationDeleteConfirmationDialogModifier: ViewModifier {
+    @Bindable var viewModel: ProfileViewModel
+
+    func body(content: Content) -> some View {
+        content
+            .confirmationDialog(
+                "pharmacy_pending_invitations.delete_confirm_title".localized,
+                isPresented: $viewModel.showDeletePendingInvitationConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("pharmacy_pending_invitations.delete_confirm_action".localized, role: .destructive) {
+                    Task { await viewModel.confirmDeletePendingInvitation() }
+                }
+                Button("cancel".localized, role: .cancel) {
+                    viewModel.cancelDeletePendingInvitation()
+                }
+            } message: {
+                if let invitation = viewModel.selectedPendingInvitation {
+                    Text(
+                        String(
+                            format: "pharmacy_pending_invitations.delete_confirm_message".localized,
+                            invitation.pharmacistFullName
+                        )
+                    )
+                }
+            }
+    }
+}
+
+extension View {
+    func pendingInvitationDeleteConfirmationDialog(viewModel: ProfileViewModel) -> some View {
+        modifier(PendingInvitationDeleteConfirmationDialogModifier(viewModel: viewModel))
     }
 }

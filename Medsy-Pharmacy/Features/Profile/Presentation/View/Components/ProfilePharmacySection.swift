@@ -9,9 +9,17 @@ struct ProfilePharmacySection: View {
     let profile: PharmacyProfile
     let pharmacistCountLabel: String
     let errorMessages: [String]
+    let showsPendingInvitations: Bool
+    let pendingInvitations: [PharmacyInvitation]
+    let isLoadingPendingInvitations: Bool
+    let pendingInvitationDeletingId: Int?
+    let pendingInvitationsErrorMessage: String?
     let onPharmacyTap: () -> Void
     let onPharmacistsTap: () -> Void
     let onInviteTap: () -> Void
+    let onRefreshPendingInvitations: () -> Void
+    let onInvitationTap: (PharmacyInvitation) -> Void
+    let onDeleteInvitation: (PharmacyInvitation) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
@@ -49,6 +57,18 @@ struct ProfilePharmacySection: View {
 
             if profile.isPharmacyAdmin {
                 inviteButton
+            }
+
+            if profile.isPharmacyAdmin, showsPendingInvitations {
+                PendingInvitationsSectionView(
+                    invitations: pendingInvitations,
+                    isLoading: isLoadingPendingInvitations,
+                    deletingInvitationId: pendingInvitationDeletingId,
+                    errorMessage: pendingInvitationsErrorMessage,
+                    onRefresh: onRefreshPendingInvitations,
+                    onInvitationTap: onInvitationTap,
+                    onDeleteInvitation: onDeleteInvitation
+                )
             }
 
             ForEach(Array(errorMessages.enumerated()), id: \.offset) { _, message in
