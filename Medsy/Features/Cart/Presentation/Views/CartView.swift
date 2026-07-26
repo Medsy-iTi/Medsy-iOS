@@ -41,7 +41,7 @@ struct CartView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                MedsyNavBar(title: "cart.title".localized) {
+                MedsyNavBar(title: "cart.title".localized, trailing: {
                     Button {
                         showsClearConfirmation = true
                     } label: {
@@ -52,7 +52,7 @@ struct CartView: View {
                     .accessibilityLabel("cart.clear.accessibility".localized)
                     .disabled(!viewModel.hasContent)
                     .opacity(viewModel.hasContent ? 1 : 0.35)
-                }
+                })
 
                 content
             }

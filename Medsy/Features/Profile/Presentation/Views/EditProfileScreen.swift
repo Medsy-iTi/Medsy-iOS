@@ -67,7 +67,8 @@ struct EditProfileScreen: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                header
+
+                MedsyNavBar(title: "profile.edit.title".localized, onBack: onCancel)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
@@ -106,32 +107,10 @@ struct EditProfileScreen: View {
                 }
             )
 
-            AddressPickerScreen(viewModel: viewModel)
-        }
-    }
-
-    private var header: some View {
-        HStack {
-            Button {
-                onCancel()
-            } label: {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(ProfileStyle.primaryText)
-                    .frame(width: 36, height: 36)
+            NavigationStack {
+                AddressPickerScreen(viewModel: viewModel)
             }
-            .buttonStyle(.plain)
-
-            Text("profile.edit.title".localized)
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(ProfileStyle.primaryText)
-                .frame(maxWidth: .infinity)
-
-            Color.clear
-                .frame(width: 36, height: 36)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
     }
 
     private var avatarBlock: some View {
@@ -398,13 +377,15 @@ struct EditProfileScreen: View {
 }
 
 #Preview {
-    EditProfileScreen(
-        firstName: "Ahmed",
-        lastName: "Elkady",
-        phoneNumber: "+20 10 1234 5678",
-        email: "customer@dawanow.com",
-        homeAddress: "Cairo, Egypt",
-        dateOfBirth: Date()
-    )
+    NavigationStack {
+        EditProfileScreen(
+            firstName: "Ahmed",
+            lastName: "Elkady",
+            phoneNumber: "+20 10 1234 5678",
+            email: "customer@dawanow.com",
+            homeAddress: "Cairo, Egypt",
+            dateOfBirth: Date()
+        )
+    }
     .environment(LanguageManager.shared)
 }

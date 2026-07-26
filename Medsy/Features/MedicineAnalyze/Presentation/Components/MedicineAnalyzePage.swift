@@ -21,14 +21,10 @@ struct MedicineAnalyzePage<Content: View>: View {
             MedsyNavBar(
                 title: "medicineAnalyze.title".localized,
                 onBack: onBack
-            ) {
-                EmptyView()
-            }
+            )
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(AppColor.bg)
-        .toolbar(.hidden, for: .navigationBar)
-        .navigationBarHidden(true)
     }
 }

@@ -82,7 +82,6 @@ struct CompleteRequestView: View {
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
-        .toolbarVisibility(.hidden, for: .navigationBar)
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(
                 title: "complete_request.submit".localized,
