@@ -16,6 +16,7 @@ enum CompleteRequestDraftMapper {
                     id: item.id,
                     name: item.name,
                     dosageInfo: item.dosageInfo,
+                    imageURL: item.imageUrl,
                     unitPrice: item.unitPrice,
                     quantity: item.quantity
                 )

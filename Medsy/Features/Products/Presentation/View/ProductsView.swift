@@ -73,13 +73,7 @@ struct ProductsView: View {
                             }
 
                             if viewModel.isFetchingNextPage {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                        .tint(AppColor.green)
-                                    Spacer()
-                                }
-                                .padding(.vertical, 16)
+                                MedsySkeletonList(rowCount: 2)
                             }
                         }
                         .padding()

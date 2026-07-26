@@ -141,6 +141,10 @@ struct SearchResultsView: View {
 								viewModel.loadNextPageIfNeeded(currentItem: product)
 							}
 						}
+
+						if viewModel.isLoadingNextPage {
+							MedsySkeletonList(rowCount: 2)
+						}
 					}
 					.padding(MedsySpacing.md)
 				}

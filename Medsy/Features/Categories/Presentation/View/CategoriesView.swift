@@ -82,9 +82,7 @@ struct CategoriesView: View {
                             NavigationLink(destination: ProductsView(category: category)) {
                                 CategoryGridCard(
                                     titleKey: category.displayName,
-                                    iconName: category.iconName,
-                                    iconColor: category.iconColor,
-                                    bgColor: category.bgColor,
+                                    bgColor: category.bgColor
                                 )
                             }
                             .buttonStyle(.plain)

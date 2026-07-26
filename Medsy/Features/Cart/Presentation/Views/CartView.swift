@@ -136,8 +136,7 @@ struct CartView: View {
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            LoadingView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CartLoadingSkeleton()
 
         case .empty:
             if viewModel.prescriptions.isEmpty {

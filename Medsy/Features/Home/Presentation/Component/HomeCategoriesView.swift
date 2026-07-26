@@ -54,9 +54,8 @@ struct HomeCategoriesView: View {
                                             .fill(category.bgColor)
                                             .frame(width: 58, height: 58)
 
-                                        Image(systemName: category.iconName)
-                                            .font(.system(size: 22, weight: .semibold))
-                                            .foregroundStyle(category.iconColor)
+                                        MedsyBrandImageFallback(logoScale: 0.72)
+                                            .frame(width: 58, height: 58)
                                     }
 
                                     Text(category.displayName)
@@ -95,4 +94,3 @@ struct HomeCategoriesView: View {
         }
     }
 }
-

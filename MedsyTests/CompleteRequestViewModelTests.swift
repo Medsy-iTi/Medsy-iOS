@@ -211,7 +211,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
                     dosageInfo: "500 mg",
                     unitPrice: 25,
                     quantity: 2,
-                    imageUrl: nil
+                    imageUrl: "https://example.com/medicine.jpg"
                 )
             ],
             prescriptions: [
@@ -225,6 +225,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
         XCTAssertEqual(result.prescriptionCount, 1)
         XCTAssertEqual(result.estimatedTotal, 50)
         XCTAssertEqual(result.items.first?.name, "Medicine")
+        XCTAssertEqual(result.items.first?.imageURL, "https://example.com/medicine.jpg")
     }
 
     private var validLocation: CompleteRequestLocation {
