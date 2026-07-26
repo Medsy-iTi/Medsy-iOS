@@ -34,8 +34,6 @@ struct ProductDetailView: View {
         }
         .background(AppColor.bg.ignoresSafeArea())
         .localizedEnvironment()
-        .toolbar(.hidden, for: .navigationBar)
-        .navigationBarHidden(true)
         .id(languageManager.currentLanguage)
         .onAppear { viewModel.load() }
     }
