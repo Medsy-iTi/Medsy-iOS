@@ -48,7 +48,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
             loadDetail(orderId: orderId)
         case .reorder:
             handleReorder()
-        case .dismissReorderAlert:
+        case .dismissReorderFeedback:
             reorderState = .idle
         }
     }
