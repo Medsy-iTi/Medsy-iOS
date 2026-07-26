@@ -36,7 +36,7 @@ struct ReorderToastView: View {
                     .foregroundStyle(AppColor.textSec)
                     .padding(6)
             }
-            .accessibilityLabel("common.close".localized)
+            .accessibilityLabel("orders.reorder.continue_shopping".localized)
         }
         .padding(MedsySpacing.md)
         .background(AppColor.card)
