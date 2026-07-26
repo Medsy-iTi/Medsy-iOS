@@ -1,9 +1,4 @@
-//
-//  PharmacyRequestDetailsView.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 23/07/2026.
-//
+// PharmacyRequestDetailsView.swift
 
 import SwiftUI
 
@@ -15,6 +10,7 @@ struct PharmacyRequestDetailsView: View {
     @State private var requestModel: PharmacyRequestDetailsModel?
 
     @State private var showFullPrescriptionImage: Bool = false
+    @State private var itemToReplace: PharmacyOrderItem? = nil
 
     init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
         self._requestModel = State(initialValue: requestModel)
@@ -71,7 +67,10 @@ struct PharmacyRequestDetailsView: View {
                         PharmacyOrderItemsCard(
                             items: model.items,
                             deliveryFee: model.wrappedValue.deliveryFee,
-                            total: model.wrappedValue.total
+                            total: model.wrappedValue.total,
+                            onSelectAlternative: { item in
+                                itemToReplace = item
+                            }
                         )
 
                         PharmacyPrescriptionCard(
@@ -166,6 +165,11 @@ struct PharmacyRequestDetailsView: View {
                         .foregroundStyle(.white)
                     }
                 }
+            }
+        }
+        .sheet(item: $itemToReplace) { item in
+            PharmacyProductSearchView { selectedProduct in
+                viewModel?.replaceItem(item, with: selectedProduct)
             }
         }
         .task {

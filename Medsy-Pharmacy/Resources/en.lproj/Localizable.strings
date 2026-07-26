@@ -294,6 +294,7 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+"pharmacy.request.select_alternative" = "Select an Alternative";
 /* Pharmacist Invitations */
 "common.error" = "Something went wrong";
 "common.ok" = "OK";
