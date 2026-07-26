@@ -19,11 +19,7 @@ struct CartEmptyStateView: View {
                 RoundedRectangle(cornerRadius: 36, style: .continuous)
                     .fill(AppColor.lightGreen)
 
-                Image(systemName: "cart.badge.plus")
-                    .font(.system(size: 44, weight: .semibold))
-                    .foregroundStyle(AppColor.green)
-
-                MedsyLottieView(animationName: "cart_empty_scan")
+                MedsyLottieView(animationName: "cart_empty_prescription")
                     .frame(width: 144, height: 144)
             }
             .frame(width: 160, height: 160)
