@@ -60,7 +60,7 @@ struct OrdersCoordinatorView: View {
                         onBack: { coordinator.pop() },
                         onReorder: { detailViewModel.handle(.reorder) },
                         onSelectPharmacy: onSelectPharmacy,
-                        onDismissReorderAlert: { detailViewModel.handle(.dismissReorderAlert) },
+                        onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
                         onGoToCart: onGoToCart
                     )
                     .task {

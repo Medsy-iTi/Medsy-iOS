@@ -51,7 +51,10 @@ struct MainTabBarView: View {
                     .onAppear { isTabBarHidden = false }
                 case .orders:
                     OrdersCoordinatorView(
-                        onGoToCart: { coordinator.select(.cart) }
+                        onGoToCart: {
+                            cartViewModel.handle(.load)
+                            coordinator.select(.cart)
+                        }
                     )
                     .onAppear { isTabBarHidden = false }
                 case .favorites, .offers:
@@ -197,4 +200,3 @@ struct MainTabBarView: View {
         }
     }
 }
-
