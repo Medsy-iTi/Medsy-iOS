@@ -12,15 +12,18 @@ struct OrdersCoordinatorView: View {
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
     private let onSelectPharmacy: (Int) -> Void
+    private let onReorderCompleted: () -> Void
     private let onGoToCart: () -> Void
 
     init(
         onSelectPharmacy: @escaping (Int) -> Void = { _ in },
+        onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
         _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
         self.onSelectPharmacy = onSelectPharmacy
+        self.onReorderCompleted = onReorderCompleted
         self.onGoToCart = onGoToCart
     }
 
@@ -28,11 +31,13 @@ struct OrdersCoordinatorView: View {
         historyViewModel: OrderHistoryViewModel,
         detailViewModel: OrderDetailViewModel,
         onSelectPharmacy: @escaping (Int) -> Void = { _ in },
+        onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: historyViewModel)
         _detailViewModel = State(initialValue: detailViewModel)
         self.onSelectPharmacy = onSelectPharmacy
+        self.onReorderCompleted = onReorderCompleted
         self.onGoToCart = onGoToCart
     }
 
@@ -63,6 +68,10 @@ struct OrdersCoordinatorView: View {
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
                         onGoToCart: onGoToCart
                     )
+                    .onChange(of: detailViewModel.reorderState) { _, state in
+                        guard state.didAddItemsToCart else { return }
+                        onReorderCompleted()
+                    }
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))
                     }

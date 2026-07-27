@@ -590,6 +590,8 @@
 "complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";
 "complete_request.validation.cvv" = "Enter the three-digit security code.";
 "complete_request.submit" = "Submit medicine request";
+"complete_request.success.title" = "Request sent successfully";
+"complete_request.success.subtitle" = "We returned you home so you can view current offers.";
 "complete_request.submit_error.title" = "Couldn't complete request";
 "complete_request.submit_error" = "Your request wasn't completed because the cart couldn't be cleared. Please try again.";
 "complete_request.location.title" = "Choose delivery location";

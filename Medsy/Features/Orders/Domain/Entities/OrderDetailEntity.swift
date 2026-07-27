@@ -28,4 +28,5 @@ struct OrderDetailItemEntity: Identifiable {
     let originalProductName: String?
     let quantity: Int
     let unitPrice: Double
+    let imageURL: String?
 }

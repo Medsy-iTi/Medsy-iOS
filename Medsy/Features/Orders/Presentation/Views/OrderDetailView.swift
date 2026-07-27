@@ -250,14 +250,7 @@ struct OrderDetailView: View {
 
     private func itemRow(item: OrderDetailItemModel) -> some View {
         HStack(alignment: .center, spacing: MedsySpacing.sm) {
-            RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
-                .fill(AppColor.lightGreen)
-                .frame(width: 48, height: 48)
-                .overlay(
-                    Image(systemName: "pills.fill")
-                        .font(.system(size: 22))
-                        .foregroundStyle(AppColor.green.opacity(0.7))
-                )
+            OrderProductImageView(imageURL: item.imageURL, size: 48)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.productName)
