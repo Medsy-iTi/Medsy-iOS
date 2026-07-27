@@ -76,6 +76,7 @@ struct PharmacyRequestDetailsModel {
     var prescriptionImageUrl: String? = nil
     let deliveryLatitude: Double?
     let deliveryLongitude: Double?
+    let createdAt: Date
 
     init(
         id: String,
@@ -87,7 +88,8 @@ struct PharmacyRequestDetailsModel {
         notes: String,
         prescriptionImageUrl: String? = nil,
         deliveryLatitude: Double? = nil,
-        deliveryLongitude: Double? = nil
+        deliveryLongitude: Double? = nil,
+        createdAt: Date? = nil
     ) {
         self.id = id
         self.minutesAgo = minutesAgo
@@ -102,6 +104,7 @@ struct PharmacyRequestDetailsModel {
         self.prescriptionImageUrl = prescriptionImageUrl
         self.deliveryLatitude = deliveryLatitude
         self.deliveryLongitude = deliveryLongitude
+        self.createdAt = createdAt ?? Date(timeIntervalSinceNow: -Double(minutesAgo * 60))
     }
     
     var subtotal: Double {
@@ -117,7 +120,7 @@ extension PharmacyRequestDetailsModel {
     init(order: PharmacyOrderListItem) {
         self.init(
             id: order.id,
-            minutesAgo: order.minutesAgo,
+            minutesAgo: Int(Date().timeIntervalSince(order.createdAt) / 60),
             statusTitle: order.status == .new ? "pharmacy.home.order_new".localized : (order.status == .preparing ? "pharmacy.home.order_preparing".localized : "pharmacy.home.order_delivered".localized),
             customer: PharmacyCustomerInfo(
                 name: order.customerName,
@@ -131,7 +134,8 @@ extension PharmacyRequestDetailsModel {
             deliveryFee: 0.0,
             notes: "",
             deliveryLatitude: nil,
-            deliveryLongitude: nil
+            deliveryLongitude: nil,
+            createdAt: order.createdAt
         )
     }
 
@@ -166,7 +170,8 @@ extension PharmacyRequestDetailsModel {
             deliveryFee: 0.0,
             notes: order.notes ?? "",
             deliveryLatitude: order.deliveryCoordinate.latitude,
-            deliveryLongitude: order.deliveryCoordinate.longitude
+            deliveryLongitude: order.deliveryCoordinate.longitude,
+            createdAt: order.date
         )
     }
 
@@ -187,7 +192,8 @@ extension PharmacyRequestDetailsModel {
             deliveryFee: 0.0,
             notes: "",
             deliveryLatitude: nil,
-            deliveryLongitude: nil
+            deliveryLongitude: nil,
+            createdAt: Date(timeIntervalSinceNow: -Double(homeOrder.minutesAgo * 60))
         )
     }
 }

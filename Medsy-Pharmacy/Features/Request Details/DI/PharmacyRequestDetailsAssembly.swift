@@ -1,8 +1,4 @@
-//  PharmacyRequestDetailsAssembly.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 23/07/2026.
-//
+// PharmacyRequestDetailsAssembly.swift
 
 import Foundation
 
@@ -26,6 +22,10 @@ struct PharmacyRequestDetailsAssembly: PharmacyModuleAssembly {
 
         container.register(SendOfferUseCaseProtocol.self) { c in
             SendOfferUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
+        }
+
+        container.register(SearchProductsUseCaseProtocol.self) { c in
+            SearchProductsUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
         }
     }
 }

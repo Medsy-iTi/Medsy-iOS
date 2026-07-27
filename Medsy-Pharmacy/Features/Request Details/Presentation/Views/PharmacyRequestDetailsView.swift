@@ -1,9 +1,4 @@
-//
-//  PharmacyRequestDetailsView.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 23/07/2026.
-//
+// PharmacyRequestDetailsView.swift
 
 import SwiftUI
 
@@ -15,6 +10,7 @@ struct PharmacyRequestDetailsView: View {
     @State private var requestModel: PharmacyRequestDetailsModel?
 
     @State private var showFullPrescriptionImage: Bool = false
+    @State private var itemToReplace: PharmacyOrderItem? = nil
 
     init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
         self._requestModel = State(initialValue: requestModel)
@@ -52,7 +48,7 @@ struct PharmacyRequestDetailsView: View {
                     VStack(spacing: PharmacySpacing.md) {
                         PharmacyCustomerInfoCard(
                             orderId: model.wrappedValue.id,
-                            minutesAgo: model.wrappedValue.minutesAgo,
+                            createdAt: model.wrappedValue.createdAt,
                             customer: model.wrappedValue.customer,
                             onContact: {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
@@ -71,15 +67,21 @@ struct PharmacyRequestDetailsView: View {
                         PharmacyOrderItemsCard(
                             items: model.items,
                             deliveryFee: model.wrappedValue.deliveryFee,
-                            total: model.wrappedValue.total
-                        )
-
-                        PharmacyPrescriptionCard(
-                            imageUrl: model.wrappedValue.prescriptionImageUrl,
-                            onEnlarge: {
-                                showFullPrescriptionImage = true
+                            total: model.wrappedValue.total,
+                            isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
+                            onSelectAlternative: { item in
+                                itemToReplace = item
                             }
                         )
+
+                        if model.wrappedValue.prescriptionImageUrl != nil {
+                            PharmacyPrescriptionCard(
+                                imageUrl: model.wrappedValue.prescriptionImageUrl,
+                                onEnlarge: {
+                                    showFullPrescriptionImage = true
+                                }
+                            )
+                        }
 
                         PharmacyCustomerNotesCard(
                             notes: model.wrappedValue.notes
@@ -166,6 +168,11 @@ struct PharmacyRequestDetailsView: View {
                         .foregroundStyle(.white)
                     }
                 }
+            }
+        }
+        .sheet(item: $itemToReplace) { item in
+            PharmacyProductSearchView { selectedProduct in
+                viewModel?.replaceItem(item, with: selectedProduct)
             }
         }
         .task {

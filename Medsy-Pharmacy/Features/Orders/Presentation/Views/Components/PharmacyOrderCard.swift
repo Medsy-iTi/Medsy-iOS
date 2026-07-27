@@ -22,7 +22,7 @@ struct PharmacyOrderCard: View {
 
 				Spacer()
 
-				Label("pharmacy.orders.minutes_ago".localized(order.minutesAgo), systemImage: "bag")
+				Label(order.createdAt.relativeTimeString, systemImage: "bag")
 					.font(PharmacyColor.sans(11, .medium))
 					.foregroundStyle(PharmacyColor.textSecondary)
 					.labelStyle(PharmacyOrderTimeLabelStyle())
