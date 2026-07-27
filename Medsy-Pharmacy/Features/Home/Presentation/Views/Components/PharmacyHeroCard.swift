@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct PharmacyHeroCard: View {
+    let pharmacyName: String
+    let address: String
+    let isOpen: Bool
+
     var body: some View {
         VStack(spacing: 0) {
             PharmacyStorefrontIllustration()
@@ -17,18 +21,21 @@ struct PharmacyHeroCard: View {
 
             VStack(spacing: PharmacySpacing.xs) {
                 HStack(spacing: PharmacySpacing.xs) {
-                    Text("pharmacy.home.pharmacy_name".localized)
+                    Text(pharmacyName)
                         .font(PharmacyColor.sans(17, .bold))
                         .foregroundStyle(PharmacyColor.textPrimary)
-                    Text("pharmacy.home.online".localized)
+                    Text((isOpen ? "pharmacy.home.online" : "pharmacy.home.closed").localized)
                         .font(PharmacyColor.sans(10, .semibold))
-                        .foregroundStyle(PharmacyColor.success)
+                        .foregroundStyle(isOpen ? PharmacyColor.success : PharmacyColor.danger)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(PharmacyColor.successSoft, in: Capsule())
+                        .background(
+                            (isOpen ? PharmacyColor.success : PharmacyColor.danger).opacity(0.12),
+                            in: Capsule()
+                        )
                 }
 
-                Label("pharmacy.home.address".localized, systemImage: "location.fill")
+                Label(address, systemImage: "location.fill")
                     .font(PharmacyColor.sans(12, .medium))
                     .foregroundStyle(PharmacyColor.textSecondary)
 
