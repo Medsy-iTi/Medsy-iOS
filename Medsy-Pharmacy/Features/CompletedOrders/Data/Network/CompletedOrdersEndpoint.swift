@@ -16,7 +16,7 @@ extension CompletedOrdersEndpoint: ApiEndpoint {
     var path: String {
         switch self {
         case .getCompletedOrders(let pharmacyId, _, _, _):
-            return "/api/v1/orders/pharmacy/\(pharmacyId)"
+            return "orders/pharmacy/\(pharmacyId)"
         }
     }
 
