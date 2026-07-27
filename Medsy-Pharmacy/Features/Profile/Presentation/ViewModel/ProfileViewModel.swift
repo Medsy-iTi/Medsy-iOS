@@ -80,6 +80,7 @@ final class ProfileViewModel {
     private let logoutUseCase: LogoutUseCaseProtocol
     private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
     private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
+    private let sessionSettings: PharmacySessionSettings
 
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
@@ -110,7 +111,7 @@ final class ProfileViewModel {
         logoutUseCase: LogoutUseCaseProtocol,
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
         goOffDutyUseCase: GoOffDutyUseCaseProtocol,
-
+        sessionSettings: PharmacySessionSettings,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -125,8 +126,10 @@ final class ProfileViewModel {
         self.logoutUseCase = logoutUseCase
         self.goOnDutyUseCase = goOnDutyUseCase
         self.goOffDutyUseCase = goOffDutyUseCase
+        self.sessionSettings = sessionSettings
         self.languageManager = languageManager
         self.appSettings = appSettings
+        self.isOnDuty = sessionSettings.isOnDuty
     }
 
     // MARK: - Computed Props
@@ -175,6 +178,11 @@ final class ProfileViewModel {
         do {
             let profile = try await getProfileUseCase.execute()
             self.profile = profile
+            sessionSettings.updatePharmacy(
+                id: profile.pharmacyId,
+                name: profile.pharmacyName,
+                address: profile.pharmacyAddress
+            )
             self.state = .loaded
         } catch {
             if case NetworkError.unauthorized = error {
@@ -266,6 +274,11 @@ final class ProfileViewModel {
                 name: name,
                 address: address,
                 phoneNumber: phoneNumber
+            )
+            sessionSettings.updatePharmacy(
+                id: pharmacyId,
+                name: name ?? profile?.pharmacyName,
+                address: address ?? profile?.pharmacyAddress
             )
             isUpdatingPharmacy = false
             await loadProfile(showsSpinner: false)
@@ -453,6 +466,8 @@ final class ProfileViewModel {
 
     private func logoutAndNotify() async {
         await logoutUseCase.execute()
+        stopHeartbeat()
+        sessionSettings.clear()
         isLoggingOut = false
         isLeavingPharmacy = false
         isDeletingPharmacy = false
@@ -477,6 +492,7 @@ final class ProfileViewModel {
                 startHeartbeat()
             }
             isOnDuty = status.onDuty
+            sessionSettings.updateDutyStatus(status.onDuty)
             presenceToastMessage = isOnDuty ? "profile.presence.toast.on".localized : "profile.presence.toast.off".localized
             showPresenceToast = true
             Task {
