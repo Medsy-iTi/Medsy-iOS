@@ -1,7 +1,7 @@
 "pharmacy.tab.home" = "Home";
 "pharmacy.tab.orders" = "Orders";
 "pharmacy.tab.products" = "Products";
-"pharmacy.tab.customers" = "Customers";
+"pharmacy.tab.completedOrders" = "Orders";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
 "pharmacy.dashboard.title" = "Pharmacy dashboard";
@@ -361,3 +361,16 @@
 "pharmacy.orders.status.pending" = "Pending Approval";
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
+
+"orders_title" = "Orders";
+"orders_search_placeholder" = "Search by order # or customer name";
+"orders_price_format" = "%d EGP";
+
+"orders_empty_none_title" = "No completed orders yet";
+"orders_empty_none_message" = "Orders you finish delivering will show up here.";
+"orders_empty_filtered_title" = "No matching orders";
+"orders_empty_filtered_message" = "Try a different search term.";
+
+"orders_error_title" = "Something went wrong";
+"orders_load_error" = "We couldn't load your orders. Please try again.";
+"orders_retry" = "Retry";

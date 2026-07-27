@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D5530B6301700FB0018B619 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 6D5530B5301700FB0018B619 /* Lottie */; };
 		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
 		9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
@@ -133,6 +134,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A000001300A000100000001 /* Alamofire in Frameworks */,
+				6D5530B6301700FB0018B619 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +275,7 @@
 			name = "Medsy-Pharmacy";
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
+				6D5530B5301700FB0018B619 /* Lottie */,
 			);
 			productName = "Medsy-Pharmacy";
 			productReference = 787FF8733009785B006556E7 /* Medsy-Pharmacy.app */;
@@ -371,6 +374,7 @@
 			packageReferences = (
 				6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */,
+				6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7834991A30055416001D87B6 /* Products */;
@@ -943,6 +947,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.1;
+			};
+		};
 		6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -962,6 +974,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6D5530B5301700FB0018B619 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		6D8B26563006BA48001616C8 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */;
