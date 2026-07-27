@@ -38,7 +38,8 @@ struct CompleteRequestAssembly: ModuleAssembly {
                     submitCompleteRequestUseCase: container.resolve(SubmitCompleteRequestUseCaseProtocol.self),
                     searchAddressUseCase: container.resolve(SearchAddressUseCaseProtocol.self),
                     reverseGeocodeAddressUseCase: container.resolve(ReverseGeocodeAddressUseCaseProtocol.self),
-                    locationProvider: container.resolve(CompleteRequestLocationProviderProtocol.self)
+                    locationProvider: container.resolve(CompleteRequestLocationProviderProtocol.self),
+                    statusStore: container.resolve(UserDefaultsStatusStoreProtocol.self)
                 )
             }
         }

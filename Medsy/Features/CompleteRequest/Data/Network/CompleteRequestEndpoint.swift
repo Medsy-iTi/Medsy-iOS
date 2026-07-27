@@ -22,7 +22,6 @@ enum CompleteRequestEndpoint: ApiEndpoint {
     var headers: HTTPHeaders? {
         ["Accept": "application/json"]
     }
-
     var body: Data? {
         nil
     }
