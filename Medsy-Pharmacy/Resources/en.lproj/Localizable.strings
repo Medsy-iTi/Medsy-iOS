@@ -120,6 +120,16 @@
 "pharmacy.setup.decision.title" = "Do you have a pharmacy?";
 "pharmacy.setup.decision.subtitle" = "Add your pharmacy to start receiving and managing medicine requests.";
 "pharmacy.setup.decision.add" = "Add your pharmacy";
+"pharmacy.setup.decision.unassigned_title" = "No pharmacy assigned";
+"pharmacy.setup.decision.unassigned_subtitle" = "This pharmacist account is not linked to a pharmacy yet.";
+"pharmacy.setup.decision.register_title" = "Register your pharmacy";
+"pharmacy.setup.decision.register_subtitle" = "Create a pharmacy profile, add its map location, and upload the license PDF for review.";
+"pharmacy.setup.decision.invitations_title" = "You have pharmacy invitations";
+"pharmacy.setup.decision.invitation_count_one" = "1 pending invitation waiting for you";
+"pharmacy.setup.decision.invitation_count_many" = "%d pending invitations waiting for you";
+"pharmacy.setup.decision.invite_help_title" = "Already work in a pharmacy?";
+"pharmacy.setup.decision.invite_help_subtitle" = "Ask the pharmacy owner or admin to invite this pharmacist account using your email address.";
+"pharmacy.setup.decision.register_action" = "Register a pharmacy";
 "pharmacy.setup.decision.back_to_sign_in" = "Back to sign in";
 "pharmacy.setup.add.title" = "Add your pharmacy";
 "pharmacy.setup.add.subtitle" = "Enter the pharmacy details, select its location, and upload the licence document.";

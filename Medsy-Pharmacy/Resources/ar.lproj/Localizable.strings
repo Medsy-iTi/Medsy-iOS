@@ -119,6 +119,16 @@
 "pharmacy.setup.decision.title" = "هل لديك صيدلية؟";
 "pharmacy.setup.decision.subtitle" = "أضف صيدليتك لبدء استقبال وإدارة طلبات الأدوية.";
 "pharmacy.setup.decision.add" = "إضافة صيدليتك";
+"pharmacy.setup.decision.unassigned_title" = "لا توجد صيدلية مرتبطة";
+"pharmacy.setup.decision.unassigned_subtitle" = "حساب الصيدلي هذا غير مرتبط بأي صيدلية حتى الآن.";
+"pharmacy.setup.decision.register_title" = "سجّل صيدليتك";
+"pharmacy.setup.decision.register_subtitle" = "أنشئ ملف الصيدلية وحدد موقعها على الخريطة وارفع ملف الترخيص بصيغة PDF للمراجعة.";
+"pharmacy.setup.decision.invitations_title" = "لديك دعوات للانضمام إلى صيدليات";
+"pharmacy.setup.decision.invitation_count_one" = "دعوة واحدة معلقة بانتظارك";
+"pharmacy.setup.decision.invitation_count_many" = "%d دعوات معلقة بانتظارك";
+"pharmacy.setup.decision.invite_help_title" = "هل تعمل بالفعل في صيدلية؟";
+"pharmacy.setup.decision.invite_help_subtitle" = "اطلب من مالك الصيدلية أو المسؤول دعوتك باستخدام البريد الإلكتروني لهذا الحساب.";
+"pharmacy.setup.decision.register_action" = "تسجيل صيدلية";
 "pharmacy.setup.decision.back_to_sign_in" = "العودة لتسجيل الدخول";
 "pharmacy.setup.add.title" = "إضافة صيدليتك";
 "pharmacy.setup.add.subtitle" = "أدخل بيانات الصيدلية وحدد موقعها وارفع مستند الترخيص.";
