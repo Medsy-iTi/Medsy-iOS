@@ -1,5 +1,5 @@
 "pharmacy.tab.home" = "الرئيسية";
-"pharmacy.tab.orders" = "الطلبات";
+"pharmacy.tab.orders" = "العروض";
 "pharmacy.tab.products" = "المنتجات";
 "pharmacy.tab.customers" = "العملاء";
 "pharmacy.tab.more" = "المزيد";
@@ -35,11 +35,12 @@
 "pharmacy.home.address.nozha" = "شارع النيل، المعادي";
 "pharmacy.home.address.dar_elsalam" = "دار السلام، القاهرة";
 /* Orders */
-"pharmacy.orders.title" = "الطلبات";
-"pharmacy.orders.filter.all" = "جميع الطلبات";
-"pharmacy.orders.filter.new" = "جديدة";
-"pharmacy.orders.filter.preparing" = "قيد التجهيز";
-"pharmacy.orders.filter.delivered" = "تم التوصيل";
+"pharmacy.orders.title" = "العروض";
+"pharmacy.orders.filter.all" = "الكل";
+"pharmacy.orders.filter.new" = "جديد";
+"pharmacy.orders.filter.pendingApproval" = "قيد الانتظار";
+"pharmacy.orders.filter.expired" = "منتهي";
+"pharmacy.orders.filter.completed" = "مكتمل";
 "pharmacy.orders.search" = "ابحث برقم الطلب أو اسم العميل";
 "pharmacy.orders.filters" = "فلترة الطلبات";
 "pharmacy.orders.order_number" = "#%@";

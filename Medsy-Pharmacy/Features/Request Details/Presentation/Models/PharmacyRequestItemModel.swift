@@ -117,7 +117,7 @@ extension PharmacyRequestDetailsModel {
     init(order: PharmacyOrderListItem) {
         self.init(
             id: order.id,
-            minutesAgo: order.minutesAgo,
+            minutesAgo: Int(Date().timeIntervalSince(order.createdAt) / 60),
             statusTitle: order.status == .new ? "pharmacy.home.order_new".localized : (order.status == .preparing ? "pharmacy.home.order_preparing".localized : "pharmacy.home.order_delivered".localized),
             customer: PharmacyCustomerInfo(
                 name: order.customerName,
