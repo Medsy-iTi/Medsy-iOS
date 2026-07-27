@@ -6,6 +6,7 @@ struct PharmacyOrderItemsCard: View {
     @Binding var items: [PharmacyOrderItem]
     let deliveryFee: Double
     let total: Double
+    let isOfferSubmitted: Bool
     var onSelectAlternative: ((PharmacyOrderItem) -> Void)? = nil
 
     var body: some View {
@@ -104,9 +105,10 @@ struct PharmacyOrderItemsCard: View {
                                 }
                             }
                             .buttonStyle(.plain)
+                            .disabled(isOfferSubmitted)
                         }
 
-                        if !item.isAvailable {
+                        if !item.isAvailable && !isOfferSubmitted {
                             Button {
                                 onSelectAlternative?(item)
                             } label: {

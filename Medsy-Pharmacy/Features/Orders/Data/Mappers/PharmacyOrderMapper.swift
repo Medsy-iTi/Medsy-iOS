@@ -161,14 +161,15 @@ enum PharmacyOrderMapper {
             notes: order.notes ?? "",
             prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl),
             deliveryLatitude: order.deliveryCoordinate.latitude,
-            deliveryLongitude: order.deliveryCoordinate.longitude
+            deliveryLongitude: order.deliveryCoordinate.longitude,
+            createdAt: order.date
         )
     }
 
     private static func makeFullImageUrl(_ urlString: String?) -> String? {
         guard let urlString = urlString, !urlString.isEmpty else { return nil }
         if urlString.hasPrefix("http") { return urlString }
-        let rootUrl = PharmacyConfiguration.apiBaseURL.replacingOccurrences(of: "api/v1/", with: "")
+        let rootUrl = PharmacyConfiguration.apiBaseURL
         let path = urlString.hasPrefix("/") ? String(urlString.dropFirst()) : urlString
         return rootUrl + path
     }

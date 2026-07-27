@@ -48,7 +48,7 @@ struct PharmacyRequestDetailsView: View {
                     VStack(spacing: PharmacySpacing.md) {
                         PharmacyCustomerInfoCard(
                             orderId: model.wrappedValue.id,
-                            minutesAgo: model.wrappedValue.minutesAgo,
+                            createdAt: model.wrappedValue.createdAt,
                             customer: model.wrappedValue.customer,
                             onContact: {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
@@ -68,17 +68,20 @@ struct PharmacyRequestDetailsView: View {
                             items: model.items,
                             deliveryFee: model.wrappedValue.deliveryFee,
                             total: model.wrappedValue.total,
+                            isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
                             onSelectAlternative: { item in
                                 itemToReplace = item
                             }
                         )
 
-                        PharmacyPrescriptionCard(
-                            imageUrl: model.wrappedValue.prescriptionImageUrl,
-                            onEnlarge: {
-                                showFullPrescriptionImage = true
-                            }
-                        )
+                        if model.wrappedValue.prescriptionImageUrl != nil {
+                            PharmacyPrescriptionCard(
+                                imageUrl: model.wrappedValue.prescriptionImageUrl,
+                                onEnlarge: {
+                                    showFullPrescriptionImage = true
+                                }
+                            )
+                        }
 
                         PharmacyCustomerNotesCard(
                             notes: model.wrappedValue.notes

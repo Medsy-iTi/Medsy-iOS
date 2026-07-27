@@ -42,7 +42,8 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
             return [
                 "keyword": keyword,
                 "page": page,
-                "size": size
+                "size": size,
+                "lang": "ar"
             ]
         case .fetchRequestById, .sendOffer:
             return nil
