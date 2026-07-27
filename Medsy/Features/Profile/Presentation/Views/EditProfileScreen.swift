@@ -13,6 +13,11 @@ struct EditProfileScreen: View {
     let lastName: String
     let phoneNumber: String
     let email: String
+    let initialHomeAddress: String
+    let initialLatitude: Double?
+    let initialLongitude: Double?
+    let initialDateOfBirth: Date?
+    let opensAddressPickerOnAppear: Bool
     let isSaving: Bool
     let errorMessage: String?
     let onCancel: () -> Void
@@ -27,6 +32,7 @@ struct EditProfileScreen: View {
     @State private var lastNameError: String?
     @State private var addressError: String?
     @State private var showsAddressPicker = false
+    @State private var didOpenInitialAddressPicker = false
     @State private var pickedLatitude: Double?
     @State private var pickedLongitude: Double?
 
@@ -39,6 +45,7 @@ struct EditProfileScreen: View {
         latitude: Double? = nil,
         longitude: Double? = nil,
         dateOfBirth: Date?,
+        opensAddressPickerOnAppear: Bool = false,
         isSaving: Bool = false,
         errorMessage: String? = nil,
         onCancel: @escaping () -> Void = {},
@@ -48,6 +55,11 @@ struct EditProfileScreen: View {
         self.lastName = lastName
         self.phoneNumber = phoneNumber
         self.email = email
+        self.initialHomeAddress = homeAddress
+        self.initialLatitude = latitude
+        self.initialLongitude = longitude
+        self.initialDateOfBirth = dateOfBirth
+        self.opensAddressPickerOnAppear = opensAddressPickerOnAppear
         self.isSaving = isSaving
         self.errorMessage = errorMessage
         self.onCancel = onCancel
@@ -62,7 +74,7 @@ struct EditProfileScreen: View {
     }
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             ProfileStyle.background
                 .ignoresSafeArea()
 
@@ -87,13 +99,23 @@ struct EditProfileScreen: View {
                     .padding(.bottom, 32)
                 }
             }
+
+            if hasUnsavedChanges {
+                ProfileUnsavedChangesToast()
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(1)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: hasUnsavedChanges)
+        .onAppear {
+            openAddressPickerIfRequested()
         }
         .sheet(isPresented: $showsAddressPicker) {
             let viewModel = AddressPickerViewModel(
                 initialAddress: draftAddress,
-                initialCoordinate: pickedLatitude.map { lat in
-                    CLLocationCoordinate2D(latitude: lat, longitude: pickedLongitude ?? 0)
-                },
+                initialCoordinate: initialPickedCoordinate,
                 searchAddressUseCase: DIContainer.shared.resolve(SearchAddressUseCaseProtocol.self),
                 reverseGeocodeAddressUseCase: DIContainer.shared.resolve(ReverseGeocodeAddressUseCaseProtocol.self),
                 onConfirm: { address, latitude, longitude in
@@ -110,6 +132,35 @@ struct EditProfileScreen: View {
             NavigationStack {
                 AddressPickerScreen(viewModel: viewModel)
             }
+        }
+    }
+
+    private var initialPickedCoordinate: CLLocationCoordinate2D? {
+        guard let pickedLatitude, let pickedLongitude else { return nil }
+        return CLLocationCoordinate2D(latitude: pickedLatitude, longitude: pickedLongitude)
+    }
+
+    private var hasUnsavedChanges: Bool {
+        normalized(draftFirstName) != normalized(firstName)
+        || normalized(draftLastName) != normalized(lastName)
+        || normalized(draftAddress) != normalized(initialHomeAddress)
+        || coordinatesChanged
+        || selectedDateOfBirthChanged
+    }
+
+    private var coordinatesChanged: Bool {
+        coordinateValueChanged(pickedLatitude, initialLatitude)
+        || coordinateValueChanged(pickedLongitude, initialLongitude)
+    }
+
+    private var selectedDateOfBirthChanged: Bool {
+        switch (includesDateOfBirth ? draftDateOfBirth : nil, initialDateOfBirth) {
+        case (nil, nil):
+            return false
+        case let (lhs?, rhs?):
+            return !Calendar.current.isDate(lhs, inSameDayAs: rhs)
+        default:
+            return true
         }
     }
 
@@ -371,8 +422,55 @@ struct EditProfileScreen: View {
         }
     }
 
+    private func openAddressPickerIfRequested() {
+        guard opensAddressPickerOnAppear, !didOpenInitialAddressPicker else { return }
+        didOpenInitialAddressPicker = true
+        showsAddressPicker = true
+    }
+
+    private func normalized(_ value: String) -> String {
+        value.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func coordinateValueChanged(_ lhs: Double?, _ rhs: Double?) -> Bool {
+        switch (lhs, rhs) {
+        case (nil, nil):
+            return false
+        case let (lhs?, rhs?):
+            return abs(lhs - rhs) > 0.000001
+        default:
+            return true
+        }
+    }
+
     private static var defaultDateOfBirth: Date {
         Calendar.current.date(from: DateComponents(year: 1995, month: 1, day: 1)) ?? Date()
+    }
+}
+
+private struct ProfileUnsavedChangesToast: View {
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "exclamationmark.circle.fill")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(ProfileStyle.green)
+
+            Text("profile.unsaved_changes_toast".localized)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(ProfileStyle.primaryText)
+                .lineLimit(2)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(ProfileStyle.card)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(ProfileStyle.green.opacity(0.35), lineWidth: 1)
+        }
+        .shadow(color: ProfileStyle.green.opacity(0.12), radius: 14, y: 6)
     }
 }
 

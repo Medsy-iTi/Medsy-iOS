@@ -32,9 +32,11 @@ struct ProfileCoordinatorView: View {
             email: coordinator.email,
             homeAddress: coordinator.displayHomeAddress,
             dateOfBirthText: coordinator.displayDateOfBirth,
+            hasDeliveryLocation: coordinator.hasDeliveryLocation,
             state: coordinator.state,
             onRetry: { Task { await coordinator.refreshProfile() } },
-            onEditProfile: coordinator.showEditProfile,
+            onEditProfile: { coordinator.showEditProfile() },
+            onAddDeliveryLocation: { coordinator.showEditProfile(openAddressPicker: true) },
             onLanguage: coordinator.showLanguagePicker,
             onTheme: coordinator.showThemePicker,
             onOrders: onOrders,
@@ -60,7 +62,7 @@ struct ProfileCoordinatorView: View {
     @ViewBuilder
     private func sheet(for presentation: ProfilePresentation, coordinator: ProfileCoordinator) -> some View {
         switch presentation {
-        case .editProfile:
+        case .editProfile(let openAddressPicker):
             NavigationStack {
                 EditProfileScreen(
                     firstName: coordinator.firstName,
@@ -71,6 +73,7 @@ struct ProfileCoordinatorView: View {
                     latitude: coordinator.homeLatitude,
                     longitude: coordinator.homeLongitude,
                     dateOfBirth: coordinator.dateOfBirth,
+                    opensAddressPickerOnAppear: openAddressPicker,
                     isSaving: coordinator.isSaving,
                     errorMessage: coordinator.saveErrorMessage,
                     onCancel: coordinator.dismissPresentation,

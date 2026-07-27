@@ -19,4 +19,6 @@ struct AuthenticatedUser: Equatable {
     let role: String
     let homeAddress: String
     let dateOfBirth: String
+    let homeLatitude: Double?
+    let homeLongitude: Double?
 }
