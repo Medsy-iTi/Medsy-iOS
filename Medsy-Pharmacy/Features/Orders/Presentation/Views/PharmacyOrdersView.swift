@@ -21,10 +21,12 @@ struct PharmacyOrdersView: View {
 			LazyVStack(spacing: PharmacySpacing.sm) {
 				PharmacyOrdersHeaderView()
 				PharmacyOrdersFilterBar(
-					selection: $viewModel.selectedFilter, allCount: viewModel.allOrdersCount,
-					newCount: viewModel.deliveredOrdersCount,
-					preparingCount: viewModel.newOrdersCount,
-					deliveredCount: viewModel.preparingOrdersCount
+					selection: $viewModel.selectedFilter,
+					allCount: viewModel.allOrdersCount,
+					newCount: viewModel.newOrdersCount,
+					pendingApprovalCount: viewModel.pendingApprovalOrdersCount,
+					expiredCount: viewModel.expiredOrdersCount,
+					completedCount: viewModel.completedOrdersCount
 				)
 				PharmacyOrderSearchField(text: $viewModel.searchText, onClear: viewModel.clearSearch)
 

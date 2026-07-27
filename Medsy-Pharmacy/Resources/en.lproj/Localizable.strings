@@ -36,10 +36,11 @@
 "pharmacy.home.address.dar_elsalam" = "Dar El Salam, Cairo";
 /* Orders */
 "pharmacy.orders.title" = "Orders";
-"pharmacy.orders.filter.all" = "All orders";
+"pharmacy.orders.filter.all" = "All";
 "pharmacy.orders.filter.new" = "New";
-"pharmacy.orders.filter.preparing" = "Preparing";
-"pharmacy.orders.filter.delivered" = "Delivered";
+"pharmacy.orders.filter.pendingApproval" = "Pending Approval";
+"pharmacy.orders.filter.expired" = "Expired";
+"pharmacy.orders.filter.completed" = "Completed";
 "pharmacy.orders.search" = "Search by order number or customer name";
 "pharmacy.orders.filters" = "Order filters";
 "pharmacy.orders.order_number" = "#%@";
@@ -294,6 +295,7 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+"pharmacy.request.select_alternative" = "Select an Alternative";
 /* Pharmacist Invitations */
 "common.error" = "Something went wrong";
 "common.ok" = "OK";

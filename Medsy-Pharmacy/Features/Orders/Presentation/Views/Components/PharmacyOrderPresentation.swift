@@ -9,7 +9,13 @@ import SwiftUI
 
 extension PharmacyOrdersFilter {
     var titleKey: String {
-        "pharmacy.orders.filter.\(rawValue)"
+        switch self {
+        case .all: "pharmacy.orders.filter.all"
+        case .new: "pharmacy.orders.filter.new"
+        case .pendingApproval: "pharmacy.orders.filter.pendingApproval"
+        case .expired: "pharmacy.orders.filter.expired"
+        case .completed: "pharmacy.orders.filter.completed"
+        }
     }
 }
 
