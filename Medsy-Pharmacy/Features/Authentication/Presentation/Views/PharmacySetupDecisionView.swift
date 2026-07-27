@@ -50,7 +50,7 @@ struct PharmacySetupDecisionView: View {
     }
 
     private func illustration(height: CGFloat) -> some View {
-        PharmacyLottieView(animationName: "doctors")
+		PharmacyLottieView(animationName: "doctors")
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .padding(.horizontal, PharmacySpacing.sm)

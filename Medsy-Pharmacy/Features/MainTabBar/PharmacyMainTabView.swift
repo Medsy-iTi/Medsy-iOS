@@ -12,6 +12,7 @@ struct PharmacyMainTabView: View {
     var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
+	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     @ObservedObject private var identityProviding = PharmacySessionSettings.shared
     private let onLoggedOut: () -> Void
@@ -20,12 +21,14 @@ struct PharmacyMainTabView: View {
         coordinator: PharmacyMainTabCoordinator,
         homeFactory: PharmacyHomeFactory,
         ordersFactory: PharmacyOrdersFactory,
+		completedOrdersFactory: PharmacyCompletedOrdersFactory,
         onLoggedOut: @escaping () -> Void
     ) {
         self.coordinator = coordinator
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
         self.onLoggedOut = onLoggedOut
+		self.completedOrdersFactory = completedOrdersFactory
     }
 
     var body: some View {
@@ -48,11 +51,12 @@ struct PharmacyMainTabView: View {
                 }
                 .tag(PharmacyTab.products)
 
-            PharmacySetupPlaceholderView(tab: .customers)
-                .tabItem {
-                    tabLabel(for: .customers)
-                }
-                .tag(PharmacyTab.customers)
+			completedOrdersFactory.makeView()
+				.tabItem {
+					tabLabel(for: .completedOrders)
+				}
+				.tag(PharmacyTab.completedOrders)
+			
 
             ProfileTabRootView(
                 coordinator: coordinator.profileCoordinator,

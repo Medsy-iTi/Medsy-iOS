@@ -19,14 +19,6 @@ struct PharmacyRequestDetailsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PharmacyRequestDetailsHeaderView(
-                orderId: (viewModel?.requestModel?.id ?? requestModel?.id) ?? "1",
-                statusTitle: (viewModel?.requestModel?.statusTitle ?? requestModel?.statusTitle) ?? "",
-                onBack: {
-                    dismiss()
-                }
-            )
-
             if let viewModel, viewModel.state == .loading {
                 VStack(spacing: 12) {
                     Spacer()
@@ -123,13 +115,14 @@ struct PharmacyRequestDetailsView: View {
             }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
-        .alert("تنبيه", isPresented: Binding(get: {
+        .navigationTitle("pharmacy.request.details.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("pharmacy.request.alert.title".localized, isPresented: Binding(get: {
             viewModel?.showSuccessAlert ?? false
         }, set: { newValue in
             viewModel?.showSuccessAlert = newValue
         })) {
-            Button("حسناً", role: .cancel) { }
+            Button("common.ok".localized, role: .cancel) { }
         } message: {
             Text(viewModel?.alertMessage ?? "")
         }

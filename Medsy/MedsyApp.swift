@@ -35,7 +35,7 @@ struct MedsyApp: App {
             ChatbotAssembly(),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
-            PharmacyProfileAssembly(),
+            CompletedOrderDetailsAssembly(),
             OffersAssembly()
         ])
 

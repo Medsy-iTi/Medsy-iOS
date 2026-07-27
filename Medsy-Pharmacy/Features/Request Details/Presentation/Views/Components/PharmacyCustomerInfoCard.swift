@@ -50,7 +50,7 @@ struct PharmacyCustomerInfoCard: View {
             }
 
             HStack(alignment: .center) {
-                Text(customer.address.isEmpty ? "string" : customer.address)
+                Text(customer.address.isEmpty ? "pharmacy.orders.address.placeholder".localized : customer.address)
                     .font(PharmacyColor.sans(14, .regular))
                     .foregroundStyle(PharmacyColor.textSecondary)
                     .lineLimit(2)

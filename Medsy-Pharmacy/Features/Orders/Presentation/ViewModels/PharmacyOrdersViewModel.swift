@@ -94,9 +94,9 @@ final class PharmacyOrdersViewModel {
 			isLastPage = page.isLastPage
 			loadState = .loaded
 		} catch let error as PharmacyOrdersResolutionError {
-			loadState = .failed(error.errorDescription ?? "Something went wrong.")
+			loadState = .failed(error.errorDescription ?? "common.somethingWentWrong".localized)
 		} catch {
-			loadState = .failed((error as? NetworkError)?.errorDescription ?? "Something went wrong.")
+			loadState = .failed((error as? NetworkError)?.errorDescription ?? "common.somethingWentWrong".localized)
 		}
 
 	}

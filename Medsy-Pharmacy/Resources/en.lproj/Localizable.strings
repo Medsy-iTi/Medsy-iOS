@@ -1,7 +1,7 @@
 "pharmacy.tab.home" = "Home";
-"pharmacy.tab.orders" = "Orders";
+"pharmacy.tab.orders" = "Requests";
 "pharmacy.tab.products" = "Products";
-"pharmacy.tab.customers" = "Customers";
+"pharmacy.tab.completedOrders" = "Orders";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
 "pharmacy.dashboard.title" = "Pharmacy dashboard";
@@ -41,7 +41,15 @@
 "pharmacy.orders.filter.pendingApproval" = "Pending Approval";
 "pharmacy.orders.filter.expired" = "Expired";
 "pharmacy.orders.filter.completed" = "Completed";
-"pharmacy.orders.search" = "Search by order number or customer name";
+"pharmacy.orders.filter.preparing" = "Preparing";
+"pharmacy.orders.filter.delivered" = "Delivered";
+"pharmacy.orders.search" = "Search orders by number or customer name";
+"pharmacy.orders.error.title" = "Failed to load orders";
+"pharmacy.orders.noResults.title" = "No results found";
+"pharmacy.orders.noResults.message" = "No orders match your current filter or search.";
+"pharmacy.orders.item_pieces" = "%@ pieces";
+"pharmacy.request.address_format" = "Location: (%@, %@)";
+"pharmacy.request.customer_notes_default" = "Order from customer";
 "pharmacy.orders.filters" = "Order filters";
 "pharmacy.orders.order_number" = "#%@";
 "pharmacy.orders.minutes_ago" = "%d min ago";
@@ -327,10 +335,16 @@
 /* Orders List */
 "pharmacy.orders.customer.fallback" = "Customer #%@";
 "pharmacy.orders.address.fallback" = "Address unavailable";
+"pharmacy.orders.address.placeholder" = "Address not available";
 "pharmacy.orders.retry" = "Retry";
 "pharmacy.orders.detail_placeholder" = "Order details coming soon.";
 "pharmacy.orders.noData" = "No orders found.";
 "common.somethingWentWrong" = "Something went wrong.";
+"common.close" = "Close";
+"pharmacy.request.alert.title" = "Notice";
+"common.ok" = "OK";
+"pharmacy.request.offer_product" = "Offer product: %@";
+"pharmacy.request.pack_size_label" = "%@ tab";
 
 /* Presence & On Duty */
 "profile.presence.section_title" = "Availability";
@@ -374,6 +388,35 @@
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
 
+"orders_title" = "Orders";
+"orders_search_placeholder" = "Search by order # or customer name";
+"orders_price_format" = "%d EGP";
+
+"orders_empty_none_title" = "No completed orders yet";
+"orders_empty_none_message" = "Orders you finish delivering will show up here.";
+"orders_empty_filtered_title" = "No matching orders";
+"orders_empty_filtered_message" = "Try a different search term.";
+
+"orders_error_title" = "Something went wrong";
+"orders_load_error" = "We couldn't load your orders. Please try again.";
+"orders_retry" = "Retry";
+"completed_order.title" = "Order Details";
+"completed_order.order_number" = "Order #%d";
+"completed_order.customer" = "Customer";
+"completed_order.pharmacy" = "Pharmacy";
+"completed_order.pharmacy_address" = "Address";
+"completed_order.pharmacy_phone" = "Phone";
+"completed_order.pharmacist" = "Pharmacist";
+"completed_order.items_label" = "Items";
+"completed_order.order_summary" = "Order Summary";
+"completed_order.subtotal" = "Subtotal";
+"completed_order.delivery_fee" = "Delivery Fee";
+"completed_order.total" = "Total";
+"completed_order.item_qty_price" = "%d × %.0f EGP";
+"completed_order.price_format" = "%.0f EGP";
+"completed_order.not_found" = "Order not found";
+"completed_order.fulfillment.delivery" = "Delivery";
+"completed_order.fulfillment.pickup" = "Pickup";
 /* Pharmacy Pending Invitations */
 "refresh" = "Refresh";
 "pharmacy_pending_invitations.title" = "Pending invitations";
