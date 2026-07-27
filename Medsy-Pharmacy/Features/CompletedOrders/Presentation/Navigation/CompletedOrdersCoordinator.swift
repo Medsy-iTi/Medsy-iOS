@@ -7,20 +7,23 @@
 
 
 import Observation
+import SwiftUI
 
-protocol CompletedOrdersCoordinatorProtocol: Coordinator {
+enum CompletedOrdersRoute: Hashable {
+    case detail(orderId: Int)
+}
+
+protocol CompletedOrdersCoordinatorProtocol: AnyObject {
     func showDetails(for order: CompletedOrder)
 }
 
 @Observable
 @MainActor
 final class CompletedOrdersCoordinator: CompletedOrdersCoordinatorProtocol {
-
+    var path = NavigationPath()
 
     func showDetails(for order: CompletedOrder) {
-
-
-        print("CompletedOrdersCoordinator.showDetails(for:) — order #\(order.id) — details screen not built yet")
+        path.append(CompletedOrdersRoute.detail(orderId: order.id))
     }
 }
 

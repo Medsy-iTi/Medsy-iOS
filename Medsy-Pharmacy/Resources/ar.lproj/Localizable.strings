@@ -373,3 +373,20 @@
 "orders_load_error" = "تعذّر تحميل الطلبات، حاول مرة أخرى.";
 "orders_retry" = "إعادة المحاولة";
 
+"completed_order.title" = "تفاصيل الطلب";
+"completed_order.order_number" = "طلب #%d";
+"completed_order.customer" = "العميل";
+"completed_order.pharmacy" = "الصيدلية";
+"completed_order.pharmacy_address" = "العنوان";
+"completed_order.pharmacy_phone" = "الهاتف";
+"completed_order.pharmacist" = "الصيدلاني";
+"completed_order.items_label" = "المنتجات";
+"completed_order.order_summary" = "ملخص الطلب";
+"completed_order.subtotal" = "الإجمالي الجزئي";
+"completed_order.delivery_fee" = "رسوم التوصيل";
+"completed_order.total" = "الإجمالي";
+"completed_order.item_qty_price" = "%d × %.0f جنيه";
+"completed_order.price_format" = "%.0f جنيه";
+"completed_order.not_found" = "الطلب غير موجود";
+"completed_order.fulfillment.delivery" = "توصيل";
+"completed_order.fulfillment.pickup" = "استلام من الصيدلية";

@@ -21,9 +21,17 @@ struct CompletedOrdersTabRootView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $coordinator.path) {
             CompletedOrdersView(viewModel: viewModel)
-            
+                .navigationDestination(for: CompletedOrdersRoute.self) { route in
+                    switch route {
+                    case .detail(let orderId):
+                        CompletedOrderDetailsCoordinatorView.Embedded(
+                            orderId: orderId,
+                            onTabBarHiddenChange: { _ in } // Tab bar hiding handled at higher level or unused in Pharmacy app
+                        )
+                    }
+                }
         }
     }
 }
