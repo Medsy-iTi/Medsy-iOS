@@ -108,7 +108,12 @@ private struct PharmacyAuthenticationRootView: View {
 			actions: .placeholder,
 			locationProvider: PreviewContentLocationProvider()
 		),
-		homeFactory: PharmacyHomeFactory(),
+		homeFactory: PharmacyHomeFactory(
+			getProfileUseCase: PreviewGetProfileUseCase(),
+			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
+			identityProvider: PreviewIdentityProvider(),
+			sessionSettings: PharmacySessionSettings()
+		),
 		ordersFactory: PharmacyOrdersFactory(
 			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
 			getProfileUseCase: PreviewGetProfileUseCase(),
