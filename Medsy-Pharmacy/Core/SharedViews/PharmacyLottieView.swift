@@ -1,41 +1,83 @@
-//
-//  PharmacyLottieView.swift
-//  Medsy
-//
-//  Created by Shahudaa on 26/07/2026.
-//
-
-
-import SwiftUI
 import Lottie
+import SwiftUI
 
 struct PharmacyLottieView: UIViewRepresentable {
-	let name: String
-	var loopMode: LottieLoopMode = .loop
-	var speed: CGFloat = 1
+    let animationName: String
+    var loopMode: LottieLoopMode = .loop
 
-	func makeUIView(context: Context) -> UIView {
-		let container = UIView()
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-		let animationView = LottieAnimationView(name: name)
-		animationView.translatesAutoresizingMaskIntoConstraints = false
-		animationView.contentMode = .scaleAspectFit
-		animationView.loopMode = loopMode
-		animationView.animationSpeed = speed
+    func makeUIView(context: Context) -> PharmacyLottieContainerView {
+        let containerView = PharmacyLottieContainerView(
+            animationName: animationName
+        )
+        containerView.update(
+            loopMode: loopMode,
+            reduceMotion: reduceMotion
+        )
+        return containerView
+    }
 
-		container.addSubview(animationView)
+    func updateUIView(
+        _ containerView: PharmacyLottieContainerView,
+        context: Context
+    ) {
+        containerView.update(
+            loopMode: loopMode,
+            reduceMotion: reduceMotion
+        )
+    }
+}
 
-		NSLayoutConstraint.activate([
-			animationView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-			animationView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-			animationView.topAnchor.constraint(equalTo: container.topAnchor),
-			animationView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-		])
+final class PharmacyLottieContainerView: UIView {
+    private let animationView: LottieAnimationView
 
-		animationView.play()
+    init(animationName: String) {
+        animationView = LottieAnimationView(
+            name: animationName,
+            bundle: .main
+        )
+        super.init(frame: .zero)
 
-		return container
-	}
+        clipsToBounds = true
+        layer.masksToBounds = true
+        isUserInteractionEnabled = false
 
-	func updateUIView(_ uiView: UIView, context: Context) {}
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.contentMode = .scaleAspectFit
+        animationView.clipsToBounds = true
+        animationView.layer.masksToBounds = true
+        animationView.backgroundBehavior = .pauseAndRestore
+
+        addSubview(animationView)
+        NSLayoutConstraint.activate([
+            animationView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            animationView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            animationView.topAnchor.constraint(equalTo: topAnchor),
+            animationView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var intrinsicContentSize: CGSize {
+        CGSize(
+            width: UIView.noIntrinsicMetric,
+            height: UIView.noIntrinsicMetric
+        )
+    }
+
+    func update(loopMode: LottieLoopMode, reduceMotion: Bool) {
+        animationView.loopMode = loopMode
+
+        if reduceMotion {
+            animationView.stop()
+            animationView.currentProgress = 0.5
+        } else if !animationView.isAnimationPlaying {
+            animationView.play()
+        }
+    }
 }

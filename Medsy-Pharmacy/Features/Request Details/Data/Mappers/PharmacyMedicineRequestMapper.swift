@@ -95,17 +95,19 @@ enum PharmacyMedicineRequestMapper {
             notes: entity.notes ?? "",
             prescriptionImageUrl: makeFullImageUrl(entity.prescriptionUrl),
             deliveryLatitude: entity.deliveryLatitude,
-            deliveryLongitude: entity.deliveryLongitude
+            deliveryLongitude: entity.deliveryLongitude,
+            createdAt: entity.createdAt
         )
     }
 
     private static func makeFullImageUrl(_ urlString: String?) -> String? {
         guard let urlString = urlString, !urlString.isEmpty else { return nil }
         if urlString.hasPrefix("http") { return urlString }
-        let rootUrl = PharmacyConfiguration.apiBaseURL.replacingOccurrences(of: "api/v1/", with: "")
+        let rootUrl = PharmacyConfiguration.apiBaseURL
         let path = urlString.hasPrefix("/") ? String(urlString.dropFirst()) : urlString
         return rootUrl + path
     }
+
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {

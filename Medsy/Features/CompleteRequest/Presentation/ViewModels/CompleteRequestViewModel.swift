@@ -30,6 +30,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
 
     private let getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol
     private let submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol
+    private let statusStore: UserDefaultsStatusStoreProtocol?
     private let onRequestCreated: (CompleteRequestSubmission) async -> Bool
     private let now: () -> Date
     private var hasLoadedAddress = false
@@ -38,12 +39,14 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         draft: CompleteRequestDraft,
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
+        statusStore: UserDefaultsStatusStoreProtocol? = nil,
         now: @escaping () -> Date = Date.init,
         onRequestCreated: @escaping (CompleteRequestSubmission) async -> Bool
     ) {
         self.draft = draft
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
         self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
+        self.statusStore = statusStore
         self.now = now
         self.onRequestCreated = onRequestCreated
     }
@@ -188,16 +191,18 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
 
         if submittedRequest == nil {
             do {
-                submittedRequest = try await submitCompleteRequestUseCase.execute(
+                let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
-                        deliveryLatitude: deliveryLocation.latitude,
-                        deliveryLongitude: deliveryLocation.longitude,
-                        deliveryAddress: deliveryLocation.address,
+                        deliveryLatitude:30,
+                        deliveryLongitude:30,
+                        deliveryAddress: "cairo",
                         notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
                         paymentMethod: paymentMethod.rawValue,
                         prescriptionData: draft.prescriptionData
                     )
                 )
+                submittedRequest = result
+                statusStore?.savePendingRequestId(result.id)
             } catch {
                 submissionErrorMessage = error.localizedDescription
                 return false

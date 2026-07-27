@@ -1,9 +1,4 @@
-//
-//  PharmacyRequestsRepository.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
+// PharmacyRequestsRepository.swift
 
 import Foundation
 
@@ -41,5 +36,14 @@ final class PharmacyRequestsRepository: PharmacyRequestsRepositoryProtocol {
             throw NetworkError.validationError(response.message)
         }
         return true
+    }
+
+    func searchProducts(keyword: String, page: Int, size: Int) async throws -> [PharmacyProductDTO] {
+        let endpoint = PharmacyRequestsEndpoint.searchProducts(keyword: keyword, page: page, size: size)
+        let response: APIEnvelope<PageResponseDTO<PharmacyProductDTO>> = try await networkService.request(endpoint: endpoint)
+        guard response.success, let data = response.data else {
+            throw NetworkError.validationError(response.message)
+        }
+        return data.content
     }
 }

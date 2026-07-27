@@ -50,12 +50,7 @@ enum PharmacyOrderMapper {
 
     static func map(_ dto: PharmacyMedicineRequestDTO) -> PharmacyOrder {
         let total = (dto.items ?? []).reduce(0.0) { $0 + (($1.unitPrice ?? 0.0) * Double($1.quantity)) }
-        let parsedDate: Date = {
-            guard let dateStr = dto.createdAt else { return Date() }
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            return formatter.date(from: dateStr) ?? Date()
-        }()
+        let parsedDate = parseDate(from: dto.createdAt)
 
         let items = (dto.items ?? []).map { item in
             PharmacyOrderLineItem(
@@ -115,7 +110,7 @@ enum PharmacyOrderMapper {
             address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress,
             paymentMethod: .cash,
             amount: Int(order.totalPrice.rounded()),
-            minutesAgo: Int(Date().timeIntervalSince(order.date) / 60),
+            createdAt: order.date,
             status: mapStatus(order.status, orderId: order.id)
         )
     }
@@ -166,14 +161,15 @@ enum PharmacyOrderMapper {
             notes: order.notes ?? "",
             prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl),
             deliveryLatitude: order.deliveryCoordinate.latitude,
-            deliveryLongitude: order.deliveryCoordinate.longitude
+            deliveryLongitude: order.deliveryCoordinate.longitude,
+            createdAt: order.date
         )
     }
 
     private static func makeFullImageUrl(_ urlString: String?) -> String? {
         guard let urlString = urlString, !urlString.isEmpty else { return nil }
         if urlString.hasPrefix("http") { return urlString }
-        let rootUrl = PharmacyConfiguration.apiBaseURL.replacingOccurrences(of: "api/v1/", with: "")
+        let rootUrl = PharmacyConfiguration.apiBaseURL
         let path = urlString.hasPrefix("/") ? String(urlString.dropFirst()) : urlString
         return rootUrl + path
     }
@@ -188,5 +184,42 @@ enum PharmacyOrderMapper {
         case .cancelled: return "pharmacy.home.order_delivered".localized
         case .unknown(let val): return val
         }
+    }
+
+    private static func parseDate(from dateStr: String?) -> Date {
+        guard let dateStr = dateStr else { return Date() }
+        
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = isoFormatter.date(from: dateStr) {
+            return date
+        }
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        let formats = [
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss"
+        ]
+        
+        for format in formats {
+            formatter.dateFormat = format
+            if let date = formatter.date(from: dateStr) {
+                return date
+            }
+        }
+        
+        if !dateStr.hasSuffix("Z") && !dateStr.contains("+") && !dateStr.contains("-") {
+            let withZ = dateStr + "Z"
+            if let date = isoFormatter.date(from: withZ) {
+                return date
+            }
+        }
+        
+        return Date()
     }
 }
