@@ -37,8 +37,8 @@ enum AppColor {
     static let lightGreen = Color(hex: "#E8F8F4")
     static let white = Color(hex: "#FFFFFF")
   
-    static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#FFFFFF") : Color(hex: "#1C1C1C") }
-    static var textSec: Color { Color(hex: "#6B7280") }
+    static var textPrim: Color { .primary }
+    static var textSec: Color { .secondary }
     static var hintPlaceholder: Color {
         AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
     }

@@ -73,6 +73,8 @@ struct CompleteRequestView: View {
                                 onCVVChange: viewModel.formatCVV
                             )
                         }
+
+                        CompleteRequestNotesView(notes: $viewModel.notes)
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)
@@ -80,7 +82,6 @@ struct CompleteRequestView: View {
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
-        .toolbarVisibility(.hidden, for: .navigationBar)
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(
                 title: "complete_request.submit".localized,

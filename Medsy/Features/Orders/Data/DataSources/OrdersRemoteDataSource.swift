@@ -6,7 +6,7 @@
 //
 
 protocol OrdersRemoteDataSourceProtocol {
-    func fetchOrders(page: Int, size: Int, status: String?) async throws -> PageDTO<OrderDTO>
+    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<OrderDTO>
     func fetchOrderDetail(id: Int) async throws -> OrderDTO
 }
 
@@ -17,9 +17,9 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
         self.networkService = networkService
     }
 
-    func fetchOrders(page: Int, size: Int, status: String?) async throws -> PageDTO<OrderDTO> {
+    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<OrderDTO> {
         let response: OrdersPageResponseDTO = try await networkService.request(
-            endpoint: OrdersEndpoint.fetchOrders(page: page, size: size, status: status)
+            endpoint: OrdersEndpoint.fetchOrders(page: page, size: size)
         )
         return try unwrapPage(from: response)
     }

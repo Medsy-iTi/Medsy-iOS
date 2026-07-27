@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 @MainActor
 final class ProfileCoordinator: Coordinator {
-	var path = NavigationPath()
+	var path: [ProfileRoute] = []
 	var activeSheet: ProfileSheet?
 
 	let viewModel: ProfileViewModel
@@ -47,6 +47,17 @@ final class ProfileCoordinator: Coordinator {
 		}
 		viewModel.onLoggedOut = { [weak self] in
 			self?.onLoggedOut?()
+		}
+		viewModel.onPharmacistRemoved = { [weak self] in
+			guard let self else { return }
+			if let last = path.last {
+				switch last {
+					case .pharmacistProfile, .editPharmacist:
+						pop()
+					default:
+						break
+				}
+			}
 		}
 	}
 
@@ -102,11 +113,12 @@ final class ProfileCoordinator: Coordinator {
 			case let .pharmacistProfile(member):
 				PharmacistDetailView(
 					member: member,
-					canEdit: viewModel.canManage(member),
+					canEdit: false,
 					canRemove: viewModel.canManage(member),
-					onEdit: { self.viewModel.didTapEditPharmacist(member) },
+					onEdit: { },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
+				.removePharmacistConfirmationDialog(viewModel: viewModel)
 
 			case .editPharmacy:
 				EmptyView()
@@ -114,11 +126,12 @@ final class ProfileCoordinator: Coordinator {
 			case let .editPharmacist(member):
 				PharmacistDetailView(
 					member: member,
-					canEdit: viewModel.canManage(member),
+					canEdit: false,
 					canRemove: viewModel.canManage(member),
-					onEdit: { self.viewModel.didTapEditPharmacist(member) },
+					onEdit: { },
 					onRemove: { self.viewModel.requestRemovePharmacist(member) }
 				)
+				.removePharmacistConfirmationDialog(viewModel: viewModel)
 
 			case .settings:
 				ProfileSettingsView(viewModel: viewModel)
@@ -211,8 +224,10 @@ final class ProfileCoordinator: Coordinator {
 				isSaving: viewModel.isSaving,
 				errorMessage: viewModel.saveErrorMessage,
 				onCancel: pop,
-				onSave: { homeAddress, dateOfBirth in
+				onSave: { firstName, lastName, homeAddress, dateOfBirth in
 					await self.viewModel.updateProfile(
+						firstName: firstName,
+						lastName: lastName,
 						homeAddress: homeAddress,
 						dateOfBirth: dateOfBirth
 					)
@@ -260,6 +275,7 @@ final class ProfileCoordinator: Coordinator {
 				}
 			}
 		)
+		.removePharmacistConfirmationDialog(viewModel: viewModel)
 	}
 
 	@ViewBuilder

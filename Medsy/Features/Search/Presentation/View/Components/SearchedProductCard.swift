@@ -105,41 +105,14 @@ struct SearchedProductCard: View {
 
 	@ViewBuilder
 	private var productImage: some View {
-		if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
-			AsyncImage(url: url) { phase in
-				switch phase {
-					case .success(let image):
-						image
-							.resizable()
-							.scaledToFill()
-					case .empty:
-						ProgressView()
-							.frame(width: 72, height: 72)
-					default:
-						badgeFallback
-				}
-			}
-			.frame(width: 72, height: 72)
-			.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
-		} else {
-			badgeFallback
+		MedsyRemoteImage(urlString: product.imageUrl, contentMode: .fit) {
+			MedsyBrandImageFallback()
+		} failure: {
+			MedsyBrandImageFallback()
 		}
-	}
-
-	var badgeFallback: some View {
-		RoundedRectangle(cornerRadius: MedsyRadius.md)
-			.fill(product.badgeColor.opacity(0.15))
-			.frame(width: 72, height: 72)
-			.overlay(
-				Text(product.badgeText)
-					.font(.system(size: 10, weight: .bold))
-					.multilineTextAlignment(.center)
-					.foregroundStyle(product.badgeColor)
-					.lineLimit(2)
-					.minimumScaleFactor(0.7)
-					.truncationMode(.tail)
-					.padding(4)
-			)
+		.frame(width: 72, height: 72)
+		.background(AppColor.surface)
+		.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
 	}
 
 	@ViewBuilder

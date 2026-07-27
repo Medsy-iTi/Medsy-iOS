@@ -10,18 +10,30 @@ import Foundation
 enum OrderHistoryEvent {
     case load
     case retry
-    case selectFilter(OrderFilter)
+    case applyFilters(ActiveOrderFilters)
     case loadNextPage
 }
 
 enum OrderDetailEvent {
     case load(orderId: Int)
     case retry(orderId: Int)
+    case reorder
+    case dismissReorderFeedback
+}
+
+
+enum ReorderState: Equatable {
+    case idle
+    case loading
+    case success
+    case partial(added: Int, total: Int)
+    case failed
 }
 
 @MainActor
 protocol OrderHistoryViewModelProtocol: AnyObject {
     var historyState: OrderHistoryViewState { get }
+    var activeFilters: ActiveOrderFilters { get }
     var isLoadingNextPage: Bool { get }
 
     func handle(_ event: OrderHistoryEvent)
@@ -30,6 +42,6 @@ protocol OrderHistoryViewModelProtocol: AnyObject {
 @MainActor
 protocol OrderDetailViewModelProtocol: AnyObject {
     var detailState: OrderDetailViewState { get }
-
+    var reorderState: ReorderState { get }
     func handle(_ event: OrderDetailEvent)
 }

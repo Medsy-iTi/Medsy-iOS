@@ -33,8 +33,25 @@ struct CompleteRequestItem: Identifiable, Equatable {
     let id: String
     let name: String
     let dosageInfo: String
+    let imageURL: String?
     let unitPrice: Double
     let quantity: Int
+
+    init(
+        id: String,
+        name: String,
+        dosageInfo: String,
+        imageURL: String? = nil,
+        unitPrice: Double,
+        quantity: Int
+    ) {
+        self.id = id
+        self.name = name
+        self.dosageInfo = dosageInfo
+        self.imageURL = imageURL
+        self.unitPrice = unitPrice
+        self.quantity = quantity
+    }
 
     var lineTotal: Double {
         unitPrice * Double(quantity)
@@ -44,6 +61,17 @@ struct CompleteRequestItem: Identifiable, Equatable {
 struct CompleteRequestDraft: Equatable {
     let items: [CompleteRequestItem]
     let prescriptionCount: Int
+    let prescriptionData: Data?
+
+    init(
+        items: [CompleteRequestItem],
+        prescriptionCount: Int,
+        prescriptionData: Data? = nil
+    ) {
+        self.items = items
+        self.prescriptionCount = prescriptionCount
+        self.prescriptionData = prescriptionData
+    }
 
     var itemCount: Int {
         items.reduce(0) { $0 + $1.quantity }

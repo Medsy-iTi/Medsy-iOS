@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 
 enum CompleteRequestEndpoint: ApiEndpoint {
-    case submit(CompleteRequestDTO, imageData: Data? = nil)
+    case submit(CompleteRequestDTO)
 
     var path: String {
         "requests"
@@ -20,40 +20,32 @@ enum CompleteRequestEndpoint: ApiEndpoint {
     }
 
     var headers: HTTPHeaders? {
-        nil
+        ["Accept": "application/json"]
     }
-
-    // OLD:
-    // var body: Data? {
-    //     switch self {
-    //     case let .submit(request):
-    //         try? JSONEncoder().encode(request)
-    //     }
-    // }
-
     var body: Data? {
         nil
     }
 
     var multipartFormParts: [MultipartFormPart]? {
         switch self {
-        case let .submit(request, imageData):
-            var parts: [MultipartFormPart] = []
-            if let requestData = try? JSONEncoder().encode(request) {
-                parts.append(
-                    MultipartFormPart(
-                        data: requestData,
-                        name: "request",
-                        fileName: "request.json",
-                        mimeType: "application/json"
-                    )
-                )
+        case let .submit(request):
+            guard let requestData = try? JSONEncoder().encode(request) else {
+                return nil
             }
-            if let imageData {
+
+            var parts = [
+                MultipartFormPart(
+                    data: requestData,
+                    name: "request",
+                    mimeType: "application/json"
+                )
+            ]
+
+            if let prescriptionData = request.prescriptionData {
                 parts.append(
                     MultipartFormPart(
-                        data: imageData,
-                        name: "file",
+                        data: prescriptionData,
+                        name: "prescription",
                         fileName: "prescription.jpg",
                         mimeType: "image/jpeg"
                     )
@@ -64,6 +56,10 @@ enum CompleteRequestEndpoint: ApiEndpoint {
     }
 
     var requiresAuthentication: Bool {
+        true
+    }
+
+    var allowsResponseLogging: Bool {
         true
     }
 }

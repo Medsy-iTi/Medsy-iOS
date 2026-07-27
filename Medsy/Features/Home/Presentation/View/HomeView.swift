@@ -13,13 +13,19 @@ struct HomeView: View {
     let onPrescription: () -> Void
     var onCompareOffers: (() -> Void)? = nil
     var onOpenOfferResult: ((OfferResult, Int) -> Void)? = nil
+    let homeAddress: String
+    let onAddressTap: () -> Void
+
 
     var body: some View {
         @Bindable var vm = viewModel
 
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
-                HomeHeaderView()
+                HomeHeaderView(
+                    homeAddress: homeAddress,
+                    onAddressTap: onAddressTap
+                )
                 HomeSearchBar(onTap: onSearchTap)
                 //HomeStatusSelectorView(selectedStatus: $vm.selectedStatus)
                 HomePromoBanner()

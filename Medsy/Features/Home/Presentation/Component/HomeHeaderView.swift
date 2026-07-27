@@ -8,46 +8,57 @@ import SwiftUI
 
 struct HomeHeaderView: View {
     @Environment(LanguageManager.self) private var languageManager
-    
+    let homeAddress: String
+    let onAddressTap: () -> Void
+
     var body: some View {
-        HStack {
+        HStack(spacing: MedsySpacing.sm) {
             Button {
-//                withAnimation(.easeInOut(duration: 0.3)) {
-//                    languageManager.toggle()
-//                }
-            } label: {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "bell")
-                        .font(.title2)
-                        .foregroundStyle(AppColor.textPrim)
-                    
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 8, height: 8)
-                        .offset(x: 2, y: -2)
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    languageManager.toggle()
                 }
-                .padding(8)
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "globe")
+                    Text(languageManager.currentLanguage.toggled.displayName)
+                        .font(AppColor.sans(13, .bold))
+                }
+                .foregroundStyle(AppColor.textPrim)
+                .padding(.horizontal, 10)
+                .frame(minHeight: 44)
+                .background(AppColor.card, in: Capsule())
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("common.language".localized)
             
             Spacer()
             
-            HStack(spacing: 6) {
-                Image(systemName: "mappin.and.ellipse")
-                    .font(.subheadline)
-                    .foregroundStyle(AppColor.textPrim)
-                
-                Text("home.deliveryTo".localized)
-                    .font(AppColor.sans(14, .bold))
-                    .foregroundStyle(AppColor.textPrim)
-                
-                Image(systemName: "chevron.down")
-                    .font(.caption)
-                    .foregroundStyle(AppColor.textPrim)
+            Button(action: onAddressTap) {
+                HStack(spacing: 7) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.subheadline)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("home.deliveryTo".localized)
+                            .font(AppColor.sans(11, .regular))
+                            .foregroundStyle(AppColor.textSec)
+
+                        Text(homeAddress)
+                            .font(AppColor.sans(14, .bold))
+                            .foregroundStyle(AppColor.textPrim)
+                            .lineLimit(1)
+                    }
+
+                    Image(systemName: "chevron.forward")
+                        .font(.caption.weight(.semibold))
+                }
+                .foregroundStyle(AppColor.textPrim)
             }
-            .onTapGesture {
-            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(
+                "\("home.deliveryTo".localized), \(homeAddress)"
+            )
         }
-        .environment(\.layoutDirection, .leftToRight)
         .padding(.horizontal)
         .padding(.vertical, 8)
     }

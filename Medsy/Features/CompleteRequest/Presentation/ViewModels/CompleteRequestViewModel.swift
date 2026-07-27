@@ -16,6 +16,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     var paymentMethod: CompleteRequestPaymentMethod = .cash
     private(set) var savedAddress: String?
     private(set) var deliveryLocation: CompleteRequestLocation?
+    var notes = ""
     var cardholderName = ""
     var cardNumber = ""
     var expiry = ""
@@ -190,25 +191,14 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
 
         if submittedRequest == nil {
             do {
-                // OLD:
-                // let result = try await submitCompleteRequestUseCase.execute(
-                //     input: SubmitCompleteRequestInput(
-                //         deliveryLatitude: deliveryLocation.latitude,
-                //         deliveryLongitude: deliveryLocation.longitude,
-                //         deliveryAddress: deliveryLocation.address
-                //     )
-                // )
-
                 let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
-                        deliveryLatitude:30,
-                                //deliveryLocation.latitude,
-                        deliveryLongitude:30,
-                            //deliveryLocation.longitude,
-                        deliveryAddress:"cairo",
-                            //deliveryLocation.address,
-                        notes: cardholderName,
-                        paymentMethod: paymentMethod.rawValue.uppercased()
+                        deliveryLatitude: deliveryLocation.latitude,
+                        deliveryLongitude: deliveryLocation.longitude,
+                        deliveryAddress: deliveryLocation.address,
+                        notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
+                        paymentMethod: paymentMethod.rawValue,
+                        prescriptionData: draft.prescriptionData
                     )
                 )
                 submittedRequest = result

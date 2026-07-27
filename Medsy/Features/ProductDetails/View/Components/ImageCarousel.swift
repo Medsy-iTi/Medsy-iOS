@@ -21,42 +21,28 @@ struct ImageCarousel: View {
 
     var body: some View {
         ZStack(alignment: isRTL ? .topLeading : .topTrailing) {
-            TabView(selection: $selectedIndex) {
-                ForEach(images.indices, id: \.self) { index in
-                    if let url = URL(string: images[index]) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .padding(MedsySpacing.lg)
-                            case .empty:
-                                ProgressView()
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            default:
-                                Image(systemName: "photo")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .padding(MedsySpacing.lg)
-                                    .foregroundColor(AppColor.textSec.opacity(0.3))
+            Group {
+                if images.isEmpty {
+                    MedsyBrandImageFallback(logoScale: 0.5)
+                } else {
+                    TabView(selection: $selectedIndex) {
+                        ForEach(images.indices, id: \.self) { index in
+                            MedsyRemoteImage(urlString: images[index], contentMode: .fit) {
+                                MedsyBrandImageFallback(logoScale: 0.5)
+                            } failure: {
+                                MedsyBrandImageFallback(logoScale: 0.5)
                             }
-                        }
-                        .tag(index)
-                    } else {
-                        Image(systemName: "photo")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(MedsySpacing.lg)
-                            .foregroundColor(AppColor.textSec.opacity(0.3))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
                             .tag(index)
+                        }
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .flipsForRightToLeftLayoutDirection(true)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .flipsForRightToLeftLayoutDirection(true)
 			.frame(width: 340 ,height: height)
-			.background(.white)
+			.background(AppColor.surface)
 			.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
 
             if showFavorite {

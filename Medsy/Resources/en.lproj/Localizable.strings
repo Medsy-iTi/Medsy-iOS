@@ -13,6 +13,12 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Splash */
+"splash.brand" = "Medsy";
+"splash.tagline" = "Your health, our priority";
+"splash.subtitle" = "Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
 "pharmacyProfile.badge" = "Pharmacy";
@@ -28,7 +34,7 @@
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.deliveryTo" = "Deliver to";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";
@@ -473,6 +479,9 @@
 "orders.empty.completed.subtitle"    = "Orders that have been delivered will appear here.";
 "orders.empty.cancelled.title"       = "No cancelled orders";
 "orders.empty.cancelled.subtitle"    = "Cancelled orders will appear here.";
+"orders.empty.filtered.title"        = "No matching orders";
+"orders.empty.filtered.subtitle"     = "No orders match your current filters. Try adjusting or clearing them.";
+"orders.empty.clear_filters"         = "Clear filters";
 "orders.error.title"                 = "Couldn't load orders";
 "orders.error.subtitle"              = "Check your internet connection and try again.";
 "orders.loading"                     = "Loading orders…";
@@ -498,6 +507,33 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.reorder.go_to_cart"          = "Go to Cart";
+"orders.reorder.continue_shopping"   = "Continue Shopping";
+"orders.reorder.success.title"       = "Added Successfully";
+"orders.reorder.partial.title"       = "Partially Added";
+"orders.reorder.failed.title"        = "Failed to Add";
+"orders.reorder.success.message"     = "All items have been added to your cart.";
+"orders.reorder.partial.message"     = "Added %d out of %d items to your cart.";
+"orders.reorder.failed.message"      = "We couldn't add the items to your cart. Please try again.";
+
+"orders.filter.title"                 = "Filter Orders";
+"orders.filter.reset"                 = "Reset";
+"orders.filter.apply"                 = "Apply";
+"orders.filter.button.accessibility" = "Filter orders";
+"orders.filter.section.status"       = "Status";
+"orders.filter.section.fulfillment"  = "Fulfillment Type";
+"orders.filter.section.date"         = "Date Range";
+"orders.filter.fulfillment.all"      = "All";
+"orders.filter.fulfillment.delivery" = "Delivery";
+"orders.filter.fulfillment.pickup"   = "Pickup";
+"orders.date_range.anytime"          = "Anytime";
+"orders.date_range.today"            = "Today";
+"orders.date_range.last_7_days"      = "Last 7 days";
+"orders.date_range.last_30_days"     = "Last 30 days";
+"orders.date_range.last_3_months"    = "Last 3 months";
+"orders.date_range.custom"           = "Custom";
+"orders.filter.date.from"            = "From";
+"orders.filter.date.to"              = "To";
 
 /* Address Picker */
 
@@ -535,6 +571,9 @@
 "complete_request.payment.cash.subtitle" = "Pay when you receive the request";
 "complete_request.payment.visa" = "Visa";
 "complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.notes.title" = "Request notes";
+"complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
+"complete_request.notes.placeholder" = "Add notes for the pharmacy";
 "complete_request.card.title" = "Visa card details";
 "complete_request.card.cardholder" = "Cardholder name";
 "complete_request.card.number" = "Card number";

@@ -2,8 +2,6 @@ import SwiftUI
 
 struct CategoryGridCard: View {
     let titleKey: String
-    let iconName: String
-    let iconColor: Color
     let bgColor: Color
 
     var body: some View {
@@ -12,10 +10,9 @@ struct CategoryGridCard: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(bgColor)
                     .frame(width: 50, height: 50)
-                
-                Image(systemName: iconName)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(iconColor)
+
+                MedsyBrandImageFallback(logoScale: 0.72)
+                    .frame(width: 50, height: 50)
             }
             
             VStack(alignment: .leading, spacing: 4) {

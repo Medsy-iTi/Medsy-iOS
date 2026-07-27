@@ -13,6 +13,7 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var state: SearchResultsState = .loading
 	@Published var products: [MedsyProduct] = []
 	@Published var errorMessage: String?
+	@Published private(set) var isLoadingNextPage = false
 
 
 	@Published var selectedSort: ProductSort? = nil {
@@ -85,6 +86,7 @@ final class SearchResultsViewModel: ObservableObject {
 		loadTask?.cancel()
 		currentPage = 0
 		isLastPage = false
+		isLoadingNextPage = false
 		state = .loading
 		loadTask = Task { await fetch(reset: true) }
 	}
@@ -127,7 +129,11 @@ final class SearchResultsViewModel: ObservableObject {
 	private func fetch(reset: Bool) async {
 		guard !isLoadingPage else { return }
 		isLoadingPage = true
-		defer { isLoadingPage = false }
+		if !reset { isLoadingNextPage = true }
+		defer {
+			isLoadingPage = false
+			isLoadingNextPage = false
+		}
 
 		do {
 			let sort: [ProductSort] = selectedSort.map { [$0] } ?? []

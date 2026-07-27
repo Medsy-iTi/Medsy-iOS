@@ -79,15 +79,21 @@ struct HomeCoordinatorView: View {
     @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
     private let onOpenCart: () -> Void
+    private let homeAddress: String
+    private let onOpenProfile: () -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
-        onOpenCart: @escaping () -> Void = {}
+        onOpenCart: @escaping () -> Void = {},
+        homeAddress: String,
+        onOpenProfile: @escaping () -> Void
     ) {
         _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onOpenCart = onOpenCart
+        self.homeAddress = homeAddress
+        self.onOpenProfile = onOpenProfile
     }
 
     var body: some View {
@@ -99,7 +105,9 @@ struct HomeCoordinatorView: View {
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
                 onCompareOffers: coordinator.openOffersList,
-                onOpenOfferResult: coordinator.openOfferResult
+                onOpenOfferResult: coordinator.openOfferResult,
+                homeAddress: homeAddress,
+                onAddressTap: onOpenProfile
             )
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
