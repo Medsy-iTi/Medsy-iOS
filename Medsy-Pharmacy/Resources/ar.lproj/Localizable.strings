@@ -12,6 +12,14 @@
 "pharmacy.home.pharmacy_name" = "صيدلية الأمل";
 "pharmacy.home.address" = "شارع النيل، المعادي، القاهرة";
 "pharmacy.home.online" = "مفتوحة الآن";
+"pharmacy.home.closed" = "مغلقة";
+"pharmacy.home.pharmacy_unavailable" = "اسم الصيدلية غير متاح";
+"pharmacy.home.address_unavailable" = "العنوان غير متاح";
+"pharmacy.home.profile_load_error" = "تعذر تحميل بيانات الصيدلية.";
+"pharmacy.home.orders_loading" = "جارٍ تحميل الطلبات الحديثة…";
+"pharmacy.home.orders_empty_title" = "لا توجد طلبات حديثة";
+"pharmacy.home.orders_empty_message" = "ستظهر الطلبات الجديدة هنا عند وصولها.";
+"pharmacy.home.orders_load_error" = "تعذر تحميل الطلبات الحديثة.";
 "pharmacy.home.pharmacy_number" = "رقم الصيدلية";
 "pharmacy.home.overview" = "نظرة عامة اليوم";
 "pharmacy.home.new_orders" = "طلبات جديدة";
