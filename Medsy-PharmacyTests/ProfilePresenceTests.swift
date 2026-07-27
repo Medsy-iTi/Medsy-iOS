@@ -137,6 +137,9 @@ final class ProfileViewModelPresenceTests: XCTestCase {
             logoutUseCase: MockLogoutUseCase(),
             goOnDutyUseCase: goOnDutyUseCase,
             goOffDutyUseCase: goOffDutyUseCase,
+            sessionSettings: PharmacySessionSettings(
+                defaults: UserDefaults(suiteName: "ProfilePresenceTests.\(UUID().uuidString)")!
+            ),
             languageManager: LanguageManager.shared,
             appSettings: PharmacyAppSettings.shared
         )
