@@ -416,3 +416,17 @@
 "completed_order.not_found" = "الطلب غير موجود";
 "completed_order.fulfillment.delivery" = "توصيل";
 "completed_order.fulfillment.pickup" = "استلام من الصيدلية";
+/* Pharmacy Pending Invitations */
+"refresh" = "تحديث";
+"pharmacy_pending_invitations.title" = "الدعوات المعلقة";
+"pharmacy_pending_invitations.subtitle" = "راجع الصيادلة المدعوين قبل انضمامهم";
+"pharmacy_pending_invitations.empty" = "لا توجد دعوات معلقة لهذه الصيدلية.";
+"pharmacy_pending_invitations.details_title" = "تفاصيل الدعوة";
+"pharmacy_pending_invitations.delete" = "حذف الدعوة";
+"pharmacy_pending_invitations.delete_confirm_title" = "حذف الدعوة المعلقة؟";
+"pharmacy_pending_invitations.delete_confirm_action" = "حذف الدعوة";
+"pharmacy_pending_invitations.delete_confirm_message" = "هل تريد حذف دعوة %@ المعلقة؟";
+"pharmacy_pending_invitations.pharmacy" = "الصيدلية";
+"pharmacy_pending_invitations.pharmacist_id" = "معرّف الصيدلي";
+"pharmacy_pending_invitations.invitation_id" = "معرّف الدعوة";
+"pharmacy_pending_invitations.created_at" = "تاريخ الإنشاء";

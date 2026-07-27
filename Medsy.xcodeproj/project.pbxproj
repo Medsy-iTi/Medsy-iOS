@@ -112,6 +112,7 @@
 			files = (
 				6D8B26573006BA48001616C8 /* Alamofire in Frameworks */,
 				6D8B29BA3006F319001616C8 /* Swinject in Frameworks */,
+				9A146001301A000100000001 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +206,7 @@
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
+				9A146000301A000100000001 /* Lottie */,
 			);
 			productName = Medsy;
 			productReference = 7834991930055416001D87B6 /* Medsy.app */;

@@ -13,7 +13,8 @@ struct PharmacyInvitation: Equatable, Hashable {
     let pharmacistFirstName: String
     let pharmacistLastName: String
     let status: String
-    let invitedEmail: String
+    let createdAt: Date?
+    let invitedEmail: String?
 
     var pharmacistFullName: String {
         "\(pharmacistFirstName) \(pharmacistLastName)"
