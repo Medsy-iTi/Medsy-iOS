@@ -10,6 +10,7 @@
 		6D5530B6301700FB0018B619 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 6D5530B5301700FB0018B619 /* Lottie */; };
 		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
+		780F75C03017A8A80005EA77 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 780F75BF3017A8A80005EA77 /* Lottie */; };
 		9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 /* End PBXBuildFile section */
 
@@ -112,7 +113,7 @@
 			files = (
 				6D8B26573006BA48001616C8 /* Alamofire in Frameworks */,
 				6D8B29BA3006F319001616C8 /* Swinject in Frameworks */,
-				9A146001301A000100000001 /* Lottie in Frameworks */,
+				780F75C03017A8A80005EA77 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +207,7 @@
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
-				9A146000301A000100000001 /* Lottie */,
+				780F75BF3017A8A80005EA77 /* Lottie */,
 			);
 			productName = Medsy;
 			productReference = 7834991930055416001D87B6 /* Medsy.app */;
@@ -990,6 +991,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */;
 			productName = Swinject;
+		};
+		780F75BF3017A8A80005EA77 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
