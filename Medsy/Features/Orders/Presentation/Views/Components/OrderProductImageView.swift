@@ -12,29 +12,20 @@ struct OrderProductImageView: View {
     var size: CGFloat = 48
 
     var body: some View {
-        Group {
-            if let url = imageURL.flatMap(URL.init(string:)) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        placeholder
-                            .redacted(reason: .placeholder)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        placeholder
-                    @unknown default:
-                        placeholder
-                    }
-                }
-            } else {
+        MedsyRemoteImage(
+            urlString: imageURL,
+            contentMode: .fit,
+            placeholder: {
+                placeholder
+                    .redacted(reason: .placeholder)
+            },
+            failure: {
                 placeholder
             }
-        }
+        )
         .frame(width: size, height: size)
-        .background(AppColor.lightGreen)
+        .padding(4)
+        .background(AppColor.card)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
     }
 

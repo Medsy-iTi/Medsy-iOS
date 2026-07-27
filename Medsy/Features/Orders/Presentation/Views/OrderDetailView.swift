@@ -13,6 +13,7 @@ struct OrderDetailView: View {
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
+    var onSelectProduct: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
 
@@ -206,33 +207,44 @@ struct OrderDetailView: View {
     }
 
     private func itemRow(item: OrderDetailItemModel) -> some View {
-        HStack(alignment: .center, spacing: MedsySpacing.sm) {
-            OrderProductImageView(imageURL: item.imageURL, size: 48)
+        Button {
+            onSelectProduct?(item.productId)
+        } label: {
+            HStack(alignment: .center, spacing: MedsySpacing.sm) {
+                OrderProductImageView(imageURL: item.imageURL, size: 48)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(item.productName)
-                    .font(AppColor.sans(14, .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .lineLimit(2)
-
-                if let originalName = item.originalProductName {
-                    Text(String(format: "orders.detail.alternative_to".localized, originalName))
-                        .font(AppColor.sans(12, .medium))
-                        .foregroundStyle(AppColor.green)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.productName)
+                        .font(AppColor.sans(14, .semibold))
+                        .foregroundStyle(AppColor.textPrim)
                         .lineLimit(2)
+
+                    if let originalName = item.originalProductName {
+                        Text(String(format: "orders.detail.alternative_to".localized, originalName))
+                            .font(AppColor.sans(12, .medium))
+                            .foregroundStyle(AppColor.green)
+                            .lineLimit(2)
+                    }
+
+                    Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
+                        .font(AppColor.sans(12))
+                        .foregroundStyle(AppColor.textSec)
                 }
 
-                Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
-                    .font(AppColor.sans(12))
-                    .foregroundStyle(AppColor.textSec)
+                Spacer(minLength: 0)
+
+                VStack(alignment: .trailing, spacing: MedsySpacing.xxs) {
+                    Text(String(format: "orders.price_format".localized, item.unitPrice * Double(item.quantity)))
+                        .font(AppColor.sans(14, .semibold))
+                        .foregroundStyle(AppColor.textPrim)
+
+                    Image(systemName: "chevron.forward")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppColor.textSec)
+                }
             }
-
-            Spacer(minLength: 0)
-
-            Text(String(format: "orders.price_format".localized, item.unitPrice * Double(item.quantity)))
-                .font(AppColor.sans(14, .semibold))
-                .foregroundStyle(AppColor.textPrim)
         }
+        .buttonStyle(.plain)
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
     }

@@ -59,6 +59,9 @@ struct OrdersCoordinatorView: View {
                         onRetry: { detailViewModel.handle(.retry(orderId: orderId)) },
                         onBack: { coordinator.pop() },
                         onReorder: { detailViewModel.handle(.reorder) },
+                        onSelectProduct: { productId in
+                            coordinator.path.append(ProductDetailDestination(productId: String(productId)))
+                        },
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
                         onGoToCart: onGoToCart
                     )
