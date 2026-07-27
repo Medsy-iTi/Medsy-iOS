@@ -46,15 +46,8 @@ struct OrderCardView: View {
 
                 HStack(alignment: .bottom) {
                     HStack(spacing: -MedsySpacing.xxs) {
-                        ForEach(0..<min(order.itemCount, 3), id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
-                                .fill(AppColor.lightGreen)
-                                .frame(width: 40, height: 40)
-                                .overlay(
-                                    Image(systemName: "pills.fill")
-                                        .font(.system(size: 17))
-                                        .foregroundStyle(AppColor.green.opacity(0.65))
-                                )
+                        ForEach(0..<min(order.itemCount, 3), id: \.self) { index in
+                            OrderProductImageView(imageURL: imageURL(at: index), size: 40)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
                                         .stroke(AppColor.card, lineWidth: 2)
@@ -113,6 +106,11 @@ struct OrderCardView: View {
         )
         .font(AppColor.sans(12, .medium))
         .foregroundStyle(AppColor.green)
+    }
+
+    private func imageURL(at index: Int) -> String? {
+        guard order.itemImageURLs.indices.contains(index) else { return nil }
+        return order.itemImageURLs[index]
     }
 }
 

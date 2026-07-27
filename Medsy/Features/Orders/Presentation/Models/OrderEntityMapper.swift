@@ -17,7 +17,8 @@ enum OrderEntityMapper {
             fulfillmentType: entity.fulfillmentType,
             date: entity.date,
             totalPrice: entity.totalPrice,
-            itemCount: entity.itemCount
+            itemCount: entity.itemCount,
+            itemImageURLs: entity.itemImageURLs
         )
     }
 
@@ -44,7 +45,8 @@ enum OrderEntityMapper {
             productName: entity.productName,
             originalProductName: entity.originalProductName,
             quantity: entity.quantity,
-            unitPrice: entity.unitPrice
+            unitPrice: entity.unitPrice,
+            imageURL: entity.imageURL
         )
     }
 }
@@ -102,4 +104,3 @@ private extension OrderStatusPresentation {
         }
     }
 }
-

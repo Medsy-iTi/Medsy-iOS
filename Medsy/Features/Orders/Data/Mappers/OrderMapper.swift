@@ -15,6 +15,20 @@ enum OrderMapper {
         return formatter
     }()
 
+    private static let localDateTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+
+    private static let localDateTimeWithoutFractionFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+
     static func mapToEntity(_ dto: OrderDTO) -> OrderEntity {
         let fulfillmentType = fulfillmentType(for: dto)
         return OrderEntity(
@@ -28,7 +42,8 @@ enum OrderMapper {
             fulfillmentType: fulfillmentType,
             date: date(from: dto.date),
             totalPrice: dto.totalPrice,
-            itemCount: dto.items.reduce(0) { $0 + $1.quantity }
+            itemCount: dto.items.reduce(0) { $0 + $1.quantity },
+            itemImageURLs: dto.items.compactMap(\.imageUrl)
         )
     }
 
@@ -76,7 +91,8 @@ enum OrderMapper {
             ),
             originalProductName: dto.originalProductName,
             quantity: dto.quantity,
-            unitPrice: dto.unitPrice
+            unitPrice: dto.unitPrice,
+            imageURL: dto.imageUrl
         )
     }
 
@@ -88,6 +104,46 @@ enum OrderMapper {
     }
 
     private static func date(from string: String) -> Date {
-        dateFormatter.date(from: string) ?? Date()
+        if let date = dateFormatter.date(from: string) {
+            return date
+        }
+
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = isoFormatter.date(from: string) {
+            return date
+        }
+
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        if let date = isoFormatter.date(from: string) {
+            return date
+        }
+
+        if let date = localDateTimeFormatter.date(from: normalizedLocalDateTime(string)) {
+            return date
+        }
+
+        if let date = localDateTimeWithoutFractionFormatter.date(from: string) {
+            return date
+        }
+
+        return Date()
+    }
+
+    private static func normalizedLocalDateTime(_ string: String) -> String {
+        guard let dotIndex = string.firstIndex(of: ".") else { return string }
+
+        let prefix = string[..<dotIndex]
+        let fractionStart = string.index(after: dotIndex)
+        let fractionalDigits = String(string[fractionStart...]
+            .prefix(while: { $0.isNumber })
+            .prefix(3))
+        let paddedFraction = fractionalDigits.padding(
+            toLength: 3,
+            withPad: "0",
+            startingAt: 0
+        )
+
+        return "\(prefix).\(paddedFraction)"
     }
 }
