@@ -14,13 +14,23 @@ struct OrderCompleteView: View {
     let onBackToHome: () -> Void
 
     private var confirmedMedicines: [OfferMedicineItem] {
-        offerDetail.medicines.filter { $0.isAvailable }
+        let confirmedIds = Set(result.orders.flatMap { $0.itemIds })
+        let matched = offerDetail.medicines.filter { confirmedIds.contains($0.requestItemId) }
+        if !matched.isEmpty {
+            return matched
+        }
+        return offerDetail.medicines.filter { $0.isSelected }
     }
 
     private var confirmedTotalPrice: Double {
-        offerDetail.totalPrice > 0
-            ? offerDetail.totalPrice
-            : confirmedMedicines.reduce(0.0) { $0 + $1.price }
+        confirmedMedicines.reduce(0.0) { $0 + $1.price }
+    }
+
+    private var displayPharmacyName: String {
+        if let name = result.orders.first?.pharmacyName, !name.isEmpty {
+            return name
+        }
+        return offerDetail.pharmacyName
     }
 
     @State private var animateCheckmark = false
@@ -29,7 +39,6 @@ struct OrderCompleteView: View {
         VStack(spacing: 24) {
             Spacer()
 
-            // Success checkmark animation
             ZStack {
                 Circle()
                     .fill(AppColor.green.opacity(0.15))
@@ -65,7 +74,6 @@ struct OrderCompleteView: View {
                     .padding(.horizontal, 32)
             }
 
-            // Real Data summary card
             VStack(spacing: 16) {
                 HStack {
                     Text("order_complete.summary_title".localized)
@@ -81,7 +89,7 @@ struct OrderCompleteView: View {
                         .font(AppColor.sans(14))
                         .foregroundStyle(AppColor.textSec)
                     Spacer()
-                    Text(offerDetail.pharmacyName)
+                    Text(displayPharmacyName)
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
