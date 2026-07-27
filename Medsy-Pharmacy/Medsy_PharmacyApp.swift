@@ -29,7 +29,8 @@ struct Medsy_PharmacyApp: App {
             PharmacyHomeAssembly(),
             PharmacyOrdersAssembly(),
             PharmacyRequestDetailsAssembly(),
-			CompletedOrdersAssembly()
+			CompletedOrdersAssembly(),
+            CompletedOrderDetailsAssembly()
         ])
 
         let container = PharmacyAppAssembler.shared.container
