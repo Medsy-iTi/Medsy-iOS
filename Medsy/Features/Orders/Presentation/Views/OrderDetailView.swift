@@ -13,7 +13,6 @@ struct OrderDetailView: View {
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
-    var onSelectPharmacy: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
 
@@ -114,7 +113,6 @@ struct OrderDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.md) {
                     statusHeader(order: order)
-                    pharmacyCard(order: order)
                     itemsSection(order: order)
                     summaryCard(order: order)
                 }
@@ -179,47 +177,6 @@ struct OrderDetailView: View {
         .padding(.vertical, MedsySpacing.xxs + 2)
         .background(AppColor.lightGreen)
         .clipShape(Capsule())
-    }
-
-    private func pharmacyCard(order: OrderDetailPresentationModel) -> some View {
-        Button {
-            onSelectPharmacy?(order.pharmacyId)
-        } label: {
-            HStack(spacing: MedsySpacing.sm) {
-            ZStack {
-                Circle()
-                    .fill(AppColor.lightGreen)
-                    .frame(width: 44, height: 44)
-                Image(systemName: "cross.vial.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(AppColor.green)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("orders.detail.pharmacy".localized)
-                    .font(AppColor.sans(12))
-                    .foregroundStyle(AppColor.textSec)
-                Text(order.pharmacyName)
-                    .font(AppColor.sans(15, .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-            }
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "chevron.forward")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AppColor.textSec)
-            }
-        }
-        .buttonStyle(.plain)
-        .padding(MedsySpacing.md)
-        .background(AppColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
-        )
-        .medsyCardShadow()
     }
 
     private func itemsSection(order: OrderDetailPresentationModel) -> some View {

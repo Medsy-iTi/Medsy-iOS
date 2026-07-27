@@ -39,11 +39,6 @@ struct OrderCardView: View {
 
                 fulfillmentBadge
 
-                Text(String(format: "orders.from_pharmacy".localized, order.pharmacyName))
-                    .font(AppColor.sans(13))
-                    .foregroundStyle(AppColor.textSec)
-                    .lineLimit(1)
-
                 HStack(alignment: .bottom) {
                     HStack(spacing: -MedsySpacing.xxs) {
                         ForEach(0..<min(order.itemCount, 3), id: \.self) { index in

@@ -11,18 +11,15 @@ struct OrdersCoordinatorView: View {
     @State private var coordinator = OrdersCoordinator()
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
-    private let onSelectPharmacy: (Int) -> Void
     private let onReorderCompleted: () -> Void
     private let onGoToCart: () -> Void
 
     init(
-        onSelectPharmacy: @escaping (Int) -> Void = { _ in },
         onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
         _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
-        self.onSelectPharmacy = onSelectPharmacy
         self.onReorderCompleted = onReorderCompleted
         self.onGoToCart = onGoToCart
     }
@@ -30,13 +27,11 @@ struct OrdersCoordinatorView: View {
     init(
         historyViewModel: OrderHistoryViewModel,
         detailViewModel: OrderDetailViewModel,
-        onSelectPharmacy: @escaping (Int) -> Void = { _ in },
         onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
         _historyViewModel = State(initialValue: historyViewModel)
         _detailViewModel = State(initialValue: detailViewModel)
-        self.onSelectPharmacy = onSelectPharmacy
         self.onReorderCompleted = onReorderCompleted
         self.onGoToCart = onGoToCart
     }
@@ -64,7 +59,6 @@ struct OrdersCoordinatorView: View {
                         onRetry: { detailViewModel.handle(.retry(orderId: orderId)) },
                         onBack: { coordinator.pop() },
                         onReorder: { detailViewModel.handle(.reorder) },
-                        onSelectPharmacy: onSelectPharmacy,
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
                         onGoToCart: onGoToCart
                     )

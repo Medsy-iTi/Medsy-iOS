@@ -465,7 +465,6 @@
 "orders.status.preparing"            = "Preparing";
 "orders.status.ready_for_pickup"     = "Ready for pickup";
 "orders.status.out_for_delivery"     = "Out for delivery";
-"orders.from_pharmacy"               = "From %@";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";
@@ -496,7 +495,6 @@
 "orders.detail.order_number"         = "Order #%d";
 "orders.detail.date"                 = "Date";
 "orders.detail.status"               = "Status";
-"orders.detail.pharmacy"             = "Pharmacy";
 "orders.detail.items"                = "Items price";
 "orders.detail.items_label"          = "Items";
 "orders.detail.item_unit_price"      = "%.0f EGP each";
