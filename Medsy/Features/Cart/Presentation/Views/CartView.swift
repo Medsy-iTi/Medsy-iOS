@@ -23,17 +23,20 @@ struct CartView: View {
     @State private var operationErrorMessage: String?
 
     let onSearch: () -> Void
+    let onScanPrescription: () -> Void
     let onContinue: (CartRequestDraft) -> Void
     let onProductSelected: (String) -> Void
 
     init(
         viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
+        onScanPrescription: @escaping () -> Void = {},
         onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
         onProductSelected: @escaping (String) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onSearch = onSearch
+        self.onScanPrescription = onScanPrescription
         self.onContinue = onContinue
         self.onProductSelected = onProductSelected
     }
@@ -142,7 +145,7 @@ struct CartView: View {
             if viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: { presentPrescriptionSources() }
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: [])
@@ -165,7 +168,7 @@ struct CartView: View {
             if items.isEmpty && viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: { presentPrescriptionSources() }
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: items)

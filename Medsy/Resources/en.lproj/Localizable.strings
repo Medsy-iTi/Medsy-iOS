@@ -241,9 +241,9 @@
 "cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
 "cart.continue" = "Continue";
 "cart.empty.title" = "Your cart is empty";
-"cart.empty.message" = "Search for medicines or upload a prescription to start a request.";
+"cart.empty.message" = "Search for medicines or scan a prescription to add medicines first.";
 "cart.empty.search" = "Search medicines";
-"cart.empty.upload" = "Upload prescription";
+"cart.empty.scan_prescription" = "Scan prescription";
 "cart.error.title" = "Couldn't Load Cart";
 "cart.removed_message" = "%@ removed";
 "cart.undo" = "Undo";

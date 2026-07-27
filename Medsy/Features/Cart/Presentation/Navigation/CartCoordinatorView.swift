@@ -12,6 +12,7 @@ enum CartRoute: Hashable {
     case productDetail(String)
     case completeRequest
     case search(String)
+    case prescription
 }
 
 @MainActor
@@ -31,6 +32,10 @@ final class CartCoordinator {
 
     func showSearch(query: String = "") {
         path.append(CartRoute.search(query))
+    }
+
+    func showPrescription() {
+        path.append(CartRoute.prescription)
     }
 
     func pop() {
@@ -65,6 +70,7 @@ struct CartCoordinatorView: View {
             CartView(
                 viewModel: viewModel,
                 onSearch: { coordinator.showSearch() },
+                onScanPrescription: coordinator.showPrescription,
                 onContinue: coordinator.showCompleteRequest,
                 onProductSelected: coordinator.showProductDetail
             )
@@ -89,6 +95,11 @@ struct CartCoordinatorView: View {
                         query: query,
                         onBack: { coordinator.pop() },
                         onPush: { dest in coordinator.path.append(dest) }
+                    )
+                case .prescription:
+                    PrescriptionCoordinatorView(
+                        onExit: coordinator.pop,
+                        onViewCart: coordinator.pop
                     )
                 }
             }
