@@ -17,13 +17,24 @@ final class PharmacyOrdersRepository: PharmacyOrdersRepositoryProtocol {
     func fetchOrders(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
         let endpoint = PharmacyOrdersEndpoint.fetchOrders(pharmacyId: pharmacyId, page: page, size: size)
 
-        let envelope: APIEnvelope<PageResponseDTO<PharmacyOrderDTO>> =
-            try await networkService.request(endpoint: endpoint)
+        do {
+            let envelope: APIEnvelope<PageResponseDTO<PharmacyMedicineRequestDTO>> =
+                try await networkService.request(endpoint: endpoint)
 
-        guard let pageDTO = envelope.data else {
-            throw NetworkError.decodingFailed
+            guard let pageDTO = envelope.data else {
+                throw NetworkError.decodingFailed
+            }
+
+            return PharmacyOrderMapper.map(pageDTO)
+        } catch {
+            let envelope: APIEnvelope<PageResponseDTO<PharmacyOrderDTO>> =
+                try await networkService.request(endpoint: endpoint)
+
+            guard let pageDTO = envelope.data else {
+                throw NetworkError.decodingFailed
+            }
+
+            return PharmacyOrderMapper.map(pageDTO)
         }
-
-        return PharmacyOrderMapper.map(pageDTO)
     }
 }

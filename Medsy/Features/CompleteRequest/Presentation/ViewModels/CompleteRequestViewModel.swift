@@ -193,9 +193,9 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
             do {
                 let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
-                        deliveryLatitude: deliveryLocation.latitude,
-                        deliveryLongitude: deliveryLocation.longitude,
-                        deliveryAddress: deliveryLocation.address,
+                        deliveryLatitude:30,
+                        deliveryLongitude:30,
+                        deliveryAddress: "cairo",
                         notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
                         paymentMethod: paymentMethod.rawValue,
                         prescriptionData: draft.prescriptionData

@@ -331,3 +331,33 @@
 "profile.on_duty.title" = "On Duty";
 "profile.on_duty.on" = "On Duty";
 "profile.on_duty.off" = "Off Duty";
+
+/* Request Details */
+"pharmacy.request.details.title" = "Request Details";
+"pharmacy.request.min_ago" = "%d min ago";
+"pharmacy.request.product_label" = "Product #%@";
+"pharmacy.request.customer_id_label" = "Customer #%@";
+"pharmacy.request.loading" = "Loading...";
+"pharmacy.request.no_data" = "No request details found";
+"pharmacy.request.preview_prescription" = "Preview Prescription";
+"pharmacy.request.requested_medicines" = "Requested Medicines";
+"pharmacy.request.currency_unit" = "EGP";
+"pharmacy.request.reject_order_btn" = "Reject Request";
+"pharmacy.request.contact_customer_btn" = "Contact Customer";
+"pharmacy.request.customer_prescription" = "Customer Prescription";
+"pharmacy.request.prescription_handwritten" = "Handwritten Prescription";
+"pharmacy.request.notes_for_customer_header" = "Notes for Customer";
+"pharmacy.request.notes_for_customer_placeholder" = "Add your notes here...";
+"pharmacy.request.customer_notes_header" = "Customer Notes";
+"pharmacy.request.no_customer_notes" = "No notes from customer";
+"pharmacy.request.order_total_header" = "Order Total";
+"pharmacy.request.view_payment_summary" = "View Payment Summary";
+
+"pharmacy.orders.action.send_offer" = "Send Offer";
+"pharmacy.orders.action.expired" = "Expired";
+"pharmacy.orders.action.view" = "View Details";
+"pharmacy.orders.status.completed" = "Completed";
+"pharmacy.orders.status.expired" = "Expired";
+"pharmacy.orders.status.pending" = "Pending Approval";
+"pharmacy.orders.status.approved" = "Approved";
+"pharmacy.orders.status.offer_sent" = "Offer Sent";

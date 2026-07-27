@@ -64,8 +64,17 @@ struct PharmacyOrdersView: View {
 							PharmacyOrdersEmptyView()
 						} else {
 							ForEach(viewModel.visibleOrders) { order in
-								PharmacyOrderCard(order: order, onAction: { viewModel.handleAction(for: order) })
-									.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
+								PharmacyOrderCard(order: order, onAction: {
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
+									}
+								})
+								.onTapGesture {
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
+									}
+								}
+								.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
 							}
 							if viewModel.isLoadingNextPage {
 								ProgressView().padding(.vertical, PharmacySpacing.sm)

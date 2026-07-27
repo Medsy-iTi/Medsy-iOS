@@ -19,14 +19,20 @@ extension PharmacyOrderListStatus {
         case .new: "pharmacy.orders.filter.new"
         case .preparing: "pharmacy.orders.filter.preparing"
         case .delivered: "pharmacy.orders.filter.delivered"
+        case .completed: "pharmacy.orders.status.completed"
+        case .expired: "pharmacy.orders.status.expired"
+        case .pendingApproval: "pharmacy.orders.status.pending"
         }
     }
 
     var actionTitleKey: String {
         switch self {
-        case .new: "pharmacy.orders.action.accept"
+        case .new: "pharmacy.orders.action.send_offer"
         case .preparing: "pharmacy.orders.action.prepare"
         case .delivered: "pharmacy.orders.action.view"
+        case .completed: "pharmacy.orders.action.view"
+        case .expired: "pharmacy.orders.action.expired"
+        case .pendingApproval: "pharmacy.orders.status.pending"
         }
     }
 
@@ -35,13 +41,17 @@ extension PharmacyOrderListStatus {
         case .new: PharmacyColor.primary
         case .preparing: PharmacyColor.secondary
         case .delivered: PharmacyColor.success
+        case .completed: PharmacyColor.success
+        case .expired: PharmacyColor.danger
+        case .pendingApproval: PharmacyColor.primary
         }
     }
 
     var buttonStyle: PharmacyPrimaryButtonStyle {
         switch self {
         case .new: .filled
-        case .preparing, .delivered: .soft
+        case .preparing, .delivered, .completed: .soft
+        case .expired, .pendingApproval: .soft
         }
     }
 }

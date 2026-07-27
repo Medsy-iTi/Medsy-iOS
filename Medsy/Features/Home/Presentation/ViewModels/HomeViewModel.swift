@@ -27,8 +27,6 @@ final class HomeViewModel {
         self.statusStore = statusStore
     }
 
-    // MARK: - Computed properties for UI
-
     var firstAvailableOfferResult: OfferResult? {
         offerResults.values.first(where: { $0.isAvailable })
     }
@@ -52,17 +50,15 @@ final class HomeViewModel {
     // MARK: - Polling
 
     func checkAndStartPolling() {
-        var pendingIds = statusStore.pendingRequestIds
-        // Check for requests older than 5 minutes (300 seconds) and expire them immediately (Disabled as per user request)
-        /*
-        for reqId in pendingIds {
-            if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
+        let allIds = statusStore.pendingRequestIds
+        for reqId in allIds {
+            if let age = statusStore.getRequestAgeInSeconds(reqId), age > 900 {
                 statusStore.clearPendingRequestId(reqId)
+                offerResults.removeValue(forKey: reqId)
             }
         }
-        */
-        
-        pendingIds = statusStore.pendingRequestIds
+
+        let pendingIds = statusStore.pendingRequestIds
         guard !pendingIds.isEmpty else {
             activeRequestIds = []
             offerResults = [:]
@@ -72,7 +68,6 @@ final class HomeViewModel {
         }
 
         activeRequestIds = pendingIds
-        // Clean up any old offer results that are no longer pending
         for reqId in offerResults.keys {
             if !pendingIds.contains(reqId) {
                 offerResults.removeValue(forKey: reqId)
@@ -87,23 +82,7 @@ final class HomeViewModel {
 
         pollingTask = Task {
             while !Task.isCancelled {
-                var ids = statusStore.pendingRequestIds
-                // Clean up expired requests in background loop (Disabled as per user request)
-                /*
-                var expiredIds: [Int] = []
-                for reqId in ids {
-                    if let age = statusStore.getRequestAgeInSeconds(reqId), age > 300 {
-                        expiredIds.append(reqId)
-                    }
-                }
-                for reqId in expiredIds {
-                    statusStore.clearPendingRequestId(reqId)
-                    offerResults.removeValue(forKey: reqId)
-                    activeRequestIds.removeAll { $0 == reqId }
-                }
-                */
-                
-                ids = statusStore.pendingRequestIds
+                let ids = statusStore.pendingRequestIds
                 guard !ids.isEmpty else {
                     selectedStatus = .home
                     break
