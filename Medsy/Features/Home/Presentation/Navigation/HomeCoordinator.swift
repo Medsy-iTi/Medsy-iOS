@@ -77,6 +77,7 @@ final class HomeCoordinator {
 struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
     @Binding private var requestedRoute: HomeRoute?
+    @Binding private var rootResetSignal: Int
     private let onTabBarHiddenChange: (Bool) -> Void
     private let onOpenCart: () -> Void
     private let homeAddress: String
@@ -84,12 +85,14 @@ struct HomeCoordinatorView: View {
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
+        rootResetSignal: Binding<Int> = .constant(0),
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
         onOpenCart: @escaping () -> Void = {},
         homeAddress: String,
         onOpenProfile: @escaping () -> Void
     ) {
         _requestedRoute = requestedRoute
+        _rootResetSignal = rootResetSignal
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onOpenCart = onOpenCart
         self.homeAddress = homeAddress
@@ -186,6 +189,10 @@ struct HomeCoordinatorView: View {
         .onChange(of: requestedRoute) { _, _ in
             openRequestedRoute()
         }
+        .onChange(of: rootResetSignal) { _, _ in
+            coordinator.path = NavigationPath()
+            onTabBarHiddenChange(false)
+        }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
         }
@@ -197,6 +204,5 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-
 
 

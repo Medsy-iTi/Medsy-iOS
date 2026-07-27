@@ -15,6 +15,7 @@ struct MainTabBarView: View {
     @State private var cartViewModel: CartViewModel
     @State private var profileViewModel: ProfileViewModel
     @State private var requestedHomeRoute: HomeRoute?
+    @State private var homeRootResetSignal = 0
     @State private var cartFeedbackTask: Task<Void, Never>?
     @State private var requestSuccessTask: Task<Void, Never>?
     @State private var isShowingRequestSuccess = false
@@ -34,6 +35,7 @@ struct MainTabBarView: View {
         TabView(selection: selectedTabBinding) {
             HomeCoordinatorView(
                 requestedRoute: $requestedHomeRoute,
+                rootResetSignal: $homeRootResetSignal,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
                 homeAddress: profileViewModel.displayHomeAddress,
@@ -51,6 +53,7 @@ struct MainTabBarView: View {
                     isTabBarHidden = false
                     cartViewModel.handle(.load)
                     showRequestSuccessToast()
+                    homeRootResetSignal += 1
                     coordinator.select(.home)
                 }
             )
