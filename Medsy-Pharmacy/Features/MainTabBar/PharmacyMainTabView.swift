@@ -12,8 +12,8 @@ struct PharmacyMainTabView: View {
     var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
+    @State private var homeViewModel: PharmacyHomeViewModel
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
-    @ObservedObject private var identityProviding = PharmacySessionSettings.shared
     private let onLoggedOut: () -> Void
 
     init(
@@ -25,12 +25,16 @@ struct PharmacyMainTabView: View {
         self.coordinator = coordinator
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
+        _homeViewModel = State(initialValue: homeFactory.makeViewModel())
         self.onLoggedOut = onLoggedOut
     }
 
     var body: some View {
         TabView(selection: selectedTabBinding) {
-            homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
+            homeFactory.makeView(
+                viewModel: homeViewModel,
+                onViewAllOrders: coordinator.showOrders
+            )
                 .tabItem {
                     tabLabel(for: .home)
                 }
@@ -68,6 +72,10 @@ struct PharmacyMainTabView: View {
         .toolbarBackground(PharmacyColor.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .onChange(of: coordinator.selectedTab) { _, selectedTab in
+            guard selectedTab == .home else { return }
+            Task { await homeViewModel.refresh() }
+        }
     }
 
     private var selectedTabBinding: Binding<PharmacyTab> {
