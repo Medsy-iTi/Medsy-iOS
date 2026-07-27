@@ -14,12 +14,13 @@ struct OrderCompleteView: View {
     let onBackToHome: () -> Void
 
     private var confirmedMedicines: [OfferMedicineItem] {
-        let confirmedItemIds = Set(result.orders.flatMap { $0.itemIds })
-        return offerDetail.medicines.filter { confirmedItemIds.contains($0.requestItemId) }
+        offerDetail.medicines.filter { $0.isAvailable }
     }
 
     private var confirmedTotalPrice: Double {
-        confirmedMedicines.reduce(0.0) { $0 + $1.price }
+        offerDetail.totalPrice > 0
+            ? offerDetail.totalPrice
+            : confirmedMedicines.reduce(0.0) { $0 + $1.price }
     }
 
     @State private var animateCheckmark = false
