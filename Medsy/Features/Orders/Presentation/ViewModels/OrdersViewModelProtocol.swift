@@ -28,6 +28,17 @@ enum ReorderState: Equatable {
     case success
     case partial(added: Int, total: Int)
     case failed
+
+    var didAddItemsToCart: Bool {
+        switch self {
+        case .success:
+            return true
+        case .partial(let added, _):
+            return added > 0
+        case .idle, .loading, .failed:
+            return false
+        }
+    }
 }
 
 @MainActor

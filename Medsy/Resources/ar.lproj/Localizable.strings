@@ -588,6 +588,8 @@
 "complete_request.validation.expiry" = "أدخل تاريخ انتهاء صالحًا وغير منتهي بصيغة شهر/سنة.";
 "complete_request.validation.cvv" = "أدخل رمز الأمان المكوّن من ثلاثة أرقام.";
 "complete_request.submit" = "إرسال طلب الدواء";
+"complete_request.success.title" = "تم إرسال الطلب بنجاح";
+"complete_request.success.subtitle" = "عدنا بك للرئيسية لتتمكن من مشاهدة العروض الحالية.";
 "complete_request.submit_error.title" = "تعذر إكمال الطلب";
 "complete_request.submit_error" = "لم يكتمل طلبك لتعذر إفراغ السلة. حاول مرة أخرى.";
 "complete_request.location.title" = "اختر موقع التوصيل";

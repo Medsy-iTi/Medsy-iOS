@@ -16,6 +16,8 @@ struct MainTabBarView: View {
     @State private var profileViewModel: ProfileViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var cartFeedbackTask: Task<Void, Never>?
+    @State private var requestSuccessTask: Task<Void, Never>?
+    @State private var isShowingRequestSuccess = false
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -47,7 +49,9 @@ struct MainTabBarView: View {
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onRequestCompleted: {
                     isTabBarHidden = false
-                    coordinator.select(.orders)
+                    cartViewModel.handle(.load)
+                    showRequestSuccessToast()
+                    coordinator.select(.home)
                 }
             )
             .onAppear { isTabBarHidden = false }
@@ -66,6 +70,9 @@ struct MainTabBarView: View {
             .tag(AppTab.chatbot)
 
             OrdersCoordinatorView(
+                onReorderCompleted: {
+                    cartViewModel.handle(.load)
+                },
                 onGoToCart: {
                     cartViewModel.handle(.load)
                     coordinator.select(.cart)
@@ -96,7 +103,12 @@ struct MainTabBarView: View {
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
         .overlay(alignment: .top) {
-            if let productName = addedProductName {
+            if isShowingRequestSuccess {
+                RequestSentBanner()
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.top, MedsySpacing.sm)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            } else if let productName = addedProductName {
                 CartAddedBanner(productName: productName)
                     .padding(.horizontal, MedsySpacing.md)
                     .padding(.top, MedsySpacing.sm)
@@ -108,6 +120,7 @@ struct MainTabBarView: View {
         }
         .onDisappear {
             cartFeedbackTask?.cancel()
+            requestSuccessTask?.cancel()
         }
         .task {
             cartViewModel.handle(.load)
@@ -140,5 +153,53 @@ struct MainTabBarView: View {
             guard !Task.isCancelled else { return }
             cartViewModel.handle(.dismissFeedback)
         }
+    }
+
+    private func showRequestSuccessToast() {
+        requestSuccessTask?.cancel()
+        withAnimation(.easeInOut(duration: 0.25)) {
+            isShowingRequestSuccess = true
+        }
+
+        requestSuccessTask = Task {
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isShowingRequestSuccess = false
+            }
+        }
+    }
+}
+
+private struct RequestSentBanner: View {
+    var body: some View {
+        HStack(spacing: MedsySpacing.sm) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(AppColor.green)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("complete_request.success.title".localized)
+                    .font(MedsyFont.bodyMedium(14))
+                    .foregroundStyle(AppColor.textPrim)
+
+                Text("complete_request.success.subtitle".localized)
+                    .font(AppColor.sans(12))
+                    .foregroundStyle(AppColor.textSec)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "house.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppColor.green)
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.card)
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.green.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .shadow(color: .black.opacity(0.12), radius: 12, y: 5)
     }
 }
