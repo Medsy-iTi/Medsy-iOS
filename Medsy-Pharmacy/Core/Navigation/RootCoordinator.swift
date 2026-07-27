@@ -11,7 +11,7 @@ import Observation
 @MainActor
 final class RootCoordinator {
 	private(set) var flow: RootFlow = .splash
-	let mainTabCoordinator = PharmacyMainTabCoordinator()
+	private(set) var mainTabCoordinator = PharmacyMainTabCoordinator()
 
 	private let hasCompletedOnboardingUseCase: HasCompletedOnboardingUseCaseProtocol
 	private let completeOnboardingUseCase: CompleteOnboardingUseCaseProtocol
@@ -44,20 +44,21 @@ final class RootCoordinator {
 
 	func finishAuthentication() {
 		isAuthenticated = true
+		mainTabCoordinator = PharmacyMainTabCoordinator()
 		flow = .main
 	}
 
 	func logout() {
 		isAuthenticated = false
 		try? tokenStore.clearTokens()
-		mainTabCoordinator.select(.home)
+		mainTabCoordinator = PharmacyMainTabCoordinator()
 		flow = .authentication
 	}
 
 	func returnToSignIn() {
 		isAuthenticated = false
 		try? tokenStore.clearTokens()
-		mainTabCoordinator.select(.home)
+		mainTabCoordinator = PharmacyMainTabCoordinator()
 		flow = .authentication
 	}
 }

@@ -14,6 +14,7 @@ enum ProfileRoute: Hashable {
     case pharmacistsList
     case invitePharmacist
     case inviteSuccess(InviteSuccessInfo)
+    case pendingInvitationDetail(PharmacyInvitation)
     case pharmacistProfile(PharmacistMember)
     case settings
 }
