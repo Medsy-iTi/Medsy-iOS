@@ -99,7 +99,9 @@ private struct PreviewVerificationUseCase: VerificationUseCaseProtocol {
                 lastName: "",
                 role: "CUSTOMER",
                 homeAddress: "",
-                dateOfBirth: ""
+                dateOfBirth: "",
+                homeLatitude: nil,
+                homeLongitude: nil
             )
         )
     }

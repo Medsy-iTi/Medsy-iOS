@@ -12,7 +12,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class AddressPickerViewModel {
+final class AddressPickerViewModel: NSObject, CLLocationManagerDelegate {
 
 	var searchText: String = ""
 	var addressText: String
@@ -20,6 +20,7 @@ final class AddressPickerViewModel {
 	var searchResults: [MKMapItem] = []
 	var isSearching = false
 	var isResolvingAddress = false
+	var locationPermissionMessage: String?
 
 	private let searchDebounceNanoseconds: UInt64 = 350_000_000
 	private var searchTask: Task<Void, Never>?
@@ -60,6 +61,9 @@ final class AddressPickerViewModel {
 		self.region = initialRegion
 		self.cameraPosition = .region(initialRegion)
 		self.pickedCoordinate = initialCoordinate
+		super.init()
+		locationManager.delegate = self
+		locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
 	}
 
 	var annotatedItems: [AnnotatedMapItem] {
@@ -123,7 +127,10 @@ final class AddressPickerViewModel {
 	func resolveInitialLocationIfNeeded() {
 		guard pickedCoordinate == nil else { return }
 		let query = addressText.trimmingCharacters(in: .whitespaces)
-		guard !query.isEmpty else { return }
+		guard !query.isEmpty else {
+			requestCurrentLocationIfPossible()
+			return
+		}
 
 		initialLocationTask?.cancel()
 		initialLocationTask = Task { [weak self] in
@@ -146,6 +153,7 @@ final class AddressPickerViewModel {
 
 	func selectPin(at coordinate: CLLocationCoordinate2D) {
 		pickedCoordinate = coordinate
+		locationPermissionMessage = nil
 		reverseGeocodeTask?.cancel()
 
 		reverseGeocodeTask = Task { [weak self] in
@@ -209,6 +217,66 @@ final class AddressPickerViewModel {
 	}
 
 	func requestLocationPermission() {
-		locationManager.requestWhenInUseAuthorization()
+		switch locationManager.authorizationStatus {
+		case .notDetermined:
+			locationManager.requestWhenInUseAuthorization()
+		case .authorizedAlways, .authorizedWhenInUse:
+			requestCurrentLocationIfPossible()
+		case .denied, .restricted:
+			locationPermissionMessage = "address.permission_denied".localized
+		@unknown default:
+			break
+		}
+	}
+
+	nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+		Task { @MainActor in
+			switch manager.authorizationStatus {
+			case .authorizedAlways, .authorizedWhenInUse:
+				self.locationPermissionMessage = nil
+				self.requestCurrentLocationIfPossible()
+			case .denied, .restricted:
+				self.locationPermissionMessage = "address.permission_denied".localized
+			case .notDetermined:
+				break
+			@unknown default:
+				break
+			}
+		}
+	}
+
+	nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+		guard let coordinate = locations.last?.coordinate else { return }
+		Task { @MainActor in
+			guard self.pickedCoordinate == nil else {
+				self.isResolvingAddress = false
+				return
+			}
+			self.selectPin(at: coordinate)
+		}
+	}
+
+	nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+		Task { @MainActor in
+			self.isResolvingAddress = false
+			self.locationPermissionMessage = error.localizedDescription
+		}
+	}
+
+	private func requestCurrentLocationIfPossible() {
+		guard pickedCoordinate == nil else { return }
+		switch locationManager.authorizationStatus {
+		case .authorizedAlways, .authorizedWhenInUse:
+			break
+		case .denied, .restricted:
+			locationPermissionMessage = "address.permission_denied".localized
+			return
+		case .notDetermined:
+			return
+		@unknown default:
+			return
+		}
+		isResolvingAddress = true
+		locationManager.requestLocation()
 	}
 }

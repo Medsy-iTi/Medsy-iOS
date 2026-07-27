@@ -20,6 +20,8 @@ final class ProfileDataContractTests: XCTestCase {
             "firstName": "Ahmed",
             "lastName": "Elkady",
             "homeAddress": "Cairo",
+            "deliveryLatitude": 30.0444,
+            "deliveryLongitude": 31.2357,
             "dob": "2000-05-18",
             "phoneNumber": "01012345678"
           }
@@ -37,6 +39,8 @@ final class ProfileDataContractTests: XCTestCase {
         XCTAssertEqual(profile.firstName, "Ahmed")
         XCTAssertEqual(profile.lastName, "Elkady")
         XCTAssertEqual(profile.homeAddress, "Cairo")
+        XCTAssertEqual(profile.homeLatitude, 30.0444)
+        XCTAssertEqual(profile.homeLongitude, 31.2357)
         XCTAssertEqual(profile.dateOfBirth.map(ProfileDateMapper.string), "2000-05-18")
         XCTAssertEqual(profile.phoneNumber, "01012345678")
     }
@@ -44,16 +48,20 @@ final class ProfileDataContractTests: XCTestCase {
     func testUpdateRequestOmitsUnchangedValues() throws {
         let input = UpdateCustomerProfileInput(
             homeAddress: "Nasr City",
-            homeLatitude: nil,
-            homeLongitude: nil,
+            homeLatitude: 30.0444,
+            homeLongitude: 31.2357,
             dateOfBirth: nil
         )
         let request = UpdateCustomerProfileRequestDTO(input: input)
         let data = try JSONEncoder().encode(request)
-        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: String])
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
 
-        XCTAssertEqual(json["homeAddress"], "Nasr City")
+        XCTAssertEqual(json["homeAddress"] as? String, "Nasr City")
+        XCTAssertEqual(json["deliveryLatitude"] as? Double, 30.0444)
+        XCTAssertEqual(json["deliveryLongitude"] as? Double, 31.2357)
         XCTAssertNil(json["dob"])
+        XCTAssertNil(json["Lattitude"])
+        XCTAssertNil(json["Longitude"])
     }
 
     func testProfileEndpointsRequireAuthentication() {

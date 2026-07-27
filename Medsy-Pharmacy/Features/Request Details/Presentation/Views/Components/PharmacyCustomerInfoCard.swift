@@ -1,76 +1,77 @@
+//
 //  PharmacyCustomerInfoCard.swift
 //  Medsy-Pharmacy
 //
-//  Created by Antoneos Philip on 19/07/2026.
+//  Created by Antoneos Philip on 23/07/2026.
 //
 
 import SwiftUI
 
 struct PharmacyCustomerInfoCard: View {
+    let orderId: String
+    let createdAt: Date
     let customer: PharmacyCustomerInfo
     let onContact: () -> Void
+    var onLocationTap: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: PharmacySpacing.sm) {
-            HStack(spacing: 8) {
-                Spacer()
-
-                Text("معلومات العميل")
-                    .font(PharmacyColor.sans(15, .bold))
+        VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
+            HStack {
+                Text("#\(orderId)")
+                    .font(PharmacyColor.sans(18, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
 
-                Image(systemName: "person")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
+                Spacer()
+
+                Text(createdAt.relativeTimeString)
+                    .font(PharmacyColor.sans(13, .regular))
+                    .foregroundStyle(PharmacyColor.textSecondary)
             }
 
-            VStack(alignment: .trailing, spacing: 10) {
-                HStack(spacing: 10) {
-                    Spacer()
-                    Text(customer.name)
-                        .font(PharmacyColor.sans(14, .semibold))
-                        .foregroundStyle(PharmacyColor.textPrimary)
-                    Image(systemName: "phone")
-                        .font(.system(size: 14))
-                        .foregroundStyle(PharmacyColor.primary)
-                }
+            HStack(alignment: .center) {
+                Text(customer.name)
+                    .font(PharmacyColor.sans(16, .bold))
+                    .foregroundStyle(PharmacyColor.textPrimary)
 
-                HStack(spacing: 10) {
-                    Spacer()
-                    Text(customer.phone)
-                        .font(PharmacyColor.sans(14, .medium))
-                        .foregroundStyle(PharmacyColor.textPrimary)
-                    Image(systemName: "phone")
-                        .font(.system(size: 14))
-                        .foregroundStyle(PharmacyColor.primary)
-                }
+                Spacer()
 
-                HStack(spacing: 10) {
-                    Spacer()
-                    Text(customer.address)
-                        .font(PharmacyColor.sans(14, .medium))
-                        .foregroundStyle(PharmacyColor.textPrimary)
-                    Image(systemName: "mappin.and.ellipse")
-                        .font(.system(size: 14))
-                        .foregroundStyle(PharmacyColor.primary)
+                Button(action: onContact) {
+                    ZStack {
+                        Circle()
+                            .fill(PharmacyColor.primarySoft)
+                            .frame(width: 36, height: 36)
+
+                        Image(systemName: "phone.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(PharmacyColor.primary)
+                    }
                 }
+                .buttonStyle(.plain)
             }
 
-            Button(action: onContact) {
-                HStack(spacing: 8) {
-                    Spacer()
-                    Text("تواصل مع العميل")
-                        .font(PharmacyColor.sans(14, .bold))
-                    Image(systemName: "phone.fill")
-                        .font(.system(size: 14))
-                    Spacer()
+            HStack(alignment: .center) {
+                Text(customer.address.isEmpty ? "string" : customer.address)
+                    .font(PharmacyColor.sans(14, .regular))
+                    .foregroundStyle(PharmacyColor.textSecondary)
+                    .lineLimit(2)
+
+                Spacer()
+
+                Button(action: {
+                    onLocationTap?()
+                }) {
+                    ZStack {
+                        Circle()
+                            .fill(PharmacyColor.primarySoft)
+                            .frame(width: 36, height: 36)
+
+                        Image(systemName: "mappin.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(PharmacyColor.primary)
+                    }
                 }
-                .foregroundStyle(PharmacyColor.primary)
-                .padding(.vertical, 12)
-                .background(PharmacyColor.primarySoft, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-            .padding(.top, 4)
         }
         .padding(PharmacySpacing.md)
         .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))

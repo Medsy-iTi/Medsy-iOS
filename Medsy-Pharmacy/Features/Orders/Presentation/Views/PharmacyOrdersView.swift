@@ -21,10 +21,12 @@ struct PharmacyOrdersView: View {
 			LazyVStack(spacing: PharmacySpacing.sm) {
 				PharmacyOrdersHeaderView()
 				PharmacyOrdersFilterBar(
-					selection: $viewModel.selectedFilter, allCount: viewModel.allOrdersCount,
-					newCount: viewModel.deliveredOrdersCount,
-					preparingCount: viewModel.newOrdersCount,
-					deliveredCount: viewModel.preparingOrdersCount
+					selection: $viewModel.selectedFilter,
+					allCount: viewModel.allOrdersCount,
+					newCount: viewModel.newOrdersCount,
+					pendingApprovalCount: viewModel.pendingApprovalOrdersCount,
+					expiredCount: viewModel.expiredOrdersCount,
+					completedCount: viewModel.completedOrdersCount
 				)
 				PharmacyOrderSearchField(text: $viewModel.searchText, onClear: viewModel.clearSearch)
 
@@ -64,8 +66,17 @@ struct PharmacyOrdersView: View {
 							PharmacyOrdersEmptyView()
 						} else {
 							ForEach(viewModel.visibleOrders) { order in
-								PharmacyOrderCard(order: order, onAction: { viewModel.handleAction(for: order) })
-									.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
+								PharmacyOrderCard(order: order, onAction: {
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
+									}
+								})
+								.onTapGesture {
+									if let origOrder = viewModel.originalOrder(for: order.id) {
+										coordinator.showRequestDetails(order: origOrder)
+									}
+								}
+								.task { await viewModel.loadNextPageIfNeeded(currentItem: order) }
 							}
 							if viewModel.isLoadingNextPage {
 								ProgressView().padding(.vertical, PharmacySpacing.sm)
