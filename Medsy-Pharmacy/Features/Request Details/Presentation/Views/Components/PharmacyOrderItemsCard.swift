@@ -73,7 +73,7 @@ struct PharmacyOrderItemsCard: View {
                                                 .background(PharmacyColor.border, in: Capsule())
                                         }
                                         if let packSize = item.packSize, !packSize.isEmpty {
-                                            Text("\(packSize) tab")
+                                            Text("pharmacy.request.pack_size_label".localized(packSize))
                                                 .font(PharmacyColor.sans(11, .medium))
                                                 .foregroundStyle(PharmacyColor.textSecondary)
                                                 .padding(.horizontal, 6)
@@ -129,7 +129,7 @@ struct PharmacyOrderItemsCard: View {
                                 Image(systemName: "box.truck.fill")
                                     .font(.system(size: 13))
                                     .foregroundStyle(PharmacyColor.primary)
-                                Text("منتج العرض: \(item.name)")
+                                Text("pharmacy.request.offer_product".localized(item.name))
                                     .font(PharmacyColor.sans(13, .semibold))
                                     .foregroundStyle(PharmacyColor.primary)
                                 Spacer()

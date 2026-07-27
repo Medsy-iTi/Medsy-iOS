@@ -41,7 +41,15 @@
 "pharmacy.orders.filter.pendingApproval" = "قيد الانتظار";
 "pharmacy.orders.filter.expired" = "منتهي";
 "pharmacy.orders.filter.completed" = "مكتمل";
-"pharmacy.orders.search" = "ابحث برقم الطلب أو اسم العميل";
+"pharmacy.orders.filter.preparing" = "قيد التجهيز";
+"pharmacy.orders.filter.delivered" = "تم التوصيل";
+"pharmacy.orders.search" = "ابحث في الطلبات برقمها أو اسم العميل";
+"pharmacy.orders.error.title" = "تعذّر تحميل الطلبات";
+"pharmacy.orders.noResults.title" = "لا توجد نتائج";
+"pharmacy.orders.noResults.message" = "لا توجد طلبات تطابق الفلتر أو البحث الحالي.";
+"pharmacy.orders.item_pieces" = "%@ قطعة";
+"pharmacy.request.address_format" = "الموقع: (%@, %@)";
+"pharmacy.request.customer_notes_default" = "طلب من العميل";
 "pharmacy.orders.filters" = "فلترة الطلبات";
 "pharmacy.orders.order_number" = "#%@";
 "pharmacy.orders.minutes_ago" = "منذ %d دقيقة";
@@ -325,10 +333,16 @@
 /* Orders List */
 "pharmacy.orders.customer.fallback" = "عميل رقم %@";
 "pharmacy.orders.address.fallback" = "العنوان غير متوفر";
+"pharmacy.orders.address.placeholder" = "العنوان غير متاح";
 "pharmacy.orders.retry" = "إعادة المحاولة";
 "pharmacy.orders.detail_placeholder" = "تفاصيل الطلب قريبًا.";
 "pharmacy.orders.noData" = "لا توجد طلبات.";
 "common.somethingWentWrong" = "حدث خطأ ما.";
+"common.close" = "إغلاق";
+"pharmacy.request.alert.title" = "تنبيه";
+"common.ok" = "حسنًا";
+"pharmacy.request.offer_product" = "منتج العرض: %@";
+"pharmacy.request.pack_size_label" = "%@ حبة";
 
 /* Presence & On Duty */
 "profile.presence.section_title" = "حالة التوفر";

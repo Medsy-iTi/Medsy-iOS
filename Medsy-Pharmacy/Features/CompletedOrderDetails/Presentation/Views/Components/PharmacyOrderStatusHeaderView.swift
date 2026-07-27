@@ -33,7 +33,7 @@ struct PharmacyOrderStatusHeaderView: View {
                 )
             }
 
-            Text(createdAt.formatted(.dateTime.day().month(.wide).year().hour().minute()))
+            Text(createdAt.formatted(.dateTime.day().month(.wide).year()))
                 .font(PharmacyColor.sans(13))
                 .foregroundStyle(PharmacyColor.textSecondary)
         }

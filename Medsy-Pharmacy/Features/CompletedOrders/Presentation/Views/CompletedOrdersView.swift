@@ -88,3 +88,22 @@ struct CompletedOrdersView: View {
         }
     }
 }
+extension PharmacyEmptyStateView {
+
+	static var noCompletedOrders: PharmacyEmptyStateView {
+		PharmacyEmptyStateView(
+			lottieName: "no_data_found",
+			title: "orders_empty_none_title".localized,
+			message: "orders_empty_none_message".localized
+		)
+	}
+
+
+	static var noSearchResults: PharmacyEmptyStateView {
+		PharmacyEmptyStateView(
+			lottieName: "no_data_found",
+			title: "orders_empty_filtered_title".localized,
+			message: "orders_empty_filtered_message".localized
+		)
+	}
+}

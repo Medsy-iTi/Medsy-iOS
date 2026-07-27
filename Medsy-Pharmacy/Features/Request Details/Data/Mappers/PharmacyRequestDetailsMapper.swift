@@ -41,8 +41,8 @@ enum PharmacyRequestDetailsMapper {
         let presentationItems = entity.items.map { item in
             PharmacyOrderItem(
                 id: String(item.id),
-                name: "منتج #\(item.productId)",
-                spec: "\(item.quantity) قطعة",
+                name: "pharmacy.request.product_label".localized(String(item.productId)),
+                spec: "pharmacy.orders.item_pieces".localized(String(item.quantity)),
                 quantity: item.quantity,
                 price: item.unitPrice,
                 imageName: nil
@@ -53,26 +53,26 @@ enum PharmacyRequestDetailsMapper {
             id: String(entity.id),
             statusTitle: mapStatusTitle(entity.status),
             customer: PharmacyCustomerInfo(
-                name: "عميل #\(entity.userId)",
+                name: "pharmacy.request.customer_id_label".localized(String(entity.userId)),
                 phone: "01000000000",
-                address: "الموقع: (\(entity.deliveryCoordinate.latitude), \(entity.deliveryCoordinate.longitude))"
+                address: "pharmacy.request.address_format".localized(String(entity.deliveryCoordinate.latitude), String(entity.deliveryCoordinate.longitude))
             ),
             items: presentationItems,
             deliveryFee: 15.0,
-            notes: "طلب من العميل"
+            notes: "pharmacy.request.customer_notes_default".localized
         )
     }
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
-        case .pending: return "جديد"
-        case .accepted: return "مقبول"
-        case .preparing: return "قيد التحضير"
-        case .outForDelivery: return "جاري التوصيل"
-        case .delivered: return "تم التوصيل"
-        case .completed: return "مكتمل"
-        case .expired: return "منتهي الصلاحية"
-        case .cancelled: return "ملغي"
+        case .pending: return "pharmacy.home.order_new".localized
+        case .accepted: return "pharmacy.home.order_preparing".localized
+        case .preparing: return "pharmacy.home.order_preparing".localized
+        case .outForDelivery: return "pharmacy.home.order_preparing".localized
+        case .delivered: return "pharmacy.home.order_delivered".localized
+        case .completed: return "pharmacy.orders.status.completed".localized
+        case .expired: return "pharmacy.orders.status.expired".localized
+        case .cancelled: return "pharmacy.home.order_delivered".localized
         case .unknown(let val): return val
         }
     }
