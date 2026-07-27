@@ -9,13 +9,13 @@ import Observation
 import SwiftUI
 
 enum ProfilePresentation: Identifiable {
-    case editProfile
+    case editProfile(openAddressPicker: Bool = false)
     case language
     case theme
 
     var id: String {
         switch self {
-        case .editProfile: "editProfile"
+        case .editProfile(let openAddressPicker): "editProfile-\(openAddressPicker)"
         case .language: "language"
         case .theme: "theme"
         }
@@ -84,6 +84,10 @@ final class ProfileCoordinator {
 		viewModel.homeLongitude
 	}
 
+    var hasDeliveryLocation: Bool {
+        viewModel.hasDeliveryLocation
+    }
+
 
     var displayDateOfBirth: String {
         viewModel.displayDateOfBirth
@@ -127,7 +131,9 @@ final class ProfileCoordinator {
 		)
 	}
 
-    func showEditProfile() { activePresentation = .editProfile }
+    func showEditProfile(openAddressPicker: Bool = false) {
+        activePresentation = .editProfile(openAddressPicker: openAddressPicker)
+    }
     func showLanguagePicker() { activePresentation = .language }
     func showThemePicker() { activePresentation = .theme }
     func dismissPresentation() { activePresentation = nil }

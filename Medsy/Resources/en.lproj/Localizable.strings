@@ -381,6 +381,9 @@
 "profile.verified" = "Verified";
 "profile.phone_support_note" = "To change your phone number, please contact support";
 "profile.save_changes" = "Save changes";
+"profile.delivery_location.title" = "Add your delivery location";
+"profile.delivery_location.subtitle" = "Choose your location on the map to help nearby pharmacies serve you accurately.";
+"profile.unsaved_changes_toast" = "Please save the new profile.";
 "profile.name_error" = "Name must be at least 2 characters";
 "profile.address_error" = "Address must be at least 4 characters";
 

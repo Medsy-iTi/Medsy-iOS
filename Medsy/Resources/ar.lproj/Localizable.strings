@@ -380,6 +380,9 @@
 "profile.verified" = "موثق";
 "profile.phone_support_note" = "لتغيير رقم الهاتف، يرجى التواصل مع الدعم";
 "profile.save_changes" = "حفظ التغييرات";
+"profile.delivery_location.title" = "أضف موقع التوصيل";
+"profile.delivery_location.subtitle" = "اختر موقعك على الخريطة لمساعدة الصيدليات القريبة على خدمتك بدقة.";
+"profile.unsaved_changes_toast" = "يرجى حفظ بيانات الملف الشخصي الجديدة.";
 "profile.name_error" = "يجب ألا يقل الاسم عن حرفين";
 "profile.address_error" = "يجب ألا يقل العنوان عن 4 أحرف";
 
