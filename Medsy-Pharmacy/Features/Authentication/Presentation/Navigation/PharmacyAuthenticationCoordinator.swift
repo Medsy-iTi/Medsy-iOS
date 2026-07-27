@@ -13,6 +13,7 @@ final class PharmacyAuthenticationCoordinator {
     var path: [PharmacyAuthenticationRoute] = []
     let loginViewModel: PharmacyLoginViewModel
     let registrationViewModel: PharmacyRegistrationViewModel
+    let invitationsViewModel: PharmacyInvitationsViewModel
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
     private(set) var setupViewModel: PharmacySetupViewModel?
     private(set) var destinationError: String?
@@ -20,17 +21,25 @@ final class PharmacyAuthenticationCoordinator {
     private let actions: PharmacyAuthenticationActions
     private let locationProvider: PharmacyLocationProviding
     private let onAuthenticated: () -> Void
+    private let onSignedOut: () -> Void
 
     init(
         actions: PharmacyAuthenticationActions,
         locationProvider: PharmacyLocationProviding,
-        onAuthenticated: @escaping () -> Void
+        onAuthenticated: @escaping () -> Void,
+        onSignedOut: @escaping () -> Void = {}
     ) {
         self.actions = actions
         self.locationProvider = locationProvider
         self.onAuthenticated = onAuthenticated
+        self.onSignedOut = onSignedOut
         loginViewModel = PharmacyLoginViewModel(loginAction: actions.login)
         registrationViewModel = PharmacyRegistrationViewModel(registerAction: actions.register)
+        invitationsViewModel = PharmacyInvitationsViewModel(
+            loadAction: actions.pendingInvitations,
+            acceptAction: actions.acceptInvitation,
+            declineAction: actions.declineInvitation
+        )
     }
 
     func submitDetails() {
@@ -74,6 +83,7 @@ final class PharmacyAuthenticationCoordinator {
                     path.removeAll()
                     onAuthenticated()
                 } else {
+                    await invitationsViewModel.load(force: true)
                     prepareSetupFlow()
                 }
             } catch is CancellationError {
@@ -94,6 +104,24 @@ final class PharmacyAuthenticationCoordinator {
         path.append(.addPharmacy)
     }
 
+    func showInvitations() {
+        path.append(.pharmacyInvitations)
+    }
+
+    func acceptInvitation(id: Int) {
+        Task {
+            guard await invitationsViewModel.acceptInvitation(id: id) else { return }
+            path.removeAll()
+            onAuthenticated()
+        }
+    }
+
+    func declineInvitation(id: Int) {
+        Task {
+            await invitationsViewModel.declineInvitation(id: id)
+        }
+    }
+
     func showLocationPicker() {
         path.append(.choosePharmacyLocation)
     }
@@ -105,8 +133,10 @@ final class PharmacyAuthenticationCoordinator {
 
     func backToSignIn() {
         actions.signOut()
+        onSignedOut()
         setupViewModel = nil
         verificationViewModel = nil
+        invitationsViewModel.reset()
         path.removeAll()
     }
 

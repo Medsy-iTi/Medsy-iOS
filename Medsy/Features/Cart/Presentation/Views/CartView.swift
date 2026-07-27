@@ -41,7 +41,7 @@ struct CartView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                MedsyNavBar(title: "cart.title".localized) {
+                MedsyNavBar(title: "cart.title".localized, trailing: {
                     Button {
                         showsClearConfirmation = true
                     } label: {
@@ -52,7 +52,7 @@ struct CartView: View {
                     .accessibilityLabel("cart.clear.accessibility".localized)
                     .disabled(!viewModel.hasContent)
                     .opacity(viewModel.hasContent ? 1 : 0.35)
-                }
+                })
 
                 content
             }
@@ -136,8 +136,7 @@ struct CartView: View {
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            LoadingView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CartLoadingSkeleton()
 
         case .empty:
             if viewModel.prescriptions.isEmpty {
@@ -209,13 +208,6 @@ struct CartView: View {
                             )
                         }
                     }
-
-                    PrimaryButton(
-                        title: "cart.prescription.add_another".localized,
-                        systemImage: "camera",
-                        style: .secondary,
-                        action: { presentPrescriptionSources() }
-                    )
                 }
 
                 VStack(spacing: MedsySpacing.sm) {

@@ -10,15 +10,25 @@ struct OfferDetailsView: View {
     @State private var viewModel: OfferDetailsViewModel
     let onBack: () -> Void
     var onPrescriptionTap: (() -> Void)? = nil
-    var onSelectOffer: (() -> Void)? = nil
+    // OLD:
+    // var onSelectOffer: (() -> Void)? = nil
+    var onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
 
     init(
         offer: OfferPresentationModel? = nil,
+        offerResult: OfferResult? = nil,
+        requestId: Int? = nil,
         onBack: @escaping () -> Void,
         onPrescriptionTap: (() -> Void)? = nil,
-        onSelectOffer: (() -> Void)? = nil
+        onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
     ) {
-        _viewModel = State(initialValue: OfferDetailsViewModel(offer: offer))
+        _viewModel = State(
+            initialValue: OfferDetailsViewModel(
+                offer: offer,
+                offerResult: offerResult,
+                requestId: requestId
+            )
+        )
         self.onBack = onBack
         self.onPrescriptionTap = onPrescriptionTap
         self.onSelectOffer = onSelectOffer
@@ -34,13 +44,53 @@ struct OfferDetailsView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    OfferMedicinesCardView(medicines: viewModel.offerDetail.medicines)
+                    if let errorMessage = viewModel.confirmErrorMessage {
+                        Text(errorMessage)
+                            .font(AppColor.sans(12))
+                            .foregroundStyle(AppColor.danger)
+                            .padding(.horizontal, 16)
+                    }
+
+                    OfferMedicinesCardView(
+                        medicines: viewModel.offerDetail.medicines,
+                        onToggleSelection: { id in
+                            viewModel.toggleItemSelection(id: id)
+                        }
+                    )
 
                     PharmacistCommentCardView(comment: viewModel.offerDetail.pharmacistComment)
 
-                    PrescriptionButtonView(onTap: {
-                        onPrescriptionTap?()
-                    })
+                    if let prescriptionUrl = viewModel.offerDetail.prescriptionUrl,
+                       let url = URL(string: prescriptionUrl) {
+                        VStack(alignment: .trailing, spacing: 12) {
+                            Text("الروشتة")
+                                .font(AppColor.sans(16, .bold))
+                                .foregroundStyle(AppColor.textPrim)
+                                .padding(.horizontal, 4)
+
+                            VStack {
+                                AsyncImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .cornerRadius(12)
+                                } placeholder: {
+                                    ProgressView()
+                                        .padding(.vertical, 20)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(AppColor.card)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppColor.border, lineWidth: 1)
+                                    )
+                            )
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
@@ -49,19 +99,29 @@ struct OfferDetailsView: View {
 
             VStack(spacing: 0) {
                 Button {
-                    viewModel.selectOffer()
-                    onSelectOffer?()
+                    onSelectOffer?(viewModel.offerDetail)
                 } label: {
-                    Text("offers.details.selectOffer".localized)
-                        .font(AppColor.sans(16, .bold))
-                        .foregroundStyle(AppColor.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(AppColor.green)
-                        )
+                    HStack {
+                        if viewModel.isConfirming {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            // OLD:
+                            // Text("offers.details.selectOffer".localized)
+
+                            Text("متابعة الطلب")
+                                .font(AppColor.sans(16, .bold))
+                                .foregroundStyle(AppColor.white)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColor.green)
+                    )
                 }
+                .disabled(viewModel.isConfirming)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }

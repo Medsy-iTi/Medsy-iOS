@@ -22,6 +22,7 @@ struct ProfileScreen: View {
     let onEditProfile: () -> Void
     let onLanguage: () -> Void
     let onTheme: () -> Void
+    let onOrders: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -41,13 +42,6 @@ struct ProfileScreen: View {
                 subtitleKey: "profile.personal_info.subtitle",
                 iconName: "person",
                 iconColor: ProfileStyle.green
-            ),
-            ProfileRowItem(
-                id: "notifications",
-                titleKey: "profile.notifications",
-                subtitleKey: "profile.notifications.subtitle",
-                iconName: "bell",
-                iconColor: Color(hex: "#3B5BDB")
             ),
             ProfileRowItem(
                 id: "orders",
@@ -104,28 +98,10 @@ struct ProfileScreen: View {
         ]
     }
 
-    private var aboutRows: [ProfileRowItem] {
-        [
-            ProfileRowItem(
-                id: "about",
-                titleKey: "profile.about_medsy",
-                iconName: "info.circle",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "terms",
-                titleKey: "profile.terms",
-                iconName: "doc.text",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "privacy",
-                titleKey: "profile.privacy",
-                iconName: "shield",
-                iconColor: Color(hex: "#94A3B8")
-            )
-        ]
+    private var isProfileLoading: Bool {
+        state == .idle || state == .loading
     }
+
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -141,7 +117,7 @@ struct ProfileScreen: View {
                         ProfileSectionView(titleKey: "profile.section.account", rows: accountRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.preferences", rows: preferenceRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.support", rows: supportRows, onSelect: handleRowSelection)
-                        ProfileSectionView(titleKey: "profile.section.about", rows: aboutRows, onSelect: handleRowSelection)
+
                         logoutButton
                         footer
                     }
@@ -162,35 +138,40 @@ struct ProfileScreen: View {
                 .foregroundStyle(ProfileStyle.primaryText)
                 .frame(maxWidth: .infinity)
 
-            HStack(spacing: 16) {
-                ProfileAvatarView(size: 64, showsBadge: true)
+            if isProfileLoading {
+                ProfileHeaderLoadingSkeleton()
+                    .padding(.horizontal, 20)
+            } else {
+                HStack(spacing: 16) {
+                    ProfileAvatarView(size: 64, showsBadge: true)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(patientName)
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(ProfileStyle.primaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(patientName)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(ProfileStyle.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
 
-                    Label(phoneNumber, systemImage: "checkmark.circle.fill")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(ProfileStyle.secondaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
+                        Label(phoneNumber, systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(ProfileStyle.secondaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
+                    }
+
+                    Spacer(minLength: 0)
                 }
-
-                Spacer(minLength: 0)
+                .padding(.horizontal, 21)
+                .padding(.vertical, 17)
+                .background(ProfileStyle.card)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(ProfileStyle.border, lineWidth: 1)
+                }
+                .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 21)
-            .padding(.vertical, 17)
-            .background(ProfileStyle.card)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(ProfileStyle.border, lineWidth: 1)
-            }
-            .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
-            .padding(.horizontal, 20)
         }
         .padding(.top, 16)
         .padding(.bottom, 20)
@@ -206,10 +187,8 @@ struct ProfileScreen: View {
     @ViewBuilder
     private var stateContent: some View {
         switch state {
-        case .idle:
-            EmptyView()
-        case .loading:
-            ProfileLoadingCard()
+        case .idle, .loading:
+            ProfileDetailsLoadingSkeleton()
         case .loaded:
             ProfileDetailsCard(items: profileDetails)
         case .failed(let message):
@@ -258,6 +237,8 @@ struct ProfileScreen: View {
             onLanguage()
         case "theme":
             onTheme()
+        case "orders":
+            onOrders()
         default:
             break
         }
@@ -273,7 +254,7 @@ struct ProfileScreen: View {
         dateOfBirthText: "Jun 15, 1995",
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onLanguage: {}, onTheme: {}, onLogout: {}
+        onEditProfile: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }
@@ -347,28 +328,6 @@ private struct ProfileDetailRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-    }
-}
-
-private struct ProfileLoadingCard: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            ProgressView()
-                .tint(ProfileStyle.green)
-
-            Text("profile.loading".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(ProfileStyle.secondaryText)
-
-            Spacer(minLength: 0)
-        }
-        .padding(16)
-        .background(ProfileStyle.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(ProfileStyle.border, lineWidth: 1)
-        }
     }
 }
 

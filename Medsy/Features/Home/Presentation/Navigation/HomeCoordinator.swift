@@ -13,7 +13,12 @@ enum HomeRoute: Hashable {
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
-    case orderReview(OfferDetailPresentationModel)
+    case offerResult(OfferResult, Int)
+    // OLD:
+    // case orderReview(OfferDetailPresentationModel)
+    case orderReview(OfferDetailPresentationModel, Int? = nil)
+    case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
+    case medicineAnalyze
 }
 
 @MainActor
@@ -37,8 +42,25 @@ final class HomeCoordinator {
         path.append(HomeRoute.offerDetails(offer))
     }
 
-    func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
-        path.append(HomeRoute.orderReview(offerDetail))
+    func openOfferResult(_ result: OfferResult, requestId: Int) {
+        path.append(HomeRoute.offerResult(result, requestId))
+    }
+
+    // OLD:
+    // func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
+    //     path.append(HomeRoute.orderReview(offerDetail))
+    // }
+
+    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil) {
+        path.append(HomeRoute.orderReview(offerDetail, requestId))
+    }
+
+    func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.orderComplete(result, offerDetail))
+    }
+
+    func showMedicineAnalyze() {
+        path.append(HomeRoute.medicineAnalyze)
     }
 
     func open(_ route: HomeRoute) {
@@ -56,13 +78,22 @@ struct HomeCoordinatorView: View {
     @State private var coordinator = HomeCoordinator()
     @Binding private var requestedRoute: HomeRoute?
     private let onTabBarHiddenChange: (Bool) -> Void
+    private let onOpenCart: () -> Void
+    private let homeAddress: String
+    private let onOpenProfile: () -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
-        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in }
+        onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
+        onOpenCart: @escaping () -> Void = {},
+        homeAddress: String,
+        onOpenProfile: @escaping () -> Void
     ) {
         _requestedRoute = requestedRoute
         self.onTabBarHiddenChange = onTabBarHiddenChange
+        self.onOpenCart = onOpenCart
+        self.homeAddress = homeAddress
+        self.onOpenProfile = onOpenProfile
     }
 
     var body: some View {
@@ -71,8 +102,12 @@ struct HomeCoordinatorView: View {
         NavigationStack(path: $coordinator.path) {
             HomeView(
                 onSearchTap: coordinator.openSearch,
+                onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
-                onCompareOffers: coordinator.openOffersList
+                onCompareOffers: coordinator.openOffersList,
+                onOpenOfferResult: coordinator.openOfferResult,
+                homeAddress: homeAddress,
+                onAddressTap: onOpenProfile
             )
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
@@ -82,7 +117,11 @@ struct HomeCoordinatorView: View {
                     })
                 case .prescription:
                     PrescriptionCoordinatorView(
-                        onExit: coordinator.goBack
+                        onExit: coordinator.goBack,
+                        onViewCart: {
+                            coordinator.goBack()
+                            onOpenCart()
+                        }
                     )
                 case .offersList:
                     OffersListView(
@@ -94,22 +133,51 @@ struct HomeCoordinatorView: View {
                         offer: offer,
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
-                        onSelectOffer: {
-                            coordinator.openOrderReview(
-                                OfferDetailsViewModel(offer: offer).offerDetail
+                        onSelectOffer: { updatedDetail in
+                            coordinator.openOrderReview(updatedDetail)
+                        }
+                    )
+                case let .offerResult(result, requestId):
+                    OfferDetailsView(
+                        offerResult: result,
+                        requestId: requestId,
+                        onBack: coordinator.goBack,
+                        onPrescriptionTap: coordinator.showPrescription,
+                        onSelectOffer: { updatedDetail in
+                            coordinator.openOrderReview(updatedDetail, requestId: requestId)
+                        }
+                    )
+                case let .orderReview(offerDetail, requestId):
+                    OrderReviewView(
+                        offerDetail: offerDetail,
+                        requestId: requestId,
+                        onBack: coordinator.goBack,
+                        onConfirmOrder: { result in
+                            coordinator.openOrderComplete(result, offerDetail: offerDetail)
+                        }
+                    )
+                case let .orderComplete(result, offerDetail):
+                    OrderCompleteView(
+                        result: result,
+                        offerDetail: offerDetail,
+                        onBackToHome: {
+                            coordinator.path = NavigationPath()
+                        }
+                    )
+                case .medicineAnalyze:
+                    MedicineAnalyzeView(
+                        onBack: coordinator.goBack,
+                        onProductSelected: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
                             )
                         }
                     )
-                case let .orderReview(offerDetail):
-                    OrderReviewView(
-                        offerDetail: offerDetail,
-                        onBack: coordinator.goBack
-                    )
                 }
             }
-                .navigationDestination(for: ProductDetailDestination.self) { destination in
-                    ProductDetailView(productId: destination.productId)
-                }
+            .navigationDestination(for: ProductDetailDestination.self) { destination in
+                ProductDetailView(productId: destination.productId)
+            }
         }
         .onAppear {
             openRequestedRoute()
@@ -129,3 +197,6 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
+
+
+

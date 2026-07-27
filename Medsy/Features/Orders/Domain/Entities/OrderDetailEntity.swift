@@ -23,6 +23,7 @@ struct OrderDetailEntity: Identifiable {
 
 struct OrderDetailItemEntity: Identifiable {
     let id: Int
+    let productId: Int
     let productName: String
     let originalProductName: String?
     let quantity: Int

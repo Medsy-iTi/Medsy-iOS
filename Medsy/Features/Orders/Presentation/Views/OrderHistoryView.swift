@@ -8,28 +8,61 @@
 import SwiftUI
 
 struct OrderHistoryView: View {
-    @Binding var selectedFilter: OrderFilter
+    let activeFilters: ActiveOrderFilters
     let state: OrderHistoryViewState
+    let onApplyFilters: (ActiveOrderFilters) -> Void
     let onSelectOrder: (OrderPresentationModel) -> Void
     let onRetry: () -> Void
     let onLoadNextPage: () -> Void
     var onSearch: () -> Void = {}
 
+    @State private var isFilterSheetPresented = false
+
     var body: some View {
         VStack(spacing: 0) {
+            header
+            Divider().background(AppColor.border)
+            content
+        }
+        .background(AppColor.bg)
+        .sheet(isPresented: $isFilterSheetPresented) {
+            OrderFilterSheetView(current: activeFilters) { updated in
+                isFilterSheetPresented = false
+                onApplyFilters(updated)
+            }
+            .presentationDetents([.medium, .large])
+        }
+    }
+
+    private var header: some View {
+        ZStack {
             Text("orders.title".localized)
                 .font(AppColor.sans(17, .bold))
                 .foregroundStyle(AppColor.textPrim)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, MedsySpacing.md)
 
-            OrderFilterChipBar(filters: OrderFilter.allCases, selected: $selectedFilter)
-
-            Divider().background(AppColor.border)
-
-            content
+            HStack {
+                Spacer()
+                Button {
+                    isFilterSheetPresented = true
+                } label: {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .font(.system(size: 22))
+                            .foregroundStyle(activeFilters.hasActiveFilters ? AppColor.green : AppColor.textPrim)
+                        if activeFilters.hasActiveFilters {
+                            Circle()
+                                .fill(AppColor.green)
+                                .frame(width: 8, height: 8)
+                                .offset(x: 2, y: -2)
+                        }
+                    }
+                }
+                .accessibilityLabel("orders.filter.button.accessibility".localized)
+            }
+            .padding(.trailing, MedsySpacing.md)
         }
-        .background(AppColor.bg)
+        .padding(.vertical, MedsySpacing.md)
     }
 
     @ViewBuilder
@@ -40,7 +73,11 @@ struct OrderHistoryView: View {
         case .loaded(let sections):
             let orders = sections.flatMap(\.orders)
             if orders.isEmpty {
-                OrdersEmptyView(filter: selectedFilter, onSearch: onSearch)
+                OrdersEmptyView(
+                    activeFilters: activeFilters,
+                    onSearch: onSearch,
+                    onClearFilters: { onApplyFilters(.default) }
+                )
             } else {
                 ordersListView(sections: sections)
             }
@@ -52,14 +89,7 @@ struct OrderHistoryView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: MedsySpacing.lg) {
-            ProgressView()
-                .tint(AppColor.green)
-            Text("orders.loading".localized)
-                .font(MedsyFont.caption())
-                .foregroundStyle(AppColor.textSec)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        OrderHistoryLoadingSkeleton()
     }
 
     private func ordersListView(sections: [OrderDateSection]) -> some View {
@@ -106,10 +136,10 @@ struct OrderDateSection: Identifiable {
 
 
 #Preview {
-    @Previewable @State var filter: OrderFilter = .all
     OrderHistoryView(
-        selectedFilter: $filter,
+        activeFilters: .default,
         state: .loaded(OrderHistoryView.previewSections),
+        onApplyFilters: { _ in },
         onSelectOrder: { _ in },
         onRetry: {},
         onLoadNextPage: {},

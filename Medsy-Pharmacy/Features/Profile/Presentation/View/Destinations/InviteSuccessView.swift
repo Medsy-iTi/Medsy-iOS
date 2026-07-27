@@ -2,120 +2,107 @@
 //  InviteSuccessView.swift
 //  Medsy-Pharmacy
 //
-//  Invite Success Screen
-//
 
 import SwiftUI
 
 struct InviteSuccessView: View {
     let info: InviteSuccessInfo
+    let onInviteAnother: () -> Void
     let onBack: () -> Void
 
     var body: some View {
-        ZStack {
-            PharmacyColor.bg.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                header
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: PharmacySpacing.xl) {
-                        successIcon
-                        
-                        VStack(spacing: PharmacySpacing.sm) {
-                            Text("pharmacy_team.invite_success_title".localized)
-                                .font(PharmacyColor.sans(20, .bold))
-                                .foregroundStyle(PharmacyColor.textPrimary)
-                            
-                            Text("pharmacy_team.invite_success_subtitle".localized)
-                                .font(PharmacyColor.sans(14))
-                                .foregroundStyle(PharmacyColor.textSecondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        
-                        invitedEmailCard
-                        
-                        Button {
-                            onBack()
-                        } label: {
-                            Text("pharmacy_team.back_to_profile".localized)
-                                .font(PharmacyColor.sans(15, .semibold))
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 56)
-                                .background(PharmacyColor.primary)
-                                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        }
-                        .buttonStyle(.plain)
+        ScrollView {
+            VStack(spacing: PharmacySpacing.xl) {
+                successIcon
+
+                VStack(spacing: PharmacySpacing.xs) {
+                    Text("pharmacy_team.invite_success_title".localized)
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(PharmacyColor.textPrimary)
+
+                    Text("pharmacy_team.invite_success_subtitle".localized)
+                        .font(.subheadline)
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                invitedEmailCard
+
+                VStack(spacing: PharmacySpacing.sm) {
+                    Button(action: onInviteAnother) {
+                        Text("pharmacy_team.invite_another".localized)
+                            .font(.headline)
+                            .foregroundStyle(PharmacyColor.primary)
+                            .frame(maxWidth: .infinity, minHeight: 50)
                     }
-                    .padding(.horizontal, PharmacySpacing.md)
-                    .padding(.top, PharmacySpacing.xl)
-                    .padding(.bottom, PharmacySpacing.xl)
+                    .buttonStyle(.plain)
+                    .background(PharmacyColor.primarySoft)
+                    .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+
+                    Button(action: onBack) {
+                        Text("pharmacy_team.back_to_profile".localized)
+                            .font(.headline)
+                            .foregroundStyle(PharmacyColor.primary)
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal, PharmacySpacing.md)
+            .padding(.vertical, PharmacySpacing.xl)
         }
+        .background(PharmacyColor.bg.ignoresSafeArea())
+        .navigationTitle("pharmacy_team.invite_header".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden()
     }
-    
-    private var header: some View {
-        HStack {
-            Button(action: onBack) {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
-                    .background(PharmacyColor.surface)
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-            
-            Text("pharmacy_team.invite_header".localized)
-                .font(PharmacyColor.sans(17, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity)
-            
-            Color.clear.frame(width: 36, height: 36)
-        }
-        .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
-    }
-    
+
     private var successIcon: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+            Circle()
                 .fill(PharmacyColor.successSoft)
-                .frame(width: 80, height: 80)
+                .frame(width: 112, height: 112)
+
             Image(systemName: "checkmark")
-                .font(.system(size: 36, weight: .bold))
+                .font(.system(size: 46, weight: .bold))
                 .foregroundStyle(PharmacyColor.success)
         }
+        .accessibilityHidden(true)
     }
-    
+
     private var invitedEmailCard: some View {
         VStack(spacing: PharmacySpacing.sm) {
-            Text("pharmacy_team.invite_email".localized)
-                .font(PharmacyColor.sans(13, .semibold))
-                .foregroundStyle(PharmacyColor.textSecondary)
-            
-            Text(info.email)
-                .font(PharmacyColor.sans(16, .semibold))
+            Label(info.email, systemImage: "envelope")
+                .font(.body.weight(.semibold))
                 .foregroundStyle(PharmacyColor.textPrimary)
-            
-            HStack(spacing: PharmacySpacing.xxs) {
-                Image(systemName: "clock.fill")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textSecondary)
-                Text("pharmacy_team.invite_pending".localized)
-                    .font(PharmacyColor.sans(12))
-                    .foregroundStyle(PharmacyColor.textSecondary)
-            }
+
+            Label(
+                "pharmacy_team.invite_pending".localized,
+                systemImage: "clock"
+            )
+            .font(.caption)
+            .foregroundStyle(PharmacyColor.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(PharmacySpacing.lg)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
+        .background(PharmacyColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                 .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        }
     }
 }
 
+#Preview {
+    NavigationStack {
+        InviteSuccessView(
+            info: InviteSuccessInfo(
+                email: "pharmacist@example.com",
+                pharmacyName: "Medsy Pharmacy"
+            ),
+            onInviteAnother: {},
+            onBack: {}
+        )
+    }
+}

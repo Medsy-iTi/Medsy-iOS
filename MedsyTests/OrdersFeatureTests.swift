@@ -32,15 +32,17 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(page.last, true)
     }
 
-    func testOrdersEndpointSortsNewestFirstAndDoesNotMisuseSortForStatus() {
+    func testOrdersEndpointUsesOnlySupportedPaginationAndSortParameters() {
         let parameters = OrdersEndpoint
-            .fetchOrders(page: 1, size: 20, status: "PREPARING,DELIVERED")
+            .fetchOrders(page: 1, size: 20)
             .queryParameters
 
         XCTAssertEqual(parameters?["page"] as? Int, 1)
         XCTAssertEqual(parameters?["size"] as? Int, 20)
         XCTAssertEqual(parameters?["sort"] as? String, "date,desc")
-        XCTAssertEqual(parameters?["status"] as? String, "PREPARING,DELIVERED")
+        XCTAssertNil(parameters?["status"])
+        XCTAssertNil(parameters?["dateFrom"])
+        XCTAssertNil(parameters?["dateTo"])
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
@@ -193,11 +195,9 @@ private actor OrdersUseCaseStub: LoadOrdersUseCaseProtocol {
         self.pages = pages
     }
 
-    func execute(
-        statuses: [OrderStatus]?,
-        page: Int,
-        size: Int
-    ) async throws -> PagedResult<OrderEntity> {
+    func execute(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
+        _ = filter
+        _ = size
         requestedPages.append(page)
         guard let result = pages[page] else {
             throw OrdersUseCaseStubError.missingPage(page)

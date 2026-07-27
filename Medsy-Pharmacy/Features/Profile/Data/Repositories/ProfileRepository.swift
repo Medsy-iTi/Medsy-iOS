@@ -61,8 +61,8 @@ final class ProfileRepository: ProfileRepositoryProtocol {
 
         let request = UpdatePharmacyProfileRequestDTO(
             email: nil,
-            firstName: nil,
-            lastName: nil,
+			firstName: firstName,
+            lastName: lastName,
             homeAddress: homeAddress,
             dob: dobString
         )
@@ -164,3 +164,4 @@ final class ProfileRepository: ProfileRepositoryProtocol {
 }
 
 struct EmptyResponse: Decodable {}
+

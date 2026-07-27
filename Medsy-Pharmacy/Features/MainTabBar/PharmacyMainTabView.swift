@@ -9,88 +9,81 @@ import SwiftUI
 
 @MainActor
 struct PharmacyMainTabView: View {
-    @State private var coordinator: PharmacyMainTabCoordinator
+    var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
-	private let onLoggedOut: () -> Void
+    @ObservedObject private var identityProviding = PharmacySessionSettings.shared
+    private let onLoggedOut: () -> Void
 
     init(
         coordinator: PharmacyMainTabCoordinator,
         homeFactory: PharmacyHomeFactory,
         ordersFactory: PharmacyOrdersFactory,
-        onLoggedOut : @escaping () -> Void
+        onLoggedOut: @escaping () -> Void
     ) {
-        _coordinator = State(initialValue: coordinator)
+        self.coordinator = coordinator
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
         self.onLoggedOut = onLoggedOut
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            tabContent
-                .padding(.bottom, 82)
+        TabView(selection: selectedTabBinding) {
+            homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
+                .tabItem {
+                    tabLabel(for: .home)
+                }
+                .tag(PharmacyTab.home)
 
-            tabBar
+            OrdersTabRootView(factory: ordersFactory)
+                .tabItem {
+                    tabLabel(for: .orders)
+                }
+                .tag(PharmacyTab.orders)
+
+            PharmacySetupPlaceholderView(tab: .products)
+                .tabItem {
+                    tabLabel(for: .products)
+                }
+                .tag(PharmacyTab.products)
+
+            PharmacySetupPlaceholderView(tab: .customers)
+                .tabItem {
+                    tabLabel(for: .customers)
+                }
+                .tag(PharmacyTab.customers)
+
+            ProfileTabRootView(
+                coordinator: coordinator.profileCoordinator,
+                onLoggedOut: onLoggedOut
+            )
+            .tabItem {
+                tabLabel(for: .more)
+            }
+            .tag(PharmacyTab.more)
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
+        .tint(PharmacyColor.primary)
+        .toolbarBackground(PharmacyColor.surface, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 
-    @ViewBuilder
-    private var tabContent: some View {
-        switch coordinator.selectedTab {
-        case .home:
-            homeFactory.makeView(onViewAllOrders: coordinator.showOrders)
-        case .orders:
-            ordersFactory.makeView()
-        case .more:
-				ProfileTabRootView(
-					container: PharmacyAppAssembler.shared.container,
-					onLoggedOut: onLoggedOut
-				)
-        case .products, .customers:
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
-        }
+    private var selectedTabBinding: Binding<PharmacyTab> {
+        Binding(
+            get: { coordinator.selectedTab },
+            set: { coordinator.select($0) }
+        )
     }
 
-    private var tabBar: some View {
-        VStack(spacing: 0) {
-            Divider()
-                .background(PharmacyColor.border)
-
-            HStack(spacing: 0) {
-                ForEach(PharmacyTab.allCases) { tab in
-                    tabItem(tab)
-                }
-            }
-            .padding(.top, 10)
-            .padding(.bottom, 24)
-            .background(PharmacyColor.surface)
-        }
-        .frame(height: 82)
-        .ignoresSafeArea(edges: .bottom)
-    }
-
-    private func tabItem(_ tab: PharmacyTab) -> some View {
+    private func tabLabel(for tab: PharmacyTab) -> some View {
         let isSelected = coordinator.selectedTab == tab
 
-        return Button {
-            coordinator.select(tab)
-        } label: {
-            VStack(spacing: 5) {
-                Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: 20, weight: isSelected ? .semibold : .regular))
-                    .foregroundStyle(isSelected ? PharmacyColor.primary : PharmacyColor.textSecondary)
-
-                Text(tab.titleKey.localized)
-                    .font(PharmacyColor.sans(10, isSelected ? .bold : .medium))
-                    .foregroundStyle(isSelected ? PharmacyColor.primary : PharmacyColor.textSecondary)
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
+        return Label(
+            tab.titleKey.localized,
+            systemImage: isSelected ? tab.selectedIcon : tab.icon
+        )
     }
 }
 

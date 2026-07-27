@@ -79,8 +79,16 @@ struct PharmacyAuthenticationCoordinatorView: View {
             }
         case .pharmacySetupDecision:
             PharmacySetupDecisionView(
+                invitationCount: coordinator.invitationsViewModel.pendingCount,
+                onShowInvitations: coordinator.showInvitations,
                 onAddPharmacy: coordinator.showAddPharmacy,
                 onBackToSignIn: coordinator.backToSignIn
+            )
+        case .pharmacyInvitations:
+            PharmacyInvitationsView(
+                viewModel: coordinator.invitationsViewModel,
+                onAccept: coordinator.acceptInvitation,
+                onDecline: coordinator.declineInvitation
             )
         case .addPharmacy:
             if let viewModel = coordinator.setupViewModel {

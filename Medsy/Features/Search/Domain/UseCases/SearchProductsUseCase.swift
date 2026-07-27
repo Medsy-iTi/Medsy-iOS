@@ -15,7 +15,8 @@ protocol SearchProductsUseCaseProtocol {
         page: Int,
         size: Int,
         sort: [ProductSort],
-		lang: String?
+		lang: String?,
+		company: String?
     ) async throws -> PagedResult<Product>
 }
 
@@ -33,23 +34,36 @@ final class SearchProductsUseCase: SearchProductsUseCaseProtocol {
         page: Int,
         size: Int,
         sort: [ProductSort],
-		lang: String? = nil
+		lang: String? = nil,
+		company: String? = nil
     ) async throws -> PagedResult<Product> {
-        if let categoryId = categoryId, keyword.isEmpty {
-            return try await repository.fetchProductsByCategory(
-                categoryId: categoryId,
-                page: page,
-                size: size,
-                sort: sort,
-                lang: lang
-            )
+        if keyword.isEmpty {
+            if let categoryId = categoryId {
+                return try await repository.fetchProductsByCategory(
+                    categoryId: categoryId,
+                    page: page,
+                    size: size,
+                    sort: sort,
+                    lang: lang,
+                    company: company
+                )
+            } else {
+                return try await repository.fetchProducts(
+                    page: page,
+                    size: size,
+                    sort: sort,
+                    lang: lang,
+                    company: company
+                )
+            }
         } else {
             return try await repository.searchProducts(
                 keyword: keyword,
                 page: page,
                 size: size,
                 sort: sort,
-                lang: lang
+                lang: lang,
+                company: company
             )
         }
     }

@@ -9,9 +9,13 @@ struct OrderReviewMedicineRow: View {
     @Environment(LanguageManager.self) private var languageManager
     let item: OfferMedicineItem
 
+    private func formatAmount(_ amount: Double) -> String {
+        amount.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(amount))" : String(format: "%.2f", amount)
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            Text("\(item.price) \("offers.list.currency".localized)")
+            Text("\(formatAmount(item.price)) \("offers.list.currency".localized)")
                 .font(AppColor.sans(15, .bold))
                 .foregroundStyle(AppColor.textPrim)
 

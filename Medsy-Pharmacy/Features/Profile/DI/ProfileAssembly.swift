@@ -49,7 +49,8 @@ struct ProfileAssembly: PharmacyModuleAssembly {
         container.register(LogoutUseCaseProtocol.self) { container in
             LogoutUseCase(
                 repository: container.resolve(ProfileRepositoryProtocol.self),
-                tokenStore: container.resolve(TokenStoreProtocol.self)
+                tokenStore: container.resolve(TokenStoreProtocol.self),
+				pharmacyIdentityProvidor: container.resolve(PharmacyIdentityProviding.self)
             )
         }
     }

@@ -12,9 +12,6 @@ struct MedsyNavBar<Trailing: View>: View {
     let onBack: (() -> Void)?
     @ViewBuilder var trailing: () -> Trailing
 
-    @Environment(LanguageManager.self) private var languageManager
-    @ObservedObject private var appSettings = AppSettings.shared
-
     init(
         title: String? = nil,
         onBack: (() -> Void)? = nil,
@@ -26,34 +23,24 @@ struct MedsyNavBar<Trailing: View>: View {
     }
 
     var body: some View {
-        HStack {
-            Button {
-                onBack?()
-            } label: {
-				Image(systemName: languageManager.isRTL ?   "chevron.right" : "chevron.left")
-                    .foregroundStyle(AppColor.textPrim)
-                    .imageScale(.large)
+        Color.clear
+            .frame(height: 0)
+            .navigationTitle(title ?? "")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(onBack != nil)
+            .toolbar(.visible, for: .navigationBar)
+            .toolbar {
+                if let onBack {
+                    ToolbarItem(placement: .topBarLeading) {
+                        MedsyNavBarBackButton(action: onBack)
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    trailing()
+                }
             }
-            .frame(width: 44, height: 44)
-            .opacity(onBack == nil ? 0 : 1)
-            .disabled(onBack == nil)
-
-            Spacer()
-
-            if let title {
-                Text(title)
-                    .font(MedsyFont.title())
-                    .foregroundStyle(AppColor.textPrim)
-            }
-
-            Spacer()
-
-            trailing()
-                .frame(width: 44, height: 44)
-        }
-        .padding(.horizontal, MedsySpacing.md)
-        .frame(height: 56)
-        .background(AppColor.bg)
+            .toolbarBackground(AppColor.bg, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
     }
 }
-

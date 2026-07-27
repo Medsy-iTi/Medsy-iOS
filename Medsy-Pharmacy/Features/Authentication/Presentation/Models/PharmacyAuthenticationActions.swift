@@ -22,6 +22,9 @@ struct PharmacyAuthenticationActions {
     let register: (PharmacyRegistrationSubmission) async throws -> Void
     let verify: (String, String) async throws -> Void
     let membership: () async throws -> PharmacyMembership
+    let pendingInvitations: () async throws -> [PendingPharmacyInvitation]
+    let acceptInvitation: (Int) async throws -> PendingPharmacyInvitation
+    let declineInvitation: (Int) async throws -> PendingPharmacyInvitation
     let createPharmacy: (CreatePharmacyInput) async throws -> CreatedPharmacy
     let signOut: () -> Void
 
@@ -44,6 +47,31 @@ struct PharmacyAuthenticationActions {
         register: { _ in },
         verify: { _, _ in },
         membership: { PharmacyMembership(pharmacyID: nil, isAdmin: false) },
+        pendingInvitations: { [] },
+        acceptInvitation: { id in
+            PendingPharmacyInvitation(
+                id: id,
+                pharmacyID: 1,
+                pharmacyName: "",
+                pharmacistID: 1,
+                pharmacistFirstName: "",
+                pharmacistLastName: "",
+                status: .accepted,
+                createdAt: nil
+            )
+        },
+        declineInvitation: { id in
+            PendingPharmacyInvitation(
+                id: id,
+                pharmacyID: 1,
+                pharmacyName: "",
+                pharmacistID: 1,
+                pharmacistFirstName: "",
+                pharmacistLastName: "",
+                status: .declined,
+                createdAt: nil
+            )
+        },
         createPharmacy: { input in
             CreatedPharmacy(
                 id: 1,
@@ -62,6 +90,7 @@ struct PharmacyAuthenticationActions {
         registrationUseCase: PharmacyRegistrationUseCaseProtocol,
         verificationUseCase: PharmacyVerificationUseCaseProtocol,
         membershipUseCase: GetPharmacyMembershipUseCaseProtocol,
+        invitationUseCase: ManagePharmacyInvitationsUseCaseProtocol,
         createPharmacyUseCase: CreatePharmacyUseCaseProtocol,
         tokenStore: TokenStoreProtocol
     ) -> PharmacyAuthenticationActions {
@@ -92,6 +121,15 @@ struct PharmacyAuthenticationActions {
             },
             membership: {
                 try await membershipUseCase.execute()
+            },
+            pendingInvitations: {
+                try await invitationUseCase.getPendingInvitations()
+            },
+            acceptInvitation: { id in
+                try await invitationUseCase.acceptInvitation(id: id)
+            },
+            declineInvitation: { id in
+                try await invitationUseCase.declineInvitation(id: id)
             },
             createPharmacy: { input in
                 try await createPharmacyUseCase.execute(input: input)

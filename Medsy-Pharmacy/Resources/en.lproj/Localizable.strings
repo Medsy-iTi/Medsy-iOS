@@ -87,8 +87,10 @@
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
 /* Splash */
+"pharmacy.splash.brand" = "Medsy Pharmacy";
 "pharmacy.splash.subtitle" = "Pharmacy Partner Platform";
 "pharmacy.splash.tagline" = "Receive nearby requests, send offers, and fulfill orders — all in one place.";
+"pharmacy.splash.accessibility_label" = "Medsy Pharmacy. Pharmacy Partner Platform. Receive nearby requests, send offers, and fulfill orders, all in one place.";
 
 /* Onboarding */
 "pharmacy.onboarding.skip" = "Skip";
@@ -191,7 +193,7 @@
 "profile_generic_error" = "Couldn't load your data. Please try again";
 "coming_soon" = "Coming soon";
 
-// Edit Profile
+	// Edit Profile
 "profile.edit.title" = "Edit Profile";
 "profile.change_photo" = "Change Photo";
 "profile.full_name" = "Full Name";
@@ -205,7 +207,7 @@
 "profile.date_of_birth" = "Date of Birth";
 "profile.save_changes" = "Save Changes";
 
-// Pharmacy Card
+	// Pharmacy Card
 "pharmacy_card.your_pharmacy" = "Your Pharmacy";
 "pharmacy_card.unknown" = "Unnamed Pharmacy";
 "pharmacy_card.edit" = "Edit Pharmacy";
@@ -216,7 +218,7 @@
 "pharmacy_card.not_assigned" = "Not Assigned to a Pharmacy";
 "pharmacy_card.not_assigned_subtitle" = "Contact your pharmacy administrator to be added.";
 
-// Edit Pharmacy
+	// Edit Pharmacy
 "pharmacy_edit.title" = "Edit Pharmacy";
 "pharmacy_edit.name" = "Pharmacy Name";
 "pharmacy_edit.name.placeholder" = "Enter pharmacy name";
@@ -225,7 +227,7 @@
 "pharmacy_edit.phone" = "Phone Number";
 "pharmacy_edit.phone.placeholder" = "Enter pharmacy phone number";
 
-// Pharmacy Team (admin)
+	// Pharmacy Team (admin)
 "pharmacy_team.title" = "Pharmacy Team";
 "pharmacy_team.empty" = "No other pharmacists to manage.";
 "pharmacy_team.edit" = "Edit pharmacist";
@@ -240,18 +242,24 @@
 "profile.first_name" = "First Name";
 "profile.last_name" = "Last Name";
 
-// Delete Pharmacy (admin)
+	// Delete Pharmacy (admin)
 "pharmacy_card.delete" = "Delete Pharmacy";
 "pharmacy_card.delete_confirm_title" = "Delete Pharmacy";
 "pharmacy_card.delete_confirm_message" = "This permanently deletes the pharmacy and removes all pharmacists. You will be signed out.";
 "pharmacy_card.delete_confirm_action" = "Delete";
 
-// User Profile
+	// User Profile
 "profile.user_profile" = "User Profile";
 "profile.pharmacy_profile" = "Pharmacy Profile";
 "profile.pharmacists_count" = "%d pharmacists";
+"profile.my_pharmacy" = "My pharmacy";
+"profile.personal_information" = "Personal information";
+"profile.role_pharmacist" = "Licensed pharmacist";
+"profile.experience_years" = "%d years of experience";
+"profile.add_date_of_birth" = "Add date of birth";
+"profile.remove_date_of_birth" = "Remove date of birth";
 
-// Invite Pharmacist
+	// Invite Pharmacist
 "pharmacy_team.invite" = "Invite Pharmacist";
 "pharmacy_team.invite_header" = "Invite Pharmacist";
 "pharmacy_team.invite_title" = "Invite a pharmacist";
@@ -259,8 +267,19 @@
 "pharmacy_team.invite_email" = "Email Address";
 "pharmacy_team.invite_email_placeholder" = "Enter pharmacist's email";
 "pharmacy_team.invite_button" = "Send Invitation";
+"pharmacy_team.invite_short_description" = "Invite a pharmacist to join your pharmacy";
+"pharmacy_team.menu_title" = "Pharmacists in the pharmacy";
+"pharmacy_team.section_header" = "Pharmacists (%d)";
+"pharmacy_team.admin_badge" = "Admin";
+"pharmacy_team.view_profile" = "View personal profile";
+"pharmacy_team.invite_success_title" = "Invitation sent successfully";
+"pharmacy_team.invite_success_subtitle" = "The pharmacist will be notified and can accept your invitation.";
+"pharmacy_team.invite_pending" = "Waiting for the invitation to be accepted";
+"pharmacy_team.invite_another" = "Invite another pharmacist";
+"pharmacy_team.back_to_profile" = "Back to profile";
+"pharmacy_invite.validation_email" = "Enter a valid email address.";
 
-// Remove Pharmacist
+	// Remove Pharmacist
 "pharmacy_team.remove_header" = "Remove Pharmacist";
 "pharmacy_team.remove_title" = "Remove pharmacist";
 "pharmacy_team.remove_message" = "Are you sure you want to remove %@ from the pharmacy?";
@@ -275,3 +294,40 @@
 "pharmacy.request.accept" = "Accept Request";
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
+/* Pharmacist Invitations */
+"common.error" = "Something went wrong";
+"common.ok" = "OK";
+"common.retry" = "Retry";
+"pharmacy.invitations.notifications" = "Pharmacy invitations";
+"pharmacy.invitations.badge_count" = "%d pending invitations";
+"pharmacy.invitations.title" = "Pharmacy invitations";
+"pharmacy.invitations.subtitle" = "Review invitations from pharmacies that want you to join their team.";
+"pharmacy.invitations.invited_to_join" = "You have been invited to join this pharmacy.";
+"pharmacy.invitations.received_on" = "Received %@";
+"pharmacy.invitations.pending" = "Pending";
+"pharmacy.invitations.accept" = "Accept";
+"pharmacy.invitations.decline" = "Decline";
+"pharmacy.invitations.loading" = "Loading invitations…";
+"pharmacy.invitations.empty.title" = "No pending invitations";
+"pharmacy.invitations.empty.message" = "New pharmacy invitations will appear here.";
+"pharmacy.invitations.error.title" = "Invitations could not be loaded";
+
+/* Orders List */
+"pharmacy.orders.customer.fallback" = "Customer #%@";
+"pharmacy.orders.address.fallback" = "Address unavailable";
+"pharmacy.orders.retry" = "Retry";
+"pharmacy.orders.detail_placeholder" = "Order details coming soon.";
+"pharmacy.orders.noData" = "No orders found.";
+"common.somethingWentWrong" = "Something went wrong.";
+
+/* Presence & On Duty */
+"profile.presence.section_title" = "Availability";
+"profile.presence.on_duty_title" = "On Duty";
+"profile.presence.on_duty_badge" = "Active";
+"profile.presence.off_duty_badge" = "Off Duty";
+"profile.presence.error" = "Could not update your status. Please try again.";
+"profile.presence.toast.on" = "You are now receiving requests";
+"profile.presence.toast.off" = "You are not receiving requests anymore";
+"profile.on_duty.title" = "On Duty";
+"profile.on_duty.on" = "On Duty";
+"profile.on_duty.off" = "Off Duty";

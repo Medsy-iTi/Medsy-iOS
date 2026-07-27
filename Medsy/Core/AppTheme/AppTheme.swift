@@ -37,8 +37,8 @@ enum AppColor {
     static let lightGreen = Color(hex: "#E8F8F4")
     static let white = Color(hex: "#FFFFFF")
   
-    static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#FFFFFF") : Color(hex: "#1C1C1C") }
-    static var textSec: Color { Color(hex: "#6B7280") }
+    static var textPrim: Color { .primary }
+    static var textSec: Color { .secondary }
     static var hintPlaceholder: Color {
         AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
     }
@@ -84,6 +84,36 @@ extension Color {
         let b = Double(val & 0xFF) / 255
         self.init(red: r, green: g, blue: b)
     }
+}
+
+// MARK: - MedsyTheme
+
+/// Central colour palette consumed by Medsy chatbot components.
+/// Uses `AppColor` as the single source of truth so dark-mode aware
+/// colours stay reactive — no duplicate hex literals.
+struct MedsyTheme {
+    var primary:      Color
+    var primaryLight: Color
+    var danger:       Color
+    var dangerLight:  Color
+    var warning:      Color
+    var warningLight: Color
+    var surface:      Color
+    var textPrimary:  Color
+    var textSecondary: Color
+
+    /// Default Medsy palette — delegates to `AppColor` wherever possible.
+    static let `default` = MedsyTheme(
+        primary:       AppColor.green,               // #0D8653
+        primaryLight:  AppColor.lightGreen,          // #E8F8F4
+        danger:        AppColor.errorRed,            // #EF4444
+        dangerLight:   Color(hex: "FDECEB"),
+        warning:       AppColor.warningYellow,       // #F59E0B
+        warningLight:  Color(hex: "FDF3DF"),
+        surface:       Color(hex: "F1F2F4"),
+        textPrimary:   AppColor.textPrim,
+        textSecondary: AppColor.textSec
+    )
 }
 
 

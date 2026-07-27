@@ -2,8 +2,6 @@
 //  InvitePharmacistView.swift
 //  Medsy-Pharmacy
 //
-//  Invite Pharmacist Screen
-//
 
 import SwiftUI
 
@@ -11,186 +9,148 @@ struct InvitePharmacistView: View {
     let pharmacyName: String
     let isInviting: Bool
     let errorMessage: String?
-    let onCancel: () -> Void
     let onInvite: (String) async -> Bool
-    
-    @State private var email: String = ""
+
+    @State private var email = ""
     @State private var validationError: String?
-    
+
     var body: some View {
-        ZStack {
-            PharmacyColor.bg.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                header
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: PharmacySpacing.lg) {
-                        iconBlock
-                        
-                        VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
-                            Text("pharmacy_team.invite_title".localized)
-                                .font(PharmacyColor.sans(16, .bold))
-                                .foregroundStyle(PharmacyColor.textPrimary)
-                            
-                            Text(String(format: "pharmacy_team.invite_subtitle".localized, pharmacyName))
-                                .font(PharmacyColor.sans(13, .medium))
-                                .foregroundStyle(PharmacyColor.textSecondary)
-                        }
+        ScrollView {
+            VStack(spacing: PharmacySpacing.xl) {
+                invitationIllustration
+
+                VStack(spacing: PharmacySpacing.xs) {
+                    Text("pharmacy_team.invite_title".localized)
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(PharmacyColor.textPrimary)
+
+                    Text(String(format: "pharmacy_team.invite_subtitle".localized, pharmacyName))
+                        .font(.subheadline)
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                emailField
+
+                if let message = validationError ?? errorMessage {
+                    Label(message, systemImage: "exclamationmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(PharmacyColor.danger)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        emailField
-                        validationBlock
-                        errorBlock
-                        inviteButton
-                    }
-                    .padding(.horizontal, PharmacySpacing.md)
-                    .padding(.top, PharmacySpacing.sm)
-                    .padding(.bottom, PharmacySpacing.xl)
                 }
             }
+            .padding(.horizontal, PharmacySpacing.md)
+            .padding(.vertical, PharmacySpacing.xl)
+        }
+        .background(PharmacyColor.bg.ignoresSafeArea())
+        .navigationTitle("pharmacy_team.invite_header".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .safeAreaInset(edge: .bottom) {
+            inviteButton
+                .padding(.horizontal, PharmacySpacing.md)
+                .padding(.vertical, PharmacySpacing.sm)
+                .background(PharmacyColor.bg)
         }
     }
-    
-    private var header: some View {
-        HStack {
-            Button(action: onCancel) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
-                    .background(PharmacyColor.surface)
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-            
-            Text("pharmacy_team.invite_header".localized)
-                .font(PharmacyColor.sans(17, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity)
-            
-            Color.clear.frame(width: 36, height: 36)
+
+    private var invitationIllustration: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: PharmacyRadius.xl, style: .continuous)
+                .fill(PharmacyColor.primarySoft)
+                .frame(width: 108, height: 92)
+
+            Image(systemName: "envelope.open.fill")
+                .font(.system(size: 44, weight: .medium))
+                .foregroundStyle(PharmacyColor.primary.opacity(0.35))
+
+            Image(systemName: "person.badge.plus")
+                .font(.system(size: 34, weight: .semibold))
+                .foregroundStyle(PharmacyColor.primary)
+                .padding(12)
+                .background(PharmacyColor.card, in: Circle())
+                .offset(y: -18)
         }
-        .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
+        .accessibilityHidden(true)
     }
-    
-    private var iconBlock: some View {
-        VStack(spacing: PharmacySpacing.sm) {
-            ZStack {
-                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .fill(PharmacyColor.primary.opacity(0.12))
-                    .frame(width: 72, height: 72)
-                Image(systemName: "person.badge.plus")
-                    .font(.system(size: 32, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
+
     private var emailField: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
             Text("pharmacy_team.invite_email".localized)
-                .font(PharmacyColor.sans(13, .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(PharmacyColor.textPrimary)
-            
-            HStack(spacing: 10) {
+
+            HStack(spacing: PharmacySpacing.sm) {
                 Image(systemName: "envelope")
-                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(PharmacyColor.textSecondary)
-                
-                TextField("pharmacy_team.invite_email_placeholder".localized, text: $email)
-                    .font(PharmacyColor.sans(15, .medium))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
+
+                TextField(
+                    "pharmacy_team.invite_email_placeholder".localized,
+                    text: $email
+                )
+                .font(.body)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .onChange(of: email) {
+                    validationError = nil
+                }
             }
-            .padding(.horizontal, 17)
-            .padding(.vertical, 14)
+            .padding(.horizontal, PharmacySpacing.md)
+            .frame(minHeight: 56)
             .background(PharmacyColor.card)
             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
+                    .stroke(
+                        validationError == nil ? PharmacyColor.border : PharmacyColor.danger,
+                        lineWidth: 1
+                    )
             }
         }
     }
-    
-    @ViewBuilder
-    private var validationBlock: some View {
-        if let validationError {
-            Text(validationError)
-                .font(PharmacyColor.sans(12, .medium))
-                .foregroundStyle(PharmacyColor.danger)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 4)
-        }
-    }
-    
-    @ViewBuilder
-    private var errorBlock: some View {
-        if let errorMessage {
-            Text(errorMessage)
-                .font(PharmacyColor.sans(12, .medium))
-                .foregroundStyle(PharmacyColor.danger)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 4)
-        }
-    }
-    
+
     private var inviteButton: some View {
-        Button {
-            invite()
-        } label: {
+        Button(action: invite) {
             Group {
                 if isInviting {
                     ProgressView().tint(.white)
                 } else {
                     Text("pharmacy_team.invite_button".localized)
-                        .font(PharmacyColor.sans(15, .bold))
+                        .font(.headline)
                 }
             }
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(isInviting ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .frame(maxWidth: .infinity, minHeight: 52)
         }
         .buttonStyle(.plain)
+        .background(
+            isInviting ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary,
+            in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+        )
         .disabled(isInviting)
-        .padding(.top, 8)
     }
-    
+
     private func invite() {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        guard trimmedEmail.contains("@") else {
+        guard trimmedEmail.contains("@"), trimmedEmail.contains(".") else {
             validationError = "pharmacy_team.validation_email".localized
             return
         }
-        
-        guard trimmedEmail.contains(".") else {
-            validationError = "pharmacy_team.validation_email".localized
-            return
-        }
-        
+
         validationError = nil
-        
         Task {
-            let success = await onInvite(trimmedEmail)
-            if success { onCancel() }
+            _ = await onInvite(trimmedEmail)
         }
     }
 }
 
 #Preview {
-    InvitePharmacistView(
-        pharmacyName: "Test Pharmacy",
-        isInviting: false,
-        errorMessage: nil,
-        onCancel: {},
-        onInvite: { _ in true }
-    )
+    NavigationStack {
+        InvitePharmacistView(
+            pharmacyName: "Test Pharmacy",
+            isInviting: false,
+            errorMessage: nil,
+            onInvite: { _ in true }
+        )
+    }
 }

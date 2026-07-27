@@ -12,8 +12,6 @@ struct EditPharmacistScreen: View {
     let onCancel: () -> Void
     let onSave: (String, String, String, String?, Date?) async -> Bool
 
-    @State private var draftFirstName: String
-    @State private var draftLastName: String
     @State private var draftEmail: String
     @State private var draftAddress: String
     @State private var includesDateOfBirth: Bool
@@ -32,8 +30,6 @@ struct EditPharmacistScreen: View {
         self.errorMessage = errorMessage
         self.onCancel = onCancel
         self.onSave = onSave
-        _draftFirstName = State(initialValue: member.firstName)
-        _draftLastName = State(initialValue: member.lastName)
         _draftEmail = State(initialValue: member.email)
         _draftAddress = State(initialValue: "")
         _includesDateOfBirth = State(initialValue: false)
@@ -49,8 +45,8 @@ struct EditPharmacistScreen: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.lg) {
-                        editableField(titleKey: "profile.first_name", text: $draftFirstName, icon: "person")
-                        editableField(titleKey: "profile.last_name", text: $draftLastName, icon: "person")
+                        readonlyField(titleKey: "profile.first_name", value: member.firstName, icon: "person")
+                        readonlyField(titleKey: "profile.last_name", value: member.lastName, icon: "person")
                         editableField(titleKey: "profile.email", text: $draftEmail, icon: "envelope", keyboardType: .emailAddress)
                         editableField(titleKey: "profile.home_address", text: $draftAddress, icon: "mappin.and.ellipse", axis: .vertical)
                         dateOfBirthField
@@ -87,6 +83,39 @@ struct EditPharmacistScreen: View {
         }
         .padding(.horizontal, PharmacySpacing.md)
         .padding(.vertical, PharmacySpacing.sm)
+    }
+
+    private func readonlyField(titleKey: String, value: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(titleKey.localized)
+                .font(PharmacyColor.sans(13, .semibold))
+                .foregroundStyle(PharmacyColor.textPrimary)
+
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(PharmacyColor.textSecondary)
+                    .frame(width: 24)
+
+                Text(value)
+                    .font(PharmacyColor.sans(15, .medium))
+                    .foregroundStyle(PharmacyColor.textPrimary)
+
+                Spacer()
+
+                Image(systemName: "lock.fill")
+                    .font(.caption2)
+                    .foregroundStyle(PharmacyColor.textSecondary)
+            }
+            .padding(.horizontal, 17)
+            .padding(.vertical, 14)
+            .background(PharmacyColor.card)
+            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+                    .stroke(PharmacyColor.border, lineWidth: 1)
+            }
+        }
     }
 
     private func editableField(
@@ -202,15 +231,8 @@ struct EditPharmacistScreen: View {
     }
 
     private func save() {
-        let firstName = draftFirstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let lastName = draftLastName.trimmingCharacters(in: .whitespacesAndNewlines)
         let email = draftEmail.trimmingCharacters(in: .whitespacesAndNewlines)
         let address = draftAddress.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !firstName.isEmpty, !lastName.isEmpty else {
-            validationError = "pharmacy_team.validation_name".localized
-            return
-        }
 
         guard email.contains("@") else {
             validationError = "pharmacy_team.validation_email".localized
@@ -222,8 +244,8 @@ struct EditPharmacistScreen: View {
         Task {
             let success = await onSave(
                 email,
-                firstName,
-                lastName,
+                member.firstName,
+                member.lastName,
                 address.isEmpty ? nil : address,
                 includesDateOfBirth ? draftDateOfBirth : nil
             )
