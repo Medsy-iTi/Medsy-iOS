@@ -20,6 +20,9 @@ enum PharmacyOrderListStatus: Equatable, Sendable {
     case new
     case preparing
     case delivered
+    case completed
+    case expired
+    case pendingApproval
 }
 
 enum PharmacyOrderPaymentMethod: Equatable, Sendable {

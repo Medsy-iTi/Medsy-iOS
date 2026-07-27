@@ -44,6 +44,7 @@ struct MedsyApp: App {
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
       
+//        heartbeatService = AppAssembler.shared.container.resolve(HeartbeatService.self)
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
             authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
@@ -62,7 +63,7 @@ struct MedsyApp: App {
 //                heartbeatService.startHeartbeat()
 //                print("[MedsyApp] 🚀 Customer App launched — heartbeat started")
 //            }
-            .localizedEnvironment()
+                     .localizedEnvironment()
             .environment(languageManager)
             .id(languageManager.currentLanguage)
         }

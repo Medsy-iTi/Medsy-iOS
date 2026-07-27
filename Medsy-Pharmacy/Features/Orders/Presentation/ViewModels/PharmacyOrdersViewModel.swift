@@ -32,6 +32,7 @@ final class PharmacyOrdersViewModel {
 	var selectedFilter: PharmacyOrdersFilter = .all
 	var searchText = ""
 	private(set) var orders: [PharmacyOrderListItem] = []
+	private(set) var originalOrders: [PharmacyOrder] = []
 	private(set) var loadState: LoadState = .idle
 	private(set) var isLoadingNextPage = false
 
@@ -83,6 +84,7 @@ final class PharmacyOrdersViewModel {
 		do {
 			let pharmacyId = try await resolvePharmacyId()
 			let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: currentPage, size: pageSize)
+			originalOrders = page.orders
 			orders = page.orders.map(PharmacyOrderMapper.mapToListItem)
 			isLastPage = page.isLastPage
 			loadState = .loaded
@@ -111,12 +113,17 @@ final class PharmacyOrdersViewModel {
 		let nextPage = currentPage + 1
 		do {
 			let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: nextPage, size: pageSize)
+			originalOrders.append(contentsOf: page.orders)
 			orders.append(contentsOf: page.orders.map(PharmacyOrderMapper.mapToListItem))
 			currentPage = nextPage
 			isLastPage = page.isLastPage
 		} catch {
 
 		}
+	}
+
+	func originalOrder(for id: String) -> PharmacyOrder? {
+		originalOrders.first(where: { String($0.id) == id })
 	}
 
 	func clearSearch() {
