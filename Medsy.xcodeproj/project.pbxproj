@@ -10,6 +10,7 @@
 		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
 		9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
+		9B000003300A000100000001 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 9B000002300A000100000001 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A000001300A000100000001 /* Alamofire in Frameworks */,
+				9B000003300A000100000001 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +275,7 @@
 			name = "Medsy-Pharmacy";
 			packageProductDependencies = (
 				6D8B26563006BA48001616C8 /* Alamofire */,
+				9B000002300A000100000001 /* Lottie */,
 			);
 			productName = "Medsy-Pharmacy";
 			productReference = 787FF8733009785B006556E7 /* Medsy-Pharmacy.app */;
@@ -371,6 +374,7 @@
 			packageReferences = (
 				6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */,
+				9B000001300A000100000001 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7834991A30055416001D87B6 /* Products */;
@@ -959,6 +963,14 @@
 				minimumVersion = 2.10.0;
 			};
 		};
+		9B000001300A000100000001 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -971,6 +983,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */;
 			productName = Swinject;
+		};
+		9B000002300A000100000001 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B000001300A000100000001 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
