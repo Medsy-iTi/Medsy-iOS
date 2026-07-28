@@ -551,9 +551,7 @@ final class ProfileViewModel {
                 status = try await goOnDutyUseCase.execute()
                 startHeartbeat()
             }
-            isOnDuty = status.onDuty
-            sessionSettings.updateDutyStatus(status.onDuty)
-            dutyStatusStore.isOnDuty = status.onDuty
+            applyPresenceStatus(status.onDuty)
             presenceToastMessage = isOnDuty ? "profile.presence.toast.on".localized : "profile.presence.toast.off".localized
             showPresenceToast = true
             Task {
@@ -577,19 +575,24 @@ final class ProfileViewModel {
     private func syncPresenceStatus() async {
         do {
             let status = try await sendHeartbeatUseCase.execute()
-            isOnDuty = status.onDuty
-            dutyStatusStore.isOnDuty = status.onDuty
+            applyPresenceStatus(status.onDuty)
             if status.onDuty {
                 startHeartbeat()
             } else {
                 stopHeartbeat()
             }
         } catch {
-            isOnDuty = dutyStatusStore.isOnDuty
+            applyPresenceStatus(dutyStatusStore.isOnDuty)
             if isOnDuty {
                 startHeartbeat()
             }
         }
+    }
+
+    private func applyPresenceStatus(_ isOnDuty: Bool) {
+        self.isOnDuty = isOnDuty
+        sessionSettings.updateDutyStatus(isOnDuty)
+        dutyStatusStore.isOnDuty = isOnDuty
     }
 
     /// Starts a repeating 30-second heartbeat that keeps the pharmacist's
@@ -602,8 +605,7 @@ final class ProfileViewModel {
                 guard !Task.isCancelled, self?.isOnDuty == true else { break }
                 if let status = try? await self?.sendHeartbeatUseCase.execute() {
                     await MainActor.run {
-                        self?.isOnDuty = status.onDuty
-                        self?.dutyStatusStore.isOnDuty = status.onDuty
+                        self?.applyPresenceStatus(status.onDuty)
                     }
                 }
             }
