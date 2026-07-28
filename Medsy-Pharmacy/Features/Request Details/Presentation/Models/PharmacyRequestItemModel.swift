@@ -176,24 +176,6 @@ extension PharmacyRequestDetailsModel {
     }
 
     init(homeOrder: PharmacyHomeOrder) {
-        self.init(
-            id: homeOrder.id,
-            minutesAgo: homeOrder.minutesAgo,
-            statusTitle: homeOrder.status.titleKey.localized,
-            customer: PharmacyCustomerInfo(
-                name: homeOrder.customerNameKey.localized,
-                phone: "010 1234 5678",
-                address: homeOrder.addressKey.localized
-            ),
-            items: [
-                PharmacyOrderItem(id: "1", name: "pharmacy.request.product_label".localized("1"), spec: "1", quantity: 1, price: 0.0, imageName: nil),
-                PharmacyOrderItem(id: "2", name: "pharmacy.request.product_label".localized("2"), spec: "1", quantity: 1, price: 0.0, imageName: nil)
-            ],
-            deliveryFee: 0.0,
-            notes: "",
-            deliveryLatitude: nil,
-            deliveryLongitude: nil,
-            createdAt: Date(timeIntervalSinceNow: -Double(homeOrder.minutesAgo * 60))
-        )
+        self.init(order: homeOrder.sourceOrder)
     }
 }

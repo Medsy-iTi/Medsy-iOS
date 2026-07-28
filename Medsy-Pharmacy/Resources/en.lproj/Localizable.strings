@@ -12,6 +12,14 @@
 "pharmacy.home.pharmacy_name" = "Al Amal Pharmacy";
 "pharmacy.home.address" = "El Nozha, Cairo";
 "pharmacy.home.online" = "Open now";
+"pharmacy.home.closed" = "Closed";
+"pharmacy.home.pharmacy_unavailable" = "Pharmacy name unavailable";
+"pharmacy.home.address_unavailable" = "Address unavailable";
+"pharmacy.home.profile_load_error" = "Pharmacy details could not be loaded.";
+"pharmacy.home.orders_loading" = "Loading recent orders…";
+"pharmacy.home.orders_empty_title" = "No recent orders";
+"pharmacy.home.orders_empty_message" = "New orders will appear here when they arrive.";
+"pharmacy.home.orders_load_error" = "Recent orders could not be loaded.";
 "pharmacy.home.pharmacy_number" = "Pharmacy no.";
 "pharmacy.home.overview" = "Today's overview";
 "pharmacy.home.new_orders" = "New orders";

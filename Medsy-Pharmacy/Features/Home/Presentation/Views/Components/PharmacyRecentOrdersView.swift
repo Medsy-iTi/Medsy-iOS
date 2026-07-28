@@ -7,8 +7,10 @@
 import SwiftUI
 
 struct PharmacyRecentOrdersView: View {
+    let state: PharmacyHomeViewModel.OrdersState
     let orders: [PharmacyHomeOrder]
     var onSelectOrder: ((PharmacyHomeOrder) -> Void)? = nil
+    let onRetry: () -> Void
     let onViewAllOrders: () -> Void
 
     
@@ -24,25 +26,72 @@ struct PharmacyRecentOrdersView: View {
                     .foregroundStyle(PharmacyColor.primary)
             }
 
-            VStack(spacing: 0) {
-                ForEach(Array(orders.enumerated()), id: \.element.id) { index, order in
-                    Button {
-                        onSelectOrder?(order)
-                    } label: {
-                        PharmacyRecentOrderItem(order: order)
-                            .contentShape(Rectangle())
+            Group {
+                switch state {
+                case .idle, .loading:
+                    VStack(spacing: PharmacySpacing.sm) {
+                        ProgressView()
+                        Text("pharmacy.home.orders_loading".localized)
+                            .font(PharmacyColor.sans(12))
+                            .foregroundStyle(PharmacyColor.textSecondary)
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, PharmacySpacing.xl)
 
-                    if index < orders.count - 1 {
-                        Divider()
-                            .overlay(PharmacyColor.border)
-                            .padding(.leading, PharmacySpacing.md)
+                case .empty:
+                    homeOrderMessage(
+                        icon: "tray",
+                        title: "pharmacy.home.orders_empty_title".localized,
+                        message: "pharmacy.home.orders_empty_message".localized
+                    )
+
+                case .failed(let message):
+                    ErrorStateView(
+                        icon: "exclamationmark.triangle",
+                        message: message,
+                        retryTitle: "common.retry".localized,
+                        onRetry: onRetry
+                    )
+
+                case .loaded:
+                    VStack(spacing: 0) {
+                        ForEach(Array(orders.enumerated()), id: \.element.id) { index, order in
+                            Button {
+                                onSelectOrder?(order)
+                            } label: {
+                                PharmacyRecentOrderItem(order: order)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+
+                            if index < orders.count - 1 {
+                                Divider()
+                                    .overlay(PharmacyColor.border)
+                                    .padding(.leading, PharmacySpacing.md)
+                            }
+                        }
                     }
                 }
             }
             .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
         }
+    }
+
+    private func homeOrderMessage(icon: String, title: String, message: String) -> some View {
+        VStack(spacing: PharmacySpacing.xs) {
+            Image(systemName: icon)
+                .font(.system(size: 30, weight: .medium))
+                .foregroundStyle(PharmacyColor.textSecondary)
+            Text(title)
+                .font(PharmacyColor.sans(14, .bold))
+                .foregroundStyle(PharmacyColor.textPrimary)
+            Text(message)
+                .font(PharmacyColor.sans(12))
+                .foregroundStyle(PharmacyColor.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(PharmacySpacing.lg)
     }
 }

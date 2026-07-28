@@ -16,6 +16,7 @@ final class RootCoordinator {
 	private let hasCompletedOnboardingUseCase: HasCompletedOnboardingUseCaseProtocol
 	private let completeOnboardingUseCase: CompleteOnboardingUseCaseProtocol
 	private let tokenStore: TokenStoreProtocol
+	private let pharmacySession: PharmacySessionSettings
 
 	var isAuthenticated: Bool
 
@@ -23,11 +24,13 @@ final class RootCoordinator {
 		self.hasCompletedOnboardingUseCase = container.resolve(HasCompletedOnboardingUseCaseProtocol.self)
 		self.completeOnboardingUseCase = container.resolve(CompleteOnboardingUseCaseProtocol.self)
 		self.tokenStore = container.resolve(TokenStoreProtocol.self)
+		self.pharmacySession = container.resolve(PharmacySessionSettings.self)
 
 
 		let isFreshInstall = !container.resolve(HasCompletedOnboardingUseCaseProtocol.self).execute()
 		if isFreshInstall {
 			try? container.resolve(TokenStoreProtocol.self).clearTokens()
+			self.pharmacySession.clear()
 		}
 
 		self.isAuthenticated = isFreshInstall ? false : (self.tokenStore.accessToken() != nil)
@@ -51,14 +54,16 @@ final class RootCoordinator {
 	func logout() {
 		isAuthenticated = false
 		try? tokenStore.clearTokens()
-		mainTabCoordinator = PharmacyMainTabCoordinator()
+		pharmacySession.clear()
+		mainTabCoordinator.select(.home)
 		flow = .authentication
 	}
 
 	func returnToSignIn() {
 		isAuthenticated = false
 		try? tokenStore.clearTokens()
-		mainTabCoordinator = PharmacyMainTabCoordinator()
+		pharmacySession.clear()
+		mainTabCoordinator.select(.home)
 		flow = .authentication
 	}
 }

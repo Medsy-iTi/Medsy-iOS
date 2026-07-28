@@ -89,6 +89,7 @@ final class ProfileViewModel {
     private let logoutUseCase: LogoutUseCaseProtocol
     private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
     private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
+    private let sessionSettings: PharmacySessionSettings
     private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
     private let dutyStatusStore: DutyStatusStore
 
@@ -124,9 +125,9 @@ final class ProfileViewModel {
         logoutUseCase: LogoutUseCaseProtocol,
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
         goOffDutyUseCase: GoOffDutyUseCaseProtocol,
+        sessionSettings: PharmacySessionSettings,
         sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
         dutyStatusStore: DutyStatusStore,
-
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -143,11 +144,12 @@ final class ProfileViewModel {
         self.logoutUseCase = logoutUseCase
         self.goOnDutyUseCase = goOnDutyUseCase
         self.goOffDutyUseCase = goOffDutyUseCase
-        self.sendHeartbeatUseCase = sendHeartbeatUseCase
-        self.dutyStatusStore = dutyStatusStore
+        self.sessionSettings = sessionSettings
         self.languageManager = languageManager
         self.appSettings = appSettings
-        self.isOnDuty = dutyStatusStore.isOnDuty
+        self.isOnDuty = sessionSettings.isOnDuty
+        self.sendHeartbeatUseCase = sendHeartbeatUseCase
+        self.dutyStatusStore = dutyStatusStore
     }
 
     // MARK: - Computed Props
@@ -196,6 +198,11 @@ final class ProfileViewModel {
         do {
             let profile = try await getProfileUseCase.execute()
             self.profile = profile
+            sessionSettings.updatePharmacy(
+                id: profile.pharmacyId,
+                name: profile.pharmacyName,
+                address: profile.pharmacyAddress
+            )
             self.state = .loaded
             await syncPresenceStatus()
         } catch {
@@ -288,6 +295,11 @@ final class ProfileViewModel {
                 name: name,
                 address: address,
                 phoneNumber: phoneNumber
+            )
+            sessionSettings.updatePharmacy(
+                id: pharmacyId,
+                name: name ?? profile?.pharmacyName,
+                address: address ?? profile?.pharmacyAddress
             )
             isUpdatingPharmacy = false
             await loadProfile(showsSpinner: false)
@@ -514,6 +526,8 @@ final class ProfileViewModel {
 
     private func logoutAndNotify() async {
         await logoutUseCase.execute()
+        stopHeartbeat()
+        sessionSettings.clear()
         isLoggingOut = false
         isLeavingPharmacy = false
         isDeletingPharmacy = false
@@ -537,8 +551,7 @@ final class ProfileViewModel {
                 status = try await goOnDutyUseCase.execute()
                 startHeartbeat()
             }
-            isOnDuty = status.onDuty
-            dutyStatusStore.isOnDuty = status.onDuty
+            applyPresenceStatus(status.onDuty)
             presenceToastMessage = isOnDuty ? "profile.presence.toast.on".localized : "profile.presence.toast.off".localized
             showPresenceToast = true
             Task {
@@ -562,19 +575,24 @@ final class ProfileViewModel {
     private func syncPresenceStatus() async {
         do {
             let status = try await sendHeartbeatUseCase.execute()
-            isOnDuty = status.onDuty
-            dutyStatusStore.isOnDuty = status.onDuty
+            applyPresenceStatus(status.onDuty)
             if status.onDuty {
                 startHeartbeat()
             } else {
                 stopHeartbeat()
             }
         } catch {
-            isOnDuty = dutyStatusStore.isOnDuty
+            applyPresenceStatus(dutyStatusStore.isOnDuty)
             if isOnDuty {
                 startHeartbeat()
             }
         }
+    }
+
+    private func applyPresenceStatus(_ isOnDuty: Bool) {
+        self.isOnDuty = isOnDuty
+        sessionSettings.updateDutyStatus(isOnDuty)
+        dutyStatusStore.isOnDuty = isOnDuty
     }
 
     /// Starts a repeating 30-second heartbeat that keeps the pharmacist's
@@ -587,8 +605,7 @@ final class ProfileViewModel {
                 guard !Task.isCancelled, self?.isOnDuty == true else { break }
                 if let status = try? await self?.sendHeartbeatUseCase.execute() {
                     await MainActor.run {
-                        self?.isOnDuty = status.onDuty
-                        self?.dutyStatusStore.isOnDuty = status.onDuty
+                        self?.applyPresenceStatus(status.onDuty)
                     }
                 }
             }

@@ -32,6 +32,7 @@ final class ProfileCoordinator: Coordinator {
 			logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
 			goOnDutyUseCase: container.resolve(GoOnDutyUseCaseProtocol.self),
 			goOffDutyUseCase: container.resolve(GoOffDutyUseCaseProtocol.self),
+			sessionSettings: container.resolve(PharmacySessionSettings.self),
 			sendHeartbeatUseCase: container.resolve(SendHeartbeatUseCaseProtocol.self),
 			dutyStatusStore: container.resolve(DutyStatusStore.self),
 			languageManager: container.resolve(LanguageManager.self),

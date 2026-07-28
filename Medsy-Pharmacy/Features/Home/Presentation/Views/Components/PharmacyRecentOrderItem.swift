@@ -24,10 +24,10 @@ struct PharmacyRecentOrderItem: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text(order.customerNameKey.localized)
+                Text(order.customerName)
                     .font(PharmacyColor.sans(13, .semibold))
                     .foregroundStyle(PharmacyColor.textPrimary)
-                Text(order.addressKey.localized)
+                Text(order.address)
                     .font(PharmacyColor.sans(10, .medium))
                     .foregroundStyle(PharmacyColor.textSecondary)
             }
