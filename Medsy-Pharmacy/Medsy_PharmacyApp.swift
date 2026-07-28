@@ -13,7 +13,8 @@ struct Medsy_PharmacyApp: App {
     private let authenticationFactory: PharmacyAuthenticationFactory
     private let onboardingFactory: PharmacyOnboardingFactory
     private let homeFactory: PharmacyHomeFactory
-    private let ordersFactory: PharmacyOrdersFactory
+	private let ordersFactory: PharmacyOrdersFactory
+	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
     private let coordinator: RootCoordinator
     private let heartbeatService: PharmacyHeartbeatService
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
@@ -27,7 +28,9 @@ struct Medsy_PharmacyApp: App {
             PresenceAssembly(),
             PharmacyHomeAssembly(),
             PharmacyOrdersAssembly(),
-            PharmacyRequestDetailsAssembly()
+            PharmacyRequestDetailsAssembly(),
+			CompletedOrdersAssembly(),
+            CompletedOrderDetailsAssembly()
         ])
 
         let container = PharmacyAppAssembler.shared.container
@@ -35,6 +38,7 @@ struct Medsy_PharmacyApp: App {
         authenticationFactory = container.resolve(PharmacyAuthenticationFactory.self)
         homeFactory = container.resolve(PharmacyHomeFactory.self)
         ordersFactory = container.resolve(PharmacyOrdersFactory.self)
+		completedOrdersFactory = container.resolve(PharmacyCompletedOrdersFactory.self)
         heartbeatService = container.resolve(PharmacyHeartbeatService.self)
 
         onboardingFactory = PharmacyOnboardingFactory(
@@ -50,6 +54,7 @@ struct Medsy_PharmacyApp: App {
                 authenticationFactory: authenticationFactory,
                 homeFactory: homeFactory,
                 ordersFactory: ordersFactory,
+				completedOrdersFactory: completedOrdersFactory,
                 coordinator: coordinator
             )
             .task {

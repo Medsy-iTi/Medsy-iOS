@@ -22,6 +22,7 @@ enum AppTab: Int, CaseIterable {
     case offers
     case orders
     case profile
+	case completedOrders
 }
 
 @MainActor

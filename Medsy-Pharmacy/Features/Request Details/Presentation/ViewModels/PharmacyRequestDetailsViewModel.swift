@@ -1,8 +1,4 @@
-//  PharmacyRequestDetailsViewModel.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 23/07/2026.
-//
+// PharmacyRequestDetailsViewModel.swift
 
 import Foundation
 import Observation
@@ -105,6 +101,31 @@ final class PharmacyRequestDetailsViewModel {
         guard var model = requestModel else { return }
         if let idx = model.items.firstIndex(where: { $0.id == itemId }) {
             model.items[idx].selectedOfferProductId = productId
+            self.requestModel = model
+        }
+    }
+
+    func replaceItem(_ item: PharmacyOrderItem, with product: PharmacyProductDTO) {
+        guard var model = requestModel else { return }
+        if let idx = model.items.firstIndex(where: { $0.id == item.id }) {
+            let updatedItem = PharmacyOrderItem(
+                id: item.id,
+                requestItemId: item.requestItemId,
+                productId: product.id,
+                name: product.productName ?? product.name ?? item.name,
+                spec: item.spec,
+                quantity: item.quantity,
+                price: product.price ?? item.price,
+                imageName: item.imageName,
+                imageUrl: product.imageUrl ?? item.imageUrl,
+                isAvailable: true,
+                selectedOfferProductId: product.id,
+                alternativeMedicine: product.productName ?? product.name,
+                form: product.form ?? item.form,
+                strength: product.strength ?? item.strength,
+                packSize: product.packSize ?? item.packSize
+            )
+            model.items[idx] = updatedItem
             self.requestModel = model
         }
     }

@@ -106,7 +106,9 @@ private struct PreviewLoginUseCase: LoginUseCaseProtocol {
                 lastName: "",
                 role: "CUSTOMER",
                 homeAddress: "",
-                dateOfBirth: ""
+                dateOfBirth: "",
+                homeLatitude: nil,
+                homeLongitude: nil
             )
         )
     }

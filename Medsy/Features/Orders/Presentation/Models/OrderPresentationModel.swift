@@ -16,6 +16,7 @@ struct OrderPresentationModel: Identifiable {
     let date: Date
     let totalPrice: Double
     let itemCount: Int
+    let itemImageURLs: [String]
 }
 
 struct OrderDetailPresentationModel: Identifiable {
@@ -39,6 +40,7 @@ struct OrderDetailItemModel: Identifiable {
     let originalProductName: String?
     let quantity: Int
     let unitPrice: Double
+    let imageURL: String?
 }
 
 
@@ -50,7 +52,9 @@ extension OrderPresentationModel {
             status: .pending,
             fulfillmentType: .delivery,
             date: Calendar.current.date(byAdding: .hour, value: -2, to: .now)!,
-            totalPrice: 180, itemCount: 3
+            totalPrice: 180,
+            itemCount: 3,
+            itemImageURLs: []
         ),
         OrderPresentationModel(
             id: 1230, orderNumber: 1230,
@@ -58,7 +62,9 @@ extension OrderPresentationModel {
             status: .delivered,
             fulfillmentType: .pickup,
             date: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,
-            totalPrice: 125, itemCount: 2
+            totalPrice: 125,
+            itemCount: 2,
+            itemImageURLs: []
         ),
         OrderPresentationModel(
             id: 1205, orderNumber: 1205,
@@ -66,7 +72,9 @@ extension OrderPresentationModel {
             status: .delivered,
             fulfillmentType: .delivery,
             date: Calendar.current.date(byAdding: .day, value: -20, to: .now)!,
-            totalPrice: 240, itemCount: 4
+            totalPrice: 240,
+            itemCount: 4,
+            itemImageURLs: []
         ),
         OrderPresentationModel(
             id: 1180, orderNumber: 1180,
@@ -74,7 +82,9 @@ extension OrderPresentationModel {
             status: .cancelled,
             fulfillmentType: .pickup,
             date: Calendar.current.date(byAdding: .day, value: -23, to: .now)!,
-            totalPrice: 0, itemCount: 2
+            totalPrice: 0,
+            itemCount: 2,
+            itemImageURLs: []
         ),
     ]
 }
@@ -88,8 +98,8 @@ extension OrderDetailPresentationModel {
         fulfillmentType: .delivery,
         date: Calendar.current.date(byAdding: .hour, value: -2, to: .now)!,
         items: [
-            OrderDetailItemModel(id: 1, productId: 101, productName: "Panadol 500mg", originalProductName: nil, quantity: 2, unitPrice: 45),
-            OrderDetailItemModel(id: 2, productId: 102, productName: "Vitamin C 1000mg", originalProductName: "Vitamin C 500mg", quantity: 1, unitPrice: 90),
+            OrderDetailItemModel(id: 1, productId: 101, productName: "Panadol 500mg", originalProductName: nil, quantity: 2, unitPrice: 45, imageURL: nil),
+            OrderDetailItemModel(id: 2, productId: 102, productName: "Vitamin C 1000mg", originalProductName: "Vitamin C 500mg", quantity: 1, unitPrice: 90, imageURL: nil),
         ],
         itemsSubtotal: 180,
         deliveryFee: 25,

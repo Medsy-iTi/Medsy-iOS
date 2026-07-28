@@ -1,9 +1,4 @@
-//
-//  PharmacyRequestsEndpoint.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
+// PharmacyRequestsEndpoint.swift
 
 import Alamofire
 import Foundation
@@ -12,6 +7,7 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
     case fetchRequests(page: Int, size: Int)
     case fetchRequestById(requestId: Int)
     case sendOffer(requestId: Int, body: SendOfferRequestDTO)
+    case searchProducts(keyword: String, page: Int, size: Int)
 
     var path: String {
         switch self {
@@ -21,12 +17,14 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
             return "pharmacies/requests/\(requestId)"
         case .sendOffer(let requestId, _):
             return "offers/requests/\(requestId)"
+        case .searchProducts:
+            return "products/search"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .fetchRequests, .fetchRequestById:
+        case .fetchRequests, .fetchRequestById, .searchProducts:
             return .get
         case .sendOffer:
             return .post
@@ -40,6 +38,13 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
                 "page": page,
                 "size": size
             ]
+        case let .searchProducts(keyword, page, size):
+            return [
+                "keyword": keyword,
+                "page": page,
+                "size": size,
+                "lang": "ar"
+            ]
         case .fetchRequestById, .sendOffer:
             return nil
         }
@@ -47,7 +52,7 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .fetchRequests, .fetchRequestById:
+        case .fetchRequests, .fetchRequestById, .searchProducts:
             return nil
         case let .sendOffer(_, body):
             return try? JSONEncoder().encode(body)

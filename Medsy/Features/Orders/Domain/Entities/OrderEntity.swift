@@ -66,4 +66,5 @@ struct OrderEntity: Identifiable {
     let date: Date
     let totalPrice: Double
     let itemCount: Int
+    let itemImageURLs: [String]
 }

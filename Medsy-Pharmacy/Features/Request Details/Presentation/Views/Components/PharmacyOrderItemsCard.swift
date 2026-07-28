@@ -1,9 +1,4 @@
-//
-//  PharmacyOrderItemsCard.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 23/07/2026.
-//
+// PharmacyOrderItemsCard.swift
 
 import SwiftUI
 
@@ -11,6 +6,8 @@ struct PharmacyOrderItemsCard: View {
     @Binding var items: [PharmacyOrderItem]
     let deliveryFee: Double
     let total: Double
+    let isOfferSubmitted: Bool
+    var onSelectAlternative: ((PharmacyOrderItem) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
@@ -76,7 +73,7 @@ struct PharmacyOrderItemsCard: View {
                                                 .background(PharmacyColor.border, in: Capsule())
                                         }
                                         if let packSize = item.packSize, !packSize.isEmpty {
-                                            Text("\(packSize) tab")
+                                            Text("pharmacy.request.pack_size_label".localized(packSize))
                                                 .font(PharmacyColor.sans(11, .medium))
                                                 .foregroundStyle(PharmacyColor.textSecondary)
                                                 .padding(.horizontal, 6)
@@ -108,23 +105,42 @@ struct PharmacyOrderItemsCard: View {
                                 }
                             }
                             .buttonStyle(.plain)
+                            .disabled(isOfferSubmitted)
                         }
 
-                        HStack(spacing: 8) {
-                            Image(systemName: "box.truck.fill")
-                                .font(.system(size: 13))
-                                .foregroundStyle(PharmacyColor.primary)
-                            Text("منتج العرض: \(item.name)")
-                                .font(PharmacyColor.sans(13, .semibold))
-                                .foregroundStyle(PharmacyColor.primary)
-                            Spacer()
-                            Text("ID: \(item.selectedOfferProductId)")
-                                .font(PharmacyColor.sans(12, .medium))
-                                .foregroundStyle(PharmacyColor.textSecondary)
+                        if !item.isAvailable && !isOfferSubmitted {
+                            Button {
+                                onSelectAlternative?(item)
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrow.2.squarepath")
+                                        .font(.system(size: 14))
+                                    Text("pharmacy.request.select_alternative".localized)
+                                        .font(PharmacyColor.sans(14, .semibold))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
+                                .foregroundStyle(.white)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            HStack(spacing: 8) {
+                                Image(systemName: "box.truck.fill")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(PharmacyColor.primary)
+                                Text("pharmacy.request.offer_product".localized(item.name))
+                                    .font(PharmacyColor.sans(13, .semibold))
+                                    .foregroundStyle(PharmacyColor.primary)
+                                Spacer()
+                                Text("ID: \(item.selectedOfferProductId)")
+                                    .font(PharmacyColor.sans(12, .medium))
+                                    .foregroundStyle(PharmacyColor.textSecondary)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(PharmacyColor.primarySoft.opacity(0.3), in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(PharmacyColor.primarySoft.opacity(0.3), in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
                     }
                 }
             }

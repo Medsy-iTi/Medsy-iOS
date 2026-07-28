@@ -25,4 +25,8 @@ final class PharmacyMainTabCoordinator {
     func showOrders() {
         select(.orders)
     }
+
+	func showCompletedOrders() { 
+		select(.completedOrders)
+	}
 }

@@ -67,6 +67,13 @@ final class ProfileViewModel {
     var isInvitingPharmacist = false
     var inviteErrorMessage: String?
 
+    // Pending invitations (admin)
+    private(set) var pendingInvitations: [PharmacyInvitation] = []
+    var isLoadingPendingInvitations = false
+    var pendingInvitationsErrorMessage: String?
+    var selectedPendingInvitation: PharmacyInvitation?
+    var pendingInvitationDeletingId: Int?
+
     // MARK: - Dependencies
 
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
@@ -76,11 +83,15 @@ final class ProfileViewModel {
     private let deletePharmacyUseCase: DeletePharmacyUseCaseProtocol
     private let removePharmacistUseCase: RemovePharmacistUseCaseProtocol
     private let invitePharmacistUseCase: InvitePharmacistUseCaseProtocol
+    private let fetchPendingInvitationsUseCase: FetchPendingPharmacyInvitationsUseCaseProtocol
+    private let deletePendingInvitationUseCase: DeletePendingPharmacyInvitationUseCaseProtocol
     private let updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol
     private let logoutUseCase: LogoutUseCaseProtocol
     private let goOnDutyUseCase: GoOnDutyUseCaseProtocol
     private let goOffDutyUseCase: GoOffDutyUseCaseProtocol
     private let sessionSettings: PharmacySessionSettings
+    private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
+    private let dutyStatusStore: DutyStatusStore
 
     let languageManager: LanguageManager
     private let appSettings: PharmacyAppSettings
@@ -96,6 +107,7 @@ final class ProfileViewModel {
     var onPresentSheet: ((ProfileSheet) -> Void)?
     var onLoggedOut: (() -> Void)?
     var onPharmacistRemoved: (() -> Void)?
+    var onPendingInvitationDeleted: (() -> Void)?
 
     // MARK: - Init
 
@@ -107,11 +119,15 @@ final class ProfileViewModel {
         deletePharmacyUseCase: DeletePharmacyUseCaseProtocol,
         removePharmacistUseCase: RemovePharmacistUseCaseProtocol,
         invitePharmacistUseCase: InvitePharmacistUseCaseProtocol,
+        fetchPendingInvitationsUseCase: FetchPendingPharmacyInvitationsUseCaseProtocol,
+        deletePendingInvitationUseCase: DeletePendingPharmacyInvitationUseCaseProtocol,
         updatePharmacistUseCase: UpdatePharmacistUseCaseProtocol,
         logoutUseCase: LogoutUseCaseProtocol,
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
         goOffDutyUseCase: GoOffDutyUseCaseProtocol,
         sessionSettings: PharmacySessionSettings,
+        sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
+        dutyStatusStore: DutyStatusStore,
         languageManager: LanguageManager,
         appSettings: PharmacyAppSettings
     ) {
@@ -122,6 +138,8 @@ final class ProfileViewModel {
         self.deletePharmacyUseCase = deletePharmacyUseCase
         self.removePharmacistUseCase = removePharmacistUseCase
         self.invitePharmacistUseCase = invitePharmacistUseCase
+        self.fetchPendingInvitationsUseCase = fetchPendingInvitationsUseCase
+        self.deletePendingInvitationUseCase = deletePendingInvitationUseCase
         self.updatePharmacistUseCase = updatePharmacistUseCase
         self.logoutUseCase = logoutUseCase
         self.goOnDutyUseCase = goOnDutyUseCase
@@ -130,6 +148,8 @@ final class ProfileViewModel {
         self.languageManager = languageManager
         self.appSettings = appSettings
         self.isOnDuty = sessionSettings.isOnDuty
+        self.sendHeartbeatUseCase = sendHeartbeatUseCase
+        self.dutyStatusStore = dutyStatusStore
     }
 
     // MARK: - Computed Props
@@ -184,6 +204,7 @@ final class ProfileViewModel {
                 address: profile.pharmacyAddress
             )
             self.state = .loaded
+            await syncPresenceStatus()
         } catch {
             if case NetworkError.unauthorized = error {
                 onLoggedOut?()
@@ -396,8 +417,9 @@ final class ProfileViewModel {
             )
             isInvitingPharmacist = false
             inviteEmail = ""
+            await loadPendingInvitations(showsSpinner: false)
             onNavigate?(.inviteSuccess(InviteSuccessInfo(
-                email: invitation.invitedEmail,
+                email: invitation.invitedEmail ?? trimmedEmail,
                 pharmacyName: invitation.pharmacyName
             )))
             return true
@@ -411,6 +433,44 @@ final class ProfileViewModel {
     func resetInviteForm() {
         inviteEmail = ""
         inviteErrorMessage = nil
+    }
+
+    func loadPendingInvitations(showsSpinner: Bool = true) async {
+        guard
+            let pharmacyId = profile?.pharmacyId,
+            profile?.isPharmacyAdmin == true
+        else { return }
+
+        if showsSpinner { isLoadingPendingInvitations = true }
+        pendingInvitationsErrorMessage = nil
+        do {
+            pendingInvitations = try await fetchPendingInvitationsUseCase.execute(pharmacyId: pharmacyId)
+            isLoadingPendingInvitations = false
+        } catch {
+            isLoadingPendingInvitations = false
+            pendingInvitationsErrorMessage = Self.userFacingMessage(for: error)
+        }
+    }
+
+    func didTapPendingInvitation(_ invitation: PharmacyInvitation) {
+        selectedPendingInvitation = invitation
+        onNavigate?(.pendingInvitationDetail(invitation))
+    }
+
+    func deletePendingInvitation(_ invitation: PharmacyInvitation) async {
+        selectedPendingInvitation = invitation
+        pendingInvitationDeletingId = invitation.id
+        pendingInvitationsErrorMessage = nil
+        do {
+            try await deletePendingInvitationUseCase.execute(id: invitation.id)
+            pendingInvitations.removeAll { $0.id == invitation.id }
+            pendingInvitationDeletingId = nil
+            selectedPendingInvitation = nil
+            onPendingInvitationDeleted?()
+        } catch {
+            pendingInvitationDeletingId = nil
+            pendingInvitationsErrorMessage = Self.userFacingMessage(for: error)
+        }
     }
 
     // MARK: - Navigation
@@ -493,6 +553,7 @@ final class ProfileViewModel {
             }
             isOnDuty = status.onDuty
             sessionSettings.updateDutyStatus(status.onDuty)
+            dutyStatusStore.isOnDuty = status.onDuty
             presenceToastMessage = isOnDuty ? "profile.presence.toast.on".localized : "profile.presence.toast.off".localized
             showPresenceToast = true
             Task {
@@ -513,6 +574,24 @@ final class ProfileViewModel {
 
     // MARK: - Heartbeat
 
+    private func syncPresenceStatus() async {
+        do {
+            let status = try await sendHeartbeatUseCase.execute()
+            isOnDuty = status.onDuty
+            dutyStatusStore.isOnDuty = status.onDuty
+            if status.onDuty {
+                startHeartbeat()
+            } else {
+                stopHeartbeat()
+            }
+        } catch {
+            isOnDuty = dutyStatusStore.isOnDuty
+            if isOnDuty {
+                startHeartbeat()
+            }
+        }
+    }
+
     /// Starts a repeating 30-second heartbeat that keeps the pharmacist's
     /// on-duty status alive on the server.
     private func startHeartbeat() {
@@ -521,7 +600,12 @@ final class ProfileViewModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(30))
                 guard !Task.isCancelled, self?.isOnDuty == true else { break }
-                _ = try? await self?.goOnDutyUseCase.execute()
+                if let status = try? await self?.sendHeartbeatUseCase.execute() {
+                    await MainActor.run {
+                        self?.isOnDuty = status.onDuty
+                        self?.dutyStatusStore.isOnDuty = status.onDuty
+                    }
+                }
             }
         }
     }

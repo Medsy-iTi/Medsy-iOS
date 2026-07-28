@@ -65,15 +65,20 @@ final class PharmacyOrdersViewModel {
 		orders.count
 	}
 
-	var deliveredOrdersCount: Int {
-		orders.filter { $0.status == .delivered }.count
-	}
 	var newOrdersCount: Int {
 		orders.filter { $0.status == .new }.count
 	}
 
-	var preparingOrdersCount: Int {
-		orders.filter { $0.status == .preparing }.count
+	var pendingApprovalOrdersCount: Int {
+		orders.filter { $0.status == .pendingApproval }.count
+	}
+
+	var expiredOrdersCount: Int {
+		orders.filter { $0.status == .expired }.count
+	}
+
+	var completedOrdersCount: Int {
+		orders.filter { $0.status == .completed }.count
 	}
 	func loadInitial() async {
 		guard loadState != .loading else { return }
@@ -89,9 +94,9 @@ final class PharmacyOrdersViewModel {
 			isLastPage = page.isLastPage
 			loadState = .loaded
 		} catch let error as PharmacyOrdersResolutionError {
-			loadState = .failed(error.errorDescription ?? "Something went wrong.")
+			loadState = .failed(error.errorDescription ?? "common.somethingWentWrong".localized)
 		} catch {
-			loadState = .failed((error as? NetworkError)?.errorDescription ?? "Something went wrong.")
+			loadState = .failed((error as? NetworkError)?.errorDescription ?? "common.somethingWentWrong".localized)
 		}
 
 	}
@@ -150,8 +155,9 @@ final class PharmacyOrdersViewModel {
 		switch selectedFilter {
 			case .all: true
 			case .new: order.status == .new
-			case .preparing: order.status == .preparing
-			case .delivered: order.status == .delivered
+			case .pendingApproval: order.status == .pendingApproval
+			case .expired: order.status == .expired
+			case .completed: order.status == .completed
 		}
 	}
 

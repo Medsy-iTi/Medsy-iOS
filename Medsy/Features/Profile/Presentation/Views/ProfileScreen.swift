@@ -17,9 +17,11 @@ struct ProfileScreen: View {
     let email: String
     let homeAddress: String
     let dateOfBirthText: String
+    let hasDeliveryLocation: Bool
     let state: ProfileViewState
     let onRetry: () -> Void
     let onEditProfile: () -> Void
+    let onAddDeliveryLocation: () -> Void
     let onLanguage: () -> Void
     let onTheme: () -> Void
     let onOrders: () -> Void
@@ -102,6 +104,10 @@ struct ProfileScreen: View {
         state == .idle || state == .loading
     }
 
+    private var shouldShowDeliveryLocationCard: Bool {
+        !hasDeliveryLocation
+    }
+
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -113,6 +119,9 @@ struct ProfileScreen: View {
                     header
 
                     VStack(spacing: 20) {
+                        if shouldShowDeliveryLocationCard {
+                            ProfileDeliveryLocationCard(onTap: onAddDeliveryLocation)
+                        }
                         stateContent
                         ProfileSectionView(titleKey: "profile.section.account", rows: accountRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.preferences", rows: preferenceRows, onSelect: handleRowSelection)
@@ -252,9 +261,10 @@ struct ProfileScreen: View {
         email: "customer@dawanow.com",
         homeAddress: "Cairo, Egypt",
         dateOfBirthText: "Jun 15, 1995",
+        hasDeliveryLocation: true,
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
+        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }
@@ -295,6 +305,52 @@ private struct ProfileDetailsCard: View {
                     .stroke(ProfileStyle.border, lineWidth: 1)
             }
         }
+    }
+}
+
+private struct ProfileDeliveryLocationCard: View {
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(ProfileStyle.green.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                    .overlay {
+                        Image(systemName: "mappin.and.ellipse")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(ProfileStyle.green)
+                    }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("profile.delivery_location.title".localized)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(ProfileStyle.primaryText)
+
+                    Text("profile.delivery_location.subtitle".localized)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(ProfileStyle.secondaryText)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(ProfileStyle.primaryText)
+                    .flipsForRightToLeftLayoutDirection(true)
+            }
+            .padding(14)
+            .background(ProfileStyle.green.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(ProfileStyle.green.opacity(0.35), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 

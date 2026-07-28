@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PharmacyCustomerInfoCard: View {
     let orderId: String
-    let minutesAgo: Int
+    let createdAt: Date
     let customer: PharmacyCustomerInfo
     let onContact: () -> Void
     var onLocationTap: (() -> Void)? = nil
@@ -23,7 +23,7 @@ struct PharmacyCustomerInfoCard: View {
 
                 Spacer()
 
-                Text("pharmacy.request.min_ago".localized(minutesAgo))
+                Text(createdAt.relativeTimeString)
                     .font(PharmacyColor.sans(13, .regular))
                     .foregroundStyle(PharmacyColor.textSecondary)
             }
@@ -50,7 +50,7 @@ struct PharmacyCustomerInfoCard: View {
             }
 
             HStack(alignment: .center) {
-                Text(customer.address.isEmpty ? "string" : customer.address)
+                Text(customer.address.isEmpty ? "pharmacy.orders.address.placeholder".localized : customer.address)
                     .font(PharmacyColor.sans(14, .regular))
                     .foregroundStyle(PharmacyColor.textSecondary)
                     .lineLimit(2)

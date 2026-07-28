@@ -51,6 +51,7 @@ enum AppColor {
     static let successGreen = Color(hex: "#22C55E")
     static let errorRed = Color(hex: "#EF4444")
     static let warningYellow = Color(hex: "#F59E0B")
+    static let badgePurple = Color(hex: "#6366F1")
     
     static var pill: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
     static var pillSel: Color { green }

@@ -12,7 +12,7 @@ struct PharmacyOrdersView: View {
 	let coordinator: PharmacyOrdersCoordinator
 
 	init(viewModel: PharmacyOrdersViewModel, coordinator: PharmacyOrdersCoordinator) {
-		self.viewModel = viewModel
+		self._viewModel = State(initialValue: viewModel)
 		self.coordinator = coordinator
 	}
 
@@ -21,10 +21,12 @@ struct PharmacyOrdersView: View {
 			LazyVStack(spacing: PharmacySpacing.sm) {
 				PharmacyOrdersHeaderView()
 				PharmacyOrdersFilterBar(
-					selection: $viewModel.selectedFilter, allCount: viewModel.allOrdersCount,
-					newCount: viewModel.deliveredOrdersCount,
-					preparingCount: viewModel.newOrdersCount,
-					deliveredCount: viewModel.preparingOrdersCount
+					selection: $viewModel.selectedFilter,
+					allCount: viewModel.allOrdersCount,
+					newCount: viewModel.newOrdersCount,
+					pendingApprovalCount: viewModel.pendingApprovalOrdersCount,
+					expiredCount: viewModel.expiredOrdersCount,
+					completedCount: viewModel.completedOrdersCount
 				)
 				PharmacyOrderSearchField(text: $viewModel.searchText, onClear: viewModel.clearSearch)
 
@@ -36,8 +38,9 @@ struct PharmacyOrdersView: View {
 					case .failed(let message):
 						VStack {
 							Spacer()
-							ErrorStateView(
-								icon: "exclamationmark.triangle",
+							PharmacyEmptyStateView(
+								lottieName: "no_data_found",
+								title: "pharmacy.orders.error.title".localized,
 								message: message,
 								retryTitle: "common.retry".localized,
 								onRetry: { Task { await viewModel.loadInitial() } }
@@ -50,18 +53,28 @@ struct PharmacyOrdersView: View {
 						if viewModel.orders.isEmpty {
 							VStack {
 								Spacer()
-								ErrorStateView(
-									icon: "tray",
-									message: "pharmacy.orders.noData".localized,
+								PharmacyEmptyStateView(
+									lottieName: "no_data_found",
+									title: "pharmacy.orders.empty.title".localized,
+									message: "pharmacy.orders.empty.message".localized,
 									retryTitle: "common.retry".localized,
 									onRetry: { Task { await viewModel.loadInitial() } }
 								)
 								Spacer()
 							}
 							.frame(minHeight: UIScreen.main.bounds.height * 0.6)
-						}else if viewModel.visibleOrders.isEmpty {
+						} else if viewModel.visibleOrders.isEmpty {
 								// Orders exist, but none match the current filter/search
-							PharmacyOrdersEmptyView()
+							VStack {
+								Spacer()
+								PharmacyEmptyStateView(
+									lottieName: "no_data_found",
+									title: "pharmacy.orders.noResults.title".localized,
+									message: "pharmacy.orders.noResults.message".localized
+								)
+								Spacer()
+							}
+							.frame(minHeight: UIScreen.main.bounds.height * 0.4)
 						} else {
 							ForEach(viewModel.visibleOrders) { order in
 								PharmacyOrderCard(order: order, onAction: {

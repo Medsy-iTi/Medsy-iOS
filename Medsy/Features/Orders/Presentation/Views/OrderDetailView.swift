@@ -13,7 +13,7 @@ struct OrderDetailView: View {
     let onRetry: () -> Void
     let onBack: () -> Void
     var onReorder: (() -> Void)? = nil
-    var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onSelectProduct: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
 
@@ -114,7 +114,6 @@ struct OrderDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.md) {
                     statusHeader(order: order)
-                    pharmacyCard(order: order)
                     itemsSection(order: order)
                     summaryCard(order: order)
                 }
@@ -181,47 +180,6 @@ struct OrderDetailView: View {
         .clipShape(Capsule())
     }
 
-    private func pharmacyCard(order: OrderDetailPresentationModel) -> some View {
-        Button {
-            onSelectPharmacy?(order.pharmacyId)
-        } label: {
-            HStack(spacing: MedsySpacing.sm) {
-            ZStack {
-                Circle()
-                    .fill(AppColor.lightGreen)
-                    .frame(width: 44, height: 44)
-                Image(systemName: "cross.vial.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(AppColor.green)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("orders.detail.pharmacy".localized)
-                    .font(AppColor.sans(12))
-                    .foregroundStyle(AppColor.textSec)
-                Text(order.pharmacyName)
-                    .font(AppColor.sans(15, .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-            }
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "chevron.forward")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AppColor.textSec)
-            }
-        }
-        .buttonStyle(.plain)
-        .padding(MedsySpacing.md)
-        .background(AppColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
-        )
-        .medsyCardShadow()
-    }
-
     private func itemsSection(order: OrderDetailPresentationModel) -> some View {
         VStack(alignment: .leading, spacing: MedsySpacing.xs) {
             Text("orders.detail.items_label".localized)
@@ -249,40 +207,44 @@ struct OrderDetailView: View {
     }
 
     private func itemRow(item: OrderDetailItemModel) -> some View {
-        HStack(alignment: .center, spacing: MedsySpacing.sm) {
-            RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
-                .fill(AppColor.lightGreen)
-                .frame(width: 48, height: 48)
-                .overlay(
-                    Image(systemName: "pills.fill")
-                        .font(.system(size: 22))
-                        .foregroundStyle(AppColor.green.opacity(0.7))
-                )
+        Button {
+            onSelectProduct?(item.productId)
+        } label: {
+            HStack(alignment: .center, spacing: MedsySpacing.sm) {
+                OrderProductImageView(imageURL: item.imageURL, size: 48)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(item.productName)
-                    .font(AppColor.sans(14, .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .lineLimit(2)
-
-                if let originalName = item.originalProductName {
-                    Text(String(format: "orders.detail.alternative_to".localized, originalName))
-                        .font(AppColor.sans(12, .medium))
-                        .foregroundStyle(AppColor.green)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.productName)
+                        .font(AppColor.sans(14, .semibold))
+                        .foregroundStyle(AppColor.textPrim)
                         .lineLimit(2)
+
+                    if let originalName = item.originalProductName {
+                        Text(String(format: "orders.detail.alternative_to".localized, originalName))
+                            .font(AppColor.sans(12, .medium))
+                            .foregroundStyle(AppColor.green)
+                            .lineLimit(2)
+                    }
+
+                    Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
+                        .font(AppColor.sans(12))
+                        .foregroundStyle(AppColor.textSec)
                 }
 
-                Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
-                    .font(AppColor.sans(12))
-                    .foregroundStyle(AppColor.textSec)
+                Spacer(minLength: 0)
+
+                VStack(alignment: .trailing, spacing: MedsySpacing.xxs) {
+                    Text(String(format: "orders.price_format".localized, item.unitPrice * Double(item.quantity)))
+                        .font(AppColor.sans(14, .semibold))
+                        .foregroundStyle(AppColor.textPrim)
+
+                    Image(systemName: "chevron.forward")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppColor.textSec)
+                }
             }
-
-            Spacer(minLength: 0)
-
-            Text(String(format: "orders.price_format".localized, item.unitPrice * Double(item.quantity)))
-                .font(AppColor.sans(14, .semibold))
-                .foregroundStyle(AppColor.textPrim)
         }
+        .buttonStyle(.plain)
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
     }
