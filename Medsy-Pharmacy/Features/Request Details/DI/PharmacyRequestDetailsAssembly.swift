@@ -24,6 +24,10 @@ struct PharmacyRequestDetailsAssembly: PharmacyModuleAssembly {
             SendOfferUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
         }
 
+        container.register(PrescriptionImageDataSource.self) { c in
+            PrescriptionImageDataSource(networkService: c.resolve(NetworkServiceProtocol.self))
+        }
+
         container.register(SearchProductsUseCaseProtocol.self) { c in
             SearchProductsUseCase(repository: c.resolve(PharmacyRequestsRepositoryProtocol.self))
         }

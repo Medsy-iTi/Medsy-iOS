@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PharmacyPrescriptionCard: View {
-    let imageUrl: String?
+    let uiImage: UIImage?
     let onEnlarge: () -> Void
 
     var body: some View {
@@ -23,27 +23,15 @@ struct PharmacyPrescriptionCard: View {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                     .fill(PharmacyColor.mutedSurface)
                     .frame(height: 150)
-                
-                if let imageUrlStr = imageUrl, let url = URL(string: imageUrlStr) {
-                    PharmacyAuthenticatedAsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 150)
-                            .clipped()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                } else {
-                    VStack(spacing: 8) {
-                        Image(systemName: "cross.case.circle.fill")
-                            .font(.system(size: 44))
-                            .foregroundStyle(PharmacyColor.primary.opacity(0.8))
 
-                        Text("pharmacy.request.prescription_handwritten".localized)
-                            .font(PharmacyColor.sans(14, .bold))
-                            .foregroundStyle(PharmacyColor.textPrimary)
-                    }
+                PharmacyAuthenticatedAsyncImage(uiImage: uiImage) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 150)
+                        .clipped()
+                } placeholder: {
+                    ProgressView()
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
