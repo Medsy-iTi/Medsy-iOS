@@ -68,7 +68,7 @@ struct PharmacyRequestDetailsView: View {
 
                         if model.wrappedValue.prescriptionImageUrl != nil {
                             PharmacyPrescriptionCard(
-                                imageUrl: model.wrappedValue.prescriptionImageUrl,
+                                uiImage: viewModel?.prescriptionUIImage,
                                 onEnlarge: {
                                     showFullPrescriptionImage = true
                                 }
@@ -131,26 +131,13 @@ struct PharmacyRequestDetailsView: View {
                 VStack {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        if let imageUrlStr = viewModel?.requestModel?.prescriptionImageUrl ?? requestModel?.prescriptionImageUrl,
-                           let url = URL(string: imageUrlStr) {
-                            PharmacyAuthenticatedAsyncImage(url: url) { image in
+                        PharmacyAuthenticatedAsyncImage(uiImage: viewModel?.prescriptionUIImage) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
                             } placeholder: {
                                 ProgressView()
                             }
-                        } else {
-                            VStack {
-                                Image(systemName: "doc.text.image.fill")
-                                    .font(.system(size: 80))
-                                    .foregroundStyle(.white.opacity(0.8))
-                                Text("pharmacy.request.preview_prescription".localized)
-                                    .font(PharmacyColor.sans(16, .bold))
-                                    .foregroundStyle(.white)
-                                    .padding(.top, 16)
-                            }
-                        }
                     }
                 }
                 .toolbar {
@@ -174,6 +161,7 @@ struct PharmacyRequestDetailsView: View {
                 if let model = viewModel.requestModel {
                     self.requestModel = model
                 }
+                await viewModel.loadPrescriptionImage()
             }
         }
     }

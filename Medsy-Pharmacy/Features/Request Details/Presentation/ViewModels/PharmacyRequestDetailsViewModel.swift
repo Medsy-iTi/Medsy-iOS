@@ -2,6 +2,7 @@
 
 import Foundation
 import Observation
+import UIKit
 
 @MainActor
 @Observable
@@ -25,6 +26,9 @@ final class PharmacyRequestDetailsViewModel {
 
     private let fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol?
     private let sendOfferUseCase: SendOfferUseCaseProtocol?
+    private let prescriptionImageDataSource: PrescriptionImageDataSource?
+
+    private(set) var prescriptionUIImage: UIImage? = nil
 
     var showBottomBar: Bool {
         true
@@ -54,12 +58,14 @@ final class PharmacyRequestDetailsViewModel {
     init(
         requestId: Int,
         fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol? = nil,
-        sendOfferUseCase: SendOfferUseCaseProtocol? = nil
+        sendOfferUseCase: SendOfferUseCaseProtocol? = nil,
+        prescriptionImageDataSource: PrescriptionImageDataSource? = nil
     ) {
         self.requestId = requestId
         self.orderStatus = .pending
         self.fetchRequestsUseCase = fetchRequestsUseCase
         self.sendOfferUseCase = sendOfferUseCase
+        self.prescriptionImageDataSource = prescriptionImageDataSource
         if PharmacySubmittedOffersStore.shared.contains(requestId) {
             self.isOfferSubmitted = true
         }
@@ -68,12 +74,14 @@ final class PharmacyRequestDetailsViewModel {
     init(
         order: PharmacyOrder,
         fetchRequestsUseCase: FetchPharmacyRequestsUseCaseProtocol? = nil,
-        sendOfferUseCase: SendOfferUseCaseProtocol? = nil
+        sendOfferUseCase: SendOfferUseCaseProtocol? = nil,
+        prescriptionImageDataSource: PrescriptionImageDataSource? = nil
     ) {
         self.requestId = order.id
         self.orderStatus = order.status
         self.fetchRequestsUseCase = fetchRequestsUseCase
         self.sendOfferUseCase = sendOfferUseCase
+        self.prescriptionImageDataSource = prescriptionImageDataSource
         self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
         self.state = .loaded
         if order.status != .pending || PharmacySubmittedOffersStore.shared.contains(order.id) {
@@ -94,6 +102,17 @@ final class PharmacyRequestDetailsViewModel {
         } catch {
             let errMsg = (error as? NetworkError)?.errorDescription ?? error.localizedDescription
             self.state = .failed(errMsg)
+        }
+    }
+
+    func loadPrescriptionImage() async {
+        guard let urlString = requestModel?.prescriptionImageUrl else { return }
+        let dataSource = prescriptionImageDataSource ?? PharmacyAppAssembler.shared.container.resolve(PrescriptionImageDataSource.self)
+        do {
+            let image = try await dataSource.fetchImage(urlString: urlString)
+            self.prescriptionUIImage = image
+        } catch {
+            print("[ViewModel] Failed to load prescription image: \(error)")
         }
     }
 
