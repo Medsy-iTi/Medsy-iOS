@@ -12,7 +12,7 @@ enum PharmacyConfiguration {
         guard let fileURL = Bundle.main.url(forResource: "PharmacySecrets", withExtension: "plist"),
               let data = try? Data(contentsOf: fileURL),
               let values = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-              let baseURL = values["AI_API_KEY"] as? String,
+              let baseURL = values["API_BASE_URL"] as? String,
               let url = URL(string: baseURL),
               let scheme = url.scheme,
               !scheme.isEmpty,
