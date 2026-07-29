@@ -9,11 +9,13 @@ struct CompletedOrderDetailsEntity: Identifiable {
     let id: Int
     let customerId: Int
     let customerName: String
-    let pharmacyId: Int
-    let pharmacyName: String
-    let pharmacyAddress: String
-    let pharmacyPhone: String
+    let customerNotes: String
+    let pharmacistNotes: String
+    let deliveryAddress: String
+    let phoneNumber: String
+    let prescriptionImage: String?
     let pharmacistName: String
+    let pharmacistPhone: String
     let offerId: Int?
     let subTotal: Double
     let deliveryFee: Double

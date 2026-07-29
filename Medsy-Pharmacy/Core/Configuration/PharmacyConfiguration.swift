@@ -23,6 +23,15 @@ enum PharmacyConfiguration {
         return baseURL.hasSuffix("/") ? baseURL : baseURL + "/"
     }()
 
+    static let imageBaseURL: String = {
+        guard let url = URL(string: apiBaseURL),
+              let scheme = url.scheme,
+              let host = url.host else {
+            return apiBaseURL
+        }
+        return "\(scheme)://\(host)/"
+    }()
+
     static let keychainService: String = {
         guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
             fatalError("Missing Pharmacy application bundle identifier")

@@ -35,18 +35,24 @@ struct PharmacyCustomerInfoCard: View {
 
                 Spacer()
 
-                Button(action: onContact) {
-                    ZStack {
-                        Circle()
-                            .fill(PharmacyColor.primarySoft)
-                            .frame(width: 36, height: 36)
+                HStack(spacing: PharmacySpacing.sm) {
+                    Text(customer.phone)
+                        .font(PharmacyColor.sans(14, .medium))
+                        .foregroundStyle(PharmacyColor.primary)
+                        
+                    Button(action: onContact) {
+                        ZStack {
+                            Circle()
+                                .fill(PharmacyColor.primarySoft)
+                                .frame(width: 36, height: 36)
 
-                        Image(systemName: "phone.fill")
-                            .font(.system(size: 14))
-                            .foregroundStyle(PharmacyColor.primary)
+                            Image(systemName: "phone.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(PharmacyColor.primary)
+                        }
                     }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
 
             HStack(alignment: .center) {

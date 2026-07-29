@@ -27,7 +27,7 @@ struct PharmacyCompletedOrderDetailView: View {
 
     private var navTitle: String {
         if case .loaded(let order) = state {
-            return String(format: "completed_order.order_number".localized, order.orderNumber)
+            return "completed_order.order_number".localized(String(order.orderNumber))
         }
         return "completed_order.title".localized
     }
@@ -49,19 +49,84 @@ struct PharmacyCompletedOrderDetailView: View {
     private func loadedView(order: CompletedOrderDetailPresentationModel) -> some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: PharmacySpacing.md) {
-                PharmacyOrderStatusHeaderView(
-                    customerName: order.customerName,
+                
+                PharmacyCustomerInfoCard(
+                    orderId: String(order.orderNumber),
                     createdAt: order.createdAt,
-                    hasDelivery: order.hasDelivery
+                    customer: PharmacyCustomerInfo(
+                        name: order.customerName,
+                        phone: order.customerPhone,
+                        address: order.deliveryAddress
+                    ),
+                    onContact: {
+                        if let url = URL(string: "tel://\(order.customerPhone)") {
+                            UIApplication.shared.open(url)
+                        }
+                    },
+                    onLocationTap: order.hasDelivery ? {
+                        if let lat = order.deliveryLatitude, let lon = order.deliveryLongitude {
+                            let urlString = "maps://?q=\(lat),\(lon)"
+                            if let url = URL(string: urlString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    } : nil
                 )
-                PharmacyOrderPharmacyInfoCard(
-                    pharmacyName: order.pharmacyName,
-                    pharmacyAddress: order.pharmacyAddress,
-                    pharmacyPhone: order.pharmacyPhone,
-                    pharmacistName: order.pharmacistName
+                
+                PharmacyOrderItemsCard(
+                    items: .constant(order.items.map { completedItem in
+                        PharmacyOrderItem(
+                            id: String(completedItem.id),
+                            productId: completedItem.productId,
+                            name: completedItem.productName,
+                            spec: "",
+                            quantity: completedItem.quantity,
+                            price: completedItem.unitPrice,
+                            imageName: nil,
+                            imageUrl: completedItem.imageUrl,
+                            isAvailable: true,
+                            selectedOfferProductId: 0,
+                            alternativeMedicine: nil,
+                            form: nil,
+                            strength: nil,
+                            packSize: nil
+                        )
+                    }),
+                    deliveryFee: order.deliveryFee,
+                    total: order.total,
+                    isOfferSubmitted: true,
+                    isEditable: false,
+                    onSelectAlternative: nil
                 )
-                PharmacyOrderItemsSection(items: order.items)
-                PharmacyOrderSummaryCard(
+                
+                if let imageUrlString = order.prescriptionImage, let url = URL(string: imageUrlString) {
+                    PharmacyPrescriptionCard(uiImage: nil, imageUrl: url) {
+                       
+                    }
+                }
+                
+                if !order.customerNotes.isEmpty {
+                    PharmacyCustomerNotesCard(notes: order.customerNotes)
+                }
+
+                if !order.pharmacistName.isEmpty {
+                    PharmacyPharmacistInfoCard(
+                        name: order.pharmacistName,
+                        phone: order.pharmacistPhone,
+                        onContact: {
+                            if let url = URL(string: "tel://\(order.pharmacistPhone)") {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    )
+                }
+
+                if !order.pharmacistNotes.isEmpty {
+                    PharmacyNotesForCustomerCard(text: .constant(order.pharmacistNotes))
+                        .disabled(true)
+                }
+
+                PharmacyMoneyDetailsCard(
                     subTotal: order.subTotal,
                     deliveryFee: order.deliveryFee,
                     total: order.total,
@@ -74,11 +139,3 @@ struct PharmacyCompletedOrderDetailView: View {
     }
 }
 
-#Preview {
-    PharmacyCompletedOrderDetailView(
-        state: .loaded(.mock),
-        onRetry: {},
-        onBack: {}
-    )
-    .environment(LanguageManager.shared)
-}

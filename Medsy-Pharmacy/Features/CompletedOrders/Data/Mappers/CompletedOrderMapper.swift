@@ -34,7 +34,9 @@ enum CompletedOrderMapper {
         CompletedOrder(
             id: dto.id,
             customerId: dto.customerId,
-            customerName: dto.customerName,
+            customerName: dto.customerName ?? "",
+            deliveryAddress: dto.deliveryAddress ?? "",
+            customerPhone: dto.phoneNumber ?? "",
             pharmacyId: dto.pharmacyId,
             pharmacyName: dto.pharmacyName,
             pharmacyAddress: dto.pharmacyAddress,
