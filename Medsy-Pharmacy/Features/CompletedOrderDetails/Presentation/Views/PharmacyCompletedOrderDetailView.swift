@@ -50,19 +50,16 @@ struct PharmacyCompletedOrderDetailView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: PharmacySpacing.md) {
                 
-                PharmacyCustomerInfoCard(
-                    orderId: String(order.orderNumber),
-                    createdAt: order.createdAt,
-                    customer: PharmacyCustomerInfo(
-                        name: order.customerName,
-                        phone: order.customerPhone,
-                        address: order.deliveryAddress
-                    ),
+                PharmacyContactInfoCard(
+                    headerStyle: .orderInfo(orderId: String(order.orderNumber), date: order.createdAt),
+                    name: order.customerName,
+                    phone: order.customerPhone,
                     onContact: {
                         if let url = URL(string: "tel://\(order.customerPhone)") {
                             UIApplication.shared.open(url)
                         }
                     },
+                    address: order.deliveryAddress,
                     onLocationTap: order.hasDelivery ? {
                         if let lat = order.deliveryLatitude, let lon = order.deliveryLongitude {
                             let urlString = "maps://?q=\(lat),\(lon)"
@@ -98,10 +95,11 @@ struct PharmacyCompletedOrderDetailView: View {
                     isEditable: false,
                     onSelectAlternative: nil
                 )
+
                 
                 if let imageUrlString = order.prescriptionImage, let url = URL(string: imageUrlString) {
                     PharmacyPrescriptionCard(uiImage: nil, imageUrl: url) {
-                       
+                        // Action for enlarging image can go here if needed
                     }
                 }
                 
@@ -110,7 +108,8 @@ struct PharmacyCompletedOrderDetailView: View {
                 }
 
                 if !order.pharmacistName.isEmpty {
-                    PharmacyPharmacistInfoCard(
+                    PharmacyContactInfoCard(
+                        headerStyle: .title("completed_order.pharmacist".localized),
                         name: order.pharmacistName,
                         phone: order.pharmacistPhone,
                         onContact: {

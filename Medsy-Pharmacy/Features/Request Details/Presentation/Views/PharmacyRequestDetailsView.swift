@@ -38,15 +38,16 @@ struct PharmacyRequestDetailsView: View {
                 )
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.md) {
-                        PharmacyCustomerInfoCard(
-                            orderId: model.wrappedValue.id,
-                            createdAt: model.wrappedValue.createdAt,
-                            customer: model.wrappedValue.customer,
+                        PharmacyContactInfoCard(
+                            headerStyle: .orderInfo(orderId: model.wrappedValue.id, date: model.wrappedValue.createdAt),
+                            name: model.wrappedValue.customer.name,
+                            phone: model.wrappedValue.customer.phone,
                             onContact: {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
                                     UIApplication.shared.open(url)
                                 }
                             },
+                            address: model.wrappedValue.customer.address,
                             onLocationTap: {
                                 if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude {
                                     if let url = URL(string: "maps://?q=\(lat),\(lon)") {
