@@ -16,9 +16,16 @@ enum CatalogAskMapper {
             ? .none
             : .catalogResult(sources: sources)
 
+        var finalAnswer = dto.answer
+        if let data = dto.answer.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+           let innerAnswer = json["answer"] as? String {
+            finalAnswer = innerAnswer
+        }
+
         return ChatMessage(
             id:         UUID().uuidString,
-            text:       dto.answer,
+            text:       finalAnswer,
             sender:     .ai,
             timestamp:  Date(),
             customCard: customCard

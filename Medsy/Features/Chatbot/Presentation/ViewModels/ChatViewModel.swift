@@ -55,6 +55,7 @@ final class ChatViewModel: ChatViewModelProtocol {
 
 
     func loadHistory() {
+        guard messages.isEmpty else { return }
         Task {
             do {
                 let history = try await fetchChatHistoryUseCase.execute()
