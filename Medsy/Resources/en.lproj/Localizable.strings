@@ -774,3 +774,13 @@
 "chatbot.demo.order.time_left"= "07:12 left";
 
 "chatbot.demo.alternative.message" = "Done ✓ By the way, a same-ingredient equivalent of Lipitor — Ator 20 mg — costs EGP 88 instead of 210. Want it in the request instead?";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "Medsy AI is thinking…";
+"chatbot.error.generic"        = "Something went wrong. Please try again.";
+"chatbot.error.dismiss"        = "Dismiss";
+"chatbot.sources.match"        = "✓ %d%% match";
+"chatbot.sources.eyebrow"      = "AI SUGGESTED";
+"chatbot.empty.title"          = "Ask Medsy AI";
+"chatbot.empty.subtitle"       = "Ask me about medications, symptoms, or your prescription.";
