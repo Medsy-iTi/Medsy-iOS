@@ -767,3 +767,13 @@
 "chatbot.demo.order.time_left"= "٧:١٢ متبقية";
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "ميدسي AI يفكر…";
+"chatbot.error.generic"        = "حدث خطأ ما. يرجى المحاولة مجدداً.";
+"chatbot.error.dismiss"        = "إغلاق";
+"chatbot.sources.match"        = "✓ %d%% تطابق";
+"chatbot.sources.eyebrow"      = "مقترح بالذكاء الاصطناعي";
+"chatbot.empty.title"          = "اسأل ميدسي AI";
+"chatbot.empty.subtitle"       = "اسألني عن الأدوية أو الأعراض أو وصفتك الطبية.";
