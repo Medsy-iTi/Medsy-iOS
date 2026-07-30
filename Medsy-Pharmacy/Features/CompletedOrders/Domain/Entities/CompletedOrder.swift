@@ -12,6 +12,8 @@ struct CompletedOrder: Identifiable, Equatable {
     let id: Int
     let customerId: Int
     let customerName: String
+    let deliveryAddress: String
+    let customerPhone: String
     let pharmacyId: Int
     let pharmacyName: String
     let pharmacyAddress: String
@@ -24,7 +26,6 @@ struct CompletedOrder: Identifiable, Equatable {
     let total: Double
     let deliveryLatitude: Double
     let deliveryLongitude: Double
-    /// Parsed by `CompletedOrderMapper` from the API's "yyyy-MM-dd" string.
     let createdAt: Date
     let items: [CompletedOrderItem]
 }

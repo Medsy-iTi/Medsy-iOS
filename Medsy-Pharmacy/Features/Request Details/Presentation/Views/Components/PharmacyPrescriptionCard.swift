@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PharmacyPrescriptionCard: View {
     let uiImage: UIImage?
+    var imageUrl: URL? = nil
     let onEnlarge: () -> Void
 
     var body: some View {
@@ -24,13 +25,36 @@ struct PharmacyPrescriptionCard: View {
                     .fill(PharmacyColor.mutedSurface)
                     .frame(height: 150)
 
-                PharmacyAuthenticatedAsyncImage(uiImage: uiImage) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 150)
-                        .clipped()
-                } placeholder: {
+                if let uiImage = uiImage {
+                    PharmacyAuthenticatedAsyncImage(uiImage: uiImage) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 150)
+                            .clipped()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                } else if let url = imageUrl {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 150)
+                                .clipped()
+                        case .failure:
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
+                                .foregroundStyle(PharmacyColor.textSecondary.opacity(0.3))
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                } else {
                     ProgressView()
                 }
             }

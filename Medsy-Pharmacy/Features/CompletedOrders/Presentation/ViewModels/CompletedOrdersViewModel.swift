@@ -70,7 +70,7 @@ final class CompletedOrdersViewModel {
                 pharmacyId: pharmacyId,
                 page: currentPage,
                 size: pageSize,
-                sort: ["createdAt,desc"]
+                sort: ["date,desc"]
             )
             orders = result.content
             isLastPage = result.isLast
@@ -96,7 +96,7 @@ final class CompletedOrdersViewModel {
                 pharmacyId: pharmacyId,
                 page: nextPage,
                 size: pageSize,
-                sort: ["createdAt,desc"]
+                sort: ["date,desc"]
             )
             orders.append(contentsOf: result.content)
             currentPage = nextPage

@@ -409,7 +409,7 @@
 "orders_load_error" = "We couldn't load your orders. Please try again.";
 "orders_retry" = "Retry";
 "completed_order.title" = "Order Details";
-"completed_order.order_number" = "Order #%d";
+"completed_order.order_number" = "Order #%@";
 "completed_order.customer" = "Customer";
 "completed_order.pharmacy" = "Pharmacy";
 "completed_order.pharmacy_address" = "Address";
@@ -425,6 +425,11 @@
 "completed_order.not_found" = "Order not found";
 "completed_order.fulfillment.delivery" = "Delivery";
 "completed_order.fulfillment.pickup" = "Pickup";
+"completed_order.call" = "Call";
+"completed_order.customer_notes" = "Customer Notes";
+"completed_order.delivery_address" = "Delivery Address";
+"completed_order.open_in_maps" = "Open in Maps";
+"completed_order.status_completed" = "Completed";
 /* Pharmacy Pending Invitations */
 "refresh" = "Refresh";
 "pharmacy_pending_invitations.title" = "Pending invitations";
