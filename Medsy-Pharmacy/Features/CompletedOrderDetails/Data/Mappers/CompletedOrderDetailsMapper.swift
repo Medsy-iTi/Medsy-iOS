@@ -1,5 +1,5 @@
 //
-//  CompletedOrderMapper.swift
+//  CompletedOrderDetailsMapper.swift
 //  Medsy
 //
 
@@ -17,12 +17,14 @@ enum CompletedOrderDetailsMapper {
         CompletedOrderDetailsEntity(
             id: dto.id,
             customerId: dto.customerId,
-            customerName: dto.customerName,
-            pharmacyId: dto.pharmacyId,
-            pharmacyName: dto.pharmacyName,
-            pharmacyAddress: dto.pharmacyAddress,
-            pharmacyPhone: dto.pharmacyPhone,
-            pharmacistName: dto.pharmacistName,
+            customerName: dto.customerName ?? "",
+            customerNotes: dto.customerNotes ?? "",
+            pharmacistNotes: dto.pharmacistNotes ?? "",
+            deliveryAddress: dto.deliveryAddress ?? "",
+            phoneNumber: dto.phoneNumber ?? "",
+            prescriptionImage: getFullUrl(dto.prescriptionUrl),
+            pharmacistName: dto.pharmacistName ?? "",
+            pharmacistPhone: dto.pharmacyPhone ?? "",
             offerId: dto.offerId,
             subTotal: dto.subTotal,
             deliveryFee: dto.deliveryFee,
@@ -34,7 +36,7 @@ enum CompletedOrderDetailsMapper {
         )
     }
 
-    private static func mapItem(_ dto: CompletedOrderItemDTO) -> CompletedOrderDetailsItemEntity {
+    private static func mapItem(_ dto: CompletedOrderDetailsItemDTO) -> CompletedOrderDetailsItemEntity {
         CompletedOrderDetailsItemEntity(
             id: dto.id,
             productId: dto.productId,
@@ -48,5 +50,12 @@ enum CompletedOrderDetailsMapper {
 
     private static func date(from string: String) -> Date {
         dateFormatter.date(from: string) ?? Date()
+    }
+
+    private static func getFullUrl(_ path: String?) -> String? {
+        guard let path = path, !path.isEmpty else { return nil }
+        if path.hasPrefix("http") { return path }
+        let cleanPath = path.hasPrefix("/") ? String(path.dropFirst()) : path
+        return PharmacyConfiguration.imageBaseURL + cleanPath
     }
 }

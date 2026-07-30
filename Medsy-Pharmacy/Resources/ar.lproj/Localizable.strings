@@ -408,7 +408,7 @@
 "orders_retry" = "إعادة المحاولة";
 
 "completed_order.title" = "تفاصيل الطلب";
-"completed_order.order_number" = "طلب #%d";
+"completed_order.order_number" = "طلب #%@";
 "completed_order.customer" = "العميل";
 "completed_order.pharmacy" = "الصيدلية";
 "completed_order.pharmacy_address" = "العنوان";
@@ -424,6 +424,11 @@
 "completed_order.not_found" = "الطلب غير موجود";
 "completed_order.fulfillment.delivery" = "توصيل";
 "completed_order.fulfillment.pickup" = "استلام من الصيدلية";
+"completed_order.call" = "اتصال";
+"completed_order.customer_notes" = "ملاحظات العميل";
+"completed_order.delivery_address" = "عنوان التوصيل";
+"completed_order.open_in_maps" = "فتح في الخرائط";
+"completed_order.status_completed" = "مكتمل";
 /* Pharmacy Pending Invitations */
 "refresh" = "تحديث";
 "pharmacy_pending_invitations.title" = "الدعوات المعلقة";

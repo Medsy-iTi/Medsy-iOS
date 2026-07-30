@@ -31,9 +31,9 @@ extension CompletedOrdersEndpoint: ApiEndpoint {
                 "page": page,
                 "size": size
             ]
-				
-              if !sort.isEmpty {
-                parameters["sort"] = sort
+
+            if let firstSort = sort.first {
+                parameters["sort"] = firstSort
             }
             return parameters
         }

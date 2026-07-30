@@ -96,9 +96,3 @@ extension CompletedOrderDetailsCoordinatorView {
     }
 }
 
-#Preview {
-    CompletedOrderDetailsCoordinatorView(
-        viewModel: CompletedOrderDetailViewModel(state: .loaded(.mock))
-    )
-    .environment(LanguageManager.shared)
-}

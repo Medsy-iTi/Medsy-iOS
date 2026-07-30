@@ -22,7 +22,9 @@ struct CompletedOrderItemDTO: Decodable {
 struct CompletedOrderDTO: Decodable {
     let id: Int
     let customerId: Int
-    let customerName: String
+    let customerName: String?
+    let deliveryAddress: String?
+    let phoneNumber: String?
     let pharmacyId: Int
     let pharmacyName: String
     let pharmacyAddress: String
@@ -37,6 +39,8 @@ struct CompletedOrderDTO: Decodable {
     let deliveryLongitude: Double
     let createdAt: String
     let items: [CompletedOrderItemDTO]
+    
+    
 }
 
 

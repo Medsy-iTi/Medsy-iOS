@@ -1,5 +1,5 @@
 //
-//  CompletedOrderEntityMapper.swift
+//  CompletedOrderDetailsEntityMapper.swift
 //  Medsy
 //
 
@@ -11,17 +11,21 @@ enum CompletedOrderDetailsEntityMapper {
             id: entity.id,
             orderNumber: entity.id,
             customerName: entity.customerName,
-            pharmacyId: entity.pharmacyId,
-            pharmacyName: entity.pharmacyName,
-            pharmacyAddress: entity.pharmacyAddress,
-            pharmacyPhone: entity.pharmacyPhone,
+            customerNotes: entity.customerNotes,
+            pharmacistNotes: entity.pharmacistNotes,
+            deliveryAddress: entity.deliveryAddress,
+            customerPhone: entity.phoneNumber,
+            prescriptionImage: entity.prescriptionImage,
             pharmacistName: entity.pharmacistName,
+            pharmacistPhone: entity.pharmacistPhone,
             createdAt: entity.createdAt,
             items: entity.items.map(mapItem),
             subTotal: entity.subTotal,
             deliveryFee: entity.deliveryFee,
             total: entity.total,
-            hasDelivery: entity.deliveryLatitude != nil || entity.deliveryLongitude != nil
+            hasDelivery: true,
+            deliveryLatitude: entity.deliveryLatitude,
+            deliveryLongitude: entity.deliveryLongitude
         )
     }
 
