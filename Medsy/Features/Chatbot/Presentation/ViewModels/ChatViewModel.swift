@@ -1,67 +1,129 @@
+
 //
 //  ChatViewModel.swift
 //  Medsy
-//
-//  Created by ITI_JETS on 23/07/2026.
 //
 
 import Foundation
 
 
+
+protocol ChatViewModelProtocol: AnyObject {
+    var messages: [ChatMessage] { get }
+    var inputText: String { get set }
+    var isLoading: Bool { get }
+    var errorMessage: String? { get }
+    var limit: Int { get set }
+    var onNavigateToDetails: ((String) -> Void)? { get set }
+    func loadHistory()
+    func sendMessage()
+    func dismissError()
+    func addToCart(source: AICatalogSource)
+}
+
+
 @MainActor
 @Observable
-final class ChatViewModel {
-    var messages: [ChatMessage] = []
-    var inputText: String = ""
-    var isLoading: Bool = false
-    var errorMessage: String?
+final class ChatViewModel: ChatViewModelProtocol {
 
-    private let sendMessageUseCase: SendMessageUseCaseProtocol
+
+
+    private(set) var messages:      [ChatMessage] = []
+    var inputText:                   String = ""
+    private(set) var isLoading:      Bool = false
+    private(set) var errorMessage:   String?
+    var limit: Int = 5
+    var onNavigateToDetails: ((String) -> Void)?
+
+
+    private let sendMessageUseCase:      SendMessageUseCaseProtocol
     private let fetchChatHistoryUseCase: FetchChatHistoryUseCaseProtocol
+    private let addCartItemUseCase:      AddCartItemUseCaseProtocol
+    private let languageManager:         LanguageManager
 
     init(
-        sendMessageUseCase: SendMessageUseCaseProtocol,
-        fetchChatHistoryUseCase: FetchChatHistoryUseCaseProtocol
+        sendMessageUseCase:      SendMessageUseCaseProtocol,
+        fetchChatHistoryUseCase: FetchChatHistoryUseCaseProtocol,
+        addCartItemUseCase:      AddCartItemUseCaseProtocol,
+        languageManager:         LanguageManager
     ) {
-        self.sendMessageUseCase = sendMessageUseCase
+        self.sendMessageUseCase      = sendMessageUseCase
         self.fetchChatHistoryUseCase = fetchChatHistoryUseCase
+        self.addCartItemUseCase      = addCartItemUseCase
+        self.languageManager         = languageManager
     }
+
 
     func loadHistory() {
         Task {
             do {
-                self.messages = try await fetchChatHistoryUseCase.execute()
+                let history = try await fetchChatHistoryUseCase.execute()
+                self.messages = history
             } catch {
-                self.errorMessage = error.localizedDescription
+
             }
         }
     }
 
     func sendMessage() {
         let trimmedText = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedText.isEmpty else { return }
-
+        guard !trimmedText.isEmpty, !isLoading else { return }
         let userMsg = ChatMessage(
-            id: UUID().uuidString,
-            text: trimmedText,
-            sender: .user,
-            timestamp: Date(),
+            id:         UUID().uuidString,
+            text:       trimmedText,
+            sender:     .user,
+            timestamp:  Date(),
             customCard: .none
         )
-        
         messages.append(userMsg)
         inputText = ""
         isLoading = true
+        errorMessage = nil
 
         Task {
             do {
-                let aiMsg = try await sendMessageUseCase.execute(text: trimmedText)
+                let currentLang = languageManager.languageCode
+                let aiMsg = try await sendMessageUseCase.execute(
+                    text:  trimmedText,
+                    lang:  currentLang,
+                    limit: limit
+                )
                 self.messages.append(aiMsg)
-                self.isLoading = false
             } catch {
-                self.errorMessage = error.localizedDescription
-                self.isLoading = false
+                self.errorMessage = localizedError(error)
             }
+            self.isLoading = false
+        }
+    }
+
+    func dismissError() {
+        errorMessage = nil
+    }
+
+    func addToCart(source: AICatalogSource) {
+        Task {
+            do {
+                let input = AddCartItemInput(
+                    productID: Int64(source.product.id), 
+                    quantity: 1, 
+                    dosageInfo: source.product.strength ?? ""
+                )
+                _ = try await addCartItemUseCase.execute(input: input)
+            } catch {
+                self.errorMessage = localizedError(error)
+            }
+        }
+    }
+
+
+    private func localizedError(_ error: Error) -> String {
+        switch error {
+        case NetworkError.validationError(let message):
+            return message.isEmpty ? "chatbot.error.generic".localized : message
+        case NetworkError.unauthorized:
+            return "chatbot.error.generic".localized
+        default:
+            return "chatbot.error.generic".localized
         }
     }
 }
