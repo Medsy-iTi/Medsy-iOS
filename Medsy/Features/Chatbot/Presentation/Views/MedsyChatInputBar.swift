@@ -8,17 +8,18 @@
 
 import SwiftUI
 
-/// Bottom message composer: camera button, text field with mic icon, send button.
+
 struct MedsyChatInputBar: View {
     @Binding var text: String
     var placeholder: String
 
     var accentColor: Color = MedsyTheme.default.primary
-    var fieldBackground: Color = Color(hex: "F1F2F4")
+    var fieldBackground: Color = MedsyTheme.default.surface
 
     var onSend: () -> Void = {}
     var onCamera: () -> Void = {}
     var onMic: () -> Void = {}
+    var disabled: Bool = false
 
     var body: some View {
         HStack(spacing: 10) {
@@ -44,14 +45,15 @@ struct MedsyChatInputBar: View {
             .background(fieldBackground)
             .clipShape(Capsule())
 
-            Button(action: onSend) {
+            Button(action: { if !disabled { onSend() } }) {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
                     .padding(12)
-                    .background(accentColor)
+                    .background(disabled ? Color.gray.opacity(0.4) : accentColor)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .disabled(disabled)
         }
     }
 }
