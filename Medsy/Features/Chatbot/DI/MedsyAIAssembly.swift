@@ -1,3 +1,4 @@
+
 //
 //  MedsyAIAssembly.swift
 //  Medsy
@@ -7,16 +8,25 @@
 
 
 import Foundation
-
 struct ChatbotAssembly: ModuleAssembly {
+
     func register(in container: DIContainer) {
-        
-        // MARK: - Repositories
-        container.register(ChatRepositoryProtocol.self) { _ in
-            ChatRepository()
+
+
+        container.register(CatalogAskDataSourceProtocol.self) { c in
+            CatalogAskDataSource(
+                networkService: c.resolve(NetworkServiceProtocol.self)
+            )
         }
 
-        // MARK: - Use Cases
+
+        container.register(ChatRepositoryProtocol.self) { c in
+            ChatRepositoryImpl(
+                dataSource: c.resolve(CatalogAskDataSourceProtocol.self)
+            )
+        }
+
+
         container.register(SendMessageUseCaseProtocol.self) { c in
             SendMessageUseCase(
                 repository: c.resolve(ChatRepositoryProtocol.self)
@@ -29,12 +39,13 @@ struct ChatbotAssembly: ModuleAssembly {
             )
         }
 
-        // MARK: - ViewModels
         container.register(ChatViewModel.self) { c in
             MainActor.assumeIsolated {
                 ChatViewModel(
-                    sendMessageUseCase: c.resolve(SendMessageUseCaseProtocol.self),
-                    fetchChatHistoryUseCase: c.resolve(FetchChatHistoryUseCaseProtocol.self)
+                    sendMessageUseCase:       c.resolve(SendMessageUseCaseProtocol.self),
+                    fetchChatHistoryUseCase:  c.resolve(FetchChatHistoryUseCaseProtocol.self),
+                    addCartItemUseCase:       c.resolve(AddCartItemUseCaseProtocol.self),
+                    languageManager:          c.resolve(LanguageManager.self)
                 )
             }
         }

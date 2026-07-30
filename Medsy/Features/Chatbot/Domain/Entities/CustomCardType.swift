@@ -12,4 +12,5 @@ enum CustomCardType: Sendable {
     case medicineSuggestion(medicine: Medicine)
     case alternativeMedicine(originalName: String, replacementName: String, savings: String)
     case reminder(medicineName: String, schedule: String)
+    case catalogResult(sources: [AICatalogSource])
 }
