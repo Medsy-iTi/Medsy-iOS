@@ -1,24 +1,31 @@
 //
-//  PharmacyRecentOrderRow.swift
-//  Medsy
-//
-//  Created by Ehab Salah on 18/07/2026.
+//  PharmacyRecentOrderItem.swift
+//  Medsy-Pharmacy
 //
 
 import SwiftUI
 
 struct PharmacyRecentOrderItem: View {
-    let order: PharmacyHomeOrder
+    let order: PharmacyHomeRecentOrder
 
     var body: some View {
         HStack(spacing: PharmacySpacing.sm) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("pharmacy.home.order_number".localized(order.id))
+                Text("pharmacy.home.order_number".localized(String(order.id)))
                     .font(PharmacyColor.sans(13, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
-                Text("pharmacy.home.minutes_ago".localized(order.minutesAgo))
+
+                Text(order.createdAt?.relativeTimeString ?? "pharmacy.home.date_unavailable".localized)
                     .font(PharmacyColor.sans(10, .medium))
                     .foregroundStyle(PharmacyColor.textSecondary)
+
+                Text(
+                    order.total,
+                    format: .currency(code: "EGP")
+                        .precision(.fractionLength(0...2))
+                )
+                .font(PharmacyColor.sans(11, .bold))
+                .foregroundStyle(PharmacyColor.success)
             }
 
             Spacer()
@@ -27,18 +34,22 @@ struct PharmacyRecentOrderItem: View {
                 Text(order.customerName)
                     .font(PharmacyColor.sans(13, .semibold))
                     .foregroundStyle(PharmacyColor.textPrimary)
+                    .lineLimit(1)
                 Text(order.address)
                     .font(PharmacyColor.sans(10, .medium))
                     .foregroundStyle(PharmacyColor.textSecondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.trailing)
             }
 
-            Text(order.status.titleKey.localized)
+            Text("pharmacy.orders.status.completed".localized)
                 .font(PharmacyColor.sans(10, .semibold))
-                .foregroundStyle(order.status.tint)
+                .foregroundStyle(PharmacyColor.success)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 5)
-                .background(order.status.tint.opacity(0.12), in: Capsule())
+                .background(PharmacyColor.success.opacity(0.12), in: Capsule())
         }
         .padding(PharmacySpacing.sm)
+        .accessibilityElement(children: .combine)
     }
 }
