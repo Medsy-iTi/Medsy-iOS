@@ -10,6 +10,7 @@ import SwiftUI
 struct PharmacyHeroCard: View {
     let pharmacyName: String
     let address: String
+    let pharmacyId: Int?
     let isOpen: Bool
 
     var body: some View {
@@ -43,17 +44,12 @@ struct PharmacyHeroCard: View {
                     .padding(.vertical, PharmacySpacing.xxs)
 
                 HStack {
-                    Label {
-                        Text("pharmacy.home.rating".localized + " " + "pharmacy.home.reviews".localized(256))
-                    } icon: {
-                        Image(systemName: "star.fill").foregroundStyle(PharmacyColor.warning)
-                    }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("pharmacy.home.pharmacy_number".localized)
                             .font(PharmacyColor.sans(10, .medium))
                             .foregroundStyle(PharmacyColor.textSecondary)
-                        Text("PH123456")
+                        Text(pharmacyId.map { "#\($0)" } ?? "—")
                             .font(PharmacyColor.sans(12, .bold))
                             .foregroundStyle(PharmacyColor.textPrimary)
                     }
