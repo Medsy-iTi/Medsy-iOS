@@ -114,8 +114,7 @@ private struct PharmacyAuthenticationRootView: View {
 		),
 		homeFactory: PharmacyHomeFactory(
 			getProfileUseCase: PreviewGetProfileUseCase(),
-			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
-			identityProvider: PreviewIdentityProvider(),
+			fetchDashboardUseCase: PreviewFetchDashboardUseCase(),
 			sessionSettings: PharmacySessionSettings()
 		),
 		ordersFactory: PharmacyOrdersFactory(
@@ -136,6 +135,19 @@ private struct PharmacyAuthenticationRootView: View {
 private struct PreviewFetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
 	func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
 		PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
+	}
+}
+
+private struct PreviewFetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol {
+	func execute(period: PharmacyDashboardPeriod) async throws -> PharmacyDashboard {
+		PharmacyDashboard(
+			totalRevenue: 0,
+			totalOrders: 0,
+			requestsReceived: 0,
+			offersCreated: 0,
+			topSellingProducts: [],
+			recentOrders: []
+		)
 	}
 }
 
