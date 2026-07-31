@@ -7,11 +7,28 @@
 
 struct PharmacyHomeAssembly: PharmacyModuleAssembly {
     func register(in container: PharmacyDIContainer) {
+        container.register(PharmacyDashboardRemoteDataSourceProtocol.self) { container in
+            PharmacyDashboardRemoteDataSource(
+                networkService: container.resolve(NetworkServiceProtocol.self)
+            )
+        }
+
+        container.register(PharmacyDashboardRepositoryProtocol.self) { container in
+            PharmacyDashboardRepository(
+                remoteDataSource: container.resolve(PharmacyDashboardRemoteDataSourceProtocol.self)
+            )
+        }
+
+        container.register(FetchPharmacyDashboardUseCaseProtocol.self) { container in
+            FetchPharmacyDashboardUseCase(
+                repository: container.resolve(PharmacyDashboardRepositoryProtocol.self)
+            )
+        }
+
         container.register(PharmacyHomeFactory.self) { container in
             PharmacyHomeFactory(
                 getProfileUseCase: container.resolve(GetPharmacyProfileUseCaseProtocol.self),
-                fetchOrdersUseCase: container.resolve(FetchPharmacyOrdersUseCaseProtocol.self),
-                identityProvider: container.resolve(PharmacyIdentityProviding.self),
+                fetchDashboardUseCase: container.resolve(FetchPharmacyDashboardUseCaseProtocol.self),
                 sessionSettings: container.resolve(PharmacySessionSettings.self)
             )
         }
