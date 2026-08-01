@@ -3,56 +3,198 @@
 //  Medsy-PharmacyTests
 //
 
+import Alamofire
 import XCTest
 @testable import Medsy_Pharmacy
 
+final class PharmacyDashboardContractTests: XCTestCase {
+    func testEndpointUsesAuthenticatedDashboardContractAndDisablesLogging() {
+        let endpoint = PharmacyDashboardEndpoint.fetch(period: .lastWeek)
+
+        XCTAssertEqual(endpoint.path, "pharmacies/dashboard")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertEqual(endpoint.queryParameters?["period"] as? String, "LAST_WEEK")
+        XCTAssertTrue(endpoint.requiresAuthentication)
+        XCTAssertFalse(endpoint.allowsResponseLogging)
+        XCTAssertNil(endpoint.body)
+    }
+
+    func testResponseDecodesAndMapsEveryDashboardSection() throws {
+        let json = """
+        {
+          "success": true,
+          "message": "ok",
+          "data": {
+            "totalRevenue": 1250.75,
+            "totalOrders": 12,
+            "requestsReceived": 18,
+            "offersCreated": 15,
+            "topSellingProducts": [{
+              "productId": 4,
+              "productName": "Pain Relief",
+              "imageUrl": "/images/product.png",
+              "totalQuantitySold": 9,
+              "totalRevenue": 720.5
+            }],
+            "recentOrders": [{
+              "id": 88,
+              "customerId": 7,
+              "customerName": "Customer",
+              "customerNotes": "Leave at reception",
+              "deliveryAddress": "10 Health Street",
+              "phoneNumber": "01000000000",
+              "prescriptionUrl": "/prescriptions/88.png",
+              "pharmacyId": 42,
+              "pharmacyName": "Live Pharmacy",
+              "pharmacyAddress": "20 Pharmacy Street",
+              "pharmacyPhone": "0200000000",
+              "pharmacistId": 3,
+              "pharmacistName": "Pharmacist",
+              "offerId": 19,
+              "subTotal": 100,
+              "deliveryFee": 10,
+              "total": 110,
+              "deliveryLatitude": 30.1,
+              "deliveryLongitude": 31.2,
+              "createdAt": "2026-07-30",
+              "items": [{
+                "id": 1,
+                "productId": 4,
+                "productName": "Pain Relief",
+                "imageUrl": "https://cdn.example.com/product.png",
+                "quantity": 2,
+                "unitPrice": 50,
+                "totalPrice": 100
+              }]
+            }]
+          }
+        }
+        """
+
+        let envelope = try JSONDecoder().decode(
+            PharmacyDashboardEnvelopeDTO.self,
+            from: Data(json.utf8)
+        )
+        let dto = try XCTUnwrap(envelope.data)
+        let dashboard = PharmacyDashboardMapper.map(dto)
+
+        XCTAssertEqual(dashboard.totalRevenue, 1250.75)
+        XCTAssertEqual(dashboard.totalOrders, 12)
+        XCTAssertEqual(dashboard.requestsReceived, 18)
+        XCTAssertEqual(dashboard.offersCreated, 15)
+
+        let product = try XCTUnwrap(dashboard.topSellingProducts.first)
+        XCTAssertEqual(product.productId, 4)
+        XCTAssertEqual(product.productName, "Pain Relief")
+        XCTAssertEqual(
+            product.imageUrl,
+            PharmacyConfiguration.imageBaseURL + "images/product.png"
+        )
+        XCTAssertEqual(product.totalQuantitySold, 9)
+        XCTAssertEqual(product.totalRevenue, 720.5)
+
+        let order = try XCTUnwrap(dashboard.recentOrders.first)
+        XCTAssertEqual(order.id, 88)
+        XCTAssertEqual(order.customerId, 7)
+        XCTAssertEqual(order.customerNotes, "Leave at reception")
+        XCTAssertEqual(order.deliveryFee, 10)
+        XCTAssertEqual(order.total, 110)
+        XCTAssertNotNil(order.createdAt)
+        XCTAssertEqual(order.items.first?.productName, "Pain Relief")
+        XCTAssertEqual(order.items.first?.imageUrl, "https://cdn.example.com/product.png")
+    }
+
+    func testMapperSupportsISO8601DatesAndRejectsInvalidDates() {
+        XCTAssertNotNil(PharmacyDashboardMapper.parseDate("2026-07-30T09:15:10Z"))
+        XCTAssertNotNil(PharmacyDashboardMapper.parseDate("2026-07-30T09:15:10.123Z"))
+        XCTAssertNil(PharmacyDashboardMapper.parseDate("not-a-date"))
+    }
+
+    func testRemoteDataSourceRejectsMissingDashboardData() async {
+        let service = DashboardNetworkService(
+            response: PharmacyDashboardEnvelopeDTO(
+                success: true,
+                message: "Missing dashboard",
+                data: nil
+            )
+        )
+        let dataSource = PharmacyDashboardRemoteDataSource(networkService: service)
+
+        do {
+            _ = try await dataSource.fetchDashboard(period: .lastMonth)
+            XCTFail("Expected missing data to fail")
+        } catch {
+            guard case NetworkError.validationError(let message) = error else {
+                return XCTFail("Expected validation error, got \(error)")
+            }
+            XCTAssertEqual(message, "Missing dashboard")
+        }
+    }
+}
+
 @MainActor
 final class PharmacyHomeViewModelTests: XCTestCase {
-    func testRefreshLoadsProfileAndFirstFourOrdersInServerOrder() async {
+    func testRefreshLoadsProfileAndDefaultLastMonthDashboard() async {
         let session = makeSession()
-        let orders = (1...6).map {
-            makeOrder(id: $0, customerName: "Customer \($0)", address: "Address \($0)")
+        let useCase = HomeDashboardUseCase { period in
+            XCTAssertEqual(period, .lastMonth)
+            return makeDashboard()
         }
-        let fetch = HomeOrdersUseCase(result: .success(
-            PharmacyOrdersPage(orders: orders, pageNumber: 0, totalPages: 2, isLastPage: false)
-        ))
-        let viewModel = makeViewModel(session: session, fetch: fetch)
+        let viewModel = makeViewModel(
+            session: session,
+            dashboardUseCase: useCase
+        )
 
         await viewModel.refresh()
 
+        XCTAssertEqual(viewModel.selectedPeriod, .lastMonth)
+        XCTAssertEqual(viewModel.dashboardState, .loaded)
+        XCTAssertEqual(viewModel.dashboard, makeDashboard())
+        XCTAssertEqual(viewModel.metrics.count, 4)
+        XCTAssertEqual(viewModel.topSellingProducts.map(\.id), [4])
+        XCTAssertEqual(viewModel.recentOrders.map(\.id), [88])
+        XCTAssertEqual(useCase.receivedPeriods, [.lastMonth])
+        XCTAssertEqual(session.currentPharmacyId, 42)
         XCTAssertEqual(session.pharmacyName, "Live Pharmacy")
-        XCTAssertEqual(session.pharmacyAddress, "10 Health Street")
-        XCTAssertEqual(viewModel.recentOrders.map(\.id), ["1", "2", "3", "4"])
-        XCTAssertEqual(fetch.receivedPage, 0)
-        XCTAssertEqual(fetch.receivedSize, 4)
-        XCTAssertEqual(viewModel.ordersState, .loaded)
     }
 
-    func testEmptyOrdersUsesEmptyState() async {
+    func testPeriodSelectionReloadsOnlyDashboard() async {
         let session = makeSession()
-        let fetch = HomeOrdersUseCase(result: .success(
-            PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
-        ))
-        let viewModel = makeViewModel(session: session, fetch: fetch)
+        let profileUseCase = HomeProfileUseCase(result: .success(makeProfile()))
+        let dashboardUseCase = HomeDashboardUseCase { _ in makeDashboard() }
+        let viewModel = PharmacyHomeViewModel(
+            getProfileUseCase: profileUseCase,
+            fetchDashboardUseCase: dashboardUseCase,
+            sessionSettings: session
+        )
+
+        await viewModel.refresh()
+        await viewModel.selectPeriod(.lastYear)
+
+        XCTAssertEqual(viewModel.selectedPeriod, .lastYear)
+        XCTAssertEqual(dashboardUseCase.receivedPeriods, [.lastMonth, .lastYear])
+        XCTAssertEqual(profileUseCase.callCount, 1)
+    }
+
+    func testNonAdminProfileShowsRestrictedStateWithoutDashboardRequest() async {
+        let dashboardUseCase = HomeDashboardUseCase { _ in makeDashboard() }
+        let viewModel = makeViewModel(
+            profileResult: .success(makeProfile(isAdmin: false)),
+            dashboardUseCase: dashboardUseCase
+        )
 
         await viewModel.refresh()
 
-        XCTAssertEqual(viewModel.ordersState, .empty)
-        XCTAssertTrue(viewModel.recentOrders.isEmpty)
+        XCTAssertEqual(viewModel.dashboardState, .restricted)
+        XCTAssertNil(viewModel.dashboard)
+        XCTAssertTrue(dashboardUseCase.receivedPeriods.isEmpty)
     }
 
-    func testProfileFailureDoesNotHideSuccessfulOrdersFromCachedPharmacy() async {
-        let session = makeSession()
-        session.currentPharmacyId = 42
-        let order = makeOrder(id: 9)
-        let fetch = HomeOrdersUseCase(result: .success(
-            PharmacyOrdersPage(orders: [order], pageNumber: 0, totalPages: 1, isLastPage: true)
-        ))
-        let viewModel = PharmacyHomeViewModel(
-            getProfileUseCase: HomeProfileUseCase(result: .failure(HomeTestError.failed)),
-            fetchOrdersUseCase: fetch,
-            identityProvider: session,
-            sessionSettings: session
+    func testProfileFailureStillAttemptsDashboardWhenRoleIsUnknown() async {
+        let dashboardUseCase = HomeDashboardUseCase { _ in makeDashboard() }
+        let viewModel = makeViewModel(
+            profileResult: .failure(HomeTestError.failed),
+            dashboardUseCase: dashboardUseCase
         )
 
         await viewModel.refresh()
@@ -60,49 +202,67 @@ final class PharmacyHomeViewModelTests: XCTestCase {
         guard case .failed = viewModel.profileState else {
             return XCTFail("Expected profile failure")
         }
-        XCTAssertEqual(viewModel.ordersState, .loaded)
-        XCTAssertEqual(viewModel.recentOrders.first?.sourceOrder, order)
+        XCTAssertEqual(viewModel.dashboardState, .loaded)
+        XCTAssertEqual(dashboardUseCase.receivedPeriods, [.lastMonth])
     }
 
-    func testOrdersFailureDoesNotDiscardSuccessfulProfile() async {
-        let session = makeSession()
+    func testDashboardFailureShowsRetryableFailure() async {
         let viewModel = makeViewModel(
-            session: session,
-            fetch: HomeOrdersUseCase(result: .failure(HomeTestError.failed))
+            dashboardUseCase: HomeDashboardUseCase { _ in
+                throw HomeTestError.failed
+            }
         )
 
         await viewModel.refresh()
 
-        XCTAssertEqual(viewModel.profileState, .loaded)
-        guard case .failed = viewModel.ordersState else {
-            return XCTFail("Expected orders failure")
+        guard case .failed = viewModel.dashboardState else {
+            return XCTFail("Expected dashboard failure")
         }
-        XCTAssertEqual(session.pharmacyName, "Live Pharmacy")
+        XCTAssertNil(viewModel.dashboard)
     }
 
-    func testAllAPIStatusesMapToSupportedHomeStatuses() {
-        let pendingApprovalId = 987_654
-        PharmacySubmittedOffersStore.shared.insert(pendingApprovalId)
+    func testSuccessfulEmptyArraysKeepLoadedStateAndIndependentEmptySections() async {
+        let emptyDashboard = PharmacyDashboard(
+            totalRevenue: 0,
+            totalOrders: 0,
+            requestsReceived: 0,
+            offersCreated: 0,
+            topSellingProducts: [],
+            recentOrders: []
+        )
+        let viewModel = makeViewModel(
+            dashboardUseCase: HomeDashboardUseCase { _ in emptyDashboard }
+        )
 
-        let cases: [(PharmacyOrderAPIStatus, Int, PharmacyOrderStatus)] = [
-            (.pending, 987_653, .new),
-            (.pending, pendingApprovalId, .pendingApproval),
-            (.accepted, 2, .preparing),
-            (.preparing, 3, .preparing),
-            (.outForDelivery, 4, .preparing),
-            (.delivered, 5, .delivered),
-            (.completed, 6, .completed),
-            (.cancelled, 7, .expired),
-            (.expired, 8, .expired),
-            (.unknown("NEW_SERVER_VALUE"), 9, .expired)
-        ]
+        await viewModel.refresh()
 
-        for (apiStatus, id, expected) in cases {
-            XCTAssertEqual(
-                PharmacyHomeOrder(order: makeOrder(id: id, status: apiStatus)).status,
-                expected
-            )
+        XCTAssertEqual(viewModel.dashboardState, .loaded)
+        XCTAssertTrue(viewModel.topSellingProducts.isEmpty)
+        XCTAssertTrue(viewModel.recentOrders.isEmpty)
+        XCTAssertEqual(viewModel.metrics.count, 4)
+    }
+
+    func testSlowerPreviousPeriodResponseCannotOverwriteLatestSelection() async {
+        let useCase = HomeDashboardUseCase { period in
+            if period == .lastDay {
+                try await Task.sleep(for: .milliseconds(120))
+                return makeDashboard(totalOrders: 1)
+            }
+            try await Task.sleep(for: .milliseconds(10))
+            return makeDashboard(totalOrders: 7)
         }
+        let viewModel = makeViewModel(dashboardUseCase: useCase)
+
+        let first = Task { await viewModel.selectPeriod(.lastDay) }
+        try? await Task.sleep(for: .milliseconds(15))
+        let second = Task { await viewModel.selectPeriod(.lastWeek) }
+
+        await first.value
+        await second.value
+
+        XCTAssertEqual(viewModel.selectedPeriod, .lastWeek)
+        XCTAssertEqual(viewModel.dashboard?.totalOrders, 7)
+        XCTAssertEqual(viewModel.dashboardState, .loaded)
     }
 
     func testDutyStatusPersistsAndClearRemovesAllSessionValues() {
@@ -126,14 +286,14 @@ final class PharmacyHomeViewModelTests: XCTestCase {
     }
 
     private func makeViewModel(
-        session: PharmacySessionSettings,
-        fetch: HomeOrdersUseCase
+        session: PharmacySessionSettings? = nil,
+        profileResult: Result<PharmacyProfile, Error> = .success(makeProfile()),
+        dashboardUseCase: HomeDashboardUseCase
     ) -> PharmacyHomeViewModel {
         PharmacyHomeViewModel(
-            getProfileUseCase: HomeProfileUseCase(result: .success(makeProfile())),
-            fetchOrdersUseCase: fetch,
-            identityProvider: session,
-            sessionSettings: session
+            getProfileUseCase: HomeProfileUseCase(result: profileResult),
+            fetchDashboardUseCase: dashboardUseCase,
+            sessionSettings: session ?? makeSession()
         )
     }
 
@@ -142,73 +302,122 @@ final class PharmacyHomeViewModelTests: XCTestCase {
             defaults: UserDefaults(suiteName: "PharmacyHomeTests.\(UUID().uuidString)")!
         )
     }
-
-    private func makeProfile() -> PharmacyProfile {
-        PharmacyProfile(
-            id: "1",
-            firstName: "Mona",
-            lastName: "Ali",
-            email: "mona@example.com",
-            phoneNumber: "01000000000",
-            pharmacyId: 42,
-            isPharmacyAdmin: true,
-            homeAddress: nil,
-            dateOfBirth: nil,
-            pharmacyName: "Live Pharmacy",
-            pharmacyAddress: "10 Health Street",
-            pharmacyPhoneNumber: nil,
-            pharmacyMembers: []
-        )
-    }
-
-    private func makeOrder(
-        id: Int,
-        status: PharmacyOrderAPIStatus = .pending,
-        customerName: String? = "Customer",
-        address: String = "Address"
-    ) -> PharmacyOrder {
-        PharmacyOrder(
-            id: id,
-            userId: id + 100,
-            pharmacyId: 42,
-            totalPrice: 100,
-            deliveryCoordinate: (30, 31),
-            status: status,
-            date: Date().addingTimeInterval(-300),
-            items: [],
-            deliveryAddress: address,
-            prescriptionUrl: nil,
-            customerName: customerName,
-            customerPhone: nil,
-            notes: nil
-        )
-    }
 }
 
 private enum HomeTestError: Error {
     case failed
 }
 
-private struct HomeProfileUseCase: GetPharmacyProfileUseCaseProtocol {
+private final class HomeProfileUseCase: GetPharmacyProfileUseCaseProtocol {
     let result: Result<PharmacyProfile, Error>
+    private(set) var callCount = 0
 
-    func execute() async throws -> PharmacyProfile {
-        try result.get()
-    }
-}
-
-private final class HomeOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
-    let result: Result<PharmacyOrdersPage, Error>
-    private(set) var receivedPage: Int?
-    private(set) var receivedSize: Int?
-
-    init(result: Result<PharmacyOrdersPage, Error>) {
+    init(result: Result<PharmacyProfile, Error>) {
         self.result = result
     }
 
-    func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
-        receivedPage = page
-        receivedSize = size
+    func execute() async throws -> PharmacyProfile {
+        callCount += 1
         return try result.get()
     }
+}
+
+private final class HomeDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol {
+    private let action: (PharmacyDashboardPeriod) async throws -> PharmacyDashboard
+    private(set) var receivedPeriods: [PharmacyDashboardPeriod] = []
+
+    init(action: @escaping (PharmacyDashboardPeriod) async throws -> PharmacyDashboard) {
+        self.action = action
+    }
+
+    func execute(period: PharmacyDashboardPeriod) async throws -> PharmacyDashboard {
+        receivedPeriods.append(period)
+        return try await action(period)
+    }
+}
+
+private struct DashboardNetworkService: NetworkServiceProtocol {
+    let response: PharmacyDashboardEnvelopeDTO
+
+    func request<T: Decodable>(endpoint: ApiEndpoint) async throws -> T {
+        guard let typedResponse = response as? T else {
+            throw NetworkError.decodingFailed
+        }
+        return typedResponse
+    }
+
+    func requestData(endpoint: ApiEndpoint) async throws -> Data {
+        throw NetworkError.decodingFailed
+    }
+}
+
+private func makeProfile(isAdmin: Bool = true) -> PharmacyProfile {
+    PharmacyProfile(
+        id: "1",
+        firstName: "Mona",
+        lastName: "Ali",
+        email: "mona@example.com",
+        phoneNumber: "01000000000",
+        pharmacyId: 42,
+        isPharmacyAdmin: isAdmin,
+        homeAddress: nil,
+        dateOfBirth: nil,
+        pharmacyName: "Live Pharmacy",
+        pharmacyAddress: "10 Health Street",
+        pharmacyPhoneNumber: nil,
+        pharmacyMembers: []
+    )
+}
+
+private func makeDashboard(totalOrders: Int = 12) -> PharmacyDashboard {
+    PharmacyDashboard(
+        totalRevenue: 1_250.75,
+        totalOrders: totalOrders,
+        requestsReceived: 18,
+        offersCreated: 15,
+        topSellingProducts: [
+            PharmacyDashboardTopSellingProduct(
+                productId: 4,
+                productName: "Pain Relief",
+                imageUrl: "https://cdn.example.com/product.png",
+                totalQuantitySold: 9,
+                totalRevenue: 720.5
+            )
+        ],
+        recentOrders: [
+            PharmacyDashboardRecentOrder(
+                id: 88,
+                customerId: 7,
+                customerName: "Customer",
+                customerNotes: "Leave at reception",
+                deliveryAddress: "10 Health Street",
+                phoneNumber: "01000000000",
+                prescriptionUrl: nil,
+                pharmacyId: 42,
+                pharmacyName: "Live Pharmacy",
+                pharmacyAddress: "20 Pharmacy Street",
+                pharmacyPhone: "0200000000",
+                pharmacistId: 3,
+                pharmacistName: "Pharmacist",
+                offerId: 19,
+                subTotal: 100,
+                deliveryFee: 10,
+                total: 110,
+                deliveryLatitude: 30.1,
+                deliveryLongitude: 31.2,
+                createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+                items: [
+                    PharmacyDashboardRecentOrderItem(
+                        id: 1,
+                        productId: 4,
+                        productName: "Pain Relief",
+                        imageUrl: nil,
+                        quantity: 2,
+                        unitPrice: 50,
+                        totalPrice: 100
+                    )
+                ]
+            )
+        ]
+    )
 }

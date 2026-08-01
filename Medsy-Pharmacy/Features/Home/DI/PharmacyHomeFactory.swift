@@ -9,19 +9,16 @@ import SwiftUI
 
 struct PharmacyHomeFactory {
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
-    private let fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol
-    private let identityProvider: PharmacyIdentityProviding
+    private let fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol
     let sessionSettings: PharmacySessionSettings
 
     init(
         getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
-        fetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol,
-        identityProvider: PharmacyIdentityProviding,
+        fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol,
         sessionSettings: PharmacySessionSettings
     ) {
         self.getProfileUseCase = getProfileUseCase
-        self.fetchOrdersUseCase = fetchOrdersUseCase
-        self.identityProvider = identityProvider
+        self.fetchDashboardUseCase = fetchDashboardUseCase
         self.sessionSettings = sessionSettings
     }
 
@@ -29,8 +26,7 @@ struct PharmacyHomeFactory {
     func makeViewModel() -> PharmacyHomeViewModel {
         PharmacyHomeViewModel(
             getProfileUseCase: getProfileUseCase,
-            fetchOrdersUseCase: fetchOrdersUseCase,
-            identityProvider: identityProvider,
+            fetchDashboardUseCase: fetchDashboardUseCase,
             sessionSettings: sessionSettings
         )
     }
@@ -38,12 +34,14 @@ struct PharmacyHomeFactory {
     @MainActor
     func makeView(
         viewModel: PharmacyHomeViewModel,
-        onViewAllOrders: @escaping () -> Void
+        onSelectRecentOrder: @escaping (Int) -> Void,
+        onViewAllCompletedOrders: @escaping () -> Void
     ) -> PharmacyHomeView {
         PharmacyHomeView(
             viewModel: viewModel,
             sessionSettings: sessionSettings,
-            onViewAllOrders: onViewAllOrders
+            onSelectRecentOrder: onSelectRecentOrder,
+            onViewAllCompletedOrders: onViewAllCompletedOrders
         )
     }
 }

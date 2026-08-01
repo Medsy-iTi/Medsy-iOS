@@ -175,7 +175,4 @@ extension PharmacyRequestDetailsModel {
         )
     }
 
-    init(homeOrder: PharmacyHomeOrder) {
-        self.init(order: homeOrder.sourceOrder)
-    }
 }

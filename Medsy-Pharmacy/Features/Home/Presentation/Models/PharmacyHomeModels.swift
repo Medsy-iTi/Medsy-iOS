@@ -2,84 +2,53 @@
 //  PharmacyHomeModels.swift
 //  Medsy-Pharmacy
 //
-//  Created by Ehab Salah on 18/07/2026.
-//
 
 import SwiftUI
 
+enum PharmacyHomeMetricValue {
+    case count(Int)
+    case revenue(Double)
+}
+
 struct PharmacyHomeMetric: Identifiable {
-    let id = UUID()
     let titleKey: String
-    let value: String
+    let value: PharmacyHomeMetricValue
     let icon: String
     let tint: Color
+
+    var id: String { titleKey }
 }
 
-enum PharmacyOrderStatus: Equatable {
-    case new
-    case preparing
-    case delivered
-    case completed
-    case expired
-    case pendingApproval
+struct PharmacyHomeTopProduct: Identifiable {
+    let id: Int
+    let name: String
+    let imageUrl: URL?
+    let quantitySold: Int
+    let revenue: Double
 
-    var titleKey: String {
-        switch self {
-        case .new: "pharmacy.home.order_new"
-        case .preparing: "pharmacy.home.order_preparing"
-        case .delivered: "pharmacy.home.order_delivered"
-        case .completed: "pharmacy.orders.status.completed"
-        case .expired: "pharmacy.orders.status.expired"
-        case .pendingApproval: "pharmacy.orders.status.pending"
-        }
-    }
-
-    var tint: Color {
-        switch self {
-        case .new: PharmacyColor.primary
-        case .preparing: PharmacyColor.secondary
-        case .delivered: PharmacyColor.success
-        case .completed: PharmacyColor.success
-        case .expired: PharmacyColor.danger
-        case .pendingApproval: PharmacyColor.warning
-        }
+    init(product: PharmacyDashboardTopSellingProduct) {
+        id = product.productId
+        name = product.productName ?? "pharmacy.home.product_unavailable".localized
+        imageUrl = product.imageUrl.flatMap(URL.init(string:))
+        quantitySold = product.totalQuantitySold
+        revenue = product.totalRevenue
     }
 }
 
-struct PharmacyHomeOrder: Identifiable {
-    let id: String
+struct PharmacyHomeRecentOrder: Identifiable {
+    let id: Int
     let customerName: String
     let address: String
-    let minutesAgo: Int
-    let status: PharmacyOrderStatus
-    let sourceOrder: PharmacyOrder
+    let createdAt: Date?
+    let total: Double
 
-    init(order: PharmacyOrder, now: Date = Date()) {
-        id = String(order.id)
+    init(order: PharmacyDashboardRecentOrder) {
+        id = order.id
         customerName = order.customerName
-            ?? "pharmacy.orders.customer.fallback".localized(String(order.userId))
-        address = order.deliveryAddress.isEmpty
-            ? "pharmacy.orders.address.fallback".localized
-            : order.deliveryAddress
-        minutesAgo = max(0, Int(now.timeIntervalSince(order.date) / 60))
-        status = Self.status(for: order)
-        sourceOrder = order
-    }
-
-    private static func status(for order: PharmacyOrder) -> PharmacyOrderStatus {
-        switch order.status {
-        case .pending:
-            return PharmacySubmittedOffersStore.shared.contains(order.id)
-                ? .pendingApproval
-                : .new
-        case .accepted, .preparing, .outForDelivery:
-            return .preparing
-        case .delivered:
-            return .delivered
-        case .completed:
-            return .completed
-        case .cancelled, .expired, .unknown:
-            return .expired
-        }
+            ?? "pharmacy.orders.customer.fallback".localized(String(order.customerId))
+        address = order.deliveryAddress
+            ?? "pharmacy.orders.address.fallback".localized
+        createdAt = order.createdAt
+        total = order.total
     }
 }
