@@ -15,10 +15,6 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
     var savedAddress: String? { get }
     var deliveryLocation: CompleteRequestLocation? { get }
     var notes: String { get set }
-    var cardholderName: String { get set }
-    var cardNumber: String { get set }
-    var expiry: String { get set }
-    var cvv: String { get set }
     var isSummaryExpanded: Bool { get set }
     var isLoadingAddress: Bool { get }
     var isSubmitting: Bool { get }
@@ -26,17 +22,13 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
     var validationErrors: [CompleteRequestValidationError] { get }
     var submittedRequest: SubmittedMedicineRequest? { get }
     var showsDeliveryDetails: Bool { get }
-    var showsVisaForm: Bool { get }
+    var showsOnlinePaymentInfo: Bool { get }
     var canSubmit: Bool { get }
 
     func loadSavedAddress() async
     func selectReceiveMethod(_ method: CompleteRequestReceiveMethod)
     func selectPaymentMethod(_ method: CompleteRequestPaymentMethod)
     func confirmLocation(_ location: CompleteRequestLocation)
-    func formatCardNumber()
-    func formatExpiry()
-    func formatCVV()
-    func validationMessage(for field: CompleteRequestCardField) -> String?
     func dismissSubmissionError()
     func submit() async -> Bool
 }
