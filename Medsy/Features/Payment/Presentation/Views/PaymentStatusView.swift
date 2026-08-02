@@ -12,6 +12,8 @@ struct PaymentStatusView: View {
     @ObservedObject private var appSettings = AppSettings.shared
 
     let status: PaymentStatusPresentation
+    var isPrimaryActionLoading = false
+    var isPrimaryActionDisabled = false
     let onPrimaryAction: () -> Void
     let onSecondaryAction: () -> Void
 
@@ -55,6 +57,8 @@ struct PaymentStatusView: View {
             VStack(spacing: MedsySpacing.sm) {
                 PrimaryButton(
                     title: status.primaryActionTitle,
+                    isLoading: isPrimaryActionLoading,
+                    isDisabled: isPrimaryActionDisabled,
                     action: onPrimaryAction
                 )
 

@@ -63,7 +63,9 @@ struct OrdersCoordinatorView: View {
                             coordinator.path.append(ProductDetailDestination(productId: String(productId)))
                         },
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
-                        onGoToCart: onGoToCart
+                        onGoToCart: onGoToCart,
+                        paymentAction: detailViewModel.paymentAction,
+                        onPaymentAction: { coordinator.showPayment(orderId: orderId) }
                     )
                     .onChange(of: detailViewModel.reorderState) { _, state in
                         guard state.didAddItemsToCart else { return }
@@ -72,6 +74,15 @@ struct OrdersCoordinatorView: View {
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))
                     }
+                case .payment(let orderId):
+                    PaymentFlowView(
+                        viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                            orderIds: [orderId]
+                        ),
+                        onCompleted: coordinator.pop,
+                        onViewOrder: coordinator.pop,
+                        onUnsupportedCombinedOrder: coordinator.pop
+                    )
                 case let .search(query):
                     SearchCoordinatorView(
                         query: query,

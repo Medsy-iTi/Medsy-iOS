@@ -14,6 +14,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     private(set) var detailState: OrderDetailViewState = .loading
     private(set) var reorderState: ReorderState = .idle
+    private(set) var paymentAction: PaymentOrderActionPresentation?
 
     private let getOrderDetailUseCase: GetOrderDetailUseCaseProtocol?
     private let reorderUseCase: ReorderUseCaseProtocol?
@@ -22,18 +23,22 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     init(
         getOrderDetailUseCase: GetOrderDetailUseCaseProtocol? = nil,
-        reorderUseCase: ReorderUseCaseProtocol? = nil
+        reorderUseCase: ReorderUseCaseProtocol? = nil,
+        paymentAction: PaymentOrderActionPresentation? = nil
     ) {
         self.getOrderDetailUseCase = getOrderDetailUseCase
         self.reorderUseCase = reorderUseCase
+        self.paymentAction = paymentAction
     }
 
     init(
         state: OrderDetailViewState,
-        reorderState: ReorderState = .idle
+        reorderState: ReorderState = .idle,
+        paymentAction: PaymentOrderActionPresentation? = nil
     ) {
         detailState = state
         self.reorderState = reorderState
+        self.paymentAction = paymentAction
         getOrderDetailUseCase = nil
         reorderUseCase = nil
     }
