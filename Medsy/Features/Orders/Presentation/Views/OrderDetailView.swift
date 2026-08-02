@@ -16,6 +16,8 @@ struct OrderDetailView: View {
     var onSelectProduct: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
+    var paymentAction: PaymentOrderActionPresentation? = nil
+    var onPaymentAction: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -118,16 +120,16 @@ struct OrderDetailView: View {
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
-                .padding(.bottom, 96)
+                .padding(.bottom, paymentAction == nil ? 96 : 162)
             }
 
-            reorderButton
+            bottomActions
                 .padding(.horizontal, MedsySpacing.md)
                 .padding(.bottom, MedsySpacing.lg)
                 .background(
                     AppColor.bg
                         .ignoresSafeArea()
-                        .frame(height: 96)
+                        .frame(height: paymentAction == nil ? 96 : 162)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                 )
         }
@@ -317,6 +319,19 @@ struct OrderDetailView: View {
         }
     }
 
+    private var bottomActions: some View {
+        VStack(spacing: MedsySpacing.sm) {
+            if let paymentAction {
+                PaymentOrderActionView(
+                    action: paymentAction,
+                    onTap: { onPaymentAction?() }
+                )
+            }
+
+            reorderButton
+        }
+    }
+
 
     private func dateLabel(for date: Date) -> String {
         let calendar = Calendar.current
@@ -356,7 +371,9 @@ extension ReorderState {
         state: .loaded(.mock),
         reorderState: .idle,
         onRetry: {},
-        onBack: {}
+        onBack: {},
+        paymentAction: .payNow,
+        onPaymentAction: {}
     )
     .environment(LanguageManager.shared)
 }
