@@ -25,6 +25,44 @@ struct CartItemDTO: Decodable, Equatable {
     let unitPrice: Double
     let quantity: Int
     let subtotal: Double
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case productId
+        case productName
+        case imageUrl
+        case unitPrice
+        case quantity
+        case subtotal
+        case product
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let product = try container.decodeIfPresent(CartItemProductDTO.self, forKey: .product)
+
+        id = try container.decode(Int64.self, forKey: .id)
+        productId = try container.decodeIfPresent(Int64.self, forKey: .productId)
+            ?? product?.id
+            ?? 0
+        productName = try container.decodeIfPresent(String.self, forKey: .productName)
+            ?? product?.productName
+            ?? product?.name
+            ?? ""
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+            ?? product?.imageUrl
+        unitPrice = try container.decodeIfPresent(Double.self, forKey: .unitPrice) ?? 0
+        quantity = try container.decodeIfPresent(Int.self, forKey: .quantity) ?? 0
+        subtotal = try container.decodeIfPresent(Double.self, forKey: .subtotal)
+            ?? unitPrice * Double(quantity)
+    }
+}
+
+private struct CartItemProductDTO: Decodable {
+    let id: Int64?
+    let name: String?
+    let productName: String?
+    let imageUrl: String?
 }
 
 struct AddCartItemRequestDTO: Encodable, Equatable {
