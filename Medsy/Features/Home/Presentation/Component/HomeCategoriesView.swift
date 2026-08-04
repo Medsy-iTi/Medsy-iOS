@@ -8,12 +8,17 @@ import SwiftUI
 struct HomeCategoriesView: View {
     @State private var viewModel: CategoriesViewModel
 
+    private let columns = Array(
+        repeating: GridItem(.flexible(), spacing: MedsySpacing.sm, alignment: .top),
+        count: 3
+    )
+
     init(viewModel: CategoriesViewModel = DIContainer.shared.resolve(CategoriesViewModel.self)) {
         _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: MedsySpacing.md) {
             HStack {
                 Text("home.shopByCategories".localized)
                     .font(AppColor.sans(16, .bold))
@@ -31,47 +36,25 @@ struct HomeCategoriesView: View {
 
             switch viewModel.state {
             case .loading:
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 18) {
-                        ForEach(0..<5, id: \.self) { _ in
-                            VStack(spacing: 8) {
-                                MedsySkeletonBlock(cornerRadius: 16, height: 58, width: 58)
-                                MedsySkeletonBlock(cornerRadius: 4, height: 12, width: 50)
-                            }
-                            .frame(width: 80)
+                LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
+                    ForEach(0..<9, id: \.self) { _ in
+                        VStack(spacing: MedsySpacing.xs) {
+                            MedsySkeletonBlock(cornerRadius: MedsyRadius.lg, height: 96)
+                            MedsySkeletonBlock(cornerRadius: MedsyRadius.sm, height: 12, width: 70)
                         }
                     }
-                    .padding(.horizontal)
                 }
+                .padding(.horizontal)
             case .success:
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 18) {
-                        ForEach(viewModel.categories) { category in
-                            NavigationLink(destination: ProductsView(category: category)) {
-                                VStack(spacing: 8) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(category.bgColor)
-                                            .frame(width: 58, height: 58)
-
-                                        MedsyBrandImageFallback(logoScale: 0.72)
-                                            .frame(width: 58, height: 58)
-                                    }
-
-                                    Text(category.displayName)
-                                        .font(AppColor.sans(11, .medium))
-                                        .foregroundStyle(AppColor.textPrim)
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.center)
-                                        .frame(width: 76)
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .frame(width: 80)
+                LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
+                    ForEach(Array(viewModel.categories.prefix(9))) { category in
+                        NavigationLink(destination: ProductsView(category: category)) {
+                            CategoryGridCard(category: category)
                         }
+                        .buttonStyle(.plain)
                     }
-                    .padding(.horizontal)
                 }
+                .padding(.horizontal)
             case .error:
                 HStack {
                     Spacer()
