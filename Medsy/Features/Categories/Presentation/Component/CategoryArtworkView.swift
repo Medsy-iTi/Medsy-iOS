@@ -13,7 +13,7 @@ struct CategoryArtworkView: View {
                 MedsyBrandImageFallback(logoScale: 0.55)
             }
         }
-        .aspectRatio(1, contentMode: .fit)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(category.bgColor)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
         .overlay {

@@ -49,7 +49,7 @@ struct HomeCategoriesView: View {
                 LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
                     ForEach(Array(viewModel.categories.prefix(9))) { category in
                         NavigationLink(destination: ProductsView(category: category)) {
-                            CategoryGridCard(category: category)
+                            CategoryGridCard(category: category, artworkHeight: 96)
                         }
                         .buttonStyle(.plain)
                     }
@@ -74,6 +74,9 @@ struct HomeCategoriesView: View {
         }
         .task {
             await viewModel.loadCategories()
+        }
+        .transaction { transaction in
+            transaction.animation = nil
         }
     }
 }
