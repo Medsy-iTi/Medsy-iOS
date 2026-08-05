@@ -31,6 +31,7 @@ final class PharmacyHomeViewModel {
 
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
     private let fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol
+    private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
     private let sessionSettings: PharmacySessionSettings
 
     private var isPharmacyAdmin: Bool?
@@ -39,10 +40,12 @@ final class PharmacyHomeViewModel {
     init(
         getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
         fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol,
+        sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
         sessionSettings: PharmacySessionSettings
     ) {
         self.getProfileUseCase = getProfileUseCase
         self.fetchDashboardUseCase = fetchDashboardUseCase
+        self.sendHeartbeatUseCase = sendHeartbeatUseCase
         self.sessionSettings = sessionSettings
     }
 
@@ -91,6 +94,7 @@ final class PharmacyHomeViewModel {
 
     func refresh() async {
         let adminStatus = await loadProfile()
+        await syncPresenceStatus()
         guard adminStatus != false else {
             invalidateDashboardRequests()
             dashboard = nil
@@ -102,6 +106,7 @@ final class PharmacyHomeViewModel {
 
     func retryProfile() async {
         let adminStatus = await loadProfile()
+        await syncPresenceStatus()
         guard adminStatus != false else {
             invalidateDashboardRequests()
             dashboard = nil
@@ -169,6 +174,11 @@ final class PharmacyHomeViewModel {
             dashboard = nil
             dashboardState = .failed("pharmacy.home.dashboard_load_error".localized)
         }
+    }
+
+    private func syncPresenceStatus() async {
+        guard let presence = try? await sendHeartbeatUseCase.execute() else { return }
+        sessionSettings.updateDutyStatus(presence.onDuty)
     }
 
     private func invalidateDashboardRequests() {
