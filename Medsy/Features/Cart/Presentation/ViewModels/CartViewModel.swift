@@ -17,6 +17,8 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
     private(set) var prescriptions: [CartPrescriptionAttachment]
+    private(set) var interactionWarnings: [CartInteractionWarning]
+    private(set) var interactionsState: CartInteractionsState = .idle
 
     private let loadCartUseCase: LoadCartUseCaseProtocol?
     private let addCartItemUseCase: AddCartItemUseCaseProtocol?
@@ -24,10 +26,13 @@ final class CartViewModel: CartViewModelProtocol {
     private let removeCartItemUseCase: RemoveCartItemUseCaseProtocol?
     private let clearCartUseCase: ClearCartUseCaseProtocol?
     private let manageCartPrescriptionsUseCase: ManageCartPrescriptionsUseCaseProtocol?
+    private let getCartInteractionsUseCase: GetCartInteractionsUseCaseProtocol?
     private let maximumItemCount: Int
     private var removedItemIndex: Int?
     private var loadTask: Task<Void, Never>?
     private var operationTask: Task<Void, Never>?
+    private var interactionLanguage: String
+    private var interactionRequestSequence = 0
 
     init(
         loadCartUseCase: LoadCartUseCaseProtocol,
@@ -36,48 +41,65 @@ final class CartViewModel: CartViewModelProtocol {
         removeCartItemUseCase: RemoveCartItemUseCaseProtocol,
         clearCartUseCase: ClearCartUseCaseProtocol,
         manageCartPrescriptionsUseCase: ManageCartPrescriptionsUseCaseProtocol,
+        getCartInteractionsUseCase: GetCartInteractionsUseCaseProtocol,
+        interactionLanguage: String,
         maximumItemCount: Int = 20
     ) {
         state = .loading
         prescriptions = []
+        interactionWarnings = []
         self.loadCartUseCase = loadCartUseCase
         self.addCartItemUseCase = addCartItemUseCase
         self.updateCartItemQuantityUseCase = updateCartItemQuantityUseCase
         self.removeCartItemUseCase = removeCartItemUseCase
         self.clearCartUseCase = clearCartUseCase
         self.manageCartPrescriptionsUseCase = manageCartPrescriptionsUseCase
+        self.getCartInteractionsUseCase = getCartInteractionsUseCase
+        self.interactionLanguage = Self.normalizedLanguage(interactionLanguage)
         self.maximumItemCount = maximumItemCount
     }
 
     init(
         items: [CartDisplayItem] = [],
         prescriptions: [CartPrescriptionAttachment] = [],
+        interactionWarnings: [CartInteractionWarning] = [],
+        getCartInteractionsUseCase: GetCartInteractionsUseCaseProtocol? = nil,
+        interactionLanguage: String = "en",
         maximumItemCount: Int = 20
     ) {
         state = items.isEmpty ? .empty : .loaded(items)
         self.prescriptions = prescriptions.suffix(1).map { $0 }
+        self.interactionWarnings = interactionWarnings
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
         removeCartItemUseCase = nil
         clearCartUseCase = nil
         manageCartPrescriptionsUseCase = nil
+        self.getCartInteractionsUseCase = getCartInteractionsUseCase
+        self.interactionLanguage = Self.normalizedLanguage(interactionLanguage)
+        interactionsState = .loaded
         self.maximumItemCount = maximumItemCount
     }
 
     init(
         state: CartViewState,
         prescriptions: [CartPrescriptionAttachment] = [],
+        interactionWarnings: [CartInteractionWarning] = [],
         maximumItemCount: Int = 20
     ) {
         self.state = state
         self.prescriptions = prescriptions.suffix(1).map { $0 }
+        self.interactionWarnings = interactionWarnings
         loadCartUseCase = nil
         addCartItemUseCase = nil
         updateCartItemQuantityUseCase = nil
         removeCartItemUseCase = nil
         clearCartUseCase = nil
         manageCartPrescriptionsUseCase = nil
+        getCartInteractionsUseCase = nil
+        interactionLanguage = "en"
+        interactionsState = .loaded
         self.maximumItemCount = maximumItemCount
     }
 
@@ -178,6 +200,7 @@ final class CartViewModel: CartViewModelProtocol {
             apply(updatedCart.withPrescriptions(updatedPrescriptions))
             syncState = .synced
             feedback = nil
+            await refreshInteractions(language: interactionLanguage)
         } catch {
             if let loadCartUseCase, let refreshedCart = try? await loadCartUseCase.refresh() {
                 apply(refreshedCart)
@@ -254,6 +277,7 @@ final class CartViewModel: CartViewModelProtocol {
             replaceItems([])
             prescriptions = []
             clearRemoval()
+            clearInteractions()
             syncState = .synced
             feedback = nil
             return true
@@ -265,6 +289,7 @@ final class CartViewModel: CartViewModelProtocol {
             replaceItems([])
             prescriptions = []
             clearRemoval()
+            clearInteractions()
             syncState = .synced
             feedback = nil
             return true
@@ -273,6 +298,33 @@ final class CartViewModel: CartViewModelProtocol {
             syncState = .failed(message)
             feedback = .operationFailed(message)
             return false
+        }
+    }
+
+    func refreshInteractions(language: String) async {
+        interactionLanguage = Self.normalizedLanguage(language)
+        interactionRequestSequence += 1
+        let requestSequence = interactionRequestSequence
+
+        guard !items.isEmpty, let getCartInteractionsUseCase else {
+            interactionWarnings = []
+            interactionsState = .loaded
+            return
+        }
+
+        interactionWarnings = []
+        interactionsState = .loading
+        do {
+            let warnings = try await getCartInteractionsUseCase.execute(language: interactionLanguage)
+            guard requestSequence == interactionRequestSequence else { return }
+            interactionWarnings = warnings
+            interactionsState = .loaded
+        } catch is CancellationError {
+            return
+        } catch {
+            guard requestSequence == interactionRequestSequence else { return }
+            interactionWarnings = []
+            interactionsState = .failed(error.localizedDescription)
         }
     }
 
@@ -317,6 +369,7 @@ final class CartViewModel: CartViewModelProtocol {
                 apply(cart)
                 syncState = .synced
                 feedback = nil
+                await refreshInteractions(language: interactionLanguage)
             } catch is CancellationError {
                 return
             } catch {
@@ -509,6 +562,7 @@ final class CartViewModel: CartViewModelProtocol {
             replaceItems([])
             prescriptions = []
             clearRemoval()
+            clearInteractions()
             return .sync
         }
 
@@ -519,6 +573,7 @@ final class CartViewModel: CartViewModelProtocol {
                 replaceItems([])
                 prescriptions = []
                 clearRemoval()
+                clearInteractions()
                 syncState = .synced
                 feedback = nil
             } catch {
@@ -541,6 +596,7 @@ final class CartViewModel: CartViewModelProtocol {
                 let cart = try await operation()
                 apply(cart)
                 syncState = .synced
+                await refreshInteractions(language: interactionLanguage)
             } catch {
                 replaceItems(previousItems)
                 prescriptions = previousPrescriptions
@@ -647,6 +703,16 @@ final class CartViewModel: CartViewModelProtocol {
     private func clearRemoval() {
         removedItem = nil
         removedItemIndex = nil
+    }
+
+    private func clearInteractions() {
+        interactionRequestSequence += 1
+        interactionWarnings = []
+        interactionsState = .loaded
+    }
+
+    private static func normalizedLanguage(_ language: String) -> String {
+        language.lowercased().hasPrefix("ar") ? "ar" : "en"
     }
 }
 
