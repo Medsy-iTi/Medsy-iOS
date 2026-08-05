@@ -101,14 +101,14 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(detail.totalPrice, 95)
     }
 
-    func testOrdersEndpointUsesOnlySupportedPaginationAndSortParameters() {
+    func testOrdersEndpointUsesOnlySupportedPaginationParameters() {
         let parameters = OrdersEndpoint
             .fetchOrders(page: 1, size: 20)
             .queryParameters
 
         XCTAssertEqual(parameters?["page"] as? Int, 1)
         XCTAssertEqual(parameters?["size"] as? Int, 20)
-        XCTAssertEqual(parameters?["sort"] as? String, "date,desc")
+        XCTAssertNil(parameters?["sort"])
         XCTAssertNil(parameters?["status"])
         XCTAssertNil(parameters?["dateFrom"])
         XCTAssertNil(parameters?["dateTo"])
