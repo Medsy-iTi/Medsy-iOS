@@ -465,7 +465,6 @@
 "orders.status.preparing"            = "Preparing";
 "orders.status.ready_for_pickup"     = "Ready for pickup";
 "orders.status.out_for_delivery"     = "Out for delivery";
-"orders.from_pharmacy"               = "From %@";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";
@@ -496,7 +495,6 @@
 "orders.detail.order_number"         = "Order #%d";
 "orders.detail.date"                 = "Date";
 "orders.detail.status"               = "Status";
-"orders.detail.pharmacy"             = "Pharmacy";
 "orders.detail.items"                = "Items price";
 "orders.detail.items_label"          = "Items";
 "orders.detail.item_unit_price"      = "%.0f EGP each";
@@ -590,6 +588,8 @@
 "complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";
 "complete_request.validation.cvv" = "Enter the three-digit security code.";
 "complete_request.submit" = "Submit medicine request";
+"complete_request.success.title" = "Request sent successfully";
+"complete_request.success.subtitle" = "We returned you home so you can view current offers.";
 "complete_request.submit_error.title" = "Couldn't complete request";
 "complete_request.submit_error" = "Your request wasn't completed because the cart couldn't be cleared. Please try again.";
 "complete_request.location.title" = "Choose delivery location";
@@ -774,3 +774,13 @@
 "chatbot.demo.order.time_left"= "07:12 left";
 
 "chatbot.demo.alternative.message" = "Done ✓ By the way, a same-ingredient equivalent of Lipitor — Ator 20 mg — costs EGP 88 instead of 210. Want it in the request instead?";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "Medsy AI is thinking…";
+"chatbot.error.generic"        = "Something went wrong. Please try again.";
+"chatbot.error.dismiss"        = "Dismiss";
+"chatbot.sources.match"        = "✓ %d%% match";
+"chatbot.sources.eyebrow"      = "AI SUGGESTED";
+"chatbot.empty.title"          = "Ask Medsy AI";
+"chatbot.empty.subtitle"       = "Ask me about medications, symptoms, or your prescription.";

@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct PharmacyPrescriptionCard: View {
-    let imageUrl: String?
+    let uiImage: UIImage?
+    var imageUrl: URL? = nil
     let onEnlarge: () -> Void
 
     var body: some View {
@@ -23,9 +24,9 @@ struct PharmacyPrescriptionCard: View {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                     .fill(PharmacyColor.mutedSurface)
                     .frame(height: 150)
-                
-                if let imageUrlStr = imageUrl, let url = URL(string: imageUrlStr) {
-                    PharmacyAuthenticatedAsyncImage(url: url) { image in
+
+                if let uiImage = uiImage {
+                    PharmacyAuthenticatedAsyncImage(uiImage: uiImage) { image in
                         image
                             .resizable()
                             .scaledToFill()
@@ -34,16 +35,27 @@ struct PharmacyPrescriptionCard: View {
                     } placeholder: {
                         ProgressView()
                     }
-                } else {
-                    VStack(spacing: 8) {
-                        Image(systemName: "cross.case.circle.fill")
-                            .font(.system(size: 44))
-                            .foregroundStyle(PharmacyColor.primary.opacity(0.8))
-
-                        Text("pharmacy.request.prescription_handwritten".localized)
-                            .font(PharmacyColor.sans(14, .bold))
-                            .foregroundStyle(PharmacyColor.textPrimary)
+                } else if let url = imageUrl {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 150)
+                                .clipped()
+                        case .failure:
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
+                                .foregroundStyle(PharmacyColor.textSecondary.opacity(0.3))
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
+                } else {
+                    ProgressView()
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))

@@ -253,6 +253,7 @@ final class PrescriptionViewModelTests: XCTestCase {
             id: id,
             name: "Replacement",
             dosageInfo: "20 tablets",
+            scientificName: "Paracetamol",
             price: 55,
             imageUrl: nil,
             badgeText: "Company",

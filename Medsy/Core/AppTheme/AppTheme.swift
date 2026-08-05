@@ -69,6 +69,8 @@ enum AppColor {
 
 
 	static var danger: Color { errorRed }
+    static var dangerLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#451B1B") : Color(hex: "#FDECEB") }
+    static var warningLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#4D3613") : Color(hex: "#FDF3DF") }
 
 	static var skeleton: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : lightGreen }
 
@@ -107,10 +109,10 @@ struct MedsyTheme {
         primary:       AppColor.green,               // #0D8653
         primaryLight:  AppColor.lightGreen,          // #E8F8F4
         danger:        AppColor.errorRed,            // #EF4444
-        dangerLight:   Color(hex: "FDECEB"),
+        dangerLight:   AppColor.dangerLight,
         warning:       AppColor.warningYellow,       // #F59E0B
-        warningLight:  Color(hex: "FDF3DF"),
-        surface:       Color(hex: "F1F2F4"),
+        warningLight:  AppColor.warningLight,
+        surface:       AppColor.surface,
         textPrimary:   AppColor.textPrim,
         textSecondary: AppColor.textSec
     )

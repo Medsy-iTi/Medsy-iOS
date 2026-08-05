@@ -9,6 +9,7 @@ import Foundation
 
 protocol NetworkServiceProtocol {
     func request<T: Decodable>(endpoint: ApiEndpoint) async throws -> T
+    func requestData(endpoint: ApiEndpoint) async throws -> Data
 }
 
 protocol TokenStoreProtocol {

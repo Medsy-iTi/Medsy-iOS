@@ -19,14 +19,6 @@ struct PharmacyRequestDetailsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PharmacyRequestDetailsHeaderView(
-                orderId: (viewModel?.requestModel?.id ?? requestModel?.id) ?? "1",
-                statusTitle: (viewModel?.requestModel?.statusTitle ?? requestModel?.statusTitle) ?? "",
-                onBack: {
-                    dismiss()
-                }
-            )
-
             if let viewModel, viewModel.state == .loading {
                 VStack(spacing: 12) {
                     Spacer()
@@ -46,15 +38,16 @@ struct PharmacyRequestDetailsView: View {
                 )
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: PharmacySpacing.md) {
-                        PharmacyCustomerInfoCard(
-                            orderId: model.wrappedValue.id,
-                            createdAt: model.wrappedValue.createdAt,
-                            customer: model.wrappedValue.customer,
+                        PharmacyContactInfoCard(
+                            headerStyle: .orderInfo(orderId: model.wrappedValue.id, date: model.wrappedValue.createdAt),
+                            name: model.wrappedValue.customer.name,
+                            phone: model.wrappedValue.customer.phone,
                             onContact: {
                                 if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
                                     UIApplication.shared.open(url)
                                 }
                             },
+                            address: model.wrappedValue.customer.address,
                             onLocationTap: {
                                 if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude {
                                     if let url = URL(string: "maps://?q=\(lat),\(lon)") {
@@ -76,7 +69,7 @@ struct PharmacyRequestDetailsView: View {
 
                         if model.wrappedValue.prescriptionImageUrl != nil {
                             PharmacyPrescriptionCard(
-                                imageUrl: model.wrappedValue.prescriptionImageUrl,
+                                uiImage: viewModel?.prescriptionUIImage,
                                 onEnlarge: {
                                     showFullPrescriptionImage = true
                                 }
@@ -123,13 +116,14 @@ struct PharmacyRequestDetailsView: View {
             }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
-        .alert("تنبيه", isPresented: Binding(get: {
+        .navigationTitle("pharmacy.request.details.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("pharmacy.request.alert.title".localized, isPresented: Binding(get: {
             viewModel?.showSuccessAlert ?? false
         }, set: { newValue in
             viewModel?.showSuccessAlert = newValue
         })) {
-            Button("حسناً", role: .cancel) { }
+            Button("common.ok".localized, role: .cancel) { }
         } message: {
             Text(viewModel?.alertMessage ?? "")
         }
@@ -138,26 +132,13 @@ struct PharmacyRequestDetailsView: View {
                 VStack {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        if let imageUrlStr = viewModel?.requestModel?.prescriptionImageUrl ?? requestModel?.prescriptionImageUrl,
-                           let url = URL(string: imageUrlStr) {
-                            PharmacyAuthenticatedAsyncImage(url: url) { image in
+                        PharmacyAuthenticatedAsyncImage(uiImage: viewModel?.prescriptionUIImage) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
                             } placeholder: {
                                 ProgressView()
                             }
-                        } else {
-                            VStack {
-                                Image(systemName: "doc.text.image.fill")
-                                    .font(.system(size: 80))
-                                    .foregroundStyle(.white.opacity(0.8))
-                                Text("pharmacy.request.preview_prescription".localized)
-                                    .font(PharmacyColor.sans(16, .bold))
-                                    .foregroundStyle(.white)
-                                    .padding(.top, 16)
-                            }
-                        }
                     }
                 }
                 .toolbar {
@@ -181,6 +162,7 @@ struct PharmacyRequestDetailsView: View {
                 if let model = viewModel.requestModel {
                     self.requestModel = model
                 }
+                await viewModel.loadPrescriptionImage()
             }
         }
     }

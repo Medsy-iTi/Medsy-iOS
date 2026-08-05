@@ -14,6 +14,14 @@ struct PharmacyDetailView: View {
     let isLeaving: Bool
     let deleteErrorMessage: String?
     let leaveErrorMessage: String?
+    let pendingInvitations: [PharmacyInvitation]
+    let isLoadingPendingInvitations: Bool
+    let pendingInvitationDeletingId: Int?
+    let pendingInvitationsErrorMessage: String?
+    let onLoadPendingInvitations: () -> Void
+    let onRefreshPendingInvitations: () -> Void
+    let onInvitationTap: (PharmacyInvitation) -> Void
+    let onDeleteInvitation: (PharmacyInvitation) async -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onLeave: () -> Void
@@ -29,6 +37,15 @@ struct PharmacyDetailView: View {
 
                 if isAdmin {
                     adminActions
+                    PendingInvitationsSectionView(
+                        invitations: pendingInvitations,
+                        isLoading: isLoadingPendingInvitations,
+                        deletingInvitationId: pendingInvitationDeletingId,
+                        errorMessage: pendingInvitationsErrorMessage,
+                        onRefresh: onRefreshPendingInvitations,
+                        onInvitationTap: onInvitationTap,
+                        onDeleteInvitation: onDeleteInvitation
+                    )
                 } else {
                     leaveAction
                 }
@@ -47,6 +64,11 @@ struct PharmacyDetailView: View {
         .background(PharmacyColor.bg.ignoresSafeArea())
         .navigationTitle("pharmacy_details_title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            if isAdmin {
+                onLoadPendingInvitations()
+            }
+        }
         .confirmationDialog(
             "pharmacy_card.delete_confirm_title".localized,
             isPresented: $showDeleteConfirmation,
@@ -234,5 +256,3 @@ struct PharmacyDetailView: View {
         .background(PharmacyColor.danger.opacity(0.1), in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
     }
 }
-
-

@@ -17,6 +17,10 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
             PharmacyAppSettings.shared
         }
 
+        container.register(PharmacySessionSettings.self) { _ in
+            PharmacySessionSettings.shared
+        }
+
         container.register(NetworkTransportProtocol.self) { _ in
             NetworkTransport()
         }

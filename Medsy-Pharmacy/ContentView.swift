@@ -12,6 +12,7 @@ struct ContentView: View {
     let authenticationFactory: PharmacyAuthenticationFactory
     let homeFactory: PharmacyHomeFactory
     let ordersFactory: PharmacyOrdersFactory
+	let completedOrdersFactory: PharmacyCompletedOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     @Bindable var coordinator: RootCoordinator
 
@@ -20,12 +21,14 @@ struct ContentView: View {
         authenticationFactory: PharmacyAuthenticationFactory,
         homeFactory: PharmacyHomeFactory,
         ordersFactory: PharmacyOrdersFactory,
+	    completedOrdersFactory: PharmacyCompletedOrdersFactory,
         coordinator: RootCoordinator
     ) {
         self.onboardingFactory = onboardingFactory
         self.authenticationFactory = authenticationFactory
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
+		self.completedOrdersFactory = completedOrdersFactory
         self.coordinator = coordinator
     }
 
@@ -60,6 +63,7 @@ struct ContentView: View {
                     coordinator: coordinator.mainTabCoordinator,
                     homeFactory: homeFactory,
                     ordersFactory: ordersFactory,
+					completedOrdersFactory: completedOrdersFactory,
                     onLoggedOut: coordinator.logout
                 )
                 .transition(.opacity.combined(with: .move(edge: .trailing)))
@@ -108,13 +112,21 @@ private struct PharmacyAuthenticationRootView: View {
 			actions: .placeholder,
 			locationProvider: PreviewContentLocationProvider()
 		),
-		homeFactory: PharmacyHomeFactory(),
+		homeFactory: PharmacyHomeFactory(
+			getProfileUseCase: PreviewGetProfileUseCase(),
+			fetchDashboardUseCase: PreviewFetchDashboardUseCase(),
+			sessionSettings: PharmacySessionSettings()
+		),
 		ordersFactory: PharmacyOrdersFactory(
 			fetchOrdersUseCase: PreviewFetchOrdersUseCase(),
 			getProfileUseCase: PreviewGetProfileUseCase(),
 			appSettings: .shared,
 			identityProvider: PreviewIdentityProvider()
 		),
+		completedOrdersFactory: PharmacyCompletedOrdersFactory(
+			getCompletedOrdersUseCase: PreviewGetCompletedOrdersUseCase(),
+			identityProvider: PreviewIdentityProvider()
+															  ),
 		coordinator: RootCoordinator(container: PharmacyDIContainer())
 	)
 	.environment(LanguageManager.shared)
@@ -123,6 +135,19 @@ private struct PharmacyAuthenticationRootView: View {
 private struct PreviewFetchOrdersUseCase: FetchPharmacyOrdersUseCaseProtocol {
 	func execute(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
 		PharmacyOrdersPage(orders: [], pageNumber: 0, totalPages: 1, isLastPage: true)
+	}
+}
+
+private struct PreviewFetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol {
+	func execute(period: PharmacyDashboardPeriod) async throws -> PharmacyDashboard {
+		PharmacyDashboard(
+			totalRevenue: 0,
+			totalOrders: 0,
+			requestsReceived: 0,
+			offersCreated: 0,
+			topSellingProducts: [],
+			recentOrders: []
+		)
 	}
 }
 
@@ -147,5 +172,12 @@ private final class PreviewContentLocationProvider: PharmacyLocationProviding {
 
 	func location(latitude: Double, longitude: Double) async throws -> PharmacyLocation {
 		PharmacyLocation(latitude: latitude, longitude: longitude, city: "Cairo", province: "Cairo")
+	}
+}
+
+
+private struct PreviewGetCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol {
+	func execute(pharmacyId: Int, page: Int, size: Int, sort: [String]) async throws -> PaginatedResult<CompletedOrder> {
+		.empty
 	}
 }

@@ -464,7 +464,6 @@
 "orders.status.preparing"            = "جاري التجهيز";
 "orders.status.ready_for_pickup"     = "جاهز للاستلام";
 "orders.status.out_for_delivery"     = "خرج للتوصيل";
-"orders.from_pharmacy"               = "من %@";
 "orders.pharmacy_fallback"           = "صيدلية #%d";
 "orders.product_fallback"            = "منتج #%d";
 "orders.fulfillment.delivery"        = "توصيل";
@@ -495,7 +494,6 @@
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
 "orders.detail.status"               = "الحالة";
-"orders.detail.pharmacy"             = "الصيدلية";
 "orders.detail.items"                = "سعر المنتجات";
 "orders.detail.items_label"          = "المنتجات";
 "orders.detail.item_unit_price"      = "%.0f جنيه للقطعة";
@@ -588,6 +586,8 @@
 "complete_request.validation.expiry" = "أدخل تاريخ انتهاء صالحًا وغير منتهي بصيغة شهر/سنة.";
 "complete_request.validation.cvv" = "أدخل رمز الأمان المكوّن من ثلاثة أرقام.";
 "complete_request.submit" = "إرسال طلب الدواء";
+"complete_request.success.title" = "تم إرسال الطلب بنجاح";
+"complete_request.success.subtitle" = "عدنا بك للرئيسية لتتمكن من مشاهدة العروض الحالية.";
 "complete_request.submit_error.title" = "تعذر إكمال الطلب";
 "complete_request.submit_error" = "لم يكتمل طلبك لتعذر إفراغ السلة. حاول مرة أخرى.";
 "complete_request.location.title" = "اختر موقع التوصيل";
@@ -767,3 +767,13 @@
 "chatbot.demo.order.time_left"= "٧:١٢ متبقية";
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "ميدسي AI يفكر…";
+"chatbot.error.generic"        = "حدث خطأ ما. يرجى المحاولة مجدداً.";
+"chatbot.error.dismiss"        = "إغلاق";
+"chatbot.sources.match"        = "✓ %d%% تطابق";
+"chatbot.sources.eyebrow"      = "مقترح بالذكاء الاصطناعي";
+"chatbot.empty.title"          = "اسأل ميدسي AI";
+"chatbot.empty.subtitle"       = "اسألني عن الأدوية أو الأعراض أو وصفتك الطبية.";

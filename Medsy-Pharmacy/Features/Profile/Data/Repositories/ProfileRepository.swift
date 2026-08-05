@@ -124,7 +124,34 @@ final class ProfileRepository: ProfileRepositoryProtocol {
             pharmacistFirstName: data.pharmacistFirstName,
             pharmacistLastName: data.pharmacistLastName,
             status: data.status,
+            createdAt: Self.invitationDate(from: data.createdAt),
             invitedEmail: email
+        )
+    }
+
+    func fetchPendingInvitations(pharmacyId: Int) async throws -> [PharmacyInvitation] {
+        let envelope: PharmacyInvitationsEnvelope = try await networkService.request(
+            endpoint: ProfileEndpoint.fetchPendingInvitations(pharmacyId: pharmacyId)
+        )
+
+        return envelope.data.map { dto in
+            PharmacyInvitation(
+                id: dto.id,
+                pharmacyId: dto.pharmacyId,
+                pharmacyName: dto.pharmacyName,
+                pharmacistId: dto.pharmacistId,
+                pharmacistFirstName: dto.pharmacistFirstName,
+                pharmacistLastName: dto.pharmacistLastName,
+                status: dto.status,
+                createdAt: Self.invitationDate(from: dto.createdAt),
+                invitedEmail: nil
+            )
+        }
+    }
+
+    func deletePendingInvitation(id: Int) async throws {
+        let _: EmptyResponse = try await networkService.request(
+            endpoint: ProfileEndpoint.deletePendingInvitation(id: id)
         )
     }
 
@@ -161,7 +188,16 @@ final class ProfileRepository: ProfileRepositoryProtocol {
             endpoint: ProfileEndpoint.logout(refreshToken: refreshToken)
         )
     }
+
+    private static func invitationDate(from rawValue: String) -> Date? {
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = fractionalFormatter.date(from: rawValue) {
+            return date
+        }
+
+        return ISO8601DateFormatter().date(from: rawValue)
+    }
 }
 
 struct EmptyResponse: Decodable {}
-

@@ -13,6 +13,7 @@ enum ProductItemPresentationMapper {
             id: String(item.id),
             name: displayName,
             dosageInfo: dosage,
+            scientificName: item.scientificName,
             price: item.price,
             imageUrl: item.imageUrl,
             badgeText: item.company,

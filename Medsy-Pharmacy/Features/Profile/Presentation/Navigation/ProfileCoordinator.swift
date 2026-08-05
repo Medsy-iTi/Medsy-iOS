@@ -26,10 +26,15 @@ final class ProfileCoordinator: Coordinator {
 			deletePharmacyUseCase: container.resolve(DeletePharmacyUseCaseProtocol.self),
 			removePharmacistUseCase: container.resolve(RemovePharmacistUseCaseProtocol.self),
 			invitePharmacistUseCase: container.resolve(InvitePharmacistUseCaseProtocol.self),
+			fetchPendingInvitationsUseCase: container.resolve(FetchPendingPharmacyInvitationsUseCaseProtocol.self),
+			deletePendingInvitationUseCase: container.resolve(DeletePendingPharmacyInvitationUseCaseProtocol.self),
 			updatePharmacistUseCase: container.resolve(UpdatePharmacistUseCaseProtocol.self),
 			logoutUseCase: container.resolve(LogoutUseCaseProtocol.self),
 			goOnDutyUseCase: container.resolve(GoOnDutyUseCaseProtocol.self),
 			goOffDutyUseCase: container.resolve(GoOffDutyUseCaseProtocol.self),
+			sessionSettings: container.resolve(PharmacySessionSettings.self),
+			sendHeartbeatUseCase: container.resolve(SendHeartbeatUseCaseProtocol.self),
+			dutyStatusStore: container.resolve(DutyStatusStore.self),
 			languageManager: container.resolve(LanguageManager.self),
 			appSettings: container.resolve(PharmacyAppSettings.self)
 		)
@@ -57,6 +62,12 @@ final class ProfileCoordinator: Coordinator {
 					default:
 						break
 				}
+			}
+		}
+		viewModel.onPendingInvitationDeleted = { [weak self] in
+			guard let self, let last = path.last else { return }
+			if case .pendingInvitationDetail = last {
+				pop()
 			}
 		}
 	}
@@ -108,6 +119,15 @@ final class ProfileCoordinator: Coordinator {
 					info: info,
 					onInviteAnother: showAnotherInvitation,
 					onBack: popToRoot
+				)
+
+			case let .pendingInvitationDetail(invitation):
+				PendingInvitationDetailView(
+					invitation: invitation,
+					isDeleting: viewModel.pendingInvitationDeletingId == invitation.id,
+					errorMessage: viewModel.pendingInvitationsErrorMessage,
+					onDelete: { invitation in await self.viewModel.deletePendingInvitation(invitation) },
+					onDismissError: { self.viewModel.pendingInvitationsErrorMessage = nil }
 				)
 
 			case let .pharmacistProfile(member):
@@ -246,6 +266,18 @@ final class ProfileCoordinator: Coordinator {
 				isLeaving: viewModel.isLeavingPharmacy,
 				deleteErrorMessage: viewModel.deletePharmacyErrorMessage,
 				leaveErrorMessage: viewModel.leavePharmacyErrorMessage,
+				pendingInvitations: viewModel.pendingInvitations,
+				isLoadingPendingInvitations: viewModel.isLoadingPendingInvitations,
+				pendingInvitationDeletingId: viewModel.pendingInvitationDeletingId,
+				pendingInvitationsErrorMessage: viewModel.pendingInvitationsErrorMessage,
+				onLoadPendingInvitations: {
+					Task { await self.viewModel.loadPendingInvitations() }
+				},
+				onRefreshPendingInvitations: {
+					Task { await self.viewModel.loadPendingInvitations() }
+				},
+				onInvitationTap: viewModel.didTapPendingInvitation,
+				onDeleteInvitation: { invitation in await self.viewModel.deletePendingInvitation(invitation) },
 				onEdit: viewModel.didTapEditPharmacy,
 				onDelete: {
 					Task { await self.viewModel.confirmDeletePharmacy() }

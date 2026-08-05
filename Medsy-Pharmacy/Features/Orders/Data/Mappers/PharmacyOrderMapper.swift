@@ -134,7 +134,7 @@ enum PharmacyOrderMapper {
                 requestItemId: item.id,
                 productId: item.productId,
                 name: item.productName ?? "pharmacy.request.product_label".localized(String(item.productId)),
-                spec: "\(item.quantity) قطعة",
+                spec: "pharmacy.orders.item_pieces".localized(String(item.quantity)),
                 quantity: item.quantity,
                 price: item.unitPrice,
                 imageName: nil,

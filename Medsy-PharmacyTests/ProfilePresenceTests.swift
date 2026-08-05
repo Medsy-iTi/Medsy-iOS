@@ -121,11 +121,49 @@ final class ProfileViewModelPresenceTests: XCTestCase {
         XCTAssertNotNil(viewModel.presenceErrorMessage)
     }
 
+    func testServerPresenceSyncUpdatesSharedHomeSession() async {
+        let suiteName = "ProfilePresenceSyncTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let sessionSettings = PharmacySessionSettings(defaults: defaults)
+        let dutyStatusStore = DutyStatusStore(defaults: defaults)
+        let viewModel = makeViewModel(
+            goOnDutyUseCase: MockGoOnDutyUseCase {
+                PresenceEntity(lastHeartbeatAt: "", onDuty: true)
+            },
+            goOffDutyUseCase: MockGoOffDutyUseCase {
+                PresenceEntity(lastHeartbeatAt: "", onDuty: false)
+            },
+            sessionSettings: sessionSettings,
+            sendHeartbeatUseCase: MockSendHeartbeatUseCase {
+                PresenceEntity(lastHeartbeatAt: "2026-07-24T12:00:00Z", onDuty: true)
+            },
+            dutyStatusStore: dutyStatusStore
+        )
+
+        XCTAssertFalse(sessionSettings.isOnDuty)
+
+        await viewModel.onAppear()
+
+        XCTAssertTrue(viewModel.isOnDuty)
+        XCTAssertTrue(sessionSettings.isOnDuty)
+        XCTAssertTrue(dutyStatusStore.isOnDuty)
+    }
+
     private func makeViewModel(
         goOnDutyUseCase: GoOnDutyUseCaseProtocol,
-        goOffDutyUseCase: GoOffDutyUseCaseProtocol
+        goOffDutyUseCase: GoOffDutyUseCaseProtocol,
+        sessionSettings: PharmacySessionSettings? = nil,
+        sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol = MockSendHeartbeatUseCase {
+            PresenceEntity(lastHeartbeatAt: "", onDuty: false)
+        },
+        dutyStatusStore: DutyStatusStore? = nil
     ) -> ProfileViewModel {
-        ProfileViewModel(
+        let defaults = UserDefaults(
+            suiteName: "ProfilePresenceTests.\(UUID().uuidString)"
+        )!
+        return ProfileViewModel(
             getProfileUseCase: MockGetProfileUseCase(),
             updateProfileUseCase: MockUpdateProfileUseCase(),
             leavePharmacyUseCase: MockLeavePharmacyUseCase(),
@@ -133,10 +171,15 @@ final class ProfileViewModelPresenceTests: XCTestCase {
             deletePharmacyUseCase: MockDeletePharmacyUseCase(),
             removePharmacistUseCase: MockRemovePharmacistUseCase(),
             invitePharmacistUseCase: MockInvitePharmacistUseCase(),
+            fetchPendingInvitationsUseCase: MockFetchPendingPharmacyInvitationsUseCase(),
+            deletePendingInvitationUseCase: MockDeletePendingPharmacyInvitationUseCase(),
             updatePharmacistUseCase: MockUpdatePharmacistUseCase(),
             logoutUseCase: MockLogoutUseCase(),
             goOnDutyUseCase: goOnDutyUseCase,
             goOffDutyUseCase: goOffDutyUseCase,
+            sessionSettings: sessionSettings ?? PharmacySessionSettings(defaults: defaults),
+            sendHeartbeatUseCase: sendHeartbeatUseCase,
+            dutyStatusStore: dutyStatusStore ?? DutyStatusStore(defaults: defaults),
             languageManager: LanguageManager.shared,
             appSettings: PharmacyAppSettings.shared
         )
@@ -155,6 +198,11 @@ private struct MockGoOnDutyUseCase: GoOnDutyUseCaseProtocol {
 }
 
 private struct MockGoOffDutyUseCase: GoOffDutyUseCaseProtocol {
+    let action: () async throws -> PresenceEntity
+    func execute() async throws -> PresenceEntity { try await action() }
+}
+
+private struct MockSendHeartbeatUseCase: SendHeartbeatUseCaseProtocol {
     let action: () async throws -> PresenceEntity
     func execute() async throws -> PresenceEntity { try await action() }
 }
@@ -209,9 +257,18 @@ private struct MockInvitePharmacistUseCase: InvitePharmacistUseCaseProtocol {
             pharmacistFirstName: "Jane",
             pharmacistLastName: "Doe",
             status: "PENDING",
+            createdAt: nil,
             invitedEmail: email
         )
     }
+}
+
+private struct MockFetchPendingPharmacyInvitationsUseCase: FetchPendingPharmacyInvitationsUseCaseProtocol {
+    func execute(pharmacyId: Int) async throws -> [PharmacyInvitation] { [] }
+}
+
+private struct MockDeletePendingPharmacyInvitationUseCase: DeletePendingPharmacyInvitationUseCaseProtocol {
+    func execute(id: Int) async throws {}
 }
 
 private struct MockUpdatePharmacistUseCase: UpdatePharmacistUseCaseProtocol {
