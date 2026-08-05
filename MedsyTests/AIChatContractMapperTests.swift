@@ -24,6 +24,7 @@ final class AIChatContractMapperTests: XCTestCase {
         XCTAssertEqual(response.action?.addedProductIDs, [142])
         XCTAssertEqual(response.pharmacistRankings.first?.metric, .offersCreated)
         XCTAssertEqual(response.pharmacistRankings.first?.period, .lastWeek)
+        XCTAssertEqual(response.pharmacistRankings.first?.direction, .bottom)
         XCTAssertEqual(response.pharmacistRankings.first?.entries.first?.pharmacistID, 17)
         XCTAssertEqual(response.pharmacistRankings.first?.entries.first?.count, 12)
     }
@@ -112,6 +113,33 @@ final class AIChatContractMapperTests: XCTestCase {
         XCTAssertEqual(warnings.first?.involvedProducts.first?.productID, 142)
     }
 
+    func testRankingDirectionDefaultsToTopAndRetainsUnknownValues() throws {
+        let json = """
+        {
+          "intent": "PHARMACIST_PERFORMANCE",
+          "answer": "Rankings",
+          "pharmacistRankings": [
+            {"metric": "OFFERS_CREATED", "period": "LAST_WEEK", "entries": []},
+            {
+              "metric": "SUCCESSFUL_ORDERS",
+              "period": "LAST_MONTH",
+              "direction": "FUTURE_DIRECTION",
+              "entries": []
+            }
+          ]
+        }
+        """
+        let dto = try JSONDecoder().decode(
+            AIChatMessageResponseDTO.self,
+            from: Data(json.utf8)
+        )
+
+        let rankings = AIChatContractMapper.map(dto).pharmacistRankings
+
+        XCTAssertEqual(rankings.first?.direction, .top)
+        XCTAssertEqual(rankings.last?.direction, .unknown("FUTURE_DIRECTION"))
+    }
+
     func testCartItemDecodesNestedBackendProductAndLegacyFlatFields() throws {
         let nested = """
         {
@@ -172,6 +200,7 @@ final class AIChatContractMapperTests: XCTestCase {
           "pharmacistRankings": [{
             "metric": "OFFERS_CREATED",
             "period": "LAST_WEEK",
+            "direction": "BOTTOM",
             "entries": [{
               "rank": 1,
               "pharmacistId": 17,
