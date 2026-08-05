@@ -206,6 +206,7 @@ final class CartViewModelTests: XCTestCase {
             id: "42",
             name: "Real Product",
             dosageInfo: "500 mg",
+            scientificName: "Paracetamol",
             price: 75,
             imageUrl: "https://example.com/product.png",
             badgeText: "Company",
