@@ -88,6 +88,12 @@ struct CartAssembly: ModuleAssembly {
             )
         }
 
+        container.register(GetCartInteractionsUseCaseProtocol.self) { container in
+            GetCartInteractionsUseCase(
+                repository: container.resolve(CartRepositoryProtocol.self)
+            )
+        }
+
         container.register(CartViewModel.self) { container in
             MainActor.assumeIsolated {
                 CartViewModel(
@@ -96,7 +102,9 @@ struct CartAssembly: ModuleAssembly {
                     updateCartItemQuantityUseCase: container.resolve(UpdateCartItemQuantityUseCaseProtocol.self),
                     removeCartItemUseCase: container.resolve(RemoveCartItemUseCaseProtocol.self),
                     clearCartUseCase: container.resolve(ClearCartUseCaseProtocol.self),
-                    manageCartPrescriptionsUseCase: container.resolve(ManageCartPrescriptionsUseCaseProtocol.self)
+                    manageCartPrescriptionsUseCase: container.resolve(ManageCartPrescriptionsUseCaseProtocol.self),
+                    getCartInteractionsUseCase: container.resolve(GetCartInteractionsUseCaseProtocol.self),
+                    interactionLanguage: LanguageManager.shared.languageCode
                 )
             }
         }
