@@ -264,6 +264,12 @@
 "cart.clear_confirmation.title" = "Clear your cart?";
 "cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
 "cart.clear_confirmation.action" = "Clear cart";
+"cart.interactions.title" = "Medicine safety";
+"cart.interactions.subtitle" = "Review possible interactions before continuing.";
+"cart.interactions.loading" = "Checking medicines for interactions...";
+"cart.interactions.failure" = "Medicine safety could not be checked. Your cart is still available.";
+"cart.interactions.severity.high" = "High risk";
+"cart.interactions.severity.moderate" = "Moderate risk";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
