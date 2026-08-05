@@ -70,9 +70,10 @@ enum OrderMapper {
         )
     }
 
-    static func mapToPagedResult(_ page: PageDTO<OrderDTO>) -> PagedResult<OrderEntity> {
-        PagedResult(
-            items: page.content.map(mapToEntity),
+    static func mapToPagedResult(_ page: PageDTO<OrderGroupDTO>) -> PagedResult<OrderEntity> {
+        let orders = page.content.flatMap(\.orders)
+        return PagedResult(
+            items: orders.map(mapToEntity),
             page: page.number ?? 0,
             size: page.size ?? page.content.count,
             totalElements: page.totalElements,
