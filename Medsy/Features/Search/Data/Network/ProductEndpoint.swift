@@ -9,14 +9,12 @@ import Foundation
 import Alamofire
 
 enum ProductEndpoint {
-	case list(page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
-	case search(keyword: String, page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
-	case category(id: Int, page: Int, size: Int, sort: [ProductSort], lang: String? = nil)
+	case list(page: Int, size: Int, sort: [ProductSort], lang: String? = nil, company: String? = nil)
+	case search(keyword: String, page: Int, size: Int, sort: [ProductSort], lang: String? = nil, company: String? = nil)
+	case category(id: Int, page: Int, size: Int, sort: [ProductSort], lang: String? = nil, company: String? = nil)
 }
 
 extension ProductEndpoint: ApiEndpoint {
-
-	var baseURL: String? { Constants.baseURL }
 
 	var method: HTTPMethod { .get }
 
@@ -26,7 +24,7 @@ extension ProductEndpoint: ApiEndpoint {
 
 	var path: String {
 		switch self {
-			case let .list(page, size, sort, lang):
+			case let .list(page, size, sort, lang, company):
 				var items = [
 					URLQueryItem(name: "page", value: "\(page)"),
 					URLQueryItem(name: "size", value: "\(size)")
@@ -35,11 +33,14 @@ extension ProductEndpoint: ApiEndpoint {
 				if let lang = lang {
 					items.append(URLQueryItem(name: "lang", value: lang))
 				}
+				if let company = company {
+					items.append(URLQueryItem(name: "company", value: company))
+				}
 
 				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
 				return "products" + Self.queryString(items)
 
-			case let .search(keyword, page, size, sort, lang):
+			case let .search(keyword, page, size, sort, lang, company):
 				var items = [
 					URLQueryItem(name: "keyword", value: keyword),
 					URLQueryItem(name: "page", value: "\(page)"),
@@ -49,11 +50,14 @@ extension ProductEndpoint: ApiEndpoint {
 				if let lang = lang {
 					items.append(URLQueryItem(name: "lang", value: lang))
 				}
+				if let company = company {
+					items.append(URLQueryItem(name: "company", value: company))
+				}
 
 				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })
 				return "products/search" + Self.queryString(items)
 
-			case let .category(id, page, size, sort, lang):
+			case let .category(id, page, size, sort, lang, company):
 				var items = [
 					URLQueryItem(name: "page", value: "\(page)"),
 					URLQueryItem(name: "size", value: "\(size)")
@@ -61,6 +65,9 @@ extension ProductEndpoint: ApiEndpoint {
 
 				if let lang = lang {
 					items.append(URLQueryItem(name: "lang", value: lang))
+				}
+				if let company = company {
+					items.append(URLQueryItem(name: "company", value: company))
 				}
 
 				items.append(contentsOf: sort.map { URLQueryItem(name: "sort", value: $0.queryValue) })

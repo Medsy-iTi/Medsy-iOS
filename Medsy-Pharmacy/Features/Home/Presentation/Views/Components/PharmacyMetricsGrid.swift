@@ -16,15 +16,9 @@ struct PharmacyMetricsGrid: View {
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
-            Text("pharmacy.home.overview".localized)
-                .font(PharmacyColor.sans(16, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-
-            LazyVGrid(columns: columns, spacing: PharmacySpacing.xs) {
-                ForEach(metrics) { metric in
-                    PharmacyMetricItem(metric: metric)
-                }
+        LazyVGrid(columns: columns, spacing: PharmacySpacing.xs) {
+            ForEach(metrics) { metric in
+                PharmacyMetricItem(metric: metric)
             }
         }
     }

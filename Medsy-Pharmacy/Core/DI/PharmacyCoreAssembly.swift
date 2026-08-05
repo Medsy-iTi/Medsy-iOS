@@ -17,6 +17,10 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
             PharmacyAppSettings.shared
         }
 
+        container.register(PharmacySessionSettings.self) { _ in
+            PharmacySessionSettings.shared
+        }
+
         container.register(NetworkTransportProtocol.self) { _ in
             NetworkTransport()
         }
@@ -36,7 +40,8 @@ struct PharmacyCoreAssembly: PharmacyModuleAssembly {
             NetworkService(
                 transport: container.resolve(NetworkTransportProtocol.self),
                 requestBuilder: container.resolve(NetworkRequestBuilder.self),
-                tokenStore: container.resolve(TokenStoreProtocol.self)
+                tokenStore: container.resolve(TokenStoreProtocol.self),
+                tokenRefresher: container.resolve(TokenRefreshing.self)
             )
         }
     }

@@ -67,7 +67,7 @@ struct MedsyProductDetailSkeleton: View {
         VStack(spacing: MedsySpacing.md) {
 
             // Image placeholder
-            MedsySkeletonBlock(cornerRadius: MedsyRadius.lg, height: 240)
+			MedsySkeletonBlock(cornerRadius: MedsyRadius.lg, height: 240,width:310)
 
             // Title / subtitle / price — mirror RTL alignment
             VStack(

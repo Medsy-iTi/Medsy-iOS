@@ -208,6 +208,7 @@ private final class VerificationDataSourceSpy: AuthNetworkDataSourceProtocol {
         verificationRequest = request
         return makeSessionDTO(from: session)
     }
+    func logout(request: LogoutRequestDTO) async throws {}
 }
 
 private final class VerificationNetworkServiceSpy: NetworkServiceProtocol {

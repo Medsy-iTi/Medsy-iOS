@@ -2,13 +2,13 @@
 //  PharmacyRecentOrdersView.swift
 //  Medsy-Pharmacy
 //
-//  Created by Ehab Salah on 18/07/2026.
-//
 
 import SwiftUI
 
 struct PharmacyRecentOrdersView: View {
-    let orders: [PharmacyHomeOrder]
+    let orders: [PharmacyHomeRecentOrder]
+    let onSelectOrder: (PharmacyHomeRecentOrder) -> Void
+    let onViewAllOrders: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
@@ -17,25 +17,43 @@ struct PharmacyRecentOrdersView: View {
                     .font(PharmacyColor.sans(16, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
                 Spacer()
-                Button("pharmacy.home.view_all".localized, action: {})
+                Button("pharmacy.home.view_all".localized, action: onViewAllOrders)
                     .font(PharmacyColor.sans(13, .semibold))
                     .foregroundStyle(PharmacyColor.primary)
             }
 
-            VStack(spacing: 0) {
-                ForEach(Array(orders.enumerated()), id: \.element.id) { index, order in
-                    PharmacyRecentOrderItem(order: order)
+            Group {
+                if orders.isEmpty {
+                    PharmacyHomeSectionMessage(
+                        icon: "tray",
+                        title: "pharmacy.home.orders_empty_title".localized,
+                        message: "pharmacy.home.orders_empty_message".localized
+                    )
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(Array(orders.enumerated()), id: \.element.id) { index, order in
+                            Button {
+                                onSelectOrder(order)
+                            } label: {
+                                PharmacyRecentOrderItem(order: order)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
 
-                    if index < orders.count - 1 {
-                        Divider()
-                            .overlay(PharmacyColor.border)
-                            .padding(.leading, PharmacySpacing.md)
+                            if index < orders.count - 1 {
+                                Divider()
+                                    .overlay(PharmacyColor.border)
+                                    .padding(.leading, PharmacySpacing.md)
+                            }
+                        }
                     }
                 }
             }
             .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
+            .overlay(
+                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+                    .stroke(PharmacyColor.border, lineWidth: 1)
+            )
         }
     }
 }
-

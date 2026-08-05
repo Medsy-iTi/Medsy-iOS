@@ -13,11 +13,28 @@
 "common.welcome"  = "Welcome, %@!";
 "common.language" = "Language";
 
+/* Splash */
+"splash.brand" = "Medsy";
+"splash.tagline" = "Your health, our priority";
+"splash.subtitle" = "Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+
+/* Pharmacy Profile */
+"pharmacyProfile.title" = "Pharmacy Profile";
+"pharmacyProfile.badge" = "Pharmacy";
+"pharmacyProfile.verified" = "Verified";
+"pharmacyProfile.location" = "Pharmacy Location";
+"pharmacyProfile.contact" = "Pharmacy Contact Information";
+"pharmacyProfile.phoneNumber" = "Phone Number";
+"pharmacyProfile.call" = "Call";
+"pharmacyProfile.directions" = "Directions";
+"pharmacyProfile.share" = "Share";
+
 "language.english" = "English";
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to Nile Street, Maadi";
+"home.deliveryTo" = "Deliver to";
 "home.searchPlaceholder" = "Search by medicine name";
 "home.promoTitle" = "Your Health Matters";
 "home.promoDiscount" = "Discount up to 30%";
@@ -36,6 +53,36 @@
 "home.uploadPrescriptionDesc" = "Upload prescription photo and we will review it";
 "home.searchForMedicine" = "Search for Medicine";
 "home.searchForMedicineDesc" = "Search for any medicine you need easily";
+"medicineAnalyze.title" = "Analyze Medicine";
+"medicineAnalyze.heading" = "Identify your medicine";
+"medicineAnalyze.message" = "Take a clear photo of a medicine package and we will help you identify it.";
+"medicineAnalyze.camera.title" = "Take a photo";
+"medicineAnalyze.camera.message" = "Use your camera to capture the medicine package";
+"medicineAnalyze.gallery.title" = "Choose from gallery";
+"medicineAnalyze.gallery.message" = "Select a medicine photo already saved on your device";
+"medicineAnalyze.tips.title" = "For the best result";
+"medicineAnalyze.tips.clear" = "Keep the medicine name and package visible";
+"medicineAnalyze.tips.single" = "Capture one medicine package at a time";
+"medicineAnalyze.tips.light" = "Use good lighting and avoid reflections";
+"medicineAnalyze.preview.heading" = "Review your medicine photo";
+"medicineAnalyze.preview.message" = "Make sure the package details are clear before continuing.";
+"medicineAnalyze.changeImage" = "Choose another image";
+"medicineAnalyze.analyze" = "Analyze medicine";
+"medicineAnalyze.cameraUnavailable.title" = "Camera unavailable";
+"medicineAnalyze.cameraUnavailable.message" = "Use a device with a camera or choose an image from your gallery.";
+"medicineAnalyze.imageError.message" = "This image could not be prepared. Please choose another image.";
+"medicineAnalyze.loading.title" = "Identifying your medicine";
+"medicineAnalyze.loading.message" = "We are checking the package details and looking for matching products.";
+"medicineAnalyze.results.recognized" = "Analysis complete";
+"medicineAnalyze.results.count" = "%d matching products";
+"medicineAnalyze.results.message" = "Review the matches and choose the medicine you need.";
+"medicineAnalyze.results.match" = "Possible match";
+"medicineAnalyze.results.guidance.title" = "What would you like to do?";
+"medicineAnalyze.results.guidance.details" = "Tap a medicine to review its full details.";
+"medicineAnalyze.results.guidance.cart" = "Use the plus button to add the medicine directly to your cart.";
+"medicineAnalyze.empty.title" = "No medicine found";
+"medicineAnalyze.empty.message" = "We could not identify a product from this image. Try a clearer photo with the package name visible.";
+"medicineAnalyze.failure.title" = "Analysis failed";
 "home.shopByCategories" = "Shop by Categories";
 "home.viewAll" = "View All";
 "home.category.medicines" = "Medicines";
@@ -106,7 +153,8 @@
 "sort.company_asc" = "Company";
 
 /* Filter */
-"filter.sort" = "Sort & Filter ";
+"filter.sort" = "Sort";
+"filter.title" = "Filter";
 "filter.sort_title" = "Sort By & Filter";
 "filter.sort_by" = "Sort options";
 "filter.clear" = "Clear filters";
@@ -114,6 +162,13 @@
 "filter.type" = "Type";
 "filter.price" = "Price";
 "filter.most_relevant" = "Most Relevant";
+"company.lilly" = "Eli Lilly";
+"company.novartis" = "Novartis";
+"company.roche" = "Hoffmann-La Roche";
+"company.pfizer" = "Pfizer";
+"company.astrazeneca" = "AstraZeneca";
+"company.novonordisk" = "Novo Nordisk";
+"company.eva_pharm" = "Eva Pharma > Andalus Pharma";
 
 
 /* Empty state */
@@ -134,6 +189,11 @@
 
 /* Product detail */
 "product.info_title" = "Product Information";
+"product.form" = "Form";
+"product.strength" = "Strength";
+"product.pack_size" = "Pack Size";
+"product.scientific_category" = "Scientific Category";
+"product.consumer_category" = "Consumer Category";
 "product.add_to_cart" = "Add to Cart";
 "product.consult_pharmacist" = "Consult a Pharmacist";
 "product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
@@ -181,13 +241,15 @@
 "cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
 "cart.continue" = "Continue";
 "cart.empty.title" = "Your cart is empty";
-"cart.empty.message" = "Search for medicines or upload a prescription to start a request.";
+"cart.empty.message" = "Search for medicines or scan a prescription to add medicines first.";
 "cart.empty.search" = "Search medicines";
-"cart.empty.upload" = "Upload prescription";
+"cart.empty.scan_prescription" = "Scan prescription";
 "cart.error.title" = "Couldn't Load Cart";
 "cart.removed_message" = "%@ removed";
 "cart.undo" = "Undo";
 "cart.prescription.add" = "Add prescription";
+"cart.prescription.add_another" = "Add another prescription";
+"cart.prescription.number" = "Prescription %d";
 "cart.prescription.title" = "Attached prescription";
 "cart.prescription.change" = "Change prescription";
 "cart.prescription.remove" = "Remove prescription";
@@ -303,6 +365,11 @@
 "profile.change_photo" = "Change photo";
 "profile.full_name" = "Full name";
 "profile.full_name.placeholder" = "Enter your full name";
+"profile.first_name" = "First name";
+"profile.first_name.placeholder" = "Enter your first name";
+"profile.last_name" = "Last name";
+"profile.last_name.placeholder" = "Enter your last name";
+"profile.name_required_error" = "This field is required";
 "profile.email" = "Email";
 "profile.phone" = "Phone number";
 "profile.home_address" = "Home address";
@@ -314,6 +381,9 @@
 "profile.verified" = "Verified";
 "profile.phone_support_note" = "To change your phone number, please contact support";
 "profile.save_changes" = "Save changes";
+"profile.delivery_location.title" = "Add your delivery location";
+"profile.delivery_location.subtitle" = "Choose your location on the map to help nearby pharmacies serve you accurately.";
+"profile.unsaved_changes_toast" = "Please save the new profile.";
 "profile.name_error" = "Name must be at least 2 characters";
 "profile.address_error" = "Address must be at least 4 characters";
 
@@ -346,8 +416,21 @@
 "prescription.review.confirmed" = "confirmed";
 "prescription.review.needsReview" = "needs review";
 "prescription.review.addToCart" = "Add to cart";
+"prescription.review.addingToCart" = "Adding to cart...";
 "prescription.review.confirm" = "Confirm";
 "prescription.review.chooseAnother" = "Choose another";
+"prescription.review.foundCount" = "%d medicines found";
+"prescription.review.recognized" = "Recognized";
+"prescription.review.showImage" = "Show prescription image";
+"prescription.review.noImage" = "No prescription image available";
+"prescription.review.perPack" = "per pack";
+"prescription.review.edit" = "Edit";
+"prescription.review.unclearMessage" = "The medicine is unclear and may be similar to:";
+"prescription.review.blocked" = "Confirm unclear medicines first to enable adding";
+"prescription.review.showCandidates" = "Review candidates";
+"prescription.review.hideCandidates" = "Hide candidates";
+"prescription.review.noCandidates" = "No matching products were suggested. Search the catalog to select this medicine.";
+"prescription.review.searchCatalog" = "Search catalog";
 "prescription.needsReview" = "Needs review";
 "prescription.added.title" = "Added to cart!";
 "prescription.added.message" = "You can review quantities and set up your order from the cart.";
@@ -356,6 +439,7 @@
 "prescription.uploadFailed.title" = "Upload failed";
 "prescription.uploadFailed.message" = "Check your internet connection and try again.";
 "prescription.retry" = "Try again";
+"prescription.analysisFailed.title" = "Prescription analysis failed";
 "prescription.readingFailed.title" = "Couldn't read the prescription";
 "prescription.readingFailed.message" = "Try a clearer image, or continue so the pharmacist can review it.";
 "prescription.readingFailed.continue" = "Continue with prescription";
@@ -364,3 +448,339 @@
 "prescription.none.manual" = "Add medicine manually";
 "prescription.camera.unavailable.title" = "Camera unavailable";
 "prescription.camera.unavailable.message" = "Use a device with a camera or choose a prescription from your photo library.";
+
+/* Orders */
+"orders.title"                       = "My Orders";
+"orders.filter.all"                  = "All";
+"orders.filter.active"               = "Active";
+"orders.filter.completed"            = "Completed";
+"orders.filter.cancelled"            = "Cancelled";
+"orders.status.pending"              = "Order Confirmed";
+"orders.status.confirmed"            = "Order Confirmed";
+"orders.status.processing"           = "Processing";
+"orders.status.shipped"              = "Shipped";
+"orders.status.delivered"            = "Delivered";
+"orders.status.cancelled"            = "Cancelled";
+"orders.status.rejected"             = "Rejected";
+"orders.status.preparing"            = "Preparing";
+"orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.out_for_delivery"     = "Out for delivery";
+"orders.pharmacy_fallback"           = "Pharmacy #%d";
+"orders.product_fallback"            = "Product #%d";
+"orders.fulfillment.delivery"        = "Delivery";
+"orders.fulfillment.pickup"          = "Pickup";
+"orders.items_count"                 = "%d items";
+"orders.item_count"                  = "%d item";
+"orders.price_format"                = "%.0f EGP";
+"orders.empty.title"                 = "No orders yet";
+"orders.empty.subtitle"              = "Your order history will appear here once you place your first order.";
+"orders.empty.search"                = "Search medicines";
+"orders.empty.active.title"          = "No active orders";
+"orders.empty.active.subtitle"       = "Orders you are currently waiting for will appear here.";
+"orders.empty.completed.title"       = "No completed orders";
+"orders.empty.completed.subtitle"    = "Orders that have been delivered will appear here.";
+"orders.empty.cancelled.title"       = "No cancelled orders";
+"orders.empty.cancelled.subtitle"    = "Cancelled orders will appear here.";
+"orders.empty.filtered.title"        = "No matching orders";
+"orders.empty.filtered.subtitle"     = "No orders match your current filters. Try adjusting or clearing them.";
+"orders.empty.clear_filters"         = "Clear filters";
+"orders.error.title"                 = "Couldn't load orders";
+"orders.error.subtitle"              = "Check your internet connection and try again.";
+"orders.loading"                     = "Loading orders…";
+"orders.section.today"               = "Today";
+"orders.section.yesterday"           = "Yesterday";
+"orders.section.active"              = "Active orders";
+"orders.section.history"             = "Order history";
+"orders.detail.title"                = "Order Details";
+"orders.detail.order_number"         = "Order #%d";
+"orders.detail.date"                 = "Date";
+"orders.detail.status"               = "Status";
+"orders.detail.items"                = "Items price";
+"orders.detail.items_label"          = "Items";
+"orders.detail.item_unit_price"      = "%.0f EGP each";
+"orders.detail.delivery_fee"         = "Delivery Fee";
+"orders.detail.total"                = "Total";
+"orders.detail.not_found"            = "Order not found";
+"orders.detail.error"                = "Couldn't load order details";
+"orders.detail.delivery"             = "Delivery";
+"orders.detail.item_qty_price"       = "%d × %.0f EGP";
+"orders.detail.order_summary"        = "Order Summary";
+"orders.detail.items_subtotal"       = "Items subtotal";
+"orders.detail.reorder"              = "Reorder";
+"orders.detail.alternative_to"       = "Alternative to %@";
+"orders.reorder.go_to_cart"          = "Go to Cart";
+"orders.reorder.continue_shopping"   = "Continue Shopping";
+"orders.reorder.success.title"       = "Added Successfully";
+"orders.reorder.partial.title"       = "Partially Added";
+"orders.reorder.failed.title"        = "Failed to Add";
+"orders.reorder.success.message"     = "All items have been added to your cart.";
+"orders.reorder.partial.message"     = "Added %d out of %d items to your cart.";
+"orders.reorder.failed.message"      = "We couldn't add the items to your cart. Please try again.";
+
+"orders.filter.title"                 = "Filter Orders";
+"orders.filter.reset"                 = "Reset";
+"orders.filter.apply"                 = "Apply";
+"orders.filter.button.accessibility" = "Filter orders";
+"orders.filter.section.status"       = "Status";
+"orders.filter.section.fulfillment"  = "Fulfillment Type";
+"orders.filter.section.date"         = "Date Range";
+"orders.filter.fulfillment.all"      = "All";
+"orders.filter.fulfillment.delivery" = "Delivery";
+"orders.filter.fulfillment.pickup"   = "Pickup";
+"orders.date_range.anytime"          = "Anytime";
+"orders.date_range.today"            = "Today";
+"orders.date_range.last_7_days"      = "Last 7 days";
+"orders.date_range.last_30_days"     = "Last 30 days";
+"orders.date_range.last_3_months"    = "Last 3 months";
+"orders.date_range.custom"           = "Custom";
+"orders.filter.date.from"            = "From";
+"orders.filter.date.to"              = "To";
+
+/* Address Picker */
+
+"address.title" = "Select your address";
+"address.search_placeholder" = "Search for a location";
+"address.confirm" = "Confirm location";
+"address.current_location" = "Use current location";
+"profile.pick_on_map" = "Pick on map";
+"address.permission_denied" = "Location access is needed to pick your address";
+
+/* Complete Request */
+"complete_request.title" = "Complete request";
+"complete_request.summary.title" = "Request summary";
+"complete_request.summary.items_count" = "%d medicines";
+"complete_request.summary.prescriptions_count" = "%d prescriptions";
+"complete_request.summary.show_items" = "Show selected medicines";
+"complete_request.summary.hide_items" = "Hide selected medicines";
+"complete_request.receive.title" = "How would you like to receive it?";
+"complete_request.receive.subtitle" = "Choose delivery to your address or pickup from the selected pharmacy later.";
+"complete_request.receive.delivery" = "Delivery";
+"complete_request.receive.delivery.subtitle" = "Delivered to your selected location";
+"complete_request.receive.pickup" = "Pickup";
+"complete_request.receive.pickup.subtitle" = "Collect it from the pharmacy";
+"complete_request.address.title" = "Delivery address";
+"complete_request.address.loading" = "Loading your saved address…";
+"complete_request.address.empty" = "No saved address was found. Choose an address and confirm its map location for this request.";
+"complete_request.address.saved_unconfirmed" = "This is your saved profile address. Confirm its location on the map before submitting the request.";
+"complete_request.address.confirm_on_map" = "Confirm address on map";
+"complete_request.address.choose" = "Choose map location";
+"complete_request.address.change" = "Change map location";
+"complete_request.address.confirmed" = "Map location confirmed";
+"complete_request.payment.title" = "How would you like to pay?";
+"complete_request.payment.subtitle" = "Select one payment option for this request.";
+"complete_request.payment.cash" = "Cash";
+"complete_request.payment.cash.subtitle" = "Pay when you receive the request";
+"complete_request.payment.visa" = "Visa";
+"complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.notes.title" = "Request notes";
+"complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
+"complete_request.notes.placeholder" = "Add notes for the pharmacy";
+"complete_request.card.title" = "Visa card details";
+"complete_request.card.cardholder" = "Cardholder name";
+"complete_request.card.number" = "Card number";
+"complete_request.card.expiry" = "Expiry (MM/YY)";
+"complete_request.card.cvv" = "CVV";
+"complete_request.card.security" = "Card details are validated on this device and are not saved.";
+"complete_request.validation.location" = "Confirm a delivery location to continue.";
+"complete_request.validation.pickup_unsupported" = "Pickup requests are not supported by the current request service yet. Choose delivery to continue.";
+"complete_request.validation.cardholder_name" = "Enter the name shown on the card.";
+"complete_request.validation.card_number" = "Enter a valid 16-digit Visa card number.";
+"complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";
+"complete_request.validation.cvv" = "Enter the three-digit security code.";
+"complete_request.submit" = "Submit medicine request";
+"complete_request.success.title" = "Request sent successfully";
+"complete_request.success.subtitle" = "We returned you home so you can view current offers.";
+"complete_request.submit_error.title" = "Couldn't complete request";
+"complete_request.submit_error" = "Your request wasn't completed because the cart couldn't be cleared. Please try again.";
+"complete_request.location.title" = "Choose delivery location";
+"complete_request.location.pin" = "Delivery location";
+"complete_request.location.preview" = "Map preview of the confirmed delivery location";
+"complete_request.location.unavailable" = "Your current location is unavailable. Search for an address or place a pin instead.";
+"complete_request.location.search_error" = "We couldn't search for that address. Please try again.";
+"complete_request.location.resolve_error" = "We couldn't identify this address. Try another point on the map.";
+
+"NSLocationWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "We need your location to show nearby addresses and help you select your delivery address.";
+
+/* Offers */
+"order_complete.thank_you" = "Thank you!";
+"order_complete.success_message" = "Your order has been confirmed successfully. We will update you soon.";
+"order_complete.summary_title" = "Confirmed Order Details";
+"order_complete.pharmacy" = "Pharmacy";
+"order_complete.medicines_count" = "Medicines Count";
+"order_complete.medicines_count_value" = "%d medicines";
+"order_complete.order_id" = "Order ID";
+"order_complete.total" = "Confirmed Total";
+"order_complete.back_home" = "Back to Home";
+"common.egp" = "EGP";
+"home.status.firstOffer.currency" = "EGP";
+"home.status.firstOffer.medsUnit" = "meds";
+"home.deleteOffer.title" = "Delete Offer";
+"home.deleteOffer.message" = "Are you sure you want to delete the offer?";
+"home.deleteOffer.confirm" = "Delete";
+"home.deleteOffer.cancel" = "Cancel";
+
+"offers.list.title" = "Available Offers";
+"offers.list.subtitleFormat" = "%d offers available for your order";
+"offers.list.badge.full" = "Full Offer";
+"offers.list.badge.partial" = "Partial Offer";
+"offers.list.badge.combined" = "Combined Offer";
+"offers.list.priceFrom" = "From";
+"offers.list.currency" = "EGP";
+"offers.list.info.title" = "Prices are fixed by Medsy";
+"offers.list.info.desc" = "Pharmacies can only apply discounts and add delivery fees";
+"offers.list.pharmacy.nahda" = "El-Nahda Pharmacy";
+"offers.list.pharmacy.shifa" = "El-Shifa Pharmacy";
+"offers.list.pharmacy.twoPharmacies" = "Offer from 2 Pharmacies";
+"offers.list.subtitle.bestPrice" = "Best Price";
+"offers.list.subtitle.unavailableMeds" = "Contains unavailable medicines";
+"offers.list.subtitle.fullCoverage" = "Full Order Coverage";
+
+"offers.details.requestedMeds" = "Requested Medicines";
+"offers.details.available" = "Available";
+"offers.details.unavailable" = "Unavailable";
+"offers.details.pharmacistComment" = "Pharmacist Comment";
+"offers.details.viewPrescription" = "View Prescription";
+"offers.details.selectOffer" = "Select This Offer";
+"offers.details.managerSuffix" = " (Manager)";
+"offers.details.defaultComment" = "Hello, all medicines are available and ready for preparation. Please adhere to the indicated dosages. We wish you a speedy recovery 🌿";
+"offers.details.med.panadol" = "Panadol Extra";
+"offers.details.dosage.panadol" = "20 tablets";
+"offers.details.med.amoxicillin" = "Amoxicillin 500mg";
+"offers.details.dosage.amoxicillin" = "16 capsules";
+"offers.details.med.brufen" = "Brufen 400mg";
+"offers.details.dosage.brufen" = "10 tablets";
+"offers.details.med.vitaminc" = "Vitamin C 1000mg";
+"offers.details.dosage.vitaminc" = "10 tablets";
+
+/* Order Review */
+"orderReview.title" = "Order Review";
+"orderReview.section.medicines" = "Medicines";
+"orderReview.section.deliveryAddress" = "Delivery Address";
+"orderReview.section.deliveryDetails" = "Delivery Details";
+"orderReview.address.edit" = "Edit";
+"orderReview.address.text" = "El-Nile St. Maadi - Cairo\nIn front of Nile Tower, 3rd Floor, Apt 12";
+"orderReview.delivery.type" = "Home Delivery";
+"orderReview.delivery.feeLabel" = "Delivery Fee";
+"orderReview.summary.subtotal" = "Medicines Subtotal";
+"orderReview.summary.deliveryFee" = "Delivery Fee";
+"orderReview.summary.total" = "Total";
+"orderReview.confirmOrder" = "Confirm Order";
+
+
+"tab.medsy_chatbot" = "Chatbot";
+
+/* ─────────────────────────────────────────────────────────── */
+/* Chatbot – MedsyChatView                                     */
+/* ─────────────────────────────────────────────────────────── */
+
+/* AI persona */
+"chatbot.ai.name"              = "Medsy AI";
+"chatbot.ai.status.online"     = "Online";
+
+/* Scenario tabs */
+"chatbot.scenario.symptom"      = "Symptoms";
+"chatbot.scenario.prescription" = "Prescription";
+"chatbot.scenario.pharmacy"     = "Pharmacies";
+"chatbot.scenario.reorder"      = "Reorder";
+
+/* Disclaimer */
+"chatbot.disclaimer" = "Information only — not a medical diagnosis. Always confirm with a pharmacist or doctor.";
+
+/* Quick-action chips */
+"chatbot.chip.how_to_take"           = "How do I take it?";
+"chatbot.chip.side_effects"          = "Side effects?";
+"chatbot.chip.cheaper"               = "Cheaper equivalent";
+"chatbot.chip.side_effects_concor"   = "Side effects of Concor?";
+"chatbot.chip.remind_daily"          = "Remind me daily";
+"chatbot.chip.nearest_hospital"      = "Nearest hospital";
+"chatbot.chip.share_location"        = "Share location";
+"chatbot.chip.switch_to_ator"        = "Switch to Ator — save EGP 122";
+"chatbot.chip.keep_lipitor"          = "Keep Lipitor";
+
+/* Common button labels */
+"chatbot.action.add_to_cart"  = "+ Add to cart";
+"chatbot.action.details"      = "Details";
+"chatbot.action.add_both"     = "Add both to cart";
+"chatbot.action.review_each"  = "Review each";
+"chatbot.action.end_call"     = "End call";
+"chatbot.action.take_over"    = "Take over call";
+
+/* Input bar */
+"chatbot.input.placeholder"  = "Message Medsy AI...";
+
+/* ── Scenario 1: Symptoms ── */
+"chatbot.demo.symptom.q1" = "I've had a bad headache since morning and my eyes hurt when I look at screens";
+"chatbot.demo.symptom.a1" = "Sorry to hear that, Omar. A few quick questions — does the pain feel like pressure around your forehead, and have you been on screens for long today?";
+"chatbot.demo.symptom.q2" = "Yes, pressure around the forehead. Working on my laptop all day";
+"chatbot.demo.symptom.a2" = "This sounds like a tension headache from eye strain — usually not serious. An over-the-counter pain reliever can help. If headaches keep coming back, I'd recommend seeing an ophthalmologist to check your eyes.";
+
+/* ── Scenario 1: Products ── */
+"chatbot.demo.product.eyebrow.otc"         = "SUGGESTED · OVER THE COUNTER";
+"chatbot.demo.product.panadol.name"        = "Panadol Extra";
+"chatbot.demo.product.panadol.subtitle"    = "500 mg · 24 tablets";
+"chatbot.demo.product.panadol.price"       = "EGP 68";
+"chatbot.demo.product.panadol.footnote"    = "Ask your pharmacist to confirm the right dose for you.";
+
+/* ── Scenario 2: Prescription ── */
+"chatbot.demo.rx.q1"      = "Can you read this and explain it simply?";
+"chatbot.demo.rx.a1"      = "I read your prescription — it's for high blood pressure and cholesterol. In simple words: one medicine keeps your pressure down, the other keeps your arteries clean. I found both in the Medsy catalog:";
+"chatbot.demo.rx.lowconf" = "One item is low-confidence — please confirm Lipitor before adding. You'll review everything in your cart before any request is sent.";
+
+"chatbot.demo.product.concor.name"     = "Concor 5 mg";
+"chatbot.demo.product.concor.subtitle" = "For blood pressure · 1 tablet every morning";
+"chatbot.demo.product.concor.price"    = "EGP 96";
+"chatbot.demo.product.concor.badge"    = "✓ 98% match";
+"chatbot.demo.product.lipitor.name"    = "Lipitor 20 mg";
+"chatbot.demo.product.lipitor.subtitle"= "For cholesterol · 1 tablet at night";
+"chatbot.demo.product.lipitor.price"   = "EGP 210";
+"chatbot.demo.product.lipitor.badge"   = "⚠ Check me";
+
+/* ── Scenario 3: Pharmacy ── */
+"chatbot.demo.pharmacy.q1" = "Which pharmacies near me are open now?";
+"chatbot.demo.pharmacy.a1" = "I found 3 pharmacies open now near Nile Street, Maadi:";
+"chatbot.demo.pharmacy.a2" = "Want me to call El Ezaby and ask if Panadol Extra is in stock?";
+"chatbot.demo.pharmacy.q2" = "Yes, call them please";
+
+"chatbot.demo.pharmacy.elezaby.name"     = "El Ezaby Pharmacy";
+"chatbot.demo.pharmacy.elezaby.distance" = "350 m · 12 Nile St. · ~4 min walk";
+"chatbot.demo.pharmacy.misr.name"        = "Misr Pharmacy";
+"chatbot.demo.pharmacy.misr.distance"    = "600 m · Road 9 · closes 12 AM";
+"chatbot.demo.pharmacy.seif.name"        = "Seif Pharmacy";
+"chatbot.demo.pharmacy.seif.distance"    = "1.1 km · Corniche El Nil · closes 11 PM";
+"chatbot.demo.pharmacy.open"             = "Open";
+"chatbot.demo.pharmacy.open24h"          = "Open 24h";
+
+"chatbot.demo.call.title"    = "Calling El Ezaby Pharmacy...";
+"chatbot.demo.call.subtitle" = "Asking about Panadol Extra 500 mg availability";
+
+/* ── Scenario 4: Reorder ── */
+"chatbot.demo.interaction.title"          = "Interaction Warning";
+"chatbot.demo.interaction.message"        = "Grapefruit juice may reduce Concor's effect. Better options exist — ask your pharmacist before combining them.";
+"chatbot.demo.interaction.action_title"   = "Ask pharmacist — 16667";
+"chatbot.demo.interaction.action_subtitle"= "Egyptian Drug Authority Hotline";
+
+"chatbot.demo.reorder.a1" = "Also — you're due to run out of Concor in 3 days. Want me to reorder your usual blood-pressure meds?";
+"chatbot.demo.reorder.q1" = "Yes reorder, and remind me to take it daily at 9 AM";
+
+"chatbot.demo.reminder.title"    = "Daily reminder set";
+"chatbot.demo.reminder.subtitle" = "Concor 5 mg · every day at 9:00 AM";
+
+"chatbot.demo.order.label"    = "REORDER · REQUEST";
+"chatbot.demo.order.status"   = "Searching pharmacies";
+"chatbot.demo.order.items"    = "Concor 5 mg ×1 · Lipitor 20 mg ×1";
+"chatbot.demo.order.subtotal" = "Fixed subtotal EGP 306 · searching within 500 m";
+"chatbot.demo.order.phase"    = "Phase 1";
+"chatbot.demo.order.time_left"= "07:12 left";
+
+"chatbot.demo.alternative.message" = "Done ✓ By the way, a same-ingredient equivalent of Lipitor — Ator 20 mg — costs EGP 88 instead of 210. Want it in the request instead?";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "Medsy AI is thinking…";
+"chatbot.error.generic"        = "Something went wrong. Please try again.";
+"chatbot.error.dismiss"        = "Dismiss";
+"chatbot.sources.match"        = "✓ %d%% match";
+"chatbot.sources.eyebrow"      = "AI SUGGESTED";
+"chatbot.empty.title"          = "Ask Medsy AI";
+"chatbot.empty.subtitle"       = "Ask me about medications, symptoms, or your prescription.";
