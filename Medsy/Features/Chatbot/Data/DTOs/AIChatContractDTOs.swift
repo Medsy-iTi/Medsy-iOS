@@ -56,6 +56,7 @@ struct AIChatActionDTO: Decodable {
 struct AIChatPharmacistRankingDTO: Decodable {
     let metric: String?
     let period: String?
+    let direction: String?
     let entries: [AIChatPharmacistPerformanceEntryDTO]?
 }
 

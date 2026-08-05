@@ -88,6 +88,12 @@ enum AIChatPerformancePeriod: Equatable, Sendable {
     case unknown(String)
 }
 
+enum AIChatPerformanceDirection: Equatable, Sendable {
+    case top
+    case bottom
+    case unknown(String)
+}
+
 struct AIChatPharmacistPerformanceEntry: Equatable, Sendable {
     let rank: Int
     let pharmacistID: Int
@@ -99,6 +105,7 @@ struct AIChatPharmacistPerformanceEntry: Equatable, Sendable {
 struct AIChatPharmacistRanking: Equatable, Sendable {
     let metric: AIChatPerformanceMetric
     let period: AIChatPerformancePeriod
+    let direction: AIChatPerformanceDirection
     let entries: [AIChatPharmacistPerformanceEntry]
 }
 

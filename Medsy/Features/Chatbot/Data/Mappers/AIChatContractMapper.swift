@@ -152,6 +152,7 @@ enum AIChatContractMapper {
         return AIChatPharmacistRanking(
             metric: mapPerformanceMetric(rawMetric),
             period: mapPerformancePeriod(rawPeriod),
+            direction: mapPerformanceDirection(dto.direction),
             entries: (dto.entries ?? []).compactMap(mapPerformanceEntry)
         )
     }
@@ -170,6 +171,17 @@ enum AIChatContractMapper {
         case "LAST_WEEK": return .lastWeek
         case "LAST_MONTH": return .lastMonth
         case "LAST_YEAR": return .lastYear
+        default: return .unknown(value)
+        }
+    }
+
+    private static func mapPerformanceDirection(
+        _ value: String?
+    ) -> AIChatPerformanceDirection {
+        guard let value else { return .top }
+        switch value.uppercased() {
+        case "TOP": return .top
+        case "BOTTOM": return .bottom
         default: return .unknown(value)
         }
     }
