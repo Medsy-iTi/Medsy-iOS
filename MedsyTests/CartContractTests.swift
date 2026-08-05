@@ -136,7 +136,95 @@ final class CartContractTests: XCTestCase {
         )
     }
 
+    func testDecodesAndMapsCartInteractionWarnings() throws {
+        let response = try decodeInteractions(
+            """
+            {
+              "success": true,
+              "message": "Cart interactions evaluated",
+              "data": {
+                "warnings": [
+                  {
+                    "severity": "HIGH",
+                    "title": "Potential interaction",
+                    "advice": "Ask your pharmacist",
+                    "involvedProducts": [
+                      {
+                        "productId": 17,
+                        "productName": "Medicine",
+                        "ingredient": "Ingredient"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+            """
+        )
+
+        let dto = try XCTUnwrap(response.data?.warnings.first)
+        let warning = CartMapper.map(dto)
+        XCTAssertEqual(warning.severity, .high)
+        XCTAssertEqual(warning.title, "Potential interaction")
+        XCTAssertEqual(warning.advice, "Ask your pharmacist")
+        XCTAssertEqual(warning.involvedProducts.first?.productID, 17)
+        XCTAssertEqual(warning.involvedProducts.first?.productName, "Medicine")
+        XCTAssertEqual(warning.involvedProducts.first?.ingredient, "Ingredient")
+    }
+
+    func testInteractionContractDefaultsSparseCollectionsAndUnknownSeverity() throws {
+        let response = try decodeInteractions(
+            """
+            {
+              "success": true,
+              "message": "Cart interactions evaluated",
+              "data": {
+                "warnings": [
+                  {
+                    "severity": "CRITICAL",
+                    "title": "Review medicines",
+                    "advice": ""
+                  }
+                ]
+              }
+            }
+            """
+        )
+
+        let dto = try XCTUnwrap(response.data?.warnings.first)
+        let warning = CartMapper.map(dto)
+        XCTAssertEqual(warning.severity, .moderate)
+        XCTAssertTrue(warning.involvedProducts.isEmpty)
+    }
+
+    func testInteractionContractDefaultsMissingWarningsToEmpty() throws {
+        let response = try decodeInteractions(
+            """
+            {
+              "success": true,
+              "message": "Cart interactions evaluated",
+              "data": {}
+            }
+            """
+        )
+
+        XCTAssertEqual(response.data?.warnings, [])
+    }
+
+    func testInteractionEndpointUsesCurrentCartAndLanguage() {
+        let endpoint = CartEndpoint.interactions(language: "ar")
+
+        XCTAssertEqual(endpoint.path, "cart/interactions")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertEqual(endpoint.queryParameters?["lang"] as? String, "ar")
+        XCTAssertTrue(endpoint.requiresAuthentication)
+    }
+
     private func decodeResponse(_ json: String) throws -> CartResponseDTO {
         try JSONDecoder().decode(CartResponseDTO.self, from: Data(json.utf8))
+    }
+
+    private func decodeInteractions(_ json: String) throws -> CartInteractionsResponseDTO {
+        try JSONDecoder().decode(CartInteractionsResponseDTO.self, from: Data(json.utf8))
     }
 }
