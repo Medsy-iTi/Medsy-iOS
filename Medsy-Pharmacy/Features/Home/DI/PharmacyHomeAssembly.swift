@@ -29,6 +29,7 @@ struct PharmacyHomeAssembly: PharmacyModuleAssembly {
             PharmacyHomeFactory(
                 getProfileUseCase: container.resolve(GetPharmacyProfileUseCaseProtocol.self),
                 fetchDashboardUseCase: container.resolve(FetchPharmacyDashboardUseCaseProtocol.self),
+                sendHeartbeatUseCase: container.resolve(SendHeartbeatUseCaseProtocol.self),
                 sessionSettings: container.resolve(PharmacySessionSettings.self)
             )
         }

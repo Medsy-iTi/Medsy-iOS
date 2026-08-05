@@ -13,4 +13,5 @@ protocol CartRepositoryProtocol {
     func removeItem(id: Int64) async throws -> Cart
     func clearCart() async throws
     func fetchItemCount() async throws -> Int
+    func fetchInteractions(language: String) async throws -> [CartInteractionWarning]
 }
