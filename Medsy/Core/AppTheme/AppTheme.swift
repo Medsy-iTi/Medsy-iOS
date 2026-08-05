@@ -37,8 +37,8 @@ enum AppColor {
     static let lightGreen = Color(hex: "#E8F8F4")
     static let white = Color(hex: "#FFFFFF")
   
-    static var textPrim: Color { AppSettings.shared.isDarkMode ? Color(hex: "#FFFFFF") : Color(hex: "#1C1C1C") }
-    static var textSec: Color { Color(hex: "#6B7280") }
+    static var textPrim: Color { .primary }
+    static var textSec: Color { .secondary }
     static var hintPlaceholder: Color {
         AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
     }
@@ -51,6 +51,7 @@ enum AppColor {
     static let successGreen = Color(hex: "#22C55E")
     static let errorRed = Color(hex: "#EF4444")
     static let warningYellow = Color(hex: "#F59E0B")
+    static let badgePurple = Color(hex: "#6366F1")
     
     static var pill: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
     static var pillSel: Color { green }
@@ -68,6 +69,8 @@ enum AppColor {
 
 
 	static var danger: Color { errorRed }
+    static var dangerLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#451B1B") : Color(hex: "#FDECEB") }
+    static var warningLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#4D3613") : Color(hex: "#FDF3DF") }
 
 	static var skeleton: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : lightGreen }
 
@@ -83,6 +86,36 @@ extension Color {
         let b = Double(val & 0xFF) / 255
         self.init(red: r, green: g, blue: b)
     }
+}
+
+// MARK: - MedsyTheme
+
+/// Central colour palette consumed by Medsy chatbot components.
+/// Uses `AppColor` as the single source of truth so dark-mode aware
+/// colours stay reactive — no duplicate hex literals.
+struct MedsyTheme {
+    var primary:      Color
+    var primaryLight: Color
+    var danger:       Color
+    var dangerLight:  Color
+    var warning:      Color
+    var warningLight: Color
+    var surface:      Color
+    var textPrimary:  Color
+    var textSecondary: Color
+
+    /// Default Medsy palette — delegates to `AppColor` wherever possible.
+    static let `default` = MedsyTheme(
+        primary:       AppColor.green,               // #0D8653
+        primaryLight:  AppColor.lightGreen,          // #E8F8F4
+        danger:        AppColor.errorRed,            // #EF4444
+        dangerLight:   AppColor.dangerLight,
+        warning:       AppColor.warningYellow,       // #F59E0B
+        warningLight:  AppColor.warningLight,
+        surface:       AppColor.surface,
+        textPrimary:   AppColor.textPrim,
+        textSecondary: AppColor.textSec
+    )
 }
 
 

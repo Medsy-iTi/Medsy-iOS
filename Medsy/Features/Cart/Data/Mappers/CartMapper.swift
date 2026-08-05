@@ -14,6 +14,7 @@ enum CartMapper {
                     id: $0.id,
                     productID: $0.productId,
                     productName: $0.productName,
+                    dosageInfo: $0.dosageInfo,
                     imageURL: $0.imageUrl,
                     unitPrice: $0.unitPrice,
                     quantity: $0.quantity,
@@ -40,6 +41,21 @@ enum CartMapper {
                 )
             },
             totalPrice: dto.totalPrice
+        )
+    }
+
+    static func map(_ dto: CartInteractionWarningDTO) -> CartInteractionWarning {
+        CartInteractionWarning(
+            severity: dto.severity.uppercased() == "HIGH" ? .high : .moderate,
+            title: dto.title,
+            advice: dto.advice,
+            involvedProducts: dto.involvedProducts.map {
+                CartInteractionProduct(
+                    productID: $0.productId,
+                    productName: $0.productName,
+                    ingredient: $0.ingredient
+                )
+            }
         )
     }
 }

@@ -35,12 +35,4 @@ struct CartRequestDraft: Equatable {
         self.prescriptions = prescriptions
     }
 
-    init(items: [CartDisplayItem], prescription: CartPrescriptionAttachment?) {
-        self.items = items
-        prescriptions = prescription.map { [$0] } ?? []
-    }
-
-    var prescription: CartPrescriptionAttachment? {
-        prescriptions.first
-    }
 }

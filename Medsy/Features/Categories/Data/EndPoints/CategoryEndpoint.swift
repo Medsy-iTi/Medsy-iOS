@@ -7,14 +7,10 @@ import Foundation
 import Alamofire
 
 enum CategoryEndpoint: ApiEndpoint {
-    case fetch(page: Int, size: Int)
-
-    var baseURL: String? {
-        return "http://localhost:8080"
-    }
+    case fetch(page: Int, size: Int, lang: String? = nil)
 
     var path: String {
-        return "/api/v1/categories"
+        return "categories"
     }
 
     var method: HTTPMethod {
@@ -23,12 +19,16 @@ enum CategoryEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .fetch(page, size):
-            return [
+        case let .fetch(page, size, lang):
+            var params: [String: Any] = [
                 "page": page,
                 "size": size,
                 "sort": "name,ASC"
             ]
+            if let lang = lang {
+                params["lang"] = lang
+            }
+            return params
         }
     }
 

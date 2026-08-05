@@ -16,7 +16,6 @@ enum CartEvent: Equatable {
     case undoRemoval
     case setPrescription(Data, CartPrescriptionSource)
     case replacePrescription(id: UUID, data: Data, source: CartPrescriptionSource)
-    case removePrescription
     case removePrescriptionByID(UUID)
     case clear
     case retry
@@ -47,6 +46,13 @@ enum CartSyncState: Equatable {
     case failed(String)
 }
 
+enum CartInteractionsState: Equatable {
+    case idle
+    case loading
+    case loaded
+    case failed(String)
+}
+
 @MainActor
 protocol CartViewModelProtocol: AnyObject {
     var state: CartViewState { get }
@@ -54,12 +60,15 @@ protocol CartViewModelProtocol: AnyObject {
     var feedback: CartFeedback? { get }
     var feedbackSequence: Int { get }
     var syncState: CartSyncState { get }
+    var interactionWarnings: [CartInteractionWarning] { get }
+    var interactionsState: CartInteractionsState { get }
     var prescriptions: [CartPrescriptionAttachment] { get }
-    var prescription: CartPrescriptionAttachment? { get }
     var itemCount: Int { get }
     var estimatedTotal: Double { get }
     var hasContent: Bool { get }
 
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect?
+    func refreshInteractions(language: String) async
+    func clearAfterCompletedRequest() async -> Bool
 }

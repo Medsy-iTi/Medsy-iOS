@@ -23,22 +23,28 @@ struct CartView: View {
     @State private var operationErrorMessage: String?
 
     let onSearch: () -> Void
+    let onScanPrescription: () -> Void
     let onContinue: (CartRequestDraft) -> Void
+    let onProductSelected: (String) -> Void
 
     init(
         viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
-        onContinue: @escaping (CartRequestDraft) -> Void = { _ in }
+        onScanPrescription: @escaping () -> Void = {},
+        onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
+        onProductSelected: @escaping (String) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onSearch = onSearch
+        self.onScanPrescription = onScanPrescription
         self.onContinue = onContinue
+        self.onProductSelected = onProductSelected
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                MedsyNavBar(title: "cart.title".localized) {
+                MedsyNavBar(title: "cart.title".localized, trailing: {
                     Button {
                         showsClearConfirmation = true
                     } label: {
@@ -49,7 +55,7 @@ struct CartView: View {
                     .accessibilityLabel("cart.clear.accessibility".localized)
                     .disabled(!viewModel.hasContent)
                     .opacity(viewModel.hasContent ? 1 : 0.35)
-                }
+                })
 
                 content
             }
@@ -133,14 +139,13 @@ struct CartView: View {
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            LoadingView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CartLoadingSkeleton()
 
         case .empty:
             if viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: { presentPrescriptionSources() }
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: [])
@@ -163,7 +168,7 @@ struct CartView: View {
             if items.isEmpty && viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: { presentPrescriptionSources() }
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: items)
@@ -206,19 +211,13 @@ struct CartView: View {
                             )
                         }
                     }
-
-                    PrimaryButton(
-                        title: "cart.prescription.add_another".localized,
-                        systemImage: "camera",
-                        style: .secondary,
-                        action: { presentPrescriptionSources() }
-                    )
                 }
 
                 VStack(spacing: MedsySpacing.sm) {
                     ForEach(items) { item in
                         CartItemRow(
                             item: item,
+                            onSelect: { openProductDetails(for: item) },
                             onDecrease: { handleItemEvent(.decreaseQuantity(itemID: item.id)) },
                             onIncrease: { handleItemEvent(.increaseQuantity(itemID: item.id)) },
                             onRemove: { handleItemEvent(.removeItem(itemID: item.id)) }
@@ -296,6 +295,11 @@ struct CartView: View {
     private func continueRequest() {
         guard case let .continueRequest(draft) = viewModel.handle(.continueRequest) else { return }
         onContinue(draft)
+    }
+
+    private func openProductDetails(for item: CartDisplayItem) {
+        guard let productID = item.productID else { return }
+        onProductSelected(String(productID))
     }
 
 }

@@ -11,7 +11,7 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
     case home
     case orders
     case products
-    case customers
+	case completedOrders
     case more
 
     var id: String {
@@ -30,8 +30,8 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
             "list.clipboard"
         case .products:
             "bag"
-        case .customers:
-            "person"
+			case .completedOrders:
+			"checkmark.seal"
         case .more:
             "ellipsis"
         }
@@ -45,8 +45,8 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
             "list.clipboard.fill"
         case .products:
             "bag.fill"
-        case .customers:
-            "person.fill"
+			case .completedOrders:
+				"checkmark.seal.fill"
         case .more:
             "ellipsis"
         }

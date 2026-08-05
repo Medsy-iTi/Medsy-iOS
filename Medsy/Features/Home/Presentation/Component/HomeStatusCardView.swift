@@ -76,6 +76,24 @@ struct HomeStatusSelectorView: View {
 struct HomeSearchingStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var requestId: Int = 0
+    @State private var secondsElapsed: Int = 0
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private var currentStage: Int {
+        if secondsElapsed < 20 {
+            return 1
+        } else if secondsElapsed < 45 {
+            return 2
+        } else {
+            return 3
+        }
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -119,7 +137,7 @@ struct HomeSearchingStatusView: View {
             }
             
             HStack {
-                Text("00:41")
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
                 
@@ -147,33 +165,33 @@ struct HomeSearchingStatusView: View {
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage3".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 3 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage3Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 3 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                     
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage2".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.green)
+                            .foregroundStyle(currentStage >= 2 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage2Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.green)
+                            .foregroundStyle(currentStage >= 2 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                     
                     VStack(spacing: 4) {
                         Text("home.status.searching.stage1".localized)
                             .font(AppColor.sans(11, .bold))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 1 ? AppColor.green : AppColor.textSec)
                         
                         Text("home.status.searching.stage1Desc".localized)
                             .font(AppColor.sans(9))
-                            .foregroundStyle(AppColor.textSec)
+                            .foregroundStyle(currentStage >= 1 ? AppColor.green : AppColor.textSec)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -189,14 +207,14 @@ struct HomeSearchingStatusView: View {
                     
                     HStack(spacing: 0) {
                         Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 3)
-                            .background(Circle().fill(AppColor.card))
+                            .stroke(currentStage >= 3 ? AppColor.green : Color.gray.opacity(0.3), lineWidth: 3)
+                            .background(Circle().fill(currentStage >= 3 ? AppColor.green.opacity(0.2) : AppColor.card))
                             .frame(width: 14, height: 14)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Circle()
-                            .stroke(AppColor.green, lineWidth: 3)
-                            .background(Circle().fill(AppColor.green.opacity(0.2)))
+                            .stroke(currentStage >= 2 ? AppColor.green : Color.gray.opacity(0.3), lineWidth: 3)
+                            .background(Circle().fill(currentStage >= 2 ? AppColor.green.opacity(0.2) : AppColor.card))
                             .frame(width: 14, height: 14)
                             .frame(maxWidth: .infinity, alignment: .center)
                         
@@ -229,18 +247,51 @@ struct HomeSearchingStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            updateTime()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                updateTime()
+            }
+        }
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        } else {
+            secondsElapsed += 1
+        }
     }
 }
 
 struct HomeFirstOfferStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
-    
+    var offerTotalPrice: Double = 0
+    var offerAvailableMedsCount: Int = 0
+    var offerTotalMedsCount: Int = 0
+    var requestId: Int = 0
+    var onCompareOffers: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
+
+    @State private var secondsElapsed: Int = 0
+    @State private var showingDeleteAlert = false
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
                 Button {
-                    selectedStatus = .home
+                    showingDeleteAlert = true
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
@@ -273,9 +324,15 @@ struct HomeFirstOfferStatusView: View {
             }
             
             HStack {
-                Text("00:36")
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
+                    .onAppear {
+                        updateTime()
+                    }
+                    .onReceive(timer) { _ in
+                        updateTime()
+                    }
                 
                 Spacer()
                 
@@ -298,6 +355,7 @@ struct HomeFirstOfferStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
+                    onCompareOffers?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
@@ -315,7 +373,7 @@ struct HomeFirstOfferStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.firstOffer.priceValue".localized)
+                    Text("\(Int(offerTotalPrice)) " + "home.status.firstOffer.currency".localized)
                         .font(AppColor.sans(15, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
@@ -329,7 +387,7 @@ struct HomeFirstOfferStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.firstOffer.medsCount".localized)
+                    Text("\(offerAvailableMedsCount) / \(offerTotalMedsCount) " + "home.status.firstOffer.medsUnit".localized)
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.green)
                 }
@@ -345,6 +403,7 @@ struct HomeFirstOfferStatusView: View {
             )
             
             Button {
+                onCompareOffers?()
             } label: {
                 Text("home.status.firstOffer.continueCompare".localized)
                     .font(AppColor.sans(15, .bold))
@@ -379,12 +438,36 @@ struct HomeFirstOfferStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
+            Button("home.deleteOffer.cancel".localized, role: .cancel) { }
+            Button("home.deleteOffer.confirm".localized, role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("home.deleteOffer.message".localized)
+        }
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        }
     }
 }
 
 struct HomeMultipleOffersStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var requestId: Int = 0
+    var onCompareOffers: (() -> Void)? = nil
+    @State private var secondsElapsed: Int = 0
+
+    private var formattedTime: String {
+        let minutes = secondsElapsed / 60
+        let seconds = secondsElapsed % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -423,7 +506,7 @@ struct HomeMultipleOffersStatusView: View {
             }
             
             HStack {
-                Text("00:00")
+                Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
                 
@@ -448,6 +531,7 @@ struct HomeMultipleOffersStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
+                    onCompareOffers?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
@@ -503,6 +587,7 @@ struct HomeMultipleOffersStatusView: View {
                 .clipShape(Capsule())
             
             Button {
+                onCompareOffers?()
             } label: {
                 Text("home.status.multipleOffers.compareOffers".localized)
                     .font(AppColor.sans(15, .bold))
@@ -542,6 +627,23 @@ struct HomeMultipleOffersStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            updateTime()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                updateTime()
+            }
+        }
+    }
+
+    private func updateTime() {
+        let store = UserDefaultsStatusStore()
+        if let age = store.getRequestAgeInSeconds(requestId) {
+            secondsElapsed = Int(age)
+        } else {
+            secondsElapsed += 1
+        }
     }
 }
 
