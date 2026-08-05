@@ -321,7 +321,7 @@
 "auth.verification.code_accessibility" = "رمز التحقق المكون من ستة أرقام";
 "auth.password.show" = "إظهار كلمة المرور";
 "auth.password.hide" = "إخفاء كلمة المرور";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
 
 /* Profile */

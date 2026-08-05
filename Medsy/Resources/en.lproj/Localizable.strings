@@ -322,7 +322,7 @@
 "auth.verification.code_accessibility" = "Six-digit verification code";
 "auth.password.show" = "Show password";
 "auth.password.hide" = "Hide password";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "Your health, our priority";
 
 /* Profile */
