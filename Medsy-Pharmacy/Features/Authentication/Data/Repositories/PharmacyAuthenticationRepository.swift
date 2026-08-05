@@ -31,4 +31,11 @@ final class PharmacyAuthenticationRepository: PharmacyAuthenticationRepositoryPr
         )
         return session.toDomain()
     }
+
+    func refresh(refreshToken: String) async throws -> PharmacyAuthenticatedSession {
+        let session = try await remoteDataSource.refresh(
+            request: PharmacyRefreshTokenRequestDTO(refreshToken: refreshToken)
+        )
+        return session.toDomain()
+    }
 }

@@ -16,6 +16,19 @@ struct PharmacyRegistrationRequestDTO: Encodable, Equatable {
     let role: String
     let homeAddress: String
     let dob: String
+    let pharmacyId: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case email
+        case phoneNumber
+        case firstName
+        case lastName
+        case password
+        case role
+        case homeAddress
+        case dob
+        case pharmacyId
+    }
 
     init(input: PharmacyRegistrationInput) {
         email = input.email
@@ -26,6 +39,20 @@ struct PharmacyRegistrationRequestDTO: Encodable, Equatable {
         role = "PHARMACIST"
         homeAddress = input.homeAddress
         dob = Self.formatDate(input.dateOfBirth)
+        pharmacyId = nil
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(email, forKey: .email)
+        try container.encode(phoneNumber, forKey: .phoneNumber)
+        try container.encode(firstName, forKey: .firstName)
+        try container.encode(lastName, forKey: .lastName)
+        try container.encode(password, forKey: .password)
+        try container.encode(role, forKey: .role)
+        try container.encode(homeAddress, forKey: .homeAddress)
+        try container.encode(dob, forKey: .dob)
+        try container.encodeNil(forKey: .pharmacyId)
     }
 
     private static func formatDate(_ date: Date) -> String {

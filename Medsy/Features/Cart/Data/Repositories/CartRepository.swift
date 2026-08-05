@@ -63,6 +63,10 @@ final class CartRepository: CartRepositoryProtocol {
         try await remoteDataSource.fetchItemCount()
     }
 
+    func fetchInteractions(language: String) async throws -> [CartInteractionWarning] {
+        try await remoteDataSource.fetchInteractions(language: language).map(CartMapper.map)
+    }
+
     private func cacheAndMap(
         _ cart: CartDTO,
         dosageByProductID: [Int64: String] = [:]

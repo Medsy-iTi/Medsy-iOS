@@ -13,6 +13,7 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var state: SearchResultsState = .loading
 	@Published var products: [MedsyProduct] = []
 	@Published var errorMessage: String?
+	@Published private(set) var isLoadingNextPage = false
 
 
 	@Published var selectedSort: ProductSort? = nil {
@@ -23,6 +24,22 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var selectedCategory: Category? = nil {
 		didSet { guard oldValue != selectedCategory else { return }; load() }
 	}
+    
+    @Published var selectedCompany: String? = nil {
+        didSet { guard oldValue != selectedCompany else { return }; load() }
+    }
+    
+    var availableCompanies: [String] {
+        [
+            "company.lilly".localized,
+            "company.novartis".localized,
+            "company.roche".localized,
+            "company.pfizer".localized,
+            "company.astrazeneca".localized,
+            "company.novonordisk".localized,
+            "company.eva_pharm".localized
+        ]
+    }
     @Published var categories: [Category] = []
 
 	private let useCase: SearchProductsUseCaseProtocol
@@ -48,7 +65,7 @@ final class SearchResultsViewModel: ObservableObject {
 		self.languageManager = languageManager
 
         Task {
-            if let result = try? await getCategoriesUseCase.execute(page: 0, size: 10) {
+            if let result = try? await getCategoriesUseCase.execute(page: 0, size: 100, lang: languageManager.currentLanguage.rawValue) {
                 self.categories = result.items
             }
         }
@@ -69,6 +86,7 @@ final class SearchResultsViewModel: ObservableObject {
 		loadTask?.cancel()
 		currentPage = 0
 		isLastPage = false
+		isLoadingNextPage = false
 		state = .loading
 		loadTask = Task { await fetch(reset: true) }
 	}
@@ -90,6 +108,7 @@ final class SearchResultsViewModel: ObservableObject {
 		products = []
 		selectedSort = nil
 		selectedCategory = nil
+        selectedCompany = nil
 		state = .empty
 	}
 
@@ -110,7 +129,11 @@ final class SearchResultsViewModel: ObservableObject {
 	private func fetch(reset: Bool) async {
 		guard !isLoadingPage else { return }
 		isLoadingPage = true
-		defer { isLoadingPage = false }
+		if !reset { isLoadingNextPage = true }
+		defer {
+			isLoadingPage = false
+			isLoadingNextPage = false
+		}
 
 		do {
 			let sort: [ProductSort] = selectedSort.map { [$0] } ?? []
@@ -120,7 +143,8 @@ final class SearchResultsViewModel: ObservableObject {
 				page: currentPage,
 				size: pageSize,
 				sort: sort,
-				lang: languageManager.currentLanguage.rawValue
+				lang: languageManager.currentLanguage.rawValue,
+                company: selectedCompany
 			)
 			print(languageManager.currentLanguage.rawValue)
 			guard !Task.isCancelled else { return }

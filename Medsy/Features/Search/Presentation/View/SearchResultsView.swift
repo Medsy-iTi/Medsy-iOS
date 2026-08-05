@@ -17,6 +17,7 @@ struct SearchResultsView: View {
 	private let onSelect: ((MedsyProduct) -> Void)?
 
 	@State private var showSortSheet = false
+	@State private var showFilterSheet = false
 
 	init(
 		query: String,
@@ -32,7 +33,10 @@ struct SearchResultsView: View {
 
 	var body: some View {
 		VStack(spacing: 0) {
-			header
+			MedsyNavBar(
+				title: "search.title".localized,
+				onBack: onBack
+			)
 
 			VStack(spacing: MedsySpacing.sm) {
 				SearchBar(
@@ -52,7 +56,13 @@ struct SearchResultsView: View {
 						showSortSheet = true
 					}
 
-
+					FilterChip(
+						title: "filter.title".localized,
+						systemIcon: "line.3.horizontal.decrease",
+						isSelected: viewModel.selectedCategory != nil || viewModel.selectedCompany != nil
+					) {
+						showFilterSheet = true
+					}
 				}
 
 				if viewModel.state == .loaded {
@@ -74,6 +84,9 @@ struct SearchResultsView: View {
 		.sheet(isPresented: $showSortSheet) {
 			SortFilterSheet(viewModel: viewModel, isPresented: $showSortSheet)
 		}
+		.sheet(isPresented: $showFilterSheet) {
+			FilterSheet(viewModel: viewModel, isPresented: $showFilterSheet)
+		}
 	}
 
 	// MARK: – Computed
@@ -86,33 +99,7 @@ struct SearchResultsView: View {
 		return match?.labelKey.localized ?? "filter.sort".localized
 	}
 
-	// MARK: – Subviews
 
-	private var header: some View {
-		HStack {
-			Button {
-				onBack()
-			} label: {
-				Image(systemName: languageManager.isRTL ?  "chevron.right" : "chevron.left")
-					.foregroundStyle(AppColor.textPrim)
-					.imageScale(.large)
-			}
-			.frame(width: 44, height: 44)
-
-			Spacer()
-
-			Text("search.title".localized)
-				.font(MedsyFont.title())
-				.foregroundStyle(AppColor.textPrim)
-
-			Spacer()
-
-			Color.clear.frame(width: 44)
-		}
-		.padding(.horizontal, MedsySpacing.md)
-		.frame(height: 56)
-		.background(AppColor.bg)
-	}
 
 	@ViewBuilder
 	private var content: some View {
@@ -153,6 +140,10 @@ struct SearchResultsView: View {
 								product.quantity = cartQuantity(for: product)
 								viewModel.loadNextPageIfNeeded(currentItem: product)
 							}
+						}
+
+						if viewModel.isLoadingNextPage {
+							MedsySkeletonList(rowCount: 2)
 						}
 					}
 					.padding(MedsySpacing.md)

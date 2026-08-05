@@ -9,70 +9,105 @@ import SwiftUI
 
 @MainActor
 struct PharmacyMainTabView: View {
-    @State private var coordinator: PharmacyMainTabCoordinator
+    var coordinator: PharmacyMainTabCoordinator
+    private let homeFactory: PharmacyHomeFactory
+    private let ordersFactory: PharmacyOrdersFactory
+    @State private var homeViewModel: PharmacyHomeViewModel
+    @State private var selectedCompletedOrder: SelectedCompletedOrder?
+	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
+    private let onLoggedOut: () -> Void
 
-    init(coordinator: PharmacyMainTabCoordinator) {
-        _coordinator = State(initialValue: coordinator)
+    init(
+        coordinator: PharmacyMainTabCoordinator,
+        homeFactory: PharmacyHomeFactory,
+        ordersFactory: PharmacyOrdersFactory,
+		completedOrdersFactory: PharmacyCompletedOrdersFactory,
+        onLoggedOut: @escaping () -> Void
+    ) {
+        self.coordinator = coordinator
+        self.homeFactory = homeFactory
+        self.ordersFactory = ordersFactory
+        _homeViewModel = State(initialValue: homeFactory.makeViewModel())
+        self.onLoggedOut = onLoggedOut
+		self.completedOrdersFactory = completedOrdersFactory
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            tabContent
-                .padding(.bottom, 82)
+        TabView(selection: selectedTabBinding) {
+            homeFactory.makeView(
+                viewModel: homeViewModel,
+                onSelectRecentOrder: { orderId in
+                    selectedCompletedOrder = SelectedCompletedOrder(id: orderId)
+                },
+                onViewAllCompletedOrders: coordinator.showCompletedOrders
+            )
+                .tabItem {
+                    tabLabel(for: .home)
+                }
+                .tag(PharmacyTab.home)
 
-            tabBar
+            OrdersTabRootView(factory: ordersFactory)
+                .tabItem {
+                    tabLabel(for: .orders)
+                }
+                .tag(PharmacyTab.orders)
+
+            PharmacySetupPlaceholderView(tab: .products)
+                .tabItem {
+                    tabLabel(for: .products)
+                }
+                .tag(PharmacyTab.products)
+
+			completedOrdersFactory.makeView()
+				.tabItem {
+					tabLabel(for: .completedOrders)
+				}
+				.tag(PharmacyTab.completedOrders)
+			
+
+            ProfileTabRootView(
+                coordinator: coordinator.profileCoordinator,
+                onLoggedOut: onLoggedOut
+            )
+            .tabItem {
+                tabLabel(for: .more)
+            }
+            .tag(PharmacyTab.more)
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
+        .tint(PharmacyColor.primary)
+        .toolbarBackground(PharmacyColor.surface, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
-    }
-
-    @ViewBuilder
-    private var tabContent: some View {
-        if coordinator.selectedTab == .home {
-            PharmacyHomeView()
-        } else {
-            PharmacySetupPlaceholderView(tab: coordinator.selectedTab)
+        .fullScreenCover(item: $selectedCompletedOrder) { selection in
+            CompletedOrderDetailsCoordinatorView.Embedded(orderId: selection.id)
+        }
+        .onChange(of: coordinator.selectedTab) { _, selectedTab in
+            guard selectedTab == .home else { return }
+            Task { await homeViewModel.refresh() }
         }
     }
 
-    private var tabBar: some View {
-        VStack(spacing: 0) {
-            Divider()
-                .background(PharmacyColor.border)
-
-            HStack(spacing: 0) {
-                ForEach(PharmacyTab.allCases) { tab in
-                    tabItem(tab)
-                }
-            }
-            .padding(.top, 10)
-            .padding(.bottom, 24)
-            .background(PharmacyColor.surface)
-        }
-        .frame(height: 82)
-        .ignoresSafeArea(edges: .bottom)
+    private var selectedTabBinding: Binding<PharmacyTab> {
+        Binding(
+            get: { coordinator.selectedTab },
+            set: { coordinator.select($0) }
+        )
     }
 
-    private func tabItem(_ tab: PharmacyTab) -> some View {
+    private func tabLabel(for tab: PharmacyTab) -> some View {
         let isSelected = coordinator.selectedTab == tab
 
-        return Button {
-            coordinator.select(tab)
-        } label: {
-            VStack(spacing: 5) {
-                Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: 20, weight: isSelected ? .semibold : .regular))
-                    .foregroundStyle(isSelected ? PharmacyColor.primary : PharmacyColor.textSecondary)
-
-                Text(tab.titleKey.localized)
-                    .font(PharmacyColor.sans(10, isSelected ? .bold : .medium))
-                    .foregroundStyle(isSelected ? PharmacyColor.primary : PharmacyColor.textSecondary)
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
+        return Label(
+            tab.titleKey.localized,
+            systemImage: isSelected ? tab.selectedIcon : tab.icon
+        )
     }
+}
+
+private struct SelectedCompletedOrder: Identifiable {
+    let id: Int
 }
 
 private struct PharmacySetupPlaceholderView: View {
