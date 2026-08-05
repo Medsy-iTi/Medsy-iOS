@@ -43,4 +43,19 @@ enum CartMapper {
             totalPrice: dto.totalPrice
         )
     }
+
+    static func map(_ dto: CartInteractionWarningDTO) -> CartInteractionWarning {
+        CartInteractionWarning(
+            severity: dto.severity.uppercased() == "HIGH" ? .high : .moderate,
+            title: dto.title,
+            advice: dto.advice,
+            involvedProducts: dto.involvedProducts.map {
+                CartInteractionProduct(
+                    productID: $0.productId,
+                    productName: $0.productName,
+                    ingredient: $0.ingredient
+                )
+            }
+        )
+    }
 }

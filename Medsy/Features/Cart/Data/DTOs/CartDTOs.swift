@@ -10,6 +10,64 @@ import Foundation
 typealias CartResponseDTO = APIResponseDTO<CartDTO>
 typealias CartCountResponseDTO = APIResponseDTO<Int>
 typealias ClearCartResponseDTO = APIResponseDTO<EmptyCartResponseDTO>
+typealias CartInteractionsResponseDTO = APIResponseDTO<CartInteractionsDTO>
+
+struct CartInteractionsDTO: Decodable, Equatable {
+    let warnings: [CartInteractionWarningDTO]
+
+    private enum CodingKeys: String, CodingKey {
+        case warnings
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        warnings = try container.decodeIfPresent([CartInteractionWarningDTO].self, forKey: .warnings) ?? []
+    }
+}
+
+struct CartInteractionWarningDTO: Decodable, Equatable {
+    let severity: String
+    let title: String
+    let advice: String
+    let involvedProducts: [CartInteractionProductDTO]
+
+    private enum CodingKeys: String, CodingKey {
+        case severity
+        case title
+        case advice
+        case involvedProducts
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        severity = try container.decodeIfPresent(String.self, forKey: .severity) ?? "MODERATE"
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+        advice = try container.decodeIfPresent(String.self, forKey: .advice) ?? ""
+        involvedProducts = try container.decodeIfPresent(
+            [CartInteractionProductDTO].self,
+            forKey: .involvedProducts
+        ) ?? []
+    }
+}
+
+struct CartInteractionProductDTO: Decodable, Equatable {
+    let productId: Int64
+    let productName: String
+    let ingredient: String
+
+    private enum CodingKeys: String, CodingKey {
+        case productId
+        case productName
+        case ingredient
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        productId = try container.decode(Int64.self, forKey: .productId)
+        productName = try container.decodeIfPresent(String.self, forKey: .productName) ?? ""
+        ingredient = try container.decodeIfPresent(String.self, forKey: .ingredient) ?? ""
+    }
+}
 
 struct CartDTO: Decodable, Equatable {
     let id: Int64
