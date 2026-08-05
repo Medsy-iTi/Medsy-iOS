@@ -94,6 +94,15 @@
 "home.category.skinCare" = "Skin Care";
 "home.category.hairCare" = "Hair Care";
 "home.category.dailyEssentials" = "Daily Essentials";
+"home.category.allergy" = "Allergy";
+"home.category.antibiotics" = "Antibiotics";
+"home.category.antifungals" = "Antifungals";
+"home.category.antiparasitics" = "Antiparasitics";
+"home.category.antivirals" = "Antivirals";
+"home.category.asthmaBreathing" = "Asthma & Breathing";
+"home.category.brainNerves" = "Brain & Nerves";
+"home.category.cancerImmunity" = "Cancer & Immunity";
+"home.category.cholesterol" = "Cholesterol";
 "home.fastDelivery" = "Fast Delivery";
 "home.toYourDoorstep" = "To your doorstep";
 

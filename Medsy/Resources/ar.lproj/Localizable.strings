@@ -94,6 +94,15 @@
 "home.category.skinCare" = "عناية بالبشرة";
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
+"home.category.allergy" = "الحساسية";
+"home.category.antibiotics" = "المضادات الحيوية";
+"home.category.antifungals" = "مضادات الفطريات";
+"home.category.antiparasitics" = "مضادات الطفيليات";
+"home.category.antivirals" = "مضادات الفيروسات";
+"home.category.asthmaBreathing" = "الربو والتنفس";
+"home.category.brainNerves" = "المخ والأعصاب";
+"home.category.cancerImmunity" = "الأورام والمناعة";
+"home.category.cholesterol" = "الكوليسترول";
 "home.fastDelivery" = "توصيل سريع";
 "home.toYourDoorstep" = "إلى باب منزلك";
 
