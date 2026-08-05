@@ -64,6 +64,5 @@ struct SearchCoordinatorView: View {
             coordinator: coordinator,
             onSelect: onSelect
         )
-        .navigationBarHidden(true)
     }
 }

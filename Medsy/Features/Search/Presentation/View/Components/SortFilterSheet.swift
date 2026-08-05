@@ -53,23 +53,7 @@ struct SortFilterSheet: View {
                 VStack(alignment: .leading, spacing: 0) {
                     
 
-                    if !viewModel.categories.isEmpty {
-                        Text("categories.title".localized)
-                            .font(MedsyFont.bodyMedium(13))
-                            .foregroundStyle(AppColor.textSec)
-                            .padding(.horizontal, MedsySpacing.md)
-                            .padding(.bottom, MedsySpacing.xs)
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: MedsySpacing.sm) {
-                                ForEach(viewModel.categories) { category in
-                                    categoryChip(category)
-                                }
-                            }
-                            .padding(.horizontal, MedsySpacing.md)
-                        }
-                        .padding(.bottom, MedsySpacing.md)
-                    }
+
 
                     // Sort options
                     Text("filter.sort_by".localized)
@@ -146,29 +130,5 @@ struct SortFilterSheet: View {
         .buttonStyle(.plain)
     }
 
-    private func categoryChip(_ category: Category) -> some View {
-        let isActive = viewModel.selectedCategory?.id == category.id
-        return Button {
-            viewModel.selectedCategory = isActive ? nil : category
-        } label: {
-            HStack(spacing: MedsySpacing.xxs) {
-                Image(systemName: category.iconName)
-                    .font(.system(size: 14))
-                Text(category.displayName)
-                    .font(MedsyFont.bodyMedium(14))
-            }
-            .padding(.horizontal, MedsySpacing.md)
-            .padding(.vertical, 8)
-            .foregroundStyle(isActive ? .white : AppColor.textPrim)
-            .background(
-                Capsule()
-                    .fill(isActive ? AppColor.green : AppColor.surface)
-            )
-            .overlay(
-                Capsule()
-                    .stroke(AppColor.green , lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
+
 }

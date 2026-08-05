@@ -19,24 +19,32 @@ struct CartView: View {
     @State private var showsCamera = false
     @State private var showsCameraUnavailable = false
     @State private var showsClearConfirmation = false
+    @State private var prescriptionBeingReplaced: UUID?
+    @State private var operationErrorMessage: String?
 
     let onSearch: () -> Void
+    let onScanPrescription: () -> Void
     let onContinue: (CartRequestDraft) -> Void
+    let onProductSelected: (String) -> Void
 
     init(
         viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
-        onContinue: @escaping (CartRequestDraft) -> Void = { _ in }
+        onScanPrescription: @escaping () -> Void = {},
+        onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
+        onProductSelected: @escaping (String) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onSearch = onSearch
+        self.onScanPrescription = onScanPrescription
         self.onContinue = onContinue
+        self.onProductSelected = onProductSelected
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                MedsyNavBar(title: "cart.title".localized) {
+                MedsyNavBar(title: "cart.title".localized, trailing: {
                     Button {
                         showsClearConfirmation = true
                     } label: {
@@ -47,7 +55,7 @@ struct CartView: View {
                     .accessibilityLabel("cart.clear.accessibility".localized)
                     .disabled(!viewModel.hasContent)
                     .opacity(viewModel.hasContent ? 1 : 0.35)
-                }
+                })
 
                 content
             }
@@ -92,7 +100,7 @@ struct CartView: View {
         }
         .sheet(isPresented: $showsCamera) {
             PrescriptionCameraPicker { data in
-                setPrescription(data, source: .camera)
+                storePrescription(data, source: .camera)
             }
             .ignoresSafeArea()
         }
@@ -109,6 +117,21 @@ struct CartView: View {
         } message: {
             Text("cart.clear_confirmation.message".localized)
         }
+        .alert(
+            "cart.error.title".localized,
+            isPresented: Binding(
+                get: { operationErrorMessage != nil },
+                set: { if !$0 { operationErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {}
+        } message: {
+            Text(operationErrorMessage ?? "")
+        }
+        .onChange(of: viewModel.syncState) { _, state in
+            guard case let .failed(message) = state else { return }
+            operationErrorMessage = message
+        }
         .animation(.easeInOut(duration: 0.2), value: viewModel.removedItem)
     }
 
@@ -116,14 +139,13 @@ struct CartView: View {
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            LoadingView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CartLoadingSkeleton()
 
         case .empty:
-            if viewModel.prescription == nil {
+            if viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: presentPrescriptionSources
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: [])
@@ -143,10 +165,10 @@ struct CartView: View {
             )
 
         case let .loaded(items):
-            if items.isEmpty {
+            if items.isEmpty && viewModel.prescriptions.isEmpty {
                 CartEmptyStateView(
                     onSearch: onSearch,
-                    onUploadPrescription: presentPrescriptionSources
+                    onScanPrescription: onScanPrescription
                 )
             } else {
                 cartContent(items: items)
@@ -167,25 +189,35 @@ struct CartView: View {
                         .foregroundStyle(AppColor.textSec)
                 }
 
-                if let prescription = viewModel.prescription {
-                    CartPrescriptionAttachmentView(
-                        attachment: prescription,
-                        onChange: presentPrescriptionSources,
-                        onRemove: removePrescription
-                    )
-                } else {
+                if viewModel.prescriptions.isEmpty {
                     PrimaryButton(
                         title: "cart.prescription.add".localized,
                         systemImage: "camera",
                         style: .secondary,
-                        action: presentPrescriptionSources
+                        action: { presentPrescriptionSources() }
                     )
+                } else {
+                    VStack(spacing: MedsySpacing.sm) {
+                        ForEach(Array(viewModel.prescriptions.enumerated()), id: \.element.id) { index, prescription in
+                            CartPrescriptionAttachmentView(
+                                attachment: prescription,
+                                position: index + 1,
+                                onChange: {
+                                    presentPrescriptionSources(replacing: prescription.id)
+                                },
+                                onRemove: {
+                                    removePrescription(id: prescription.id)
+                                }
+                            )
+                        }
+                    }
                 }
 
                 VStack(spacing: MedsySpacing.sm) {
                     ForEach(items) { item in
                         CartItemRow(
                             item: item,
+                            onSelect: { openProductDetails(for: item) },
                             onDecrease: { handleItemEvent(.decreaseQuantity(itemID: item.id)) },
                             onIncrease: { handleItemEvent(.increaseQuantity(itemID: item.id)) },
                             onRemove: { handleItemEvent(.removeItem(itemID: item.id)) }
@@ -206,7 +238,8 @@ struct CartView: View {
         }
     }
 
-    private func presentPrescriptionSources() {
+    private func presentPrescriptionSources(replacing id: UUID? = nil) {
+        prescriptionBeingReplaced = id
         showsPrescriptionSources = true
     }
 
@@ -223,17 +256,28 @@ struct CartView: View {
 
         Task {
             guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-            setPrescription(data, source: .photoLibrary)
+            storePrescription(data, source: .photoLibrary)
             selectedPhotoItem = nil
         }
     }
 
-    private func setPrescription(_ data: Data, source: CartPrescriptionSource) {
-        viewModel.handle(.setPrescription(data, source))
+    private func storePrescription(_ data: Data, source: CartPrescriptionSource) {
+        if let prescriptionBeingReplaced {
+            viewModel.handle(
+                .replacePrescription(
+                    id: prescriptionBeingReplaced,
+                    data: data,
+                    source: source
+                )
+            )
+        } else {
+            viewModel.handle(.setPrescription(data, source))
+        }
+        prescriptionBeingReplaced = nil
     }
 
-    private func removePrescription() {
-        viewModel.handle(.removePrescription)
+    private func removePrescription(id: UUID) {
+        viewModel.handle(.removePrescriptionByID(id))
     }
 
     private func handleItemEvent(_ event: CartEvent) {
@@ -245,12 +289,17 @@ struct CartView: View {
     }
 
     private func retry() {
-        viewModel.handle(.syncSucceeded([]))
+        viewModel.handle(.retry)
     }
 
     private func continueRequest() {
         guard case let .continueRequest(draft) = viewModel.handle(.continueRequest) else { return }
         onContinue(draft)
+    }
+
+    private func openProductDetails(for item: CartDisplayItem) {
+        guard let productID = item.productID else { return }
+        onProductSelected(String(productID))
     }
 
 }

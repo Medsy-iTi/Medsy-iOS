@@ -32,6 +32,6 @@ final class FetchProductsUseCase: FetchProductsUseCaseProtocol {
 		lang: String? = nil
     ) async throws -> PagedResult<Product> {
 		try await repository
-			.fetchProducts(page: page, size: size, sort: sort, lang: lang)
+			.fetchProducts(page: page, size: size, sort: sort, lang: lang, company: nil)
     }
 }

@@ -8,6 +8,19 @@
 import Foundation
 
 enum CartItemPresentationMapper {
+    static func map(_ item: CartItem) -> CartDisplayItem {
+        CartDisplayItem(
+            id: String(item.id),
+            productID: item.productID,
+            cartItemID: item.id,
+            name: item.productName,
+            dosageInfo: item.dosageInfo,
+            unitPrice: item.unitPrice,
+            quantity: item.quantity,
+            imageUrl: item.imageURL
+        )
+    }
+
     static func map(_ product: MedsyProduct, quantity: Int = 1) -> CartDisplayItem {
         CartDisplayItem(
             id: product.id,
@@ -29,6 +42,26 @@ enum CartItemPresentationMapper {
             unitPrice: product.price,
             quantity: quantity,
             imageUrl: product.images.first
+        )
+    }
+}
+
+enum CartPrescriptionPresentationMapper {
+    static func map(_ prescription: CartPrescription) -> CartPrescriptionAttachment {
+        CartPrescriptionAttachment(
+            id: prescription.id,
+            imageData: prescription.data,
+            source: prescription.source,
+            createdAt: prescription.createdAt
+        )
+    }
+
+    static func map(_ attachment: CartPrescriptionAttachment) -> CartPrescription {
+        CartPrescription(
+            id: attachment.id,
+            data: attachment.imageData,
+            source: attachment.source,
+            createdAt: attachment.createdAt
         )
     }
 }

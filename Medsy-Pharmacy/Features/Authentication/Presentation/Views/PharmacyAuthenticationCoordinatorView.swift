@@ -21,13 +21,34 @@ struct PharmacyAuthenticationCoordinatorView: View {
             PharmacyLoginView(
                 viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
-                onAuthenticated: coordinator.finishVerification
+                onAuthenticated: coordinator.resolveAuthenticatedDestination
             )
             .navigationDestination(for: PharmacyAuthenticationRoute.self) { route in
                 destination(for: route)
             }
         }
         .tint(PharmacyColor.primary)
+        .overlay {
+            if coordinator.isResolvingDestination {
+                ZStack {
+                    Color.black.opacity(0.2).ignoresSafeArea()
+                    ProgressView("pharmacy.setup.checking_membership".localized)
+                        .padding(PharmacySpacing.lg)
+                        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
+                }
+            }
+        }
+        .alert(
+            "common.error".localized,
+            isPresented: Binding(
+                get: { coordinator.destinationError != nil },
+                set: { if !$0 { coordinator.dismissDestinationError() } }
+            )
+        ) {
+            Button("common.ok".localized) { coordinator.dismissDestinationError() }
+        } message: {
+            if let message = coordinator.destinationError { Text(message) }
+        }
     }
 
     @ViewBuilder
@@ -37,7 +58,7 @@ struct PharmacyAuthenticationCoordinatorView: View {
             PharmacyLoginView(
                 viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
-                onAuthenticated: coordinator.finishVerification
+                onAuthenticated: coordinator.resolveAuthenticatedDestination
             )
         case .registrationDetails:
             PharmacyRegistrationDetailsView(
@@ -53,8 +74,33 @@ struct PharmacyAuthenticationCoordinatorView: View {
             if let viewModel = coordinator.verificationViewModel {
                 PharmacyVerificationView(
                     viewModel: viewModel,
-                    onVerified: coordinator.finishVerification
+                    onVerified: coordinator.resolveAuthenticatedDestination
                 )
+            }
+        case .pharmacySetupDecision:
+            PharmacySetupDecisionView(
+                invitationCount: coordinator.invitationsViewModel.pendingCount,
+                onShowInvitations: coordinator.showInvitations,
+                onAddPharmacy: coordinator.showAddPharmacy,
+                onBackToSignIn: coordinator.backToSignIn
+            )
+        case .pharmacyInvitations:
+            PharmacyInvitationsView(
+                viewModel: coordinator.invitationsViewModel,
+                onAccept: coordinator.acceptInvitation,
+                onDecline: coordinator.declineInvitation
+            )
+        case .addPharmacy:
+            if let viewModel = coordinator.setupViewModel {
+                PharmacyAddView(
+                    viewModel: viewModel,
+                    onChooseOnMap: coordinator.showLocationPicker,
+                    onCreated: coordinator.finishPharmacyCreation
+                )
+            }
+        case .choosePharmacyLocation:
+            if let viewModel = coordinator.setupViewModel {
+                PharmacyMapPickerView(viewModel: viewModel)
             }
         }
     }
