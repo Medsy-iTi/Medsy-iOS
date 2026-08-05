@@ -23,8 +23,7 @@ enum OrdersEndpoint: ApiEndpoint {
         case let .fetchOrders(page, size):
             return [
                 "page": page,
-                "size": size,
-                "sort": "date,desc"
+                "size": size
             ]
         case .fetchOrderDetail:
             return nil
