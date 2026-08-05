@@ -90,6 +90,7 @@ actor CartLocalDataSource: CartLocalDataSourceProtocol {
         existingItems.forEach(context.delete)
 
         for (index, item) in cart.items.enumerated() {
+            let decodedDosage = item.dosageInfo.isEmpty ? nil : item.dosageInfo
             context.insert(
                 CachedCartItemModel(
                     cacheIdentifier: "\(accountIdentifier)|\(item.id)",
@@ -97,7 +98,10 @@ actor CartLocalDataSource: CartLocalDataSourceProtocol {
                     cartItemID: item.id,
                     productID: item.productId,
                     productName: item.productName,
-                    dosageInfo: dosageByProductID[item.productId] ?? existingDosage[item.productId] ?? "",
+                    dosageInfo: dosageByProductID[item.productId]
+                        ?? decodedDosage
+                        ?? existingDosage[item.productId]
+                        ?? "",
                     imageURL: item.imageUrl,
                     unitPrice: item.unitPrice,
                     quantity: item.quantity,

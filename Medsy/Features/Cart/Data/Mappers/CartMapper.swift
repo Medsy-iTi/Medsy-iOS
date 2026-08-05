@@ -14,6 +14,7 @@ enum CartMapper {
                     id: $0.id,
                     productID: $0.productId,
                     productName: $0.productName,
+                    dosageInfo: $0.dosageInfo,
                     imageURL: $0.imageUrl,
                     unitPrice: $0.unitPrice,
                     quantity: $0.quantity,
