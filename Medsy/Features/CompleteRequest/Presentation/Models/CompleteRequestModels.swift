@@ -13,8 +13,8 @@ enum CompleteRequestReceiveMethod: String, CaseIterable, Equatable {
 }
 
 enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
-    case cash
-    case visa
+    case cash = "CASH"
+    case visa = "VISA"
 }
 
 struct CompleteRequestLocation: Equatable {

@@ -61,14 +61,29 @@ struct OfferResultItemDTO: Decodable, Equatable {
         case alternative
         case isAvailable
         case available
+        case product
+    }
+
+    private enum ProductCodingKeys: String, CodingKey {
+        case name
+        case productName
+        case imageUrl
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         requestItemId = try container.decode(Int.self, forKey: .requestItemId)
         productId = try container.decodeIfPresent(Int.self, forKey: .productId)
-        productName = try container.decodeIfPresent(String.self, forKey: .productName) ?? ""
-        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        
+        let productContainer = try? container.nestedContainer(keyedBy: ProductCodingKeys.self, forKey: .product)
+        let topName = try container.decodeIfPresent(String.self, forKey: .productName)
+        let nestedName = (try? productContainer?.decodeIfPresent(String.self, forKey: .productName)) ?? (try? productContainer?.decodeIfPresent(String.self, forKey: .name))
+        productName = topName ?? nestedName ?? ""
+
+        let topImage = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        let nestedImage = try? productContainer?.decodeIfPresent(String.self, forKey: .imageUrl)
+        imageUrl = topImage ?? nestedImage
+
         unitPrice = try container.decodeIfPresent(Double.self, forKey: .unitPrice) ?? 0.0
 
         if let alt = try container.decodeIfPresent(Bool.self, forKey: .isAlternative) {

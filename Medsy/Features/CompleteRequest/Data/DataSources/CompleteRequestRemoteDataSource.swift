@@ -17,6 +17,8 @@ final class CompleteRequestRemoteDataSource: CompleteRequestRemoteDataSourceProt
     }
     
     func submit(request: CompleteRequestDTO) async throws -> CompleteRequestResponseDTO {
+        
+        print("")
         let response: SubmitCompleteRequestResponseDTO = try await networkService.request(
             endpoint: CompleteRequestEndpoint.submit(request)
         )

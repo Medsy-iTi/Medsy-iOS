@@ -20,16 +20,41 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
     }
 
     func getOfferResult(requestId: Int) async throws -> OfferResultResponseDTO {
-        let response: GetOfferResultResponseDTO = try await networkService.request(
+        let rawData = try await networkService.requestData(
             endpoint: OffersEndpoint.getResult(requestId: requestId)
         )
-        guard response.success else {
-            throw NetworkError.validationError(response.message)
+        if let parsed = parseStreamResponse(rawData) {
+            return parsed
         }
-        guard let data = response.data else {
-            throw NetworkError.decodingFailed
+        if let response = try? JSONDecoder().decode(GetOfferResultResponseDTO.self, from: rawData),
+           response.success, let data = response.data {
+            return data
         }
-        return data
+        if let direct = try? JSONDecoder().decode(OfferResultResponseDTO.self, from: rawData) {
+            return direct
+        }
+        throw NetworkError.decodingFailed
+    }
+
+    private func parseStreamResponse(_ data: Data) -> OfferResultResponseDTO? {
+        guard let text = String(data: data, encoding: .utf8) else { return nil }
+        let lines = text.components(separatedBy: .newlines)
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("data:") {
+                let jsonString = String(trimmed.dropFirst(5)).trimmingCharacters(in: .whitespaces)
+                if let jsonData = jsonString.data(using: .utf8) {
+                    if let dto = try? JSONDecoder().decode(OfferResultResponseDTO.self, from: jsonData) {
+                        return dto
+                    }
+                    if let env = try? JSONDecoder().decode(GetOfferResultResponseDTO.self, from: jsonData),
+                       let dto = env.data {
+                        return dto
+                    }
+                }
+            }
+        }
+        return nil
     }
 
     func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO {

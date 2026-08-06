@@ -15,7 +15,7 @@ enum OffersEndpoint: ApiEndpoint {
     var path: String {
         switch self {
         case let .getResult(requestId):
-            return "requests/\(requestId)/result"
+            return "requests/\(requestId)/stream"
         case let .confirmOffer(requestId, _):
             return "requests/\(requestId)/confirm"
         }
