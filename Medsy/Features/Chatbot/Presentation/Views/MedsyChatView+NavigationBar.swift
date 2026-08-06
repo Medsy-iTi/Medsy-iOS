@@ -8,10 +8,11 @@ import SwiftUI
 extension MedsyChatView {
     var navigationBar: some View {
         HStack(spacing: MedsySpacing.xs) {
+            // AI avatar
             ZStack {
                 RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
                     .fill(theme.primary)
-                Image(systemName: "plus")
+                Image(systemName: "sparkles")
                     .foregroundColor(.white)
                     .font(.system(size: 14, weight: .bold))
             }
@@ -21,7 +22,6 @@ extension MedsyChatView {
                 Text("chatbot.ai.name".localized)
                     .font(MedsyFont.bodyMedium(15))
                     .foregroundColor(AppColor.textPrim)
-
                 HStack(spacing: 4) {
                     Circle()
                         .fill(AppColor.successGreen)
@@ -34,6 +34,19 @@ extension MedsyChatView {
 
             Spacer()
 
+            // New chat button
+            Button {
+                viewModel.startNewChat()
+            } label: {
+                Image(systemName: "square.and.pencil")
+                    .foregroundColor(AppColor.textSec)
+                    .frame(width: 36, height: 36)
+                    .background(AppColor.surface)
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+
+            // Dark mode toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                     appSettings.isDarkMode.toggle()
@@ -47,6 +60,7 @@ extension MedsyChatView {
             }
             .buttonStyle(.plain)
 
+            // Language toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                     lang.toggle()
