@@ -486,3 +486,16 @@
 "pharmacy.chatbot.ranking.period.year" = "This Year";
 "pharmacy.chatbot.ranking.direction.top" = "Top Performers";
 "pharmacy.chatbot.ranking.direction.bottom" = "Needs Improvement";
+
+/* AI ChatBot — mic, disclaimer, suggestion grid */
+"pharmacy.chatbot.disclaimer" = "Medsy AI provides general information only and does not replace professional medical advice.";
+"pharmacy.chatbot.mic.error" = "Could not access microphone. Please check permissions in Settings.";
+"pharmacy.chatbot.suggestion.alternative" = "What is an alternative for Panadol?";
+"pharmacy.chatbot.suggestion.performance.title" = "Performance";
+"pharmacy.chatbot.suggestion.performance.subtitle" = "View my monthly ranking";
+"pharmacy.chatbot.suggestion.drug_info.title" = "Drug Info";
+"pharmacy.chatbot.suggestion.drug_info.subtitle" = "Check drug interactions";
+"pharmacy.chatbot.suggestion.interactions.title" = "Side Effects";
+"pharmacy.chatbot.suggestion.interactions.subtitle" = "Find out about side effects";
+"pharmacy.chatbot.suggestion.alternative.title" = "Alternatives";
+"pharmacy.chatbot.suggestion.alternative.subtitle" = "Find a substitute medication";

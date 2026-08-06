@@ -17,7 +17,7 @@ extension PharmacyChatView {
     private func userMessageRow(_ message: AiChatMessage) -> some View {
         HStack(alignment: .bottom) {
             Spacer(minLength: 40)
-            
+
             VStack(alignment: .trailing, spacing: 4) {
                 if !message.text.isEmpty {
                     Text(message.text)
@@ -28,7 +28,7 @@ extension PharmacyChatView {
                         .background(PharmacyColor.primary)
                         .clipShape(ChatBubbleShape(isUser: true))
                 }
-                
+
                 if message.isRetryable {
                     Button(action: { viewModel.retryMessage(id: message.id) }) {
                         HStack(spacing: 4) {
@@ -46,20 +46,12 @@ extension PharmacyChatView {
 
     private func assistantMessageRow(_ message: AiChatMessage) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Image("PharmacyChatBotAvatar") // Requires asset, fallback below
-                .resizable()
-                .scaledToFit()
-                .frame(width: 28, height: 28)
-                .clipShape(Circle())
-            
+            aiChatAvatar
+
             VStack(alignment: .leading, spacing: 12) {
                 if message.isTyping {
-                    PharmacyTypingDotsView()
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(PharmacyColor.surface)
-                        .clipShape(ChatBubbleShape(isUser: false))
-                        .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
+                    // Typing handled by typingIndicator var above the row, skip here
+                    EmptyView()
                 } else {
                     if !message.text.isEmpty {
                         PharmacyAiChatMarkdownText(text: message.text)
@@ -69,25 +61,23 @@ extension PharmacyChatView {
                             .clipShape(ChatBubbleShape(isUser: false))
                             .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
                     }
-                    
+
                     // Render Intent Cards
                     Group {
                         if !message.doctorSpecializations.isEmpty {
                             PharmacyAiChatSpecializationCard(specializations: message.doctorSpecializations)
                         }
-                        
+
                         if !message.emergencyNumbers.isEmpty {
                             PharmacyAiChatEmergencyCard(numbers: message.emergencyNumbers)
                         }
-                        
-                        // Omit categories grid as it's not implemented yet
-                        
+
                         if !message.products.isEmpty {
                             ForEach(message.products) { product in
                                 PharmacyAiChatProductRow(product: product)
                             }
                         }
-                        
+
                         if !message.alternatives.isEmpty {
                             Text("pharmacy.chatbot.alternatives".localized)
                                 .font(PharmacyColor.sans(14, .bold))
@@ -97,13 +87,13 @@ extension PharmacyChatView {
                                 PharmacyAiChatProductRow(product: product)
                             }
                         }
-                        
+
                         if !message.pharmacistRankings.isEmpty {
                             ForEach(message.pharmacistRankings, id: \.metric) { ranking in
                                 PharmacyAiChatPharmacistRankingCard(ranking: ranking)
                             }
                         }
-                        
+
                         if let disclaimer = message.disclaimer {
                             PharmacyAiChatDisclaimerRow(text: disclaimer)
                         }

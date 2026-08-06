@@ -485,3 +485,16 @@
 "pharmacy.chatbot.ranking.period.year" = "هذا العام";
 "pharmacy.chatbot.ranking.direction.top" = "الأفضل أداءً";
 "pharmacy.chatbot.ranking.direction.bottom" = "يحتاج إلى تحسين";
+
+/* AI ChatBot — mic, disclaimer, suggestion grid */
+"pharmacy.chatbot.disclaimer" = "يقدم مساعد ميدسي معلومات عامة فقط ولا يُغني عن المشورة الطبية المتخصصة.";
+"pharmacy.chatbot.mic.error" = "تعذّر الوصول إلى الميكروفون. يرجى التحقق من الصلاحيات في الإعدادات.";
+"pharmacy.chatbot.suggestion.alternative" = "ما هو البديل للبنادول؟";
+"pharmacy.chatbot.suggestion.performance.title" = "الأداء";
+"pharmacy.chatbot.suggestion.performance.subtitle" = "عرض ترتيبي الشهري";
+"pharmacy.chatbot.suggestion.drug_info.title" = "معلومات الدواء";
+"pharmacy.chatbot.suggestion.drug_info.subtitle" = "التحقق من التفاعلات الدوائية";
+"pharmacy.chatbot.suggestion.interactions.title" = "الآثار الجانبية";
+"pharmacy.chatbot.suggestion.interactions.subtitle" = "معرفة الآثار الجانبية";
+"pharmacy.chatbot.suggestion.alternative.title" = "البدائل";
+"pharmacy.chatbot.suggestion.alternative.subtitle" = "إيجاد دواء بديل";

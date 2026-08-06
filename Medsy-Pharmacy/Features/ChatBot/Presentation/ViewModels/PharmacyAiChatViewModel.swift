@@ -23,6 +23,7 @@ protocol PharmacyAiChatViewModelProtocol: AnyObject {
     var errorMessage: String? { get }
     var selectedImage: UIImage? { get set }
     var isSendEnabled: Bool { get }
+    var isRecording: Bool { get }
     func onAppear()
     func sendText()
     func sendSuggestion(_ text: String)
@@ -30,6 +31,7 @@ protocol PharmacyAiChatViewModelProtocol: AnyObject {
     func startNewChat()
     func retryMessage(id: Int)
     func dismissError()
+    func toggleRecording()
     // Navigation callbacks wired by the root view
     var onOpenCategory: ((Int, String) -> Void)? { get set }
 }
@@ -48,6 +50,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
     private(set) var historyLoadFailed: Bool = false
     private(set) var errorMessage: String? = nil
     var selectedImage: UIImage? = nil
+    private(set) var isRecording: Bool = false
 
     var isSendEnabled: Bool {
         !isSending &&
@@ -64,6 +67,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
     private let loadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol
     private let startNewChatUseCase: StartNewAiChatUseCaseProtocol
     let session: AIChatSessionDataSource
+    private let speechRecognizer: PharmacySpeechRecognizer
 
     // MARK: Internal tracking
     private var activeTask: Task<Void, Never>?
@@ -76,13 +80,15 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         sendImageUseCase: SendAiChatImageMessageUseCaseProtocol,
         loadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol,
         startNewChatUseCase: StartNewAiChatUseCaseProtocol,
-        session: AIChatSessionDataSource
+        session: AIChatSessionDataSource,
+        speechRecognizer: PharmacySpeechRecognizer = PharmacySpeechRecognizer()
     ) {
         self.sendTextUseCase = sendTextUseCase
         self.sendImageUseCase = sendImageUseCase
         self.loadHistoryUseCase = loadHistoryUseCase
         self.startNewChatUseCase = startNewChatUseCase
         self.session = session
+        self.speechRecognizer = speechRecognizer
     }
 
     // MARK: Lifecycle
@@ -170,6 +176,33 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
     // MARK: Errors
 
     func dismissError() { errorMessage = nil }
+
+    // MARK: Speech
+
+    func toggleRecording() {
+        if isRecording {
+            speechRecognizer.stop()
+            isRecording = false
+        } else {
+            speechRecognizer.start { [weak self] partial in
+                guard let self else { return }
+                Task { @MainActor in self.inputText = partial }
+            } onFinished: { [weak self] final in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.inputText = final
+                    self.isRecording = false
+                }
+            } onError: { [weak self] _ in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.isRecording = false
+                    self.errorMessage = "pharmacy.chatbot.mic.error".localized
+                }
+            }
+            isRecording = true
+        }
+    }
 
     // MARK: Core send logic
 

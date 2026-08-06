@@ -29,7 +29,7 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
         case .orders:
             "list.clipboard"
         case .chatBot:
-            "bubble.left.and.bubble.right"
+            "sparkles"
 			case .completedOrders:
 			"checkmark.seal"
         case .more:
@@ -44,7 +44,7 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
         case .orders:
             "list.clipboard.fill"
         case .chatBot:
-            "bubble.left.and.bubble.right.fill"
+            "sparkles"
 			case .completedOrders:
 				"checkmark.seal.fill"
         case .more:
