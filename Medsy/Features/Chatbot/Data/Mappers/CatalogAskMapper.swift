@@ -8,7 +8,6 @@ import Foundation
 
 enum CatalogAskMapper {
 
-    // MARK: - DTO → Domain
 
     static func map(_ dto: CatalogAskResponseDTO, userText: String) -> ChatMessage {
         let sources = dto.sources.map(mapSource)
@@ -32,7 +31,6 @@ enum CatalogAskMapper {
         )
     }
 
-    // MARK: - Source
 
     static func mapSource(_ dto: CatalogSourceDTO) -> AICatalogSource {
         AICatalogSource(
@@ -44,7 +42,6 @@ enum CatalogAskMapper {
         )
     }
 
-    // MARK: - Product
 
     static func mapProduct(_ dto: CatalogProductDTO) -> AICatalogProduct {
         AICatalogProduct(

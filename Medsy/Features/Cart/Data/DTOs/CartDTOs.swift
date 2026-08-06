@@ -118,6 +118,7 @@ struct CartItemDTO: Decodable, Equatable {
         id = try container.decode(Int64.self, forKey: .id)
         productId = try container.decodeIfPresent(Int64.self, forKey: .productId)
             ?? product?.id
+
             ?? Self.missingProductID(in: container)
         productName = try container.decodeIfPresent(String.self, forKey: .productName)
             ?? product?.displayName
@@ -150,6 +151,7 @@ private struct CartItemProductDTO: Decodable {
     let id: Int64?
     let name: String?
     let productName: String?
+
     let strength: String?
     let packSize: String?
     let form: String?
