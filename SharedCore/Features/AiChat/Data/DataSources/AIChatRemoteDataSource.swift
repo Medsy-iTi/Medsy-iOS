@@ -1,3 +1,7 @@
+//
+//  AIChatRemoteDataSource.swift
+//  SharedCore
+
 import Foundation
 
 protocol AIChatRemoteDataSourceProtocol: Sendable {
@@ -10,9 +14,12 @@ protocol AIChatRemoteDataSourceProtocol: Sendable {
 
 final class AIChatRemoteDataSource: AIChatRemoteDataSourceProtocol, @unchecked Sendable {
     private let networkService: NetworkServiceProtocol
+    /// The AI key is supplied by each app's configuration (e.g. Constants.aiKey / PharmacyConfiguration.aiKey)
+    private let aiKey: String
 
-    init(networkService: NetworkServiceProtocol) {
+    init(networkService: NetworkServiceProtocol, aiKey: String) {
         self.networkService = networkService
+        self.aiKey = aiKey
     }
 
     func sendTextMessage(text: String) async throws -> AIChatMessageResponseDTO {
@@ -27,7 +34,7 @@ final class AIChatRemoteDataSource: AIChatRemoteDataSourceProtocol, @unchecked S
 
     func sendImageMessage(imageData: Data, mimeType: String, message: String?) async throws -> AIChatMessageResponseDTO {
         let envelope: APIResponseDTO<AIChatMessageResponseDTO> = try await networkService.request(
-            endpoint: AIChatEndpoint.sendImageMessage(imageData: imageData, mimeType: mimeType, message: message)
+            endpoint: AIChatEndpoint.sendImageMessage(imageData: imageData, mimeType: mimeType, message: message, aiKey: aiKey)
         )
         guard envelope.success, let data = envelope.data else {
             throw NetworkError.validationError(envelope.message)
@@ -46,7 +53,7 @@ final class AIChatRemoteDataSource: AIChatRemoteDataSourceProtocol, @unchecked S
     }
 
     func deleteHistory() async throws {
-        let envelope: APIResponseDTO<EmptyResponse> = try await networkService.request(
+        let envelope: APIResponseDTO<EmptyAIChatResponse> = try await networkService.request(
             endpoint: AIChatEndpoint.deleteHistory
         )
         guard envelope.success else {
@@ -66,4 +73,4 @@ final class AIChatRemoteDataSource: AIChatRemoteDataSourceProtocol, @unchecked S
 }
 
 // Minimal helper for DELETE endpoints that return no data
-private struct EmptyResponse: Decodable {}
+private struct EmptyAIChatResponse: Decodable {}

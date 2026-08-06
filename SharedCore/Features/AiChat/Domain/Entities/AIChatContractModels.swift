@@ -74,13 +74,13 @@ struct AIChatAction: Equatable, Sendable {
     let cartItemCount: Int?
 }
 
-enum AIChatPerformanceMetric: Equatable, Sendable {
+enum AIChatPerformanceMetric: Equatable, Hashable, Sendable {
     case offersCreated
     case successfulOrders
     case unknown(String)
 }
 
-enum AIChatPerformancePeriod: Equatable, Sendable {
+enum AIChatPerformancePeriod: Equatable, Hashable, Sendable {
     case lastDay
     case lastWeek
     case lastMonth
@@ -88,7 +88,7 @@ enum AIChatPerformancePeriod: Equatable, Sendable {
     case unknown(String)
 }
 
-enum AIChatPerformanceDirection: Equatable, Sendable {
+enum AIChatPerformanceDirection: Equatable, Hashable, Sendable {
     case top
     case bottom
     case unknown(String)

@@ -42,10 +42,11 @@ struct ChatbotAssembly: ModuleAssembly {
             }
         }
 
-        // ── New AI Chat contract ──
+        // ── New AI Chat contract (shared types from SharedCore) ──
         container.register(AIChatRemoteDataSourceProtocol.self) { c in
             AIChatRemoteDataSource(
-                networkService: c.resolve(NetworkServiceProtocol.self)
+                networkService: c.resolve(NetworkServiceProtocol.self),
+                aiKey: Constants.aiKey
             )
         }
 

@@ -30,6 +30,14 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
         assistantResponse?.categories ?? historyMessage?.categories ?? []
     }
 
+    var alternatives: [AIChatProduct] {
+        assistantResponse?.alternatives ?? historyMessage?.alternatives ?? []
+    }
+
+    var pharmacistRankings: [AIChatPharmacistRanking] {
+        assistantResponse?.pharmacistRankings ?? historyMessage?.pharmacistRankings ?? []
+    }
+
     var disclaimer: String? {
         assistantResponse?.disclaimer
     }
