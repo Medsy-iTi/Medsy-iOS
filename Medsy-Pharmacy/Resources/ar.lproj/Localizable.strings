@@ -1,6 +1,7 @@
 "pharmacy.tab.home" = "الرئيسية";
 "pharmacy.tab.orders" = "العروض";
 "pharmacy.tab.products" = "المنتجات";
+"pharmacy.tab.chatBot" =  "مساعد ميدسي";
 "pharmacy.tab.completedOrders" = "الطلبات";
 "pharmacy.tab.more" = "المزيد";
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
@@ -445,3 +446,42 @@
 "pharmacy_pending_invitations.pharmacist_id" = "معرّف الصيدلي";
 "pharmacy_pending_invitations.invitation_id" = "معرّف الدعوة";
 "pharmacy_pending_invitations.created_at" = "تاريخ الإنشاء";
+
+/* AI ChatBot */
+"pharmacy.chatbot.title" = "المساعد الذكي Medsy";
+"pharmacy.chatbot.status.online" = "متصل";
+"pharmacy.chatbot.menu.new_chat" = "محادثة جديدة";
+"pharmacy.chatbot.input.placeholder" = "اسأل عن عمليات الصيدلية...";
+"pharmacy.chatbot.state.loading_history" = "جاري تحميل المحادثة...";
+"pharmacy.chatbot.state.error_loading" = "فشل في تحميل سجل المحادثة.";
+"pharmacy.chatbot.state.retry" = "إعادة المحاولة";
+"pharmacy.chatbot.empty.title" = "كيف يمكنني مساعدتك اليوم؟";
+"pharmacy.chatbot.empty.subtitle" = "يمكنني مساعدتك في مراجعة أداء صيدليتك، الإجابة عن التفاعلات الدوائية، والمزيد.";
+"pharmacy.chatbot.error.generic" = "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى.";
+"pharmacy.chatbot.camera.image_preview" = "تم إرفاق صورة";
+
+"pharmacy.chatbot.product.add_to_cart" = "أضف إلى السلة";
+"pharmacy.chatbot.product.details" = "عرض التفاصيل";
+
+"pharmacy.chatbot.alternatives" = "البدائل المقترحة";
+"pharmacy.chatbot.specialization.header" = "التخصصات ذات الصلة";
+
+"pharmacy.chatbot.emergency.title" = "خدمات الطوارئ";
+"pharmacy.chatbot.emergency.call" = "اتصال";
+"pharmacy.chatbot.emergency.ambulance" = "الإسعاف";
+"pharmacy.chatbot.emergency.police" = "الشرطة";
+"pharmacy.chatbot.emergency.fire" = "الدفاع المدني";
+
+"pharmacy.chatbot.suggestion.performance" = "اعرض تقييم أدائي لهذا الشهر";
+"pharmacy.chatbot.suggestion.drug_info" = "تحقق من التفاعلات الدوائية بين البنادول والأسبرين";
+"pharmacy.chatbot.suggestion.interactions" = "ما هي الآثار الجانبية للأموكسيسيلين؟";
+
+"pharmacy.chatbot.ranking.empty" = "لا توجد بيانات أداء متاحة.";
+"pharmacy.chatbot.ranking.metric.offers" = "العروض المنشأة";
+"pharmacy.chatbot.ranking.metric.orders" = "الطلبات الناجحة";
+"pharmacy.chatbot.ranking.period.day" = "اليوم";
+"pharmacy.chatbot.ranking.period.week" = "هذا الأسبوع";
+"pharmacy.chatbot.ranking.period.month" = "هذا الشهر";
+"pharmacy.chatbot.ranking.period.year" = "هذا العام";
+"pharmacy.chatbot.ranking.direction.top" = "الأفضل أداءً";
+"pharmacy.chatbot.ranking.direction.bottom" = "يحتاج إلى تحسين";
