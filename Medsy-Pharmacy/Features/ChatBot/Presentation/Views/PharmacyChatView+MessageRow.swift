@@ -50,8 +50,12 @@ extension PharmacyChatView {
 
             VStack(alignment: .leading, spacing: 12) {
                 if message.isTyping {
-                    // Typing handled by typingIndicator var above the row, skip here
-                    EmptyView()
+                    PharmacyTypingDotsView()
+                        .padding(.horizontal, PharmacySpacing.md)
+                        .padding(.vertical, PharmacySpacing.sm)
+                        .background(PharmacyColor.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
                 } else {
                     if !message.text.isEmpty {
                         PharmacyAiChatMarkdownText(text: message.text)
@@ -74,7 +78,9 @@ extension PharmacyChatView {
 
                         if !message.products.isEmpty {
                             ForEach(message.products) { product in
-                                PharmacyAiChatProductRow(product: product)
+                                PharmacyAiChatProductRow(
+                                    product: product
+                                )
                             }
                         }
 
@@ -84,7 +90,9 @@ extension PharmacyChatView {
                                 .foregroundColor(PharmacyColor.textSecondary)
                                 .padding(.top, 8)
                             ForEach(message.alternatives) { product in
-                                PharmacyAiChatProductRow(product: product)
+                                PharmacyAiChatProductRow(
+                                    product: product
+                                )
                             }
                         }
 

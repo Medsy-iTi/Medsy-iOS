@@ -6,7 +6,8 @@ import SwiftUI
 
 struct PharmacyAiChatProductRow: View {
     var product: AIChatProduct
-    var onDetails: (AIChatProduct) -> Void = { _ in }
+    var onDetails: ((AIChatProduct) -> Void)? = nil
+    @State private var isExpanded: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.md) {
@@ -57,8 +58,49 @@ struct PharmacyAiChatProductRow: View {
                 Spacer()
             }
             
-            Button(action: { onDetails(product) }) {
-                Text("pharmacy.chatbot.product.details".localized)
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 6) {
+                    if let scientificName = product.scientificName, !scientificName.isEmpty {
+                        Text("pharmacy.chatbot.product.scientific_name".localized + scientificName)
+                            .font(PharmacyColor.sans(13))
+                            .foregroundColor(PharmacyColor.textSecondary)
+                    }
+                    if let company = product.company, !company.isEmpty {
+                        Text("pharmacy.chatbot.product.company".localized + company)
+                            .font(PharmacyColor.sans(13))
+                            .foregroundColor(PharmacyColor.textSecondary)
+                    }
+                    if let category = product.scientificCategory, !category.isEmpty {
+                        Text("pharmacy.chatbot.product.category".localized + category)
+                            .font(PharmacyColor.sans(13))
+                            .foregroundColor(PharmacyColor.textSecondary)
+                    }
+                    if let route = product.route, !route.isEmpty {
+                        Text("pharmacy.chatbot.product.route".localized + route)
+                            .font(PharmacyColor.sans(13))
+                            .foregroundColor(PharmacyColor.textSecondary)
+                    }
+                    if let description = product.description, !description.isEmpty {
+                        Text(description)
+                            .font(PharmacyColor.sans(13))
+                            .foregroundColor(PharmacyColor.textSecondary)
+                            .padding(.top, 4)
+                    }
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 4)
+            }
+            
+            Button(action: {
+                if let onDetails = onDetails {
+                    onDetails(product)
+                } else {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isExpanded.toggle()
+                    }
+                }
+            }) {
+                Text(isExpanded && onDetails == nil ? "pharmacy.chatbot.product.hide_details".localized : "pharmacy.chatbot.product.details".localized)
                     .font(PharmacyColor.sans(14, .semibold))
                     .foregroundColor(PharmacyColor.primary)
                     .frame(maxWidth: .infinity)

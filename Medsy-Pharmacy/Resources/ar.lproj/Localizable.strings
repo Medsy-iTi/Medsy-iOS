@@ -498,3 +498,8 @@
 "pharmacy.chatbot.suggestion.interactions.subtitle" = "معرفة الآثار الجانبية";
 "pharmacy.chatbot.suggestion.alternative.title" = "البدائل";
 "pharmacy.chatbot.suggestion.alternative.subtitle" = "إيجاد دواء بديل";
+"pharmacy.chatbot.product.hide_details" = "إخفاء التفاصيل";
+"pharmacy.chatbot.product.scientific_name" = "الاسم العلمي: ";
+"pharmacy.chatbot.product.company" = "الشركة: ";
+"pharmacy.chatbot.product.category" = "الفئة: ";
+"pharmacy.chatbot.product.route" = "طريقة التعاطي: ";

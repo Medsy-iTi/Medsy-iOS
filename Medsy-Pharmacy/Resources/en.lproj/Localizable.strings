@@ -499,3 +499,8 @@
 "pharmacy.chatbot.suggestion.interactions.subtitle" = "Find out about side effects";
 "pharmacy.chatbot.suggestion.alternative.title" = "Alternatives";
 "pharmacy.chatbot.suggestion.alternative.subtitle" = "Find a substitute medication";
+"pharmacy.chatbot.product.hide_details" = "Hide Details";
+"pharmacy.chatbot.product.scientific_name" = "Scientific Name: ";
+"pharmacy.chatbot.product.company" = "Company: ";
+"pharmacy.chatbot.product.category" = "Category: ";
+"pharmacy.chatbot.product.route" = "Route: ";

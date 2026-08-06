@@ -41,10 +41,6 @@ struct PharmacyChatView: View {
                                 messageRow(for: message)
                             }
 
-                            if viewModel.isSending {
-                                typingIndicator
-                            }
-
                             Color.clear.frame(height: 1).id("bottom")
                         }
                         .padding(.horizontal, PharmacySpacing.md)

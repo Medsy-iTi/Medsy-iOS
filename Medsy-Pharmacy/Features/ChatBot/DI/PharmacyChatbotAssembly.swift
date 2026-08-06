@@ -10,7 +10,7 @@ struct PharmacyChatbotAssembly: PharmacyModuleAssembly {
         container.register(AIChatRemoteDataSourceProtocol.self) { c in
             AIChatRemoteDataSource(
                 networkService: c.resolve(NetworkServiceProtocol.self),
-                aiKey: PharmacyConfiguration.aiKey
+                aiKey: Constants.aiKey
             )
         }
         

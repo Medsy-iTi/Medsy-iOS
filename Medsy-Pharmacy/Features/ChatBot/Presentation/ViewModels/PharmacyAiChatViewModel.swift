@@ -34,6 +34,7 @@ protocol PharmacyAiChatViewModelProtocol: AnyObject {
     func toggleRecording()
     // Navigation callbacks wired by the root view
     var onOpenCategory: ((Int, String) -> Void)? { get set }
+    var onOpenProductDetails: ((Int) -> Void)? { get set }
 }
 
 // MARK: - Implementation
@@ -60,6 +61,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
 
     // MARK: Navigation callbacks
     var onOpenCategory: ((Int, String) -> Void)?
+    var onOpenProductDetails: ((Int) -> Void)?
 
     // MARK: Dependencies
     private let sendTextUseCase: SendAiChatTextMessageUseCaseProtocol
