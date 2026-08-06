@@ -19,6 +19,28 @@ final class OfferResultRepository: OfferResultRepositoryProtocol {
         return OfferResultMapper.map(dto)
     }
 
+    func streamOfferResult(requestId: Int) -> AsyncThrowingStream<OfferResult, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    let stream = remoteDataSource.streamOfferResult(requestId: requestId)
+                    for try await dto in stream {
+                        if Task.isCancelled { break }
+                        let domainModel = OfferResultMapper.map(dto)
+                        continuation.yield(domainModel)
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
     func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult {
         let dto = try await remoteDataSource.confirmOffer(
             requestId: requestId,

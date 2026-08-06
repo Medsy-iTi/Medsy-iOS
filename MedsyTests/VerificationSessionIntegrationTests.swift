@@ -220,6 +220,16 @@ private final class VerificationNetworkServiceSpy: NetworkServiceProtocol {
         guard let response = response as? T else { throw NetworkError.decodingFailed }
         return response
     }
+
+    func requestData(endpoint: ApiEndpoint) async throws -> Data {
+        Data()
+    }
+
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
+        AsyncThrowingStream { continuation in
+            continuation.finish()
+        }
+    }
 }
 
 private final class VerificationUseCaseSpy: VerificationUseCaseProtocol {

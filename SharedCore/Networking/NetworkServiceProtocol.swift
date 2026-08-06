@@ -10,6 +10,7 @@ import Foundation
 protocol NetworkServiceProtocol {
     func request<T: Decodable>(endpoint: ApiEndpoint) async throws -> T
     func requestData(endpoint: ApiEndpoint) async throws -> Data
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error>
 }
 
 protocol TokenStoreProtocol {
@@ -22,3 +23,12 @@ protocol TokenStoreProtocol {
 protocol TokenRefreshing {
     func refreshTokens() async throws
 }
+
+extension NetworkServiceProtocol {
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
+        AsyncThrowingStream { continuation in
+            continuation.finish()
+        }
+    }
+}
+
