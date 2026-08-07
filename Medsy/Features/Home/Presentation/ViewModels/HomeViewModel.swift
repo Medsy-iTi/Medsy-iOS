@@ -84,6 +84,16 @@ final class HomeViewModel {
 
         pollingTask = Task {
             await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 5_000_000_000) 
+                        if Task.isCancelled { break }
+                        await MainActor.run {
+                            self.checkRequestExpiration()
+                        }
+                    }
+                }
+
                 for reqId in pendingIds {
                     group.addTask {
                         do {
@@ -119,6 +129,36 @@ final class HomeViewModel {
                 }
             }
             self.pollingTask = nil
+        }
+    }
+
+    private func checkRequestExpiration() {
+        let allIds = statusStore.pendingRequestIds
+        var changed = false
+        for reqId in allIds {
+            if let age = statusStore.getRequestAgeInSeconds(reqId), age > 900 {
+                print("[HomeViewModel] ⏰ Request \(reqId) has expired (age: \(age)s > 900s). Clearing...")
+                statusStore.clearPendingRequestId(reqId)
+                offerResults.removeValue(forKey: reqId)
+                changed = true
+            }
+        }
+
+        if changed {
+            let pendingIds = statusStore.pendingRequestIds
+            activeRequestIds = pendingIds
+            for reqId in offerResults.keys {
+                if !pendingIds.contains(reqId) {
+                    offerResults.removeValue(forKey: reqId)
+                }
+            }
+            if pendingIds.isEmpty {
+                print("[HomeViewModel] 🛑 All requests expired. Transitioning selectedStatus -> .home")
+                selectedStatus = .home
+                stopPolling()
+            } else if offerResults.values.first(where: { $0.isAvailable }) == nil {
+                selectedStatus = .searching
+            }
         }
     }
 

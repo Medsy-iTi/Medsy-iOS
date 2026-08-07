@@ -10,6 +10,7 @@ import Foundation
 protocol OffersRemoteDataSourceProtocol {
     func getOfferResult(requestId: Int) async throws -> OfferResultResponseDTO
     func streamOfferResult(requestId: Int) -> AsyncThrowingStream<OfferResultResponseDTO, Error>
+    func confirmOffer(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> ConfirmOfferResponseDTO
     func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO
 }
 
@@ -129,8 +130,8 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
         }
     }
 
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO {
-        let body = ConfirmOfferRequestDTO(selectedRequestItemIds: selectedRequestItemIds)
+    func confirmOffer(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> ConfirmOfferResponseDTO {
+        let body = ConfirmOfferRequestDTO(selectedItems: selectedItems)
         let response: ConfirmOfferResponseDTOContainer = try await networkService.request(
             endpoint: OffersEndpoint.confirmOffer(requestId: requestId, body: body)
         )
@@ -141,5 +142,10 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
             throw NetworkError.decodingFailed
         }
         return data
+    }
+
+    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO {
+        let items = selectedRequestItemIds.map { ConfirmOfferItemDTO(requestItemId: $0, productId: nil) }
+        return try await confirmOffer(requestId: requestId, selectedItems: items)
     }
 }

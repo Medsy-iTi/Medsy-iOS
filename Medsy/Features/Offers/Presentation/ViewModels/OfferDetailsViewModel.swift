@@ -38,6 +38,7 @@ final class OfferDetailsViewModel {
                 OfferMedicineItem(
                     id: "\(item.requestItemId)",
                     requestItemId: item.requestItemId,
+                    productId: item.productId,
                     name: item.productName,
                     dosage: "",
                     price: item.unitPrice,
@@ -109,12 +110,12 @@ final class OfferDetailsViewModel {
         // OLD:
         // let itemIds = offerDetail.medicines.filter(\.isAvailable).map(\.requestItemId)
 
-        let selectedItemIds = offerDetail.medicines
+        let selectedItems = offerDetail.medicines
             .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
+            .map { ConfirmSelectedItem(requestItemId: $0.requestItemId, productId: $0.productId) }
 
         do {
-            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedItems: selectedItems)
             statusStore?.clearPendingRequestId()
             isConfirmed = true
             return true

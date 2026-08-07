@@ -138,8 +138,13 @@ struct UpdatedItemDTO: Decodable, Equatable {
     let product: ProductNestedDTO?
 }
 
+struct ConfirmOfferItemDTO: Encodable, Equatable {
+    let requestItemId: Int
+    let productId: Int?
+}
+
 struct ConfirmOfferRequestDTO: Encodable, Equatable {
-    let selectedRequestItemIds: [Int]
+    let selectedItems: [ConfirmOfferItemDTO]
 }
 
 struct ConfirmOfferResponseDTO: Decodable, Equatable {

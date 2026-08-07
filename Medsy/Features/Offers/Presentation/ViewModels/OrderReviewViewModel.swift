@@ -65,12 +65,12 @@ final class OrderReviewViewModel {
         confirmErrorMessage = nil
         defer { isConfirming = false }
 
-        let selectedItemIds = orderReview.medicines
+        let selectedItems = orderReview.medicines
             .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
+            .map { ConfirmSelectedItem(requestItemId: $0.requestItemId, productId: $0.productId) }
 
         do {
-            let result = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            let result = try await confirmOfferUseCase.execute(requestId: requestId, selectedItems: selectedItems)
             self.confirmOfferResult = result
             statusStore?.clearPendingRequestId(requestId) // Clear this specific request ID from UserDefaults!
             isConfirmed = true
