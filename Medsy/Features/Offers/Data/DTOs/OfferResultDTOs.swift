@@ -9,6 +9,7 @@ import Foundation
 
 typealias GetOfferResultResponseDTO = APIResponseDTO<OfferResultResponseDTO>
 typealias ConfirmOfferResponseDTOContainer = APIResponseDTO<ConfirmOfferResponseDTO>
+typealias FulfillmentConfirmationResponseDTOContainer = APIResponseDTO<FulfillmentConfirmationResponseDTO>
 
 struct OfferResultResponseDTO: Decodable, Equatable {
     let items: [OfferResultItemDTO]
@@ -100,12 +101,31 @@ struct OfferResultItemDTO: Decodable, Equatable {
 }
 
 struct ConfirmOfferRequestDTO: Encodable, Equatable {
-    let selectedRequestItemIds: [Int]
+    let selectedItems: [ConfirmOfferSelectionDTO]
+}
+
+struct ConfirmOfferSelectionDTO: Encodable, Equatable {
+    let requestItemId: Int
+    let productId: Int
 }
 
 struct ConfirmOfferResponseDTO: Decodable, Equatable {
     let requestId: Int
     let orders: [ConfirmOfferOrderDTO]
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId
+        case offers
+        case orders
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        requestId = try container.decode(Int.self, forKey: .requestId)
+        orders = try container.decodeIfPresent([ConfirmOfferOrderDTO].self, forKey: .offers)
+            ?? container.decodeIfPresent([ConfirmOfferOrderDTO].self, forKey: .orders)
+            ?? []
+    }
 }
 
 struct ConfirmOfferOrderDTO: Decodable, Equatable {
@@ -113,4 +133,38 @@ struct ConfirmOfferOrderDTO: Decodable, Equatable {
     let pharmacyId: Int
     let pharmacyName: String
     let itemIds: [Int]
+
+    private enum CodingKeys: String, CodingKey {
+        case orderId
+        case offerId
+        case pharmacyId
+        case pharmacyName
+        case itemIds
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        orderId = try container.decodeIfPresent(Int.self, forKey: .orderId)
+            ?? container.decode(Int.self, forKey: .offerId)
+        pharmacyId = try container.decode(Int.self, forKey: .pharmacyId)
+        pharmacyName = try container.decode(String.self, forKey: .pharmacyName)
+        itemIds = try container.decodeIfPresent([Int].self, forKey: .itemIds) ?? []
+    }
+}
+
+struct FulfillmentConfirmationRequestDTO: Encodable, Equatable {
+    let fulfillmentMethod: String
+}
+
+struct FulfillmentConfirmationResponseDTO: Decodable, Equatable {
+    let masterOrderId: Int
+    let orderStatus: String
+    let paymentMethod: String
+    let paymentStatus: String?
+}
+
+struct ConfirmOfferDataDTO: Equatable {
+    let selection: ConfirmOfferResponseDTO
+    let fulfillment: FulfillmentConfirmationResponseDTO
+    let selectedRequestItemIds: [Int]
 }
