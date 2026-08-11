@@ -7,13 +7,13 @@
 
 import Foundation
 
-enum MasterOrderPaymentMethod: String, Equatable, Sendable {
+enum MasterOrderPaymentMethod: String, Equatable, Hashable, Sendable {
     case cash = "CASH"
     case card = "CARD"
     case unknown
 }
 
-enum MasterOrderPaymentStatus: String, Equatable, Sendable {
+enum MasterOrderPaymentStatus: String, Equatable, Hashable, Sendable {
     case unpaid = "UNPAID"
     case pending = "PENDING"
     case paid = "PAID"
@@ -23,7 +23,7 @@ enum MasterOrderPaymentStatus: String, Equatable, Sendable {
     case unknown
 }
 
-enum MasterOrderStatus: String, Equatable, Sendable {
+enum MasterOrderStatus: String, Equatable, Hashable, Sendable {
     case pending = "PENDING"
     case pendingPayment = "PENDING_PAYMENT"
     case preparing = "PREPARING"
