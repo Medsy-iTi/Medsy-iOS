@@ -9,5 +9,5 @@ import Foundation
 
 protocol OfferResultRepositoryProtocol {
     func getOfferResult(requestId: Int) async throws -> OfferResult
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult
+    func confirmOffer(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferResult
 }
