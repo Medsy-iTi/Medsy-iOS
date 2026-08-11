@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum OrderStatus {
+enum OrderStatus: Equatable {
     case pending
     case confirmed
     case preparing
