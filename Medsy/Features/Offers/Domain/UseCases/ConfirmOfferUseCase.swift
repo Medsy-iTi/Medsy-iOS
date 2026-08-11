@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ConfirmOfferUseCaseProtocol {
-    func execute(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult
+    func execute(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferResult
 }
 
 final class ConfirmOfferUseCase: ConfirmOfferUseCaseProtocol {
@@ -18,7 +18,7 @@ final class ConfirmOfferUseCase: ConfirmOfferUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult {
-        try await repository.confirmOffer(requestId: requestId, selectedRequestItemIds: selectedRequestItemIds)
+    func execute(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferResult {
+        try await repository.confirmOffer(requestId: requestId, selections: selections)
     }
 }
