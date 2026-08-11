@@ -17,6 +17,7 @@ enum HomeRoute: Hashable {
     // OLD:
     // case orderReview(OfferDetailPresentationModel)
     case orderReview(OfferDetailPresentationModel, Int? = nil)
+    case payment(ConfirmOfferResult, OfferDetailPresentationModel)
     case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
     case medicineAnalyze
 }
@@ -56,6 +57,20 @@ final class HomeCoordinator {
     }
 
     func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.orderComplete(result, offerDetail))
+    }
+
+    func openPayment(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.payment(result, offerDetail))
+    }
+
+    func replacePaymentWithOrderComplete(
+        _ result: ConfirmOfferResult,
+        offerDetail: OfferDetailPresentationModel
+    ) {
+        if !path.isEmpty {
+            path.removeLast()
+        }
         path.append(HomeRoute.orderComplete(result, offerDetail))
     }
 
@@ -156,8 +171,23 @@ struct HomeCoordinatorView: View {
                         requestId: requestId,
                         onBack: coordinator.goBack,
                         onConfirmOrder: { result in
-                            coordinator.openOrderComplete(result, offerDetail: offerDetail)
+                            coordinator.openPayment(result, offerDetail: offerDetail)
                         }
+                    )
+                case let .payment(result, offerDetail):
+                    let showCompletedOrder = {
+                        coordinator.replacePaymentWithOrderComplete(
+                            result,
+                            offerDetail: offerDetail
+                        )
+                    }
+                    PaymentFlowView(
+                        viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                            masterOrderId: result.orders.first?.orderId ?? 0,
+                            onCashPayment: showCompletedOrder
+                        ),
+                        onCompleted: showCompletedOrder,
+                        onViewOrder: showCompletedOrder
                     )
                 case let .orderComplete(result, offerDetail):
                     OrderCompleteView(
@@ -204,5 +234,3 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-
-

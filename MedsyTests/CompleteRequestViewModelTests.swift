@@ -17,7 +17,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.receiveMethod, .delivery)
         XCTAssertEqual(viewModel.paymentMethod, .cash)
         XCTAssertTrue(viewModel.showsDeliveryDetails)
-        XCTAssertFalse(viewModel.showsVisaForm)
+        XCTAssertFalse(viewModel.showsOnlinePaymentInfo)
     }
 
     func testPickupDoesNotCallDeliveryRequestEndpoint() async {
@@ -87,7 +87,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.validationErrors.contains(.locationRequired))
     }
 
-    func testValidVisaSubmitsOnlyNonSensitivePaymentSelection() async {
+    func testOnlinePaymentSubmitsOnlyNonSensitivePaymentSelection() async {
         var capturedSubmission: CompleteRequestSubmission?
         let submitUseCase = CompleteRequestSubmitUseCaseFake()
         let viewModel = makeViewModel(submitUseCase: submitUseCase) { submission in
@@ -95,49 +95,23 @@ final class CompleteRequestViewModelTests: XCTestCase {
             return true
         }
         viewModel.confirmLocation(validLocation)
-        viewModel.selectPaymentMethod(.visa)
-        viewModel.cardholderName = "Ehab Salah"
-        viewModel.cardNumber = "4111 1111 1111 1111"
-        viewModel.expiry = "12/30"
-        viewModel.cvv = "123"
+        viewModel.selectPaymentMethod(.online)
 
         let succeeded = await viewModel.submit()
 
         XCTAssertTrue(succeeded)
-        XCTAssertEqual(capturedSubmission?.paymentMethod, .visa)
+        XCTAssertEqual(capturedSubmission?.paymentMethod, .online)
         XCTAssertEqual(capturedSubmission?.deliveryLocation, validLocation)
         XCTAssertEqual(capturedSubmission?.itemCount, 2)
         XCTAssertEqual(submitUseCase.inputs, [
             SubmitCompleteRequestInput(
                 deliveryLatitude: validLocation.latitude,
                 deliveryLongitude: validLocation.longitude,
-                deliveryAddress: validLocation.address
+                deliveryAddress: validLocation.address,
+                paymentMethod: "CARD"
             )
         ])
         XCTAssertEqual(viewModel.submittedRequest?.id, 50)
-    }
-
-    func testInvalidVisaReportsImportantFieldErrors() async {
-        let viewModel = makeViewModel()
-        viewModel.confirmLocation(validLocation)
-        viewModel.selectPaymentMethod(.visa)
-        viewModel.cardholderName = ""
-        viewModel.cardNumber = "4000 0000 0000 0000"
-        viewModel.expiry = "01/20"
-        viewModel.cvv = "12"
-
-        let succeeded = await viewModel.submit()
-
-        XCTAssertFalse(succeeded)
-        XCTAssertEqual(
-            Set(viewModel.validationErrors),
-            Set([
-                .cardholderNameRequired,
-                .invalidCardNumber,
-                .invalidExpiry,
-                .invalidCVV
-            ])
-        )
     }
 
     func testSubmissionFailureKeepsCheckoutStateAndShowsError() async {
@@ -256,11 +230,6 @@ final class CompleteRequestViewModelTests: XCTestCase {
             ),
             getCustomerProfileUseCase: CompleteRequestProfileUseCaseFake(profile: profile),
             submitCompleteRequestUseCase: submitUseCase,
-            now: {
-                Calendar(identifier: .gregorian).date(
-                    from: DateComponents(year: 2026, month: 7, day: 24)
-                )!
-            },
             onRequestCreated: onSubmit
         )
     }

@@ -13,8 +13,8 @@ enum CompleteRequestReceiveMethod: String, CaseIterable, Equatable {
 }
 
 enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
-    case cash
-    case visa
+    case cash = "CASH"
+    case online = "CARD"
 }
 
 struct CompleteRequestLocation: Equatable {
@@ -95,20 +95,9 @@ struct CompleteRequestSubmission: Equatable {
     let estimatedTotal: Double
 }
 
-enum CompleteRequestCardField: Hashable {
-    case cardholderName
-    case cardNumber
-    case expiry
-    case cvv
-}
-
 enum CompleteRequestValidationError: Hashable {
     case locationRequired
     case pickupUnsupported
-    case cardholderNameRequired
-    case invalidCardNumber
-    case invalidExpiry
-    case invalidCVV
 
     var localizedMessage: String {
         switch self {
@@ -116,14 +105,6 @@ enum CompleteRequestValidationError: Hashable {
             "complete_request.validation.location".localized
         case .pickupUnsupported:
             "complete_request.validation.pickup_unsupported".localized
-        case .cardholderNameRequired:
-            "complete_request.validation.cardholder_name".localized
-        case .invalidCardNumber:
-            "complete_request.validation.card_number".localized
-        case .invalidExpiry:
-            "complete_request.validation.expiry".localized
-        case .invalidCVV:
-            "complete_request.validation.cvv".localized
         }
     }
 }

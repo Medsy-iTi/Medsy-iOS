@@ -54,5 +54,6 @@ protocol OrderHistoryViewModelProtocol: AnyObject {
 protocol OrderDetailViewModelProtocol: AnyObject {
     var detailState: OrderDetailViewState { get }
     var reorderState: ReorderState { get }
+    var paymentAction: PaymentOrderActionPresentation? { get }
     func handle(_ event: OrderDetailEvent)
 }

@@ -61,7 +61,7 @@ struct CompleteRequestView: View {
                             onSelect: viewModel.selectPaymentMethod
                         )
 
-                        if viewModel.showsVisaForm {
+                        if viewModel.showsOnlinePaymentInfo {
                             CompleteRequestOnlinePaymentInfoView()
                         }
 

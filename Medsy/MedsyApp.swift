@@ -35,7 +35,8 @@ struct MedsyApp: App {
             ChatbotAssembly(),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
-            OffersAssembly()
+            OffersAssembly(),
+            PaymentAssembly()
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
