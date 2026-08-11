@@ -79,8 +79,14 @@ struct OrdersCoordinatorView: View {
                         viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
                             masterOrderId: orderId
                         ),
-                        onCompleted: coordinator.pop,
-                        onViewOrder: coordinator.pop
+                        onCompleted: {
+                            detailViewModel.handle(.load(orderId: orderId))
+                            coordinator.pop()
+                        },
+                        onViewOrder: {
+                            detailViewModel.handle(.load(orderId: orderId))
+                            coordinator.pop()
+                        }
                     )
                 case let .search(query):
                     SearchCoordinatorView(
