@@ -23,7 +23,7 @@ final class OrdersFeatureTests: XCTestCase {
             """.utf8
         )
 
-        let page = try JSONDecoder().decode(PageDTO<OrderGroupDTO>.self, from: data)
+        let page = try JSONDecoder().decode(PageDTO<MasterOrderDTO>.self, from: data)
 
         XCTAssertEqual(page.number, 2)
         XCTAssertEqual(page.size, 20)
@@ -32,7 +32,7 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(page.last, true)
     }
 
-    func testGroupedBackendOrdersAndNestedProductsAreMapped() throws {
+    func testMasterOrdersAndNestedProductsAreMapped() throws {
         let data = Data(
             """
             {
@@ -42,21 +42,14 @@ final class OrdersFeatureTests: XCTestCase {
                 "content": [
                   {
                     "requestId": 41,
-                    "orders": [
+                    "id": 501,
+                    "orderResponses": [
                       {
-                        "id": 71,
-                        "customerId": 2,
+                        "offerId": 71,
                         "pharmacyId": 3,
                         "pharmacyName": "Medsy Pharmacy",
-                        "pharmacistId": 4,
-                        "offerId": 5,
-                        "subTotal": 85,
-                        "deliveryFee": 10,
-                        "total": 95,
-                        "deliveryLatitude": 30.0,
-                        "deliveryLongitude": 31.0,
-                        "status": "CONFIRMED",
-                        "createdAt": "2026-08-04",
+                        "latitude": 30.0,
+                        "longitude": 31.0,
                         "items": [
                           {
                             "id": 11,
@@ -73,7 +66,15 @@ final class OrdersFeatureTests: XCTestCase {
                           }
                         ]
                       }
-                    ]
+                    ],
+                    "paymentMethod": "CARD",
+                    "paymentStatus": "PENDING",
+                    "fulfillmentMethod": "DELIVERY",
+                    "deliveryFee": 10,
+                    "totalPrice": 95,
+                    "orderStatus": "PENDING_PAYMENT",
+                    "paymentExpiresAt": "2026-08-04T12:15:00",
+                    "paidAt": null
                   }
                 ],
                 "pageNumber": 0,
@@ -89,16 +90,18 @@ final class OrdersFeatureTests: XCTestCase {
         let response = try JSONDecoder().decode(OrdersPageResponseDTO.self, from: data)
         let page = try XCTUnwrap(response.data)
         let result = OrderMapper.mapToPagedResult(page)
-        let order = try XCTUnwrap(page.content.first?.orders.first)
+        let order = try XCTUnwrap(page.content.first)
         let detail = OrderMapper.mapToDetailEntity(order)
 
         XCTAssertEqual(page.content.first?.requestId, 41)
-        XCTAssertEqual(result.items.map(\.id), [71])
+        XCTAssertEqual(result.items.map(\.id), [501])
         XCTAssertEqual(result.items.first?.itemImageURLs, ["https://example.com/medicine.png"])
         XCTAssertEqual(detail.items.first?.productName, "Received medicine")
         XCTAssertEqual(detail.items.first?.imageURL, "https://example.com/medicine.png")
         XCTAssertEqual(detail.itemsSubtotal, 85)
         XCTAssertEqual(detail.totalPrice, 95)
+        XCTAssertEqual(detail.paymentMethod, .card)
+        XCTAssertEqual(detail.paymentStatus, .pending)
     }
 
     func testOrdersEndpointUsesOnlySupportedPaginationParameters() {
@@ -112,6 +115,7 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertNil(parameters?["status"])
         XCTAssertNil(parameters?["dateFrom"])
         XCTAssertNil(parameters?["dateTo"])
+        XCTAssertEqual(OrdersEndpoint.fetchOrders(page: 1, size: 20).path, "masterorders")
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
