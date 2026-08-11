@@ -14,9 +14,9 @@ struct PaymentOrderActionView: View {
     var body: some View {
         PrimaryButton(
             title: action.title,
-            systemImage: action.isLoading ? nil : "creditcard.fill",
+            systemImage: action.systemImage,
             isLoading: action.isLoading,
-            isDisabled: action.isLoading,
+            isDisabled: action.isDisabled,
             action: onTap
         )
     }
@@ -27,6 +27,7 @@ struct PaymentOrderActionView: View {
         PaymentOrderActionView(action: .payNow, onTap: {})
         PaymentOrderActionView(action: .retry, onTap: {})
         PaymentOrderActionView(action: .processing, onTap: {})
+        PaymentOrderActionView(action: .expired, onTap: {})
     }
     .padding()
 }

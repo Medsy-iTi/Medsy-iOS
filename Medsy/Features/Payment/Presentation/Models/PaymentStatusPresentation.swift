@@ -12,7 +12,7 @@ enum PaymentStatusPresentation: Equatable {
     case success
     case failure(message: String?)
     case cancelled
-    case unsupportedCombinedOrder
+    case expired
 
     var title: String {
         switch self {
@@ -24,8 +24,8 @@ enum PaymentStatusPresentation: Equatable {
             "payment.status.failure.title".localized
         case .cancelled:
             "payment.status.cancelled.title".localized
-        case .unsupportedCombinedOrder:
-            "payment.status.unsupported.title".localized
+        case .expired:
+            "payment.status.expired.title".localized
         }
     }
 
@@ -39,8 +39,8 @@ enum PaymentStatusPresentation: Equatable {
             message ?? "payment.status.failure.message".localized
         case .cancelled:
             "payment.status.cancelled.message".localized
-        case .unsupportedCombinedOrder:
-            "payment.status.unsupported.message".localized
+        case .expired:
+            "payment.status.expired.message".localized
         }
     }
 
@@ -54,14 +54,14 @@ enum PaymentStatusPresentation: Equatable {
             "exclamationmark"
         case .cancelled:
             "xmark"
-        case .unsupportedCombinedOrder:
-            "building.2"
+        case .expired:
+            "clock.badge.xmark"
         }
     }
 
     var tint: Color {
         switch self {
-        case .processing, .unsupportedCombinedOrder:
+        case .processing:
             AppColor.green
         case .success:
             AppColor.successGreen
@@ -69,6 +69,8 @@ enum PaymentStatusPresentation: Equatable {
             AppColor.danger
         case .cancelled:
             AppColor.textSec
+        case .expired:
+            AppColor.danger
         }
     }
 
@@ -84,8 +86,8 @@ enum PaymentStatusPresentation: Equatable {
             "payment.action.done".localized
         case .failure, .cancelled:
             "payment.action.retry".localized
-        case .unsupportedCombinedOrder:
-            "payment.action.back_to_offers".localized
+        case .expired:
+            "payment.action.view_order".localized
         }
     }
 
@@ -93,7 +95,7 @@ enum PaymentStatusPresentation: Equatable {
         switch self {
         case .failure, .cancelled:
             true
-        case .processing, .success, .unsupportedCombinedOrder:
+        case .processing, .success, .expired:
             false
         }
     }
@@ -103,6 +105,7 @@ enum PaymentOrderActionPresentation: Equatable {
     case payNow
     case retry
     case processing
+    case expired
 
     var title: String {
         switch self {
@@ -112,10 +115,32 @@ enum PaymentOrderActionPresentation: Equatable {
             "payment.action.retry".localized
         case .processing:
             "payment.action.processing".localized
+        case .expired:
+            "payment.action.expired".localized
         }
     }
 
     var isLoading: Bool {
         self == .processing
+    }
+
+    var isDisabled: Bool {
+        switch self {
+        case .processing, .expired:
+            true
+        case .payNow, .retry:
+            false
+        }
+    }
+
+    var systemImage: String? {
+        switch self {
+        case .payNow, .retry:
+            "creditcard.fill"
+        case .expired:
+            "clock.badge.xmark"
+        case .processing:
+            nil
+        }
     }
 }
