@@ -94,6 +94,15 @@
 "home.category.skinCare" = "عناية بالبشرة";
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
+"home.category.allergy" = "الحساسية";
+"home.category.antibiotics" = "المضادات الحيوية";
+"home.category.antifungals" = "مضادات الفطريات";
+"home.category.antiparasitics" = "مضادات الطفيليات";
+"home.category.antivirals" = "مضادات الفيروسات";
+"home.category.asthmaBreathing" = "الربو والتنفس";
+"home.category.brainNerves" = "المخ والأعصاب";
+"home.category.cancerImmunity" = "الأورام والمناعة";
+"home.category.cholesterol" = "الكوليسترول";
 "home.fastDelivery" = "توصيل سريع";
 "home.toYourDoorstep" = "إلى باب منزلك";
 
@@ -263,6 +272,12 @@
 "cart.clear_confirmation.title" = "إفراغ السلة؟";
 "cart.clear_confirmation.message" = "سيتم حذف جميع الأدوية والروشتة المرفقة.";
 "cart.clear_confirmation.action" = "إفراغ السلة";
+"cart.interactions.title" = "سلامة الأدوية";
+"cart.interactions.subtitle" = "راجع التفاعلات المحتملة قبل المتابعة.";
+"cart.interactions.loading" = "جاري فحص التفاعلات بين الأدوية...";
+"cart.interactions.failure" = "تعذر فحص سلامة الأدوية. ما زال بإمكانك استخدام السلة.";
+"cart.interactions.severity.high" = "خطورة عالية";
+"cart.interactions.severity.moderate" = "خطورة متوسطة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";
@@ -312,7 +327,7 @@
 "auth.verification.code_accessibility" = "رمز التحقق المكون من ستة أرقام";
 "auth.password.show" = "إظهار كلمة المرور";
 "auth.password.hide" = "إخفاء كلمة المرور";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
 
 /* Profile */

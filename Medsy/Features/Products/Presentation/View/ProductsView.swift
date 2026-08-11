@@ -11,6 +11,11 @@ struct ProductsView: View {
     @State private var viewModel: ProductsViewModel
     @State private var selectedProductID: String?
 
+    private let columns = Array(
+        repeating: GridItem(.flexible(), spacing: MedsySpacing.sm, alignment: .top),
+        count: 2
+    )
+
     init(category: Category) {
         _viewModel = State(initialValue: ProductsViewModel(category: category))
     }
@@ -20,8 +25,12 @@ struct ProductsView: View {
             switch viewModel.state {
             case .loading:
                 ScrollView(showsIndicators: false) {
-                    MedsySkeletonList(rowCount: 6)
-                        .padding()
+                    LazyVGrid(columns: columns, spacing: MedsySpacing.sm) {
+                        ForEach(0..<6, id: \.self) { _ in
+                            CategoryProductCardSkeleton()
+                        }
+                    }
+                    .padding(MedsySpacing.sm)
                 }
             case .success:
                 if viewModel.products.isEmpty {
@@ -43,9 +52,9 @@ struct ProductsView: View {
                 } else {
                     @Bindable var viewModel = viewModel
                     ScrollView(showsIndicators: false) {
-                        LazyVStack(spacing: 16) {
+                        LazyVGrid(columns: columns, spacing: MedsySpacing.sm) {
                             ForEach($viewModel.products) { $product in
-                                SearchedProductCard(
+                                CategoryProductCard(
                                     product: $product,
                                     onAdd: {
                                         addOneToCart(product)
@@ -59,7 +68,6 @@ struct ProductsView: View {
                                         cartViewModel.handle(.decreaseQuantity(itemID: product.id))
                                         product.quantity = cartQuantity(for: product)
                                     },
-                                    onToggleFavorite: {},
                                     onTap: { selectedProductID = product.id }
                                 )
                                 .onAppear {
@@ -73,10 +81,12 @@ struct ProductsView: View {
                             }
 
                             if viewModel.isFetchingNextPage {
-                                MedsySkeletonList(rowCount: 2)
+                                ForEach(0..<2, id: \.self) { _ in
+                                    CategoryProductCardSkeleton()
+                                }
                             }
                         }
-                        .padding()
+                        .padding(MedsySpacing.sm)
                     }
                 }
             case .error:

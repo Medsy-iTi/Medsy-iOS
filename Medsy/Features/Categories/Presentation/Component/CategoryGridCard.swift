@@ -1,37 +1,28 @@
 import SwiftUI
 
 struct CategoryGridCard: View {
-    let titleKey: String
-    let bgColor: Color
+    let category: Category
+    let artworkHeight: CGFloat
+
+    init(category: Category, artworkHeight: CGFloat = 150) {
+        self.category = category
+        self.artworkHeight = artworkHeight
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(bgColor)
-                    .frame(width: 50, height: 50)
+        VStack(spacing: MedsySpacing.xs) {
+            CategoryArtworkView(category: category)
+                .frame(height: artworkHeight)
 
-                MedsyBrandImageFallback(logoScale: 0.72)
-                    .frame(width: 50, height: 50)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(titleKey.localized)
-                    .font(AppColor.sans(14, .bold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .lineLimit(1)
-                
-              
-            }
+            Text(category.displayName)
+                .font(AppColor.sans(13, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(AppColor.card)
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.02), radius: 6, x: 0, y: 3)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(AppColor.border, lineWidth: 1)
-        )
+        .frame(maxWidth: .infinity, minHeight: artworkHeight + 42, alignment: .top)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(category.displayName)
     }
 }

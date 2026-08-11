@@ -6,14 +6,18 @@
 import SwiftUI
 
 struct HomeCategoriesView: View {
-    @State private var viewModel: CategoriesViewModel
+    private let categories: [Category]
 
-    init(viewModel: CategoriesViewModel = DIContainer.shared.resolve(CategoriesViewModel.self)) {
-        _viewModel = State(initialValue: viewModel)
+    private var visibleCategories: [Category] {
+        Array(categories.prefix(9))
+    }
+
+    init(categories: [Category] = HomeFeaturedCategoryCatalog.categories) {
+        self.categories = categories
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: MedsySpacing.md) {
             HStack {
                 Text("home.shopByCategories".localized)
                     .font(AppColor.sans(16, .bold))
@@ -29,68 +33,30 @@ struct HomeCategoriesView: View {
             }
             .padding(.horizontal)
 
-            switch viewModel.state {
-            case .loading:
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 18) {
-                        ForEach(0..<5, id: \.self) { _ in
-                            VStack(spacing: 8) {
-                                MedsySkeletonBlock(cornerRadius: 16, height: 58, width: 58)
-                                MedsySkeletonBlock(cornerRadius: 4, height: 12, width: 50)
-                            }
-                            .frame(width: 80)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-            case .success:
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 18) {
-                        ForEach(viewModel.categories) { category in
-                            NavigationLink(destination: ProductsView(category: category)) {
-                                VStack(spacing: 8) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .fill(category.bgColor)
-                                            .frame(width: 58, height: 58)
-
-                                        MedsyBrandImageFallback(logoScale: 0.72)
-                                            .frame(width: 58, height: 58)
-                                    }
-
-                                    Text(category.displayName)
-                                        .font(AppColor.sans(11, .medium))
-                                        .foregroundStyle(AppColor.textPrim)
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.center)
-                                        .frame(width: 76)
+            Grid(horizontalSpacing: MedsySpacing.sm, verticalSpacing: MedsySpacing.md) {
+                ForEach(0..<3, id: \.self) { row in
+                    GridRow {
+                        ForEach(0..<3, id: \.self) { column in
+                            let index = row * 3 + column
+                            if visibleCategories.indices.contains(index) {
+                                let category = visibleCategories[index]
+                                NavigationLink(destination: ProductsView(category: category)) {
+                                    CategoryGridCard(category: category, artworkHeight: 96)
                                 }
+                                .buttonStyle(.plain)
+                                .frame(maxWidth: .infinity)
+                            } else {
+                                Color.clear
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 138)
+                                    .accessibilityHidden(true)
                             }
-                            .buttonStyle(.plain)
-                            .frame(width: 80)
                         }
                     }
-                    .padding(.horizontal)
                 }
-            case .error:
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        Task {
-                            await viewModel.loadCategories()
-                        }
-                    }) {
-                        Label("error.retry".localized, systemImage: "arrow.clockwise")
-                            .font(AppColor.sans(13, .bold))
-                            .foregroundStyle(AppColor.green)
-                    }
-                    Spacer()
-                }
-                .frame(height: 80)
             }
-        }
-        .task {
-            await viewModel.loadCategories()
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
         }
     }
 }

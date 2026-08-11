@@ -94,6 +94,15 @@
 "home.category.skinCare" = "Skin Care";
 "home.category.hairCare" = "Hair Care";
 "home.category.dailyEssentials" = "Daily Essentials";
+"home.category.allergy" = "Allergy";
+"home.category.antibiotics" = "Antibiotics";
+"home.category.antifungals" = "Antifungals";
+"home.category.antiparasitics" = "Antiparasitics";
+"home.category.antivirals" = "Antivirals";
+"home.category.asthmaBreathing" = "Asthma & Breathing";
+"home.category.brainNerves" = "Brain & Nerves";
+"home.category.cancerImmunity" = "Cancer & Immunity";
+"home.category.cholesterol" = "Cholesterol";
 "home.fastDelivery" = "Fast Delivery";
 "home.toYourDoorstep" = "To your doorstep";
 
@@ -264,6 +273,12 @@
 "cart.clear_confirmation.title" = "Clear your cart?";
 "cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
 "cart.clear_confirmation.action" = "Clear cart";
+"cart.interactions.title" = "Medicine safety";
+"cart.interactions.subtitle" = "Review possible interactions before continuing.";
+"cart.interactions.loading" = "Checking medicines for interactions...";
+"cart.interactions.failure" = "Medicine safety could not be checked. Your cart is still available.";
+"cart.interactions.severity.high" = "High risk";
+"cart.interactions.severity.moderate" = "Moderate risk";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
@@ -313,7 +328,7 @@
 "auth.verification.code_accessibility" = "Six-digit verification code";
 "auth.password.show" = "Show password";
 "auth.password.hide" = "Hide password";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "Your health, our priority";
 
 /* Profile */
