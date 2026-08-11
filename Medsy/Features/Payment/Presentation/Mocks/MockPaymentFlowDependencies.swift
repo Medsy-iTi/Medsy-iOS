@@ -11,13 +11,13 @@ struct MockPaymentPreparer: PaymentPreparingProtocol {
     var request =
         PaymentSheetPresentationRequest(
             masterOrderId: 0,
-            opaqueReference: "preview-payment"
+            clientSecret: "preview-payment"
         )
 
     func prepare(masterOrderId: Int) async throws -> PaymentSheetPresentationRequest {
         PaymentSheetPresentationRequest(
             masterOrderId: masterOrderId,
-            opaqueReference: request.opaqueReference
+            clientSecret: request.clientSecret
         )
     }
 }

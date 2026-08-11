@@ -190,6 +190,73 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(requestedPages, [0, 1])
     }
 
+    @MainActor
+    func testPendingCardOrderBeforeExpiryCanPayNow() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitUntil { viewModel.paymentAction == .payNow }
+
+        XCTAssertEqual(viewModel.paymentAction, .payNow)
+    }
+
+    @MainActor
+    func testFailedCardOrderBeforeExpiryCanRetry() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .failed,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitUntil { viewModel.paymentAction == .retry }
+
+        XCTAssertEqual(viewModel.paymentAction, .retry)
+    }
+
+    @MainActor
+    func testExpiredCardOrderCannotPay() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 999)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertEqual(viewModel.paymentAction, .expired)
+    }
+
+    @MainActor
+    func testCancelledOrderCannotPay() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            status: .cancelled,
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertNil(viewModel.paymentAction)
+    }
+
+    @MainActor
+    func testCashOrderDoesNotShowPaymentAction() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentMethod: .cash,
+            paymentStatus: .unknown,
+            expiresAt: nil
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertNil(viewModel.paymentAction)
+    }
+
     private func decodeOrder(
         fulfillmentType: String,
         deliveryFee: Double,
@@ -243,6 +310,43 @@ final class OrdersFeatureTests: XCTestCase {
     }
 
     @MainActor
+    private func makeOrderDetailViewModel(
+        status: OrderStatus = .pending,
+        paymentMethod: MasterOrderPaymentMethod = .card,
+        paymentStatus: MasterOrderPaymentStatus,
+        expiresAt: Date?
+    ) -> OrderDetailViewModel {
+        let entity = OrderDetailEntity(
+            id: 501,
+            orderNumber: 501,
+            pharmacyName: "Medsy Pharmacy",
+            pharmacyId: 3,
+            status: status,
+            fulfillmentType: .delivery,
+            date: Date(timeIntervalSince1970: 900),
+            items: [],
+            itemsSubtotal: 85,
+            deliveryFee: 10,
+            totalPrice: 95,
+            paymentMethod: paymentMethod,
+            paymentStatus: paymentStatus,
+            paymentExpiresAt: expiresAt
+        )
+        return OrderDetailViewModel(
+            getOrderDetailUseCase: OrderDetailUseCaseStub(entity: entity),
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+    }
+
+    @MainActor
+    private func waitForLoadedState(in viewModel: OrderDetailViewModel) async throws {
+        try await waitUntil {
+            if case .loaded = viewModel.detailState { return true }
+            return false
+        }
+    }
+
+    @MainActor
     private func orderCount(in state: OrderHistoryViewState) -> Int {
         guard case let .loaded(sections) = state else { return 0 }
         return sections.flatMap(\.orders).count
@@ -258,6 +362,19 @@ final class OrdersFeatureTests: XCTestCase {
             try await Task.sleep(for: .milliseconds(10))
         }
         XCTFail("Timed out waiting for asynchronous order state")
+    }
+}
+
+private final class OrderDetailUseCaseStub: GetOrderDetailUseCaseProtocol {
+    private let entity: OrderDetailEntity
+
+    init(entity: OrderDetailEntity) {
+        self.entity = entity
+    }
+
+    func execute(id: Int) async throws -> OrderDetailEntity {
+        _ = id
+        return entity
     }
 }
 

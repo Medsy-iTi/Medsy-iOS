@@ -181,14 +181,22 @@ struct HomeCoordinatorView: View {
                             offerDetail: offerDetail
                         )
                     }
-                    PaymentFlowView(
-                        viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
-                            masterOrderId: result.orders.first?.orderId ?? 0,
-                            onCashPayment: showCompletedOrder
-                        ),
-                        onCompleted: showCompletedOrder,
-                        onViewOrder: showCompletedOrder
-                    )
+                    if let masterOrderId = result.masterOrderId {
+                        PaymentFlowView(
+                            viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                                masterOrderId: masterOrderId,
+                                onCashPayment: showCompletedOrder
+                            ),
+                            onCompleted: showCompletedOrder,
+                            onViewOrder: showCompletedOrder
+                        )
+                    } else {
+                        PaymentStatusView(
+                            status: .failure(message: "payment.error.master_order_unavailable".localized),
+                            onPrimaryAction: coordinator.goBack,
+                            onSecondaryAction: coordinator.goBack
+                        )
+                    }
                 case let .orderComplete(result, offerDetail):
                     OrderCompleteView(
                         result: result,

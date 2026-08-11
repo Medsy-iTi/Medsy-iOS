@@ -19,11 +19,15 @@ final class StripePaymentSheetPresenter: PaymentSheetPresentingProtocol {
         await withCheckedContinuation { continuation in
             Task { @MainActor in
                 guard !publishableKey.isEmpty else {
-                    continuation.resume(returning: .failed(message: "Stripe publishable key is missing"))
+                    continuation.resume(
+                        returning: .failed(message: "payment.error.missing_publishable_key".localized)
+                    )
                     return
                 }
                 guard let viewController = UIApplication.shared.paymentPresentationViewController else {
-                    continuation.resume(returning: .failed(message: "Payment screen is unavailable"))
+                    continuation.resume(
+                        returning: .failed(message: "payment.error.screen_unavailable".localized)
+                    )
                     return
                 }
 
@@ -36,7 +40,7 @@ final class StripePaymentSheetPresenter: PaymentSheetPresentingProtocol {
                 configuration.paymentMethodOrder = ["card"]
 
                 let paymentSheet = PaymentSheet(
-                    paymentIntentClientSecret: request.opaqueReference,
+                    paymentIntentClientSecret: request.clientSecret,
                     configuration: configuration
                 )
                 paymentSheet.present(from: viewController) { result in
