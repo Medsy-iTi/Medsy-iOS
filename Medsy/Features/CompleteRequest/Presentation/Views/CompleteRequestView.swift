@@ -62,16 +62,7 @@ struct CompleteRequestView: View {
                         )
 
                         if viewModel.showsVisaForm {
-                            CompleteRequestVisaFormView(
-                                cardholderName: $viewModel.cardholderName,
-                                cardNumber: $viewModel.cardNumber,
-                                expiry: $viewModel.expiry,
-                                cvv: $viewModel.cvv,
-                                errorMessage: viewModel.validationMessage,
-                                onCardNumberChange: viewModel.formatCardNumber,
-                                onExpiryChange: viewModel.formatExpiry,
-                                onCVVChange: viewModel.formatCVV
-                            )
+                            CompleteRequestOnlinePaymentInfoView()
                         }
 
                         CompleteRequestNotesView(notes: $viewModel.notes)

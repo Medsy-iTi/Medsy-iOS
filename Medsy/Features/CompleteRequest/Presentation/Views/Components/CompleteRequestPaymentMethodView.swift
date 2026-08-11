@@ -32,7 +32,7 @@ struct CompleteRequestPaymentMethodView: View {
                 CompleteRequestOptionCard(
                     title: "complete_request.payment.visa".localized,
                     subtitle: "complete_request.payment.visa.subtitle".localized,
-                    systemImage: "creditcard",
+                    systemImage: "creditcard.and.123",
                     isSelected: selectedMethod == .visa,
                     action: { onSelect(.visa) }
                 )
