@@ -8,13 +8,17 @@
 import Foundation
 
 struct PaymentSheetPresentationRequest: Equatable, Sendable {
-    let orderId: Int
+    let masterOrderId: Int
     let opaqueReference: String
 }
 
-enum PaymentPreparationResult: Equatable, Sendable {
+enum PaymentOrderPresentationStatus: Equatable, Sendable {
     case cash
-    case online(PaymentSheetPresentationRequest)
+    case cardPending(expiresAt: Date?)
+    case paid
+    case expired
+    case cancelled
+    case failed(message: String?)
 }
 
 enum PaymentSheetPresentationOutcome: Equatable, Sendable {
@@ -23,22 +27,16 @@ enum PaymentSheetPresentationOutcome: Equatable, Sendable {
     case failed(message: String?)
 }
 
-enum PaymentConfirmationPresentationStatus: Equatable, Sendable {
-    case pending
-    case paid
-    case failed(message: String?)
-}
-
 protocol PaymentPreparingProtocol {
-    func prepare(orderId: Int) async throws -> PaymentPreparationResult
+    func prepare(masterOrderId: Int) async throws -> PaymentSheetPresentationRequest
 }
 
 protocol PaymentSheetPresentingProtocol {
     func present(_ request: PaymentSheetPresentationRequest) async -> PaymentSheetPresentationOutcome
 }
 
-protocol PaymentConfirmationRefreshingProtocol {
-    func refresh(orderId: Int) async throws -> PaymentConfirmationPresentationStatus
+protocol PaymentOrderRefreshingProtocol {
+    func refresh(masterOrderId: Int) async throws -> PaymentOrderPresentationStatus
 }
 
 enum PaymentFlowViewState: Equatable {
@@ -49,7 +47,7 @@ enum PaymentFlowViewState: Equatable {
     case success
     case failure(message: String?)
     case cancelled
-    case unsupportedCombinedOrder
+    case expired
 
     var statusPresentation: PaymentStatusPresentation {
         switch self {
@@ -61,8 +59,8 @@ enum PaymentFlowViewState: Equatable {
             .failure(message: message)
         case .cancelled:
             .cancelled
-        case .unsupportedCombinedOrder:
-            .unsupportedCombinedOrder
+        case .expired:
+            .expired
         }
     }
 
@@ -70,7 +68,7 @@ enum PaymentFlowViewState: Equatable {
         switch self {
         case .loading, .presenting:
             true
-        case .idle, .processing, .success, .failure, .cancelled, .unsupportedCombinedOrder:
+        case .idle, .processing, .success, .failure, .cancelled, .expired:
             false
         }
     }
@@ -85,7 +83,7 @@ enum PaymentFlowEvent {
 @MainActor
 protocol PaymentFlowViewModelProtocol: AnyObject {
     var state: PaymentFlowViewState { get }
-    var orderId: Int? { get }
+    var masterOrderId: Int { get }
 
     func handle(_ event: PaymentFlowEvent) async
 }

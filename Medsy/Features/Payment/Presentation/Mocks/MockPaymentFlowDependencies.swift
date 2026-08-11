@@ -8,25 +8,17 @@
 import Foundation
 
 struct MockPaymentPreparer: PaymentPreparingProtocol {
-    var result: PaymentPreparationResult = .online(
+    var request =
         PaymentSheetPresentationRequest(
-            orderId: 0,
+            masterOrderId: 0,
             opaqueReference: "preview-payment"
         )
-    )
 
-    func prepare(orderId: Int) async throws -> PaymentPreparationResult {
-        switch result {
-        case .cash:
-            return .cash
-        case .online(let request):
-            return .online(
-                PaymentSheetPresentationRequest(
-                    orderId: orderId,
-                    opaqueReference: request.opaqueReference
-                )
-            )
-        }
+    func prepare(masterOrderId: Int) async throws -> PaymentSheetPresentationRequest {
+        PaymentSheetPresentationRequest(
+            masterOrderId: masterOrderId,
+            opaqueReference: request.opaqueReference
+        )
     }
 }
 
@@ -39,11 +31,11 @@ struct MockPaymentSheetPresenter: PaymentSheetPresentingProtocol {
     }
 }
 
-struct MockPaymentConfirmationRefresher: PaymentConfirmationRefreshingProtocol {
-    var status: PaymentConfirmationPresentationStatus = .pending
+struct MockPaymentOrderRefresher: PaymentOrderRefreshingProtocol {
+    var status: PaymentOrderPresentationStatus = .cardPending(expiresAt: nil)
 
-    func refresh(orderId: Int) async throws -> PaymentConfirmationPresentationStatus {
-        _ = orderId
+    func refresh(masterOrderId: Int) async throws -> PaymentOrderPresentationStatus {
+        _ = masterOrderId
         return status
     }
 }

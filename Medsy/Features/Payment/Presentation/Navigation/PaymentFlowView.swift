@@ -11,18 +11,15 @@ struct PaymentFlowView: View {
     @State private var viewModel: PaymentFlowViewModel
     let onCompleted: () -> Void
     let onViewOrder: () -> Void
-    let onUnsupportedCombinedOrder: () -> Void
 
     init(
         viewModel: PaymentFlowViewModel,
         onCompleted: @escaping () -> Void,
-        onViewOrder: @escaping () -> Void,
-        onUnsupportedCombinedOrder: @escaping () -> Void
+        onViewOrder: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
         self.onCompleted = onCompleted
         self.onViewOrder = onViewOrder
-        self.onUnsupportedCombinedOrder = onUnsupportedCombinedOrder
     }
 
     var body: some View {
@@ -44,9 +41,7 @@ struct PaymentFlowView: View {
             onCompleted()
         case .failure, .cancelled:
             Task { await viewModel.handle(.retry) }
-        case .unsupportedCombinedOrder:
-            onUnsupportedCombinedOrder()
-        case .processing:
+        case .processing, .expired:
             onViewOrder()
         case .idle, .loading, .presenting:
             break

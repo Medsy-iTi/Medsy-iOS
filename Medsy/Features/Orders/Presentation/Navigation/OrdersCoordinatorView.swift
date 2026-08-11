@@ -77,11 +77,10 @@ struct OrdersCoordinatorView: View {
                 case .payment(let orderId):
                     PaymentFlowView(
                         viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
-                            orderIds: [orderId]
+                            masterOrderId: orderId
                         ),
                         onCompleted: coordinator.pop,
-                        onViewOrder: coordinator.pop,
-                        onUnsupportedCombinedOrder: coordinator.pop
+                        onViewOrder: coordinator.pop
                     )
                 case let .search(query):
                     SearchCoordinatorView(

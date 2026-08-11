@@ -183,12 +183,11 @@ struct HomeCoordinatorView: View {
                     }
                     PaymentFlowView(
                         viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
-                            orderIds: result.orders.map(\.orderId),
+                            masterOrderId: result.orders.first?.orderId ?? 0,
                             onCashPayment: showCompletedOrder
                         ),
                         onCompleted: showCompletedOrder,
-                        onViewOrder: showCompletedOrder,
-                        onUnsupportedCombinedOrder: coordinator.goBack
+                        onViewOrder: showCompletedOrder
                     )
                 case let .orderComplete(result, offerDetail):
                     OrderCompleteView(
@@ -235,4 +234,3 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-

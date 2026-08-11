@@ -10,28 +10,28 @@ import Foundation
 struct PaymentFactory {
     private let paymentPreparer: PaymentPreparingProtocol
     private let paymentSheetPresenter: PaymentSheetPresentingProtocol
-    private let confirmationRefresher: PaymentConfirmationRefreshingProtocol
+    private let orderRefresher: PaymentOrderRefreshingProtocol
 
     init(
         paymentPreparer: PaymentPreparingProtocol,
         paymentSheetPresenter: PaymentSheetPresentingProtocol,
-        confirmationRefresher: PaymentConfirmationRefreshingProtocol
+        orderRefresher: PaymentOrderRefreshingProtocol
     ) {
         self.paymentPreparer = paymentPreparer
         self.paymentSheetPresenter = paymentSheetPresenter
-        self.confirmationRefresher = confirmationRefresher
+        self.orderRefresher = orderRefresher
     }
 
     @MainActor
     func makeViewModel(
-        orderIds: [Int],
+        masterOrderId: Int,
         onCashPayment: @escaping () -> Void = {}
     ) -> PaymentFlowViewModel {
         PaymentFlowViewModel(
-            orderIds: orderIds,
+            masterOrderId: masterOrderId,
             paymentPreparer: paymentPreparer,
             paymentSheetPresenter: paymentSheetPresenter,
-            confirmationRefresher: confirmationRefresher,
+            orderRefresher: orderRefresher,
             onCashPayment: onCashPayment
         )
     }

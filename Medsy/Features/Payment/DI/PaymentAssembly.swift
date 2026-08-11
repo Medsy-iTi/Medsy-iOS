@@ -17,15 +17,15 @@ struct PaymentAssembly: ModuleAssembly {
             MockPaymentSheetPresenter()
         }
 
-        container.register(PaymentConfirmationRefreshingProtocol.self) { _ in
-            MockPaymentConfirmationRefresher()
+        container.register(PaymentOrderRefreshingProtocol.self) { _ in
+            MockPaymentOrderRefresher()
         }
 
         container.register(PaymentFactory.self) { container in
             PaymentFactory(
                 paymentPreparer: container.resolve(PaymentPreparingProtocol.self),
                 paymentSheetPresenter: container.resolve(PaymentSheetPresentingProtocol.self),
-                confirmationRefresher: container.resolve(PaymentConfirmationRefreshingProtocol.self)
+                orderRefresher: container.resolve(PaymentOrderRefreshingProtocol.self)
             )
         }
     }
