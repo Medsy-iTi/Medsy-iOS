@@ -22,7 +22,7 @@ struct Constants {
     }()
 
     static let baseURL = "https://medsybackend.up.railway.app/api/v1/"
-    //secrets["API_BASE_URL"] as? String ?? ""
+    //
 
     static let aiKey = secrets["AI_API_KEY"] as? String ?? ""
     static var customerId: String?
