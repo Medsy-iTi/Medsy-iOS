@@ -6,8 +6,8 @@
 //
 
 protocol OrdersRemoteDataSourceProtocol {
-    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<OrderGroupDTO>
-    func fetchOrderDetail(id: Int) async throws -> OrderDTO
+    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<MasterOrderDTO>
+    func fetchOrderDetail(id: Int) async throws -> MasterOrderDTO
 }
 
 final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
@@ -17,21 +17,21 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
         self.networkService = networkService
     }
 
-    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<OrderGroupDTO> {
+    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<MasterOrderDTO> {
         let response: OrdersPageResponseDTO = try await networkService.request(
             endpoint: OrdersEndpoint.fetchOrders(page: page, size: size)
         )
         return try unwrapPage(from: response)
     }
 
-    func fetchOrderDetail(id: Int) async throws -> OrderDTO {
+    func fetchOrderDetail(id: Int) async throws -> MasterOrderDTO {
         let response: OrderDetailResponseDTO = try await networkService.request(
             endpoint: OrdersEndpoint.fetchOrderDetail(id: id)
         )
         return try unwrapOrder(from: response)
     }
 
-    private func unwrapPage(from response: OrdersPageResponseDTO) throws -> PageDTO<OrderGroupDTO> {
+    private func unwrapPage(from response: OrdersPageResponseDTO) throws -> PageDTO<MasterOrderDTO> {
         guard response.success else {
             throw NetworkError.validationError(response.message)
         }
@@ -41,7 +41,7 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
         return page
     }
 
-    private func unwrapOrder(from response: OrderDetailResponseDTO) throws -> OrderDTO {
+    private func unwrapOrder(from response: OrderDetailResponseDTO) throws -> MasterOrderDTO {
         guard response.success else {
             throw NetworkError.validationError(response.message)
         }
