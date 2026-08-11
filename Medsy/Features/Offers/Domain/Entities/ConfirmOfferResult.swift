@@ -17,4 +17,24 @@ struct ConfirmOfferOrder: Equatable, Hashable {
 struct ConfirmOfferResult: Equatable, Hashable {
     let requestId: Int
     let orders: [ConfirmOfferOrder]
+    let masterOrderId: Int?
+    let orderStatus: MasterOrderStatus?
+    let paymentMethod: MasterOrderPaymentMethod?
+    let paymentStatus: MasterOrderPaymentStatus?
+
+    init(
+        requestId: Int,
+        orders: [ConfirmOfferOrder],
+        masterOrderId: Int? = nil,
+        orderStatus: MasterOrderStatus? = nil,
+        paymentMethod: MasterOrderPaymentMethod? = nil,
+        paymentStatus: MasterOrderPaymentStatus? = nil
+    ) {
+        self.requestId = requestId
+        self.orders = orders
+        self.masterOrderId = masterOrderId
+        self.orderStatus = orderStatus
+        self.paymentMethod = paymentMethod
+        self.paymentStatus = paymentStatus
+    }
 }
