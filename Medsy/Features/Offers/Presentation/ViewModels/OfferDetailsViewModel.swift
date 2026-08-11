@@ -38,6 +38,7 @@ final class OfferDetailsViewModel {
                 OfferMedicineItem(
                     id: "\(item.requestItemId)",
                     requestItemId: item.requestItemId,
+                    productId: item.productId,
                     name: item.productName,
                     dosage: "",
                     price: item.unitPrice,
@@ -109,12 +110,23 @@ final class OfferDetailsViewModel {
         // OLD:
         // let itemIds = offerDetail.medicines.filter(\.isAvailable).map(\.requestItemId)
 
-        let selectedItemIds = offerDetail.medicines
+        let selectedMedicines = offerDetail.medicines
             .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
+        let selections = selectedMedicines.compactMap { medicine -> ConfirmOfferSelection? in
+            guard let productId = medicine.productId else { return nil }
+            return ConfirmOfferSelection(
+                requestItemId: medicine.requestItemId,
+                productId: productId
+            )
+        }
+
+        guard selections.count == selectedMedicines.count else {
+            confirmErrorMessage = "Unable to identify one of the selected medicines."
+            return false
+        }
 
         do {
-            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            _ = try await confirmOfferUseCase.execute(requestId: requestId, selections: selections)
             statusStore?.clearPendingRequestId()
             isConfirmed = true
             return true
@@ -124,4 +136,3 @@ final class OfferDetailsViewModel {
         }
     }
 }
-

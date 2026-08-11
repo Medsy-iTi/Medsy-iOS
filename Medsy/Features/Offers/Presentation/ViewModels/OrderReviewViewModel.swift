@@ -65,12 +65,23 @@ final class OrderReviewViewModel {
         confirmErrorMessage = nil
         defer { isConfirming = false }
 
-        let selectedItemIds = orderReview.medicines
+        let selectedMedicines = orderReview.medicines
             .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
+        let selections = selectedMedicines.compactMap { medicine -> ConfirmOfferSelection? in
+            guard let productId = medicine.productId else { return nil }
+            return ConfirmOfferSelection(
+                requestItemId: medicine.requestItemId,
+                productId: productId
+            )
+        }
+
+        guard selections.count == selectedMedicines.count else {
+            confirmErrorMessage = "Unable to identify one of the selected medicines."
+            return false
+        }
 
         do {
-            let result = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            let result = try await confirmOfferUseCase.execute(requestId: requestId, selections: selections)
             self.confirmOfferResult = result
             statusStore?.clearPendingRequestId(requestId) // Clear this specific request ID from UserDefaults!
             isConfirmed = true
