@@ -99,9 +99,9 @@ struct PaymentStatusView: View {
     .environment(LanguageManager.shared)
 }
 
-#Preview("Unsupported") {
+#Preview("Expired") {
     PaymentStatusView(
-        status: .unsupportedCombinedOrder,
+        status: .expired,
         onPrimaryAction: {},
         onSecondaryAction: {}
     )

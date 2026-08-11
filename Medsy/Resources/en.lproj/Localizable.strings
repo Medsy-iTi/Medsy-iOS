@@ -94,6 +94,15 @@
 "home.category.skinCare" = "Skin Care";
 "home.category.hairCare" = "Hair Care";
 "home.category.dailyEssentials" = "Daily Essentials";
+"home.category.allergy" = "Allergy";
+"home.category.antibiotics" = "Antibiotics";
+"home.category.antifungals" = "Antifungals";
+"home.category.antiparasitics" = "Antiparasitics";
+"home.category.antivirals" = "Antivirals";
+"home.category.asthmaBreathing" = "Asthma & Breathing";
+"home.category.brainNerves" = "Brain & Nerves";
+"home.category.cancerImmunity" = "Cancer & Immunity";
+"home.category.cholesterol" = "Cholesterol";
 "home.fastDelivery" = "Fast Delivery";
 "home.toYourDoorstep" = "To your doorstep";
 
@@ -264,6 +273,12 @@
 "cart.clear_confirmation.title" = "Clear your cart?";
 "cart.clear_confirmation.message" = "All medicines and the attached prescription will be removed.";
 "cart.clear_confirmation.action" = "Clear cart";
+"cart.interactions.title" = "Medicine safety";
+"cart.interactions.subtitle" = "Review possible interactions before continuing.";
+"cart.interactions.loading" = "Checking medicines for interactions...";
+"cart.interactions.failure" = "Medicine safety could not be checked. Your cart is still available.";
+"cart.interactions.severity.high" = "High risk";
+"cart.interactions.severity.moderate" = "Moderate risk";
 
 /* Onboarding */
 "onboarding.skip" = "Skip";
@@ -313,7 +328,7 @@
 "auth.verification.code_accessibility" = "Six-digit verification code";
 "auth.password.show" = "Show password";
 "auth.password.hide" = "Hide password";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "Your health, our priority";
 
 /* Profile */
@@ -570,13 +585,12 @@
 "complete_request.payment.subtitle" = "Select one payment option for this request.";
 "complete_request.payment.cash" = "Cash";
 "complete_request.payment.cash.subtitle" = "Pay when you receive the request";
-"complete_request.payment.online" = "Card or wallet";
+"complete_request.payment.online" = "Card";
 "complete_request.payment.online.subtitle" = "Pay securely after accepting an offer";
 "complete_request.online_payment.title" = "Secure online payment";
 "complete_request.online_payment.description" = "After you accept a pharmacy offer, you will complete payment using Stripe's secure payment screen.";
 "complete_request.online_payment.cards" = "Cards";
-"complete_request.online_payment.wallets" = "Wallets";
-"complete_request.online_payment.security" = "Medsy does not collect or store your card or wallet details.";
+"complete_request.online_payment.security" = "Medsy does not collect or store your card details.";
 
 "payment.status.processing.title" = "Confirming your payment";
 "payment.status.processing.message" = "Your payment was submitted. We are waiting for final confirmation from the payment provider.";
@@ -587,14 +601,14 @@
 "payment.status.failure.message" = "We could not complete this payment. No additional payment was confirmed.";
 "payment.status.cancelled.title" = "Payment cancelled";
 "payment.status.cancelled.message" = "Your order is still available. You can retry payment whenever you are ready.";
-"payment.status.unsupported.title" = "Online payment unavailable";
-"payment.status.unsupported.message" = "Online payment currently supports orders from one pharmacy. Return to the offers and select one pharmacy, or choose cash.";
+"payment.status.expired.title" = "Payment time expired";
+"payment.status.expired.message" = "This order can no longer be paid. Open the order to view its latest status.";
 "payment.action.pay_now" = "Pay now";
 "payment.action.retry" = "Retry payment";
 "payment.action.processing" = "Confirming payment";
+"payment.action.expired" = "Payment expired";
 "payment.action.view_order" = "View order";
 "payment.action.done" = "Done";
-"payment.action.back_to_offers" = "Back to offers";
 "complete_request.notes.title" = "Request notes";
 "complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
 "complete_request.notes.placeholder" = "Add notes for the pharmacy";

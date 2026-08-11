@@ -156,13 +156,48 @@ final class CartViewModelTests: XCTestCase {
         )
         let viewModel = CartViewModel(
             items: [item(id: "first", productID: 10, quantity: 2)],
-            prescriptions: [attachment]
+            prescriptions: [attachment],
+            interactionWarnings: [interactionWarning()]
         )
 
         XCTAssertEqual(viewModel.handle(.clear), .sync)
         XCTAssertEqual(viewModel.state, .empty)
         XCTAssertTrue(viewModel.prescriptions.isEmpty)
+        XCTAssertTrue(viewModel.interactionWarnings.isEmpty)
         XCTAssertFalse(viewModel.hasContent)
+    }
+
+    func testInteractionWarningsLoadWithNormalizedArabicLanguage() async {
+        let warning = interactionWarning()
+        let useCase = CartInteractionsUseCaseStub(result: .success([warning]))
+        let viewModel = CartViewModel(
+            items: [item(id: "first", productID: 10, quantity: 1)],
+            getCartInteractionsUseCase: useCase
+        )
+
+        await viewModel.refreshInteractions(language: "ar-EG")
+
+        XCTAssertEqual(useCase.requestedLanguages, ["ar"])
+        XCTAssertEqual(viewModel.interactionWarnings, [warning])
+        XCTAssertEqual(viewModel.interactionsState, .loaded)
+        XCTAssertEqual(viewModel.itemCount, 1)
+    }
+
+    func testInteractionFailureKeepsCartAvailable() async {
+        let useCase = CartInteractionsUseCaseStub(result: .failure(CartInteractionsTestError.unavailable))
+        let viewModel = CartViewModel(
+            items: [item(id: "first", productID: 10, quantity: 1)],
+            getCartInteractionsUseCase: useCase
+        )
+
+        await viewModel.refreshInteractions(language: "en")
+
+        XCTAssertTrue(viewModel.interactionWarnings.isEmpty)
+        guard case .failed = viewModel.interactionsState else {
+            return XCTFail("Expected interaction loading to fail independently")
+        }
+        XCTAssertEqual(viewModel.itemCount, 1)
+        XCTAssertTrue(viewModel.hasContent)
     }
 
     func testCompletingRequestClearsLocalCartBeforeNavigation() async {
@@ -206,6 +241,7 @@ final class CartViewModelTests: XCTestCase {
             id: "42",
             name: "Real Product",
             dosageInfo: "500 mg",
+            scientificName: "Paracetamol",
             price: 75,
             imageUrl: "https://example.com/product.png",
             badgeText: "Company",
@@ -243,4 +279,37 @@ final class CartViewModelTests: XCTestCase {
         guard case let .loaded(items) = viewModel.state else { return [] }
         return items
     }
+
+    private func interactionWarning() -> CartInteractionWarning {
+        CartInteractionWarning(
+            severity: .high,
+            title: "Potential interaction",
+            advice: "Ask your pharmacist",
+            involvedProducts: [
+                CartInteractionProduct(
+                    productID: 10,
+                    productName: "Medicine",
+                    ingredient: "Ingredient"
+                )
+            ]
+        )
+    }
+}
+
+private final class CartInteractionsUseCaseStub: GetCartInteractionsUseCaseProtocol {
+    private let result: Result<[CartInteractionWarning], Error>
+    private(set) var requestedLanguages: [String] = []
+
+    init(result: Result<[CartInteractionWarning], Error>) {
+        self.result = result
+    }
+
+    func execute(language: String) async throws -> [CartInteractionWarning] {
+        requestedLanguages.append(language)
+        return try result.get()
+    }
+}
+
+private enum CartInteractionsTestError: Error {
+    case unavailable
 }

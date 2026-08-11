@@ -23,16 +23,10 @@ struct CompleteRequestOnlinePaymentInfoView: View {
                     .foregroundStyle(AppColor.green)
             }
 
-            HStack(spacing: MedsySpacing.sm) {
-                paymentBadge(
-                    title: "complete_request.online_payment.cards".localized,
-                    systemImage: "creditcard.fill"
-                )
-                paymentBadge(
-                    title: "complete_request.online_payment.wallets".localized,
-                    systemImage: "wallet.bifold.fill"
-                )
-            }
+            paymentBadge(
+                title: "complete_request.online_payment.cards".localized,
+                systemImage: "creditcard.fill"
+            )
 
             Text("complete_request.online_payment.security".localized)
                 .font(MedsyFont.caption(12))

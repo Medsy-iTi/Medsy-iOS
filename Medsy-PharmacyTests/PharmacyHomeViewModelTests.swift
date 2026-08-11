@@ -165,6 +165,7 @@ final class PharmacyHomeViewModelTests: XCTestCase {
         let viewModel = PharmacyHomeViewModel(
             getProfileUseCase: profileUseCase,
             fetchDashboardUseCase: dashboardUseCase,
+            sendHeartbeatUseCase: HomeHeartbeatUseCase(),
             sessionSettings: session
         )
 
@@ -285,14 +286,49 @@ final class PharmacyHomeViewModelTests: XCTestCase {
         XCTAssertFalse(PharmacySessionSettings(defaults: defaults).isOnDuty)
     }
 
+    func testRefreshSynchronizesDutyStatusFromCurrentPharmacistPresence() async {
+        let session = makeSession()
+        session.updateDutyStatus(false)
+        let heartbeatUseCase = HomeHeartbeatUseCase(
+            result: .success(PresenceEntity(lastHeartbeatAt: "2026-08-05T18:00:00Z", onDuty: true))
+        )
+        let viewModel = makeViewModel(
+            session: session,
+            dashboardUseCase: HomeDashboardUseCase { _ in makeDashboard() },
+            heartbeatUseCase: heartbeatUseCase
+        )
+
+        await viewModel.refresh()
+
+        XCTAssertTrue(session.isOnDuty)
+        XCTAssertEqual(heartbeatUseCase.callCount, 1)
+    }
+
+    func testPresenceFailureKeepsCachedDutyStatus() async {
+        let session = makeSession()
+        session.updateDutyStatus(true)
+        let viewModel = makeViewModel(
+            session: session,
+            dashboardUseCase: HomeDashboardUseCase { _ in makeDashboard() },
+            heartbeatUseCase: HomeHeartbeatUseCase(result: .failure(HomeTestError.failed))
+        )
+
+        await viewModel.refresh()
+
+        XCTAssertTrue(session.isOnDuty)
+        XCTAssertEqual(viewModel.dashboardState, .loaded)
+    }
+
     private func makeViewModel(
         session: PharmacySessionSettings? = nil,
         profileResult: Result<PharmacyProfile, Error> = .success(makeProfile()),
-        dashboardUseCase: HomeDashboardUseCase
+        dashboardUseCase: HomeDashboardUseCase,
+        heartbeatUseCase: HomeHeartbeatUseCase = HomeHeartbeatUseCase()
     ) -> PharmacyHomeViewModel {
         PharmacyHomeViewModel(
             getProfileUseCase: HomeProfileUseCase(result: profileResult),
             fetchDashboardUseCase: dashboardUseCase,
+            sendHeartbeatUseCase: heartbeatUseCase,
             sessionSettings: session ?? makeSession()
         )
     }
@@ -333,6 +369,24 @@ private final class HomeDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol 
     func execute(period: PharmacyDashboardPeriod) async throws -> PharmacyDashboard {
         receivedPeriods.append(period)
         return try await action(period)
+    }
+}
+
+private final class HomeHeartbeatUseCase: SendHeartbeatUseCaseProtocol {
+    let result: Result<PresenceEntity, Error>
+    private(set) var callCount = 0
+
+    init(
+        result: Result<PresenceEntity, Error> = .success(
+            PresenceEntity(lastHeartbeatAt: "", onDuty: false)
+        )
+    ) {
+        self.result = result
+    }
+
+    func execute() async throws -> PresenceEntity {
+        callCount += 1
+        return try result.get()
     }
 }
 

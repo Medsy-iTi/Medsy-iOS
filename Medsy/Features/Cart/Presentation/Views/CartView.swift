@@ -132,6 +132,9 @@ struct CartView: View {
             guard case let .failed(message) = state else { return }
             operationErrorMessage = message
         }
+        .task(id: languageManager.languageCode) {
+            await viewModel.refreshInteractions(language: languageManager.languageCode)
+        }
         .animation(.easeInOut(duration: 0.2), value: viewModel.removedItem)
     }
 
@@ -225,6 +228,12 @@ struct CartView: View {
                     }
                 }
 
+                CartInteractionWarningsView(
+                    warnings: viewModel.interactionWarnings,
+                    state: viewModel.interactionsState,
+                    onRetry: retryInteractions
+                )
+
                 CartTotalSummaryView(
                     estimatedTotal: viewModel.estimatedTotal,
                     canContinue: viewModel.hasContent,
@@ -241,6 +250,12 @@ struct CartView: View {
     private func presentPrescriptionSources(replacing id: UUID? = nil) {
         prescriptionBeingReplaced = id
         showsPrescriptionSources = true
+    }
+
+    private func retryInteractions() {
+        Task {
+            await viewModel.refreshInteractions(language: languageManager.languageCode)
+        }
     }
 
     private func openCamera() {

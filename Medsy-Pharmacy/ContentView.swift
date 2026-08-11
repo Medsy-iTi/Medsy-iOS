@@ -115,6 +115,7 @@ private struct PharmacyAuthenticationRootView: View {
 		homeFactory: PharmacyHomeFactory(
 			getProfileUseCase: PreviewGetProfileUseCase(),
 			fetchDashboardUseCase: PreviewFetchDashboardUseCase(),
+			sendHeartbeatUseCase: PreviewSendHeartbeatUseCase(),
 			sessionSettings: PharmacySessionSettings()
 		),
 		ordersFactory: PharmacyOrdersFactory(
@@ -148,6 +149,12 @@ private struct PreviewFetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtoc
 			topSellingProducts: [],
 			recentOrders: []
 		)
+	}
+}
+
+private struct PreviewSendHeartbeatUseCase: SendHeartbeatUseCaseProtocol {
+	func execute() async throws -> PresenceEntity {
+		PresenceEntity(lastHeartbeatAt: "", onDuty: false)
 	}
 }
 

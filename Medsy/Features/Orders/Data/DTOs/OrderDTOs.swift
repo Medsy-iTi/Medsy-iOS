@@ -7,8 +7,13 @@
 
 import Foundation
 
-typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<OrderDTO>>
+typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<OrderGroupDTO>>
 typealias OrderDetailResponseDTO = APIResponseDTO<OrderDTO>
+
+struct OrderGroupDTO: Decodable {
+    let requestId: Int
+    let orders: [OrderDTO]
+}
 
 struct OrderDTO: Decodable {
     let id: Int
@@ -84,4 +89,42 @@ struct OrderItemDTO: Decodable {
     let originalProductName: String?
     let imageUrl: String?
     let totalPrice: Double?
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case productId
+        case quantity
+        case unitPrice
+        case productName
+        case originalProductName
+        case imageUrl
+        case totalPrice
+        case product
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let product = try container.decodeIfPresent(OrderItemProductDTO.self, forKey: .product)
+
+        id = try container.decode(Int.self, forKey: .id)
+        productId = try container.decodeIfPresent(Int.self, forKey: .productId)
+            ?? product?.id
+            ?? container.decode(Int.self, forKey: .productId)
+        quantity = try container.decode(Int.self, forKey: .quantity)
+        unitPrice = try container.decode(Double.self, forKey: .unitPrice)
+        productName = try container.decodeIfPresent(String.self, forKey: .productName)
+            ?? product?.productName
+            ?? product?.name
+        originalProductName = try container.decodeIfPresent(String.self, forKey: .originalProductName)
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+            ?? product?.imageUrl
+        totalPrice = try container.decodeIfPresent(Double.self, forKey: .totalPrice)
+    }
+}
+
+private struct OrderItemProductDTO: Decodable {
+    let id: Int?
+    let name: String?
+    let productName: String?
+    let imageUrl: String?
 }

@@ -24,10 +24,10 @@ struct CategoriesView: View {
         }
     }
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
+    private let columns = Array(
+        repeating: GridItem(.flexible(), spacing: MedsySpacing.sm, alignment: .top),
+        count: 2
+    )
 
     var body: some View {
         VStack(spacing: 0) {
@@ -56,21 +56,12 @@ struct CategoriesView: View {
             switch viewModel.state {
             case .loading:
                 ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: columns, spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
                         ForEach(0..<8, id: \.self) { _ in
-                            VStack(alignment: .leading, spacing: 12) {
-                                MedsySkeletonBlock(cornerRadius: 16, height: 50, width: 50)
-                                MedsySkeletonBlock(cornerRadius: 4, height: 16, width: 100)
-                                MedsySkeletonBlock(cornerRadius: 4, height: 12, width: 60)
+                            VStack(spacing: MedsySpacing.xs) {
+                                MedsySkeletonBlock(cornerRadius: MedsyRadius.lg, height: 150)
+                                MedsySkeletonBlock(cornerRadius: MedsyRadius.sm, height: 16, width: 110)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(16)
-                            .background(AppColor.card)
-                            .cornerRadius(20)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(AppColor.border, lineWidth: 1)
-                            )
                         }
                     }
                     .padding(.horizontal)
@@ -78,13 +69,10 @@ struct CategoriesView: View {
                 }
             case .success:
                 ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: columns, spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
                         ForEach(filteredCategories) { category in
                             NavigationLink(destination: ProductsView(category: category)) {
-                                CategoryGridCard(
-                                    titleKey: category.displayName,
-                                    bgColor: category.bgColor
-                                )
+                                CategoryGridCard(category: category)
                             }
                             .buttonStyle(.plain)
                             .onAppear {

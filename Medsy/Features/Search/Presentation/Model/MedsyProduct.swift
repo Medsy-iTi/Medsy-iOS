@@ -11,6 +11,7 @@ struct MedsyProduct: Identifiable, Equatable {
 	let id: String
 	let name: String
 	let dosageInfo: String
+	let scientificName: String
 	let price: Double
 	let imageUrl: String?
 	let badgeText: String
@@ -36,6 +37,7 @@ enum ProductPresentationMapper {
             id: String(product.id),
             name: displayName,
             dosageInfo: dosage,
+            scientificName: product.scientificName,
             price: product.price,
             imageUrl: product.imageUrl,
             badgeText: product.company,

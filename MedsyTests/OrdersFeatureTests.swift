@@ -23,7 +23,7 @@ final class OrdersFeatureTests: XCTestCase {
             """.utf8
         )
 
-        let page = try JSONDecoder().decode(PageDTO<OrderDTO>.self, from: data)
+        let page = try JSONDecoder().decode(PageDTO<OrderGroupDTO>.self, from: data)
 
         XCTAssertEqual(page.number, 2)
         XCTAssertEqual(page.size, 20)
@@ -32,14 +32,83 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(page.last, true)
     }
 
-    func testOrdersEndpointUsesOnlySupportedPaginationAndSortParameters() {
+    func testGroupedBackendOrdersAndNestedProductsAreMapped() throws {
+        let data = Data(
+            """
+            {
+              "success": true,
+              "message": "Orders retrieved successfully",
+              "data": {
+                "content": [
+                  {
+                    "requestId": 41,
+                    "orders": [
+                      {
+                        "id": 71,
+                        "customerId": 2,
+                        "pharmacyId": 3,
+                        "pharmacyName": "Medsy Pharmacy",
+                        "pharmacistId": 4,
+                        "offerId": 5,
+                        "subTotal": 85,
+                        "deliveryFee": 10,
+                        "total": 95,
+                        "deliveryLatitude": 30.0,
+                        "deliveryLongitude": 31.0,
+                        "status": "CONFIRMED",
+                        "createdAt": "2026-08-04",
+                        "items": [
+                          {
+                            "id": 11,
+                            "productId": 12,
+                            "quantity": 2,
+                            "unitPrice": 42.5,
+                            "totalPrice": 85,
+                            "product": {
+                              "id": 12,
+                              "name": "Medicine",
+                              "productName": "Received medicine",
+                              "imageUrl": "https://example.com/medicine.png"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "pageNumber": 0,
+                "pageSize": 20,
+                "totalElements": 1,
+                "totalPages": 1,
+                "last": true
+              }
+            }
+            """.utf8
+        )
+
+        let response = try JSONDecoder().decode(OrdersPageResponseDTO.self, from: data)
+        let page = try XCTUnwrap(response.data)
+        let result = OrderMapper.mapToPagedResult(page)
+        let order = try XCTUnwrap(page.content.first?.orders.first)
+        let detail = OrderMapper.mapToDetailEntity(order)
+
+        XCTAssertEqual(page.content.first?.requestId, 41)
+        XCTAssertEqual(result.items.map(\.id), [71])
+        XCTAssertEqual(result.items.first?.itemImageURLs, ["https://example.com/medicine.png"])
+        XCTAssertEqual(detail.items.first?.productName, "Received medicine")
+        XCTAssertEqual(detail.items.first?.imageURL, "https://example.com/medicine.png")
+        XCTAssertEqual(detail.itemsSubtotal, 85)
+        XCTAssertEqual(detail.totalPrice, 95)
+    }
+
+    func testOrdersEndpointUsesOnlySupportedPaginationParameters() {
         let parameters = OrdersEndpoint
             .fetchOrders(page: 1, size: 20)
             .queryParameters
 
         XCTAssertEqual(parameters?["page"] as? Int, 1)
         XCTAssertEqual(parameters?["size"] as? Int, 20)
-        XCTAssertEqual(parameters?["sort"] as? String, "date,desc")
+        XCTAssertNil(parameters?["sort"])
         XCTAssertNil(parameters?["status"])
         XCTAssertNil(parameters?["dateFrom"])
         XCTAssertNil(parameters?["dateTo"])
@@ -164,7 +233,8 @@ final class OrdersFeatureTests: XCTestCase {
             fulfillmentType: .pickup,
             date: Date(timeIntervalSince1970: TimeInterval(id)),
             totalPrice: 10,
-            itemCount: 1
+            itemCount: 1,
+            itemImageURLs: []
         )
     }
 

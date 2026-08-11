@@ -94,6 +94,15 @@
 "home.category.skinCare" = "عناية بالبشرة";
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
+"home.category.allergy" = "الحساسية";
+"home.category.antibiotics" = "المضادات الحيوية";
+"home.category.antifungals" = "مضادات الفطريات";
+"home.category.antiparasitics" = "مضادات الطفيليات";
+"home.category.antivirals" = "مضادات الفيروسات";
+"home.category.asthmaBreathing" = "الربو والتنفس";
+"home.category.brainNerves" = "المخ والأعصاب";
+"home.category.cancerImmunity" = "الأورام والمناعة";
+"home.category.cholesterol" = "الكوليسترول";
 "home.fastDelivery" = "توصيل سريع";
 "home.toYourDoorstep" = "إلى باب منزلك";
 
@@ -263,6 +272,12 @@
 "cart.clear_confirmation.title" = "إفراغ السلة؟";
 "cart.clear_confirmation.message" = "سيتم حذف جميع الأدوية والروشتة المرفقة.";
 "cart.clear_confirmation.action" = "إفراغ السلة";
+"cart.interactions.title" = "سلامة الأدوية";
+"cart.interactions.subtitle" = "راجع التفاعلات المحتملة قبل المتابعة.";
+"cart.interactions.loading" = "جاري فحص التفاعلات بين الأدوية...";
+"cart.interactions.failure" = "تعذر فحص سلامة الأدوية. ما زال بإمكانك استخدام السلة.";
+"cart.interactions.severity.high" = "خطورة عالية";
+"cart.interactions.severity.moderate" = "خطورة متوسطة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";
@@ -312,7 +327,7 @@
 "auth.verification.code_accessibility" = "رمز التحقق المكون من ستة أرقام";
 "auth.password.show" = "إظهار كلمة المرور";
 "auth.password.hide" = "إخفاء كلمة المرور";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
 
 /* Profile */
@@ -568,13 +583,12 @@
 "complete_request.payment.subtitle" = "اختر طريقة دفع واحدة لهذا الطلب.";
 "complete_request.payment.cash" = "نقدًا";
 "complete_request.payment.cash.subtitle" = "ادفع عند استلام الطلب";
-"complete_request.payment.online" = "بطاقة أو محفظة";
+"complete_request.payment.online" = "بطاقة";
 "complete_request.payment.online.subtitle" = "ادفع بأمان بعد قبول العرض";
 "complete_request.online_payment.title" = "دفع إلكتروني آمن";
 "complete_request.online_payment.description" = "بعد قبول عرض الصيدلية، ستكمل الدفع من خلال شاشة الدفع الآمنة الخاصة بـ Stripe.";
 "complete_request.online_payment.cards" = "البطاقات";
-"complete_request.online_payment.wallets" = "المحافظ";
-"complete_request.online_payment.security" = "لا يجمع Medsy بيانات بطاقتك أو محفظتك ولا يخزنها.";
+"complete_request.online_payment.security" = "لا يجمع Medsy بيانات بطاقتك ولا يخزنها.";
 
 "payment.status.processing.title" = "جارٍ تأكيد الدفع";
 "payment.status.processing.message" = "تم إرسال عملية الدفع وننتظر التأكيد النهائي من مزود خدمة الدفع.";
@@ -585,14 +599,14 @@
 "payment.status.failure.message" = "تعذر إتمام عملية الدفع ولم يتم تأكيد أي دفعة إضافية.";
 "payment.status.cancelled.title" = "تم إلغاء الدفع";
 "payment.status.cancelled.message" = "طلبك ما زال متاحًا، ويمكنك إعادة محاولة الدفع عندما تكون مستعدًا.";
-"payment.status.unsupported.title" = "الدفع الإلكتروني غير متاح";
-"payment.status.unsupported.message" = "يدعم الدفع الإلكتروني حاليًا الطلبات من صيدلية واحدة. ارجع إلى العروض واختر صيدلية واحدة أو اختر الدفع النقدي.";
+"payment.status.expired.title" = "انتهت مهلة الدفع";
+"payment.status.expired.message" = "لم يعد من الممكن دفع هذا الطلب. افتح الطلب لعرض أحدث حالة له.";
 "payment.action.pay_now" = "ادفع الآن";
 "payment.action.retry" = "إعادة محاولة الدفع";
 "payment.action.processing" = "جارٍ تأكيد الدفع";
+"payment.action.expired" = "انتهت مهلة الدفع";
 "payment.action.view_order" = "عرض الطلب";
 "payment.action.done" = "تم";
-"payment.action.back_to_offers" = "العودة إلى العروض";
 "complete_request.notes.title" = "ملاحظات الطلب";
 "complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
 "complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";
