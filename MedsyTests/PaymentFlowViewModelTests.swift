@@ -10,24 +10,15 @@ import XCTest
 
 @MainActor
 final class PaymentFlowViewModelTests: XCTestCase {
-    func testMultipleOrdersAreRejectedBeforePreparingPayment() async {
-        let preparer = PaymentPreparerSpy(result: .online(request(orderId: 1)))
-        let viewModel = makeViewModel(orderIds: [1, 2], preparer: preparer)
-
-        await viewModel.handle(.start)
-
-        XCTAssertEqual(viewModel.state, .unsupportedCombinedOrder)
-        XCTAssertNil(viewModel.orderId)
-        let preparationCallCount = await preparer.callCount
-        XCTAssertEqual(preparationCallCount, 0)
-    }
-
-    func testCompletedPaymentBecomesSuccessfulAfterConfirmation() async {
-        let preparer = PaymentPreparerSpy(result: .online(request(orderId: 17)))
+    func testCardPaymentRefreshesMasterOrderBeforePreparingSheet() async {
+        let refresher = PaymentOrderRefresherSpy(statuses: [
+            .cardPending(expiresAt: nil),
+            .paid
+        ])
+        let preparer = PaymentPreparerSpy()
         let presenter = PaymentSheetPresenterSpy(outcome: .completed)
-        let refresher = PaymentConfirmationRefresherSpy(status: .paid)
         let viewModel = makeViewModel(
-            orderIds: [17],
+            masterOrderId: 17,
             preparer: preparer,
             presenter: presenter,
             refresher: refresher
@@ -36,49 +27,54 @@ final class PaymentFlowViewModelTests: XCTestCase {
         await viewModel.handle(.start)
 
         XCTAssertEqual(viewModel.state, .success)
-        XCTAssertEqual(viewModel.orderId, 17)
-        let preparedOrderIds = await preparer.orderIds
-        let presentedOrderIds = await presenter.orderIds
-        let refreshedOrderIds = await refresher.orderIds
+        let refreshedOrderIds = await refresher.masterOrderIds
+        let preparedOrderIds = await preparer.masterOrderIds
+        let presentedOrderIds = await presenter.masterOrderIds
+        XCTAssertEqual(refreshedOrderIds, [17, 17])
         XCTAssertEqual(preparedOrderIds, [17])
         XCTAssertEqual(presentedOrderIds, [17])
-        XCTAssertEqual(refreshedOrderIds, [17])
     }
 
-    func testPendingWebhookKeepsPaymentProcessing() async {
+    func testExpiredOrderDoesNotCreatePaymentIntent() async {
+        let now = Date(timeIntervalSince1970: 1_000)
+        let preparer = PaymentPreparerSpy()
         let viewModel = makeViewModel(
-            orderIds: [9],
-            presenter: PaymentSheetPresenterSpy(outcome: .completed),
-            refresher: PaymentConfirmationRefresherSpy(status: .pending)
+            preparer: preparer,
+            refresher: PaymentOrderRefresherSpy(
+                statuses: [.cardPending(expiresAt: now.addingTimeInterval(-1))]
+            ),
+            now: { now }
         )
 
         await viewModel.handle(.start)
 
-        XCTAssertEqual(viewModel.state, .processing)
+        XCTAssertEqual(viewModel.state, .expired)
+        let preparedOrderIds = await preparer.masterOrderIds
+        XCTAssertEqual(preparedOrderIds, [])
     }
 
-    func testCancelledSheetKeepsOrderAvailableForRetry() async {
-        let refresher = PaymentConfirmationRefresherSpy(status: .paid)
+    func testBackendCancelledOrderDoesNotCreatePaymentIntent() async {
+        let preparer = PaymentPreparerSpy()
         let viewModel = makeViewModel(
-            orderIds: [12],
-            presenter: PaymentSheetPresenterSpy(outcome: .cancelled),
-            refresher: refresher
+            preparer: preparer,
+            refresher: PaymentOrderRefresherSpy(statuses: [.cancelled])
         )
 
         await viewModel.handle(.start)
 
-        XCTAssertEqual(viewModel.state, .cancelled)
-        let refreshedOrderIds = await refresher.orderIds
-        XCTAssertEqual(refreshedOrderIds, [])
+        XCTAssertEqual(viewModel.state, .expired)
+        let preparedOrderIds = await preparer.masterOrderIds
+        XCTAssertEqual(preparedOrderIds, [])
     }
 
-    func testCashPaymentBypassesSheetAndEmitsCompletion() async {
+    func testCashOrderBypassesIntentAndSheet() async {
         var cashCompletionCount = 0
+        let preparer = PaymentPreparerSpy()
         let presenter = PaymentSheetPresenterSpy(outcome: .completed)
         let viewModel = makeViewModel(
-            orderIds: [4],
-            preparer: PaymentPreparerSpy(result: .cash),
+            preparer: preparer,
             presenter: presenter,
+            refresher: PaymentOrderRefresherSpy(statuses: [.cash]),
             onCashPayment: { cashCompletionCount += 1 }
         )
 
@@ -86,66 +82,139 @@ final class PaymentFlowViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.state, .success)
         XCTAssertEqual(cashCompletionCount, 1)
-        let presentedOrderIds = await presenter.orderIds
+        let preparedOrderIds = await preparer.masterOrderIds
+        let presentedOrderIds = await presenter.masterOrderIds
+        XCTAssertEqual(preparedOrderIds, [])
         XCTAssertEqual(presentedOrderIds, [])
     }
 
-    func testDuplicateStartIsIgnoredWhilePreparationIsRunning() async {
-        let preparer = SuspendingPaymentPreparer()
-        let viewModel = makeViewModel(orderIds: [21], preparer: preparer)
+    func testCancelledSheetRefreshesOrderAndShowsBackendCancellation() async {
+        let viewModel = makeViewModel(
+            presenter: PaymentSheetPresenterSpy(outcome: .cancelled),
+            refresher: PaymentOrderRefresherSpy(statuses: [
+                .cardPending(expiresAt: nil),
+                .cancelled
+            ])
+        )
 
-        let firstStart = Task { await viewModel.handle(.start) }
-        await preparer.waitUntilCalled()
         await viewModel.handle(.start)
 
-        let callCount = await preparer.callCount
-        XCTAssertEqual(callCount, 1)
-        await preparer.resume(with: .online(request(orderId: 21)))
+        XCTAssertEqual(viewModel.state, .expired)
+    }
+
+    func testCancelledSheetRemainsRetryableWhileOrderIsPending() async {
+        let viewModel = makeViewModel(
+            presenter: PaymentSheetPresenterSpy(outcome: .cancelled),
+            refresher: PaymentOrderRefresherSpy(statuses: [
+                .cardPending(expiresAt: nil),
+                .cardPending(expiresAt: nil)
+            ])
+        )
+
+        await viewModel.handle(.start)
+
+        XCTAssertEqual(viewModel.state, .cancelled)
+    }
+
+    func testBackendPaidStatusOverridesFailedSheetOutcome() async {
+        let viewModel = makeViewModel(
+            presenter: PaymentSheetPresenterSpy(outcome: .failed(message: "Sheet failed")),
+            refresher: PaymentOrderRefresherSpy(statuses: [
+                .cardPending(expiresAt: nil),
+                .paid
+            ])
+        )
+
+        await viewModel.handle(.start)
+
+        XCTAssertEqual(viewModel.state, .success)
+    }
+
+    func testCompletedSheetPollsUntilBackendConfirmsPayment() async {
+        let refresher = PaymentOrderRefresherSpy(statuses: [
+            .cardPending(expiresAt: nil),
+            .cardPending(expiresAt: nil),
+            .cardPending(expiresAt: nil),
+            .paid
+        ])
+        let viewModel = makeViewModel(refresher: refresher)
+
+        await viewModel.handle(.start)
+
+        XCTAssertEqual(viewModel.state, .success)
+        let refreshCount = await refresher.masterOrderIds.count
+        XCTAssertEqual(refreshCount, 4)
+    }
+
+    func testCompletedSheetStopsPollingAfterConfiguredLimit() async {
+        let refresher = PaymentOrderRefresherSpy(
+            statuses: [.cardPending(expiresAt: nil)]
+        )
+        let viewModel = makeViewModel(
+            refresher: refresher,
+            maxConfirmationAttempts: 3
+        )
+
+        await viewModel.handle(.start)
+
+        XCTAssertEqual(viewModel.state, .processing)
+        let refreshCount = await refresher.masterOrderIds.count
+        XCTAssertEqual(refreshCount, 4)
+    }
+
+    func testDuplicateStartIsIgnoredWhilePreflightIsRunning() async {
+        let refresher = SuspendingPaymentOrderRefresher()
+        let viewModel = makeViewModel(refresher: refresher)
+
+        let firstStart = Task { await viewModel.handle(.start) }
+        await refresher.waitUntilCalled()
+        await viewModel.handle(.start)
+
+        let refreshCount = await refresher.callCount
+        XCTAssertEqual(refreshCount, 1)
+        await refresher.resume(with: .cash)
         await firstStart.value
     }
 
     private func makeViewModel(
-        orderIds: [Int],
+        masterOrderId: Int = 21,
         preparer: PaymentPreparingProtocol? = nil,
         presenter: PaymentSheetPresentingProtocol? = nil,
-        refresher: PaymentConfirmationRefreshingProtocol? = nil,
-        onCashPayment: @escaping () -> Void = {}
+        refresher: PaymentOrderRefreshingProtocol? = nil,
+        onCashPayment: @escaping () -> Void = {},
+        now: @escaping () -> Date = Date.init,
+        maxConfirmationAttempts: Int = 4
     ) -> PaymentFlowViewModel {
         PaymentFlowViewModel(
-            orderIds: orderIds,
-            paymentPreparer: preparer ?? PaymentPreparerSpy(result: .online(request(orderId: orderIds.first ?? 0))),
+            masterOrderId: masterOrderId,
+            paymentPreparer: preparer ?? PaymentPreparerSpy(),
             paymentSheetPresenter: presenter ?? PaymentSheetPresenterSpy(outcome: .completed),
-            confirmationRefresher: refresher ?? PaymentConfirmationRefresherSpy(status: .pending),
-            onCashPayment: onCashPayment
-        )
-    }
-
-    private func request(orderId: Int) -> PaymentSheetPresentationRequest {
-        PaymentSheetPresentationRequest(
-            orderId: orderId,
-            opaqueReference: "test-reference"
+            orderRefresher: refresher ?? PaymentOrderRefresherSpy(statuses: [
+                .cardPending(expiresAt: nil),
+                .paid
+            ]),
+            onCashPayment: onCashPayment,
+            now: now,
+            pollingIntervalNanoseconds: 0,
+            maxConfirmationAttempts: maxConfirmationAttempts
         )
     }
 }
 
 private actor PaymentPreparerSpy: PaymentPreparingProtocol {
-    private(set) var orderIds: [Int] = []
-    let result: PaymentPreparationResult
+    private(set) var masterOrderIds: [Int] = []
 
-    var callCount: Int { orderIds.count }
-
-    init(result: PaymentPreparationResult) {
-        self.result = result
-    }
-
-    func prepare(orderId: Int) async throws -> PaymentPreparationResult {
-        orderIds.append(orderId)
-        return result
+    func prepare(masterOrderId: Int) async throws -> PaymentSheetPresentationRequest {
+        masterOrderIds.append(masterOrderId)
+        return PaymentSheetPresentationRequest(
+            masterOrderId: masterOrderId,
+            opaqueReference: "test-reference"
+        )
     }
 }
 
 private actor PaymentSheetPresenterSpy: PaymentSheetPresentingProtocol {
-    private(set) var orderIds: [Int] = []
+    private(set) var masterOrderIds: [Int] = []
     let outcome: PaymentSheetPresentationOutcome
 
     init(outcome: PaymentSheetPresentationOutcome) {
@@ -153,31 +222,37 @@ private actor PaymentSheetPresenterSpy: PaymentSheetPresentingProtocol {
     }
 
     func present(_ request: PaymentSheetPresentationRequest) async -> PaymentSheetPresentationOutcome {
-        orderIds.append(request.orderId)
+        masterOrderIds.append(request.masterOrderId)
         return outcome
     }
 }
 
-private actor PaymentConfirmationRefresherSpy: PaymentConfirmationRefreshingProtocol {
-    private(set) var orderIds: [Int] = []
-    let status: PaymentConfirmationPresentationStatus
+private actor PaymentOrderRefresherSpy: PaymentOrderRefreshingProtocol {
+    private(set) var masterOrderIds: [Int] = []
+    private var statuses: [PaymentOrderPresentationStatus]
 
-    init(status: PaymentConfirmationPresentationStatus) {
-        self.status = status
+    init(statuses: [PaymentOrderPresentationStatus]) {
+        self.statuses = statuses
     }
 
-    func refresh(orderId: Int) async throws -> PaymentConfirmationPresentationStatus {
-        orderIds.append(orderId)
+    func refresh(masterOrderId: Int) async throws -> PaymentOrderPresentationStatus {
+        masterOrderIds.append(masterOrderId)
+        guard let status = statuses.first else {
+            return .cardPending(expiresAt: nil)
+        }
+        if statuses.count > 1 {
+            statuses.removeFirst()
+        }
         return status
     }
 }
 
-private actor SuspendingPaymentPreparer: PaymentPreparingProtocol {
+private actor SuspendingPaymentOrderRefresher: PaymentOrderRefreshingProtocol {
     private(set) var callCount = 0
-    private var continuation: CheckedContinuation<PaymentPreparationResult, Error>?
+    private var continuation: CheckedContinuation<PaymentOrderPresentationStatus, Error>?
 
-    func prepare(orderId: Int) async throws -> PaymentPreparationResult {
-        _ = orderId
+    func refresh(masterOrderId: Int) async throws -> PaymentOrderPresentationStatus {
+        _ = masterOrderId
         callCount += 1
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
@@ -190,8 +265,8 @@ private actor SuspendingPaymentPreparer: PaymentPreparingProtocol {
         }
     }
 
-    func resume(with result: PaymentPreparationResult) {
-        continuation?.resume(returning: result)
+    func resume(with status: PaymentOrderPresentationStatus) {
+        continuation?.resume(returning: status)
         continuation = nil
     }
 }
