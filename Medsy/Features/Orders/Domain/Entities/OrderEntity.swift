@@ -32,7 +32,7 @@ enum OrderStatus {
 
     init(rawValue: String) {
         switch rawValue.uppercased() {
-        case "PENDING":    self = .pending
+        case "PENDING", "PENDING_PAYMENT": self = .pending
         case "CONFIRMED":  self = .confirmed
         case "PREPARING":        self = .preparing
         case "READY_FOR_PICKUP": self = .readyForPickup
@@ -67,4 +67,35 @@ struct OrderEntity: Identifiable {
     let totalPrice: Double
     let itemCount: Int
     let itemImageURLs: [String]
+    let paymentMethod: MasterOrderPaymentMethod
+    let paymentStatus: MasterOrderPaymentStatus
+    let paymentExpiresAt: Date?
+
+    init(
+        id: Int,
+        orderNumber: Int,
+        pharmacyName: String,
+        status: OrderStatus,
+        fulfillmentType: OrderFulfillmentType,
+        date: Date,
+        totalPrice: Double,
+        itemCount: Int,
+        itemImageURLs: [String],
+        paymentMethod: MasterOrderPaymentMethod = .unknown,
+        paymentStatus: MasterOrderPaymentStatus = .unknown,
+        paymentExpiresAt: Date? = nil
+    ) {
+        self.id = id
+        self.orderNumber = orderNumber
+        self.pharmacyName = pharmacyName
+        self.status = status
+        self.fulfillmentType = fulfillmentType
+        self.date = date
+        self.totalPrice = totalPrice
+        self.itemCount = itemCount
+        self.itemImageURLs = itemImageURLs
+        self.paymentMethod = paymentMethod
+        self.paymentStatus = paymentStatus
+        self.paymentExpiresAt = paymentExpiresAt
+    }
 }

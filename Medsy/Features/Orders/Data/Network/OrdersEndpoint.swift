@@ -8,9 +8,9 @@ enum OrdersEndpoint: ApiEndpoint {
     var path: String {
         switch self {
         case .fetchOrders:
-            return "orders"
+            return "masterorders"
         case .fetchOrderDetail(let id):
-            return "orders/\(id)"
+            return "masterorders/\(id)"
         }
     }
 

@@ -47,6 +47,30 @@ enum OrderMapper {
         )
     }
 
+    static func mapToEntity(_ dto: MasterOrderDTO) -> OrderEntity {
+        let items = dto.orderResponses.flatMap(\.items)
+        let expiry = dto.paymentExpiresAt.map { date(from: $0) }
+        return OrderEntity(
+            id: dto.id,
+            orderNumber: dto.id,
+            pharmacyName: pharmacyName(from: dto.orderResponses),
+            status: OrderStatus(rawValue: dto.orderStatus),
+            fulfillmentType: OrderFulfillmentType(
+                rawValue: dto.fulfillmentMethod,
+                hasDeliveryCoordinates: false
+            ),
+            date: displayDate(paidAt: dto.paidAt, paymentExpiresAt: dto.paymentExpiresAt),
+            totalPrice: dto.totalPrice,
+            itemCount: items.reduce(0) { $0 + $1.quantity },
+            itemImageURLs: items.compactMap(\.imageUrl),
+            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.paymentMethod.uppercased()) ?? .unknown,
+            paymentStatus: dto.paymentStatus.flatMap {
+                MasterOrderPaymentStatus(rawValue: $0.uppercased())
+            } ?? .unpaid,
+            paymentExpiresAt: expiry
+        )
+    }
+
     static func mapToDetailEntity(_ dto: OrderDTO) -> OrderDetailEntity {
         let items = dto.items.map(mapToDetailItemEntity)
         let itemsSubtotal = dto.itemsSubtotal
@@ -70,10 +94,49 @@ enum OrderMapper {
         )
     }
 
+    static func mapToDetailEntity(_ dto: MasterOrderDTO) -> OrderDetailEntity {
+        let itemDTOs = dto.orderResponses.flatMap(\.items)
+        let items = itemDTOs.map(mapToDetailItemEntity)
+        let itemsSubtotal = items.reduce(0) { $0 + ($1.unitPrice * Double($1.quantity)) }
+        let fulfillmentType = OrderFulfillmentType(
+            rawValue: dto.fulfillmentMethod,
+            hasDeliveryCoordinates: false
+        )
+        return OrderDetailEntity(
+            id: dto.id,
+            orderNumber: dto.id,
+            pharmacyName: pharmacyName(from: dto.orderResponses),
+            pharmacyId: dto.orderResponses.first?.pharmacyId ?? 0,
+            status: OrderStatus(rawValue: dto.orderStatus),
+            fulfillmentType: fulfillmentType,
+            date: displayDate(paidAt: dto.paidAt, paymentExpiresAt: dto.paymentExpiresAt),
+            items: items,
+            itemsSubtotal: itemsSubtotal,
+            deliveryFee: fulfillmentType == .delivery ? dto.deliveryFee : nil,
+            totalPrice: dto.totalPrice,
+            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.paymentMethod.uppercased()) ?? .unknown,
+            paymentStatus: dto.paymentStatus.flatMap {
+                MasterOrderPaymentStatus(rawValue: $0.uppercased())
+            } ?? .unpaid,
+            paymentExpiresAt: dto.paymentExpiresAt.map { date(from: $0) }
+        )
+    }
+
     static func mapToPagedResult(_ page: PageDTO<OrderGroupDTO>) -> PagedResult<OrderEntity> {
         let orders = page.content.flatMap(\.orders)
         return PagedResult(
             items: orders.map(mapToEntity),
+            page: page.number ?? 0,
+            size: page.size ?? page.content.count,
+            totalElements: page.totalElements,
+            totalPages: page.totalPages,
+            isLast: page.last
+        )
+    }
+
+    static func mapToPagedResult(_ page: PageDTO<MasterOrderDTO>) -> PagedResult<OrderEntity> {
+        PagedResult(
+            items: page.content.map(mapToEntity),
             page: page.number ?? 0,
             size: page.size ?? page.content.count,
             totalElements: page.totalElements,
@@ -102,6 +165,21 @@ enum OrderMapper {
             rawValue: dto.fulfillmentType,
             hasDeliveryCoordinates: dto.deliveryLatitude != nil && dto.deliveryLongitude != nil
         )
+    }
+
+    private static func pharmacyName(from orders: [MasterOrderDraftDTO]) -> String {
+        let names = orders.map(\.pharmacyName).filter { !$0.isEmpty }
+        return names.isEmpty ? "orders.pharmacy_unknown".localized : names.joined(separator: " / ")
+    }
+
+    private static func displayDate(paidAt: String?, paymentExpiresAt: String?) -> Date {
+        if let paidAt {
+            return date(from: paidAt)
+        }
+        if let paymentExpiresAt {
+            return date(from: paymentExpiresAt).addingTimeInterval(-15 * 60)
+        }
+        return Date()
     }
 
     private static func date(from string: String) -> Date {
