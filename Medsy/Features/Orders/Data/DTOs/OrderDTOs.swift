@@ -7,8 +7,31 @@
 
 import Foundation
 
-typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<OrderGroupDTO>>
-typealias OrderDetailResponseDTO = APIResponseDTO<OrderDTO>
+typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<MasterOrderDTO>>
+typealias OrderDetailResponseDTO = APIResponseDTO<MasterOrderDTO>
+
+struct MasterOrderDTO: Decodable {
+    let id: Int
+    let requestId: Int
+    let orderResponses: [MasterOrderDraftDTO]
+    let paymentMethod: String
+    let paymentStatus: String?
+    let fulfillmentMethod: String?
+    let deliveryFee: Double?
+    let totalPrice: Double
+    let orderStatus: String
+    let paymentExpiresAt: String?
+    let paidAt: String?
+}
+
+struct MasterOrderDraftDTO: Decodable {
+    let offerId: Int
+    let pharmacyId: Int
+    let pharmacyName: String
+    let latitude: Double?
+    let longitude: Double?
+    let items: [OrderItemDTO]
+}
 
 struct OrderGroupDTO: Decodable {
     let requestId: Int
