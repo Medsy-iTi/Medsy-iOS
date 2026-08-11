@@ -30,11 +30,11 @@ struct CompleteRequestPaymentMethodView: View {
                 )
 
                 CompleteRequestOptionCard(
-                    title: "complete_request.payment.visa".localized,
-                    subtitle: "complete_request.payment.visa.subtitle".localized,
+                    title: "complete_request.payment.online".localized,
+                    subtitle: "complete_request.payment.online.subtitle".localized,
                     systemImage: "creditcard.and.123",
-                    isSelected: selectedMethod == .visa,
-                    action: { onSelect(.visa) }
+                    isSelected: selectedMethod == .online,
+                    action: { onSelect(.online) }
                 )
             }
         }

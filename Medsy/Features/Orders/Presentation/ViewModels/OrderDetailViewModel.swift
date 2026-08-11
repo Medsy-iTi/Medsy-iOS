@@ -14,28 +14,37 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     private(set) var detailState: OrderDetailViewState = .loading
     private(set) var reorderState: ReorderState = .idle
+    private(set) var paymentAction: PaymentOrderActionPresentation?
 
     private let getOrderDetailUseCase: GetOrderDetailUseCaseProtocol?
     private let reorderUseCase: ReorderUseCaseProtocol?
+    private let now: () -> Date
     private var loadTask: Task<Void, Never>?
     private var reorderTask: Task<Void, Never>?
 
     init(
         getOrderDetailUseCase: GetOrderDetailUseCaseProtocol? = nil,
-        reorderUseCase: ReorderUseCaseProtocol? = nil
+        reorderUseCase: ReorderUseCaseProtocol? = nil,
+        paymentAction: PaymentOrderActionPresentation? = nil,
+        now: @escaping () -> Date = Date.init
     ) {
         self.getOrderDetailUseCase = getOrderDetailUseCase
         self.reorderUseCase = reorderUseCase
+        self.paymentAction = paymentAction
+        self.now = now
     }
 
     init(
         state: OrderDetailViewState,
-        reorderState: ReorderState = .idle
+        reorderState: ReorderState = .idle,
+        paymentAction: PaymentOrderActionPresentation? = nil
     ) {
         detailState = state
         self.reorderState = reorderState
+        self.paymentAction = paymentAction
         getOrderDetailUseCase = nil
         reorderUseCase = nil
+        now = Date.init
     }
 
 
@@ -57,16 +66,39 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         loadTask?.cancel()
         detailState = .loading
         reorderState = .idle
+        paymentAction = nil
         loadTask = Task {
             guard let useCase = getOrderDetailUseCase else { return }
             do {
                 let entity = try await useCase.execute(id: orderId)
                 guard !Task.isCancelled else { return }
                 detailState = .loaded(OrderEntityMapper.mapDetail(entity))
+                paymentAction = paymentAction(for: entity)
             } catch {
                 guard !Task.isCancelled else { return }
                 detailState = .error(error.localizedDescription)
             }
+        }
+    }
+
+    private func paymentAction(for order: OrderDetailEntity) -> PaymentOrderActionPresentation? {
+        guard order.paymentMethod == .card else { return nil }
+        guard order.status != .cancelled else { return nil }
+        guard order.paymentStatus != .paid else { return nil }
+
+        if order.paymentStatus == .expired || order.paymentExpiresAt.map({ $0 <= now() }) == true {
+            return .expired
+        }
+
+        guard order.status == .pending else { return nil }
+
+        switch order.paymentStatus {
+        case .unpaid, .pending:
+            return .payNow
+        case .failed, .cancelled:
+            return .retry
+        case .paid, .expired, .unknown:
+            return nil
         }
     }
 

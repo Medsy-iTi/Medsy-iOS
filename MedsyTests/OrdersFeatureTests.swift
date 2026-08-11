@@ -23,7 +23,7 @@ final class OrdersFeatureTests: XCTestCase {
             """.utf8
         )
 
-        let page = try JSONDecoder().decode(PageDTO<OrderGroupDTO>.self, from: data)
+        let page = try JSONDecoder().decode(PageDTO<MasterOrderDTO>.self, from: data)
 
         XCTAssertEqual(page.number, 2)
         XCTAssertEqual(page.size, 20)
@@ -32,7 +32,7 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(page.last, true)
     }
 
-    func testGroupedBackendOrdersAndNestedProductsAreMapped() throws {
+    func testMasterOrdersAndNestedProductsAreMapped() throws {
         let data = Data(
             """
             {
@@ -42,21 +42,14 @@ final class OrdersFeatureTests: XCTestCase {
                 "content": [
                   {
                     "requestId": 41,
-                    "orders": [
+                    "id": 501,
+                    "orderResponses": [
                       {
-                        "id": 71,
-                        "customerId": 2,
+                        "offerId": 71,
                         "pharmacyId": 3,
                         "pharmacyName": "Medsy Pharmacy",
-                        "pharmacistId": 4,
-                        "offerId": 5,
-                        "subTotal": 85,
-                        "deliveryFee": 10,
-                        "total": 95,
-                        "deliveryLatitude": 30.0,
-                        "deliveryLongitude": 31.0,
-                        "status": "CONFIRMED",
-                        "createdAt": "2026-08-04",
+                        "latitude": 30.0,
+                        "longitude": 31.0,
                         "items": [
                           {
                             "id": 11,
@@ -73,7 +66,15 @@ final class OrdersFeatureTests: XCTestCase {
                           }
                         ]
                       }
-                    ]
+                    ],
+                    "paymentMethod": "CARD",
+                    "paymentStatus": "PENDING",
+                    "fulfillmentMethod": "DELIVERY",
+                    "deliveryFee": 10,
+                    "totalPrice": 95,
+                    "orderStatus": "PENDING_PAYMENT",
+                    "paymentExpiresAt": "2026-08-04T12:15:00",
+                    "paidAt": null
                   }
                 ],
                 "pageNumber": 0,
@@ -89,16 +90,18 @@ final class OrdersFeatureTests: XCTestCase {
         let response = try JSONDecoder().decode(OrdersPageResponseDTO.self, from: data)
         let page = try XCTUnwrap(response.data)
         let result = OrderMapper.mapToPagedResult(page)
-        let order = try XCTUnwrap(page.content.first?.orders.first)
+        let order = try XCTUnwrap(page.content.first)
         let detail = OrderMapper.mapToDetailEntity(order)
 
         XCTAssertEqual(page.content.first?.requestId, 41)
-        XCTAssertEqual(result.items.map(\.id), [71])
+        XCTAssertEqual(result.items.map(\.id), [501])
         XCTAssertEqual(result.items.first?.itemImageURLs, ["https://example.com/medicine.png"])
         XCTAssertEqual(detail.items.first?.productName, "Received medicine")
         XCTAssertEqual(detail.items.first?.imageURL, "https://example.com/medicine.png")
         XCTAssertEqual(detail.itemsSubtotal, 85)
         XCTAssertEqual(detail.totalPrice, 95)
+        XCTAssertEqual(detail.paymentMethod, .card)
+        XCTAssertEqual(detail.paymentStatus, .pending)
     }
 
     func testOrdersEndpointUsesOnlySupportedPaginationParameters() {
@@ -112,6 +115,7 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertNil(parameters?["status"])
         XCTAssertNil(parameters?["dateFrom"])
         XCTAssertNil(parameters?["dateTo"])
+        XCTAssertEqual(OrdersEndpoint.fetchOrders(page: 1, size: 20).path, "masterorders")
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
@@ -186,6 +190,73 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(requestedPages, [0, 1])
     }
 
+    @MainActor
+    func testPendingCardOrderBeforeExpiryCanPayNow() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitUntil { viewModel.paymentAction == .payNow }
+
+        XCTAssertEqual(viewModel.paymentAction, .payNow)
+    }
+
+    @MainActor
+    func testFailedCardOrderBeforeExpiryCanRetry() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .failed,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitUntil { viewModel.paymentAction == .retry }
+
+        XCTAssertEqual(viewModel.paymentAction, .retry)
+    }
+
+    @MainActor
+    func testExpiredCardOrderCannotPay() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 999)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertEqual(viewModel.paymentAction, .expired)
+    }
+
+    @MainActor
+    func testCancelledOrderCannotPay() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            status: .cancelled,
+            paymentStatus: .pending,
+            expiresAt: Date(timeIntervalSince1970: 2_000)
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertNil(viewModel.paymentAction)
+    }
+
+    @MainActor
+    func testCashOrderDoesNotShowPaymentAction() async throws {
+        let viewModel = makeOrderDetailViewModel(
+            paymentMethod: .cash,
+            paymentStatus: .unknown,
+            expiresAt: nil
+        )
+
+        viewModel.handle(.load(orderId: 501))
+        try await waitForLoadedState(in: viewModel)
+
+        XCTAssertNil(viewModel.paymentAction)
+    }
+
     private func decodeOrder(
         fulfillmentType: String,
         deliveryFee: Double,
@@ -239,6 +310,43 @@ final class OrdersFeatureTests: XCTestCase {
     }
 
     @MainActor
+    private func makeOrderDetailViewModel(
+        status: OrderStatus = .pending,
+        paymentMethod: MasterOrderPaymentMethod = .card,
+        paymentStatus: MasterOrderPaymentStatus,
+        expiresAt: Date?
+    ) -> OrderDetailViewModel {
+        let entity = OrderDetailEntity(
+            id: 501,
+            orderNumber: 501,
+            pharmacyName: "Medsy Pharmacy",
+            pharmacyId: 3,
+            status: status,
+            fulfillmentType: .delivery,
+            date: Date(timeIntervalSince1970: 900),
+            items: [],
+            itemsSubtotal: 85,
+            deliveryFee: 10,
+            totalPrice: 95,
+            paymentMethod: paymentMethod,
+            paymentStatus: paymentStatus,
+            paymentExpiresAt: expiresAt
+        )
+        return OrderDetailViewModel(
+            getOrderDetailUseCase: OrderDetailUseCaseStub(entity: entity),
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+    }
+
+    @MainActor
+    private func waitForLoadedState(in viewModel: OrderDetailViewModel) async throws {
+        try await waitUntil {
+            if case .loaded = viewModel.detailState { return true }
+            return false
+        }
+    }
+
+    @MainActor
     private func orderCount(in state: OrderHistoryViewState) -> Int {
         guard case let .loaded(sections) = state else { return 0 }
         return sections.flatMap(\.orders).count
@@ -254,6 +362,19 @@ final class OrdersFeatureTests: XCTestCase {
             try await Task.sleep(for: .milliseconds(10))
         }
         XCTFail("Timed out waiting for asynchronous order state")
+    }
+}
+
+private final class OrderDetailUseCaseStub: GetOrderDetailUseCaseProtocol {
+    private let entity: OrderDetailEntity
+
+    init(entity: OrderDetailEntity) {
+        self.entity = entity
+    }
+
+    func execute(id: Int) async throws -> OrderDetailEntity {
+        _ = id
+        return entity
     }
 }
 

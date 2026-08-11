@@ -19,10 +19,10 @@ final class OfferResultRepository: OfferResultRepositoryProtocol {
         return OfferResultMapper.map(dto)
     }
 
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult {
+    func confirmOffer(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferResult {
         let dto = try await remoteDataSource.confirmOffer(
             requestId: requestId,
-            selectedRequestItemIds: selectedRequestItemIds
+            selections: selections
         )
         return OfferResultMapper.map(dto)
     }

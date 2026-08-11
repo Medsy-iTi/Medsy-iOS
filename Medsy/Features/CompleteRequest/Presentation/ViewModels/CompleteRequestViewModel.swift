@@ -17,10 +17,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private(set) var savedAddress: String?
     private(set) var deliveryLocation: CompleteRequestLocation?
     var notes = ""
-    var cardholderName = ""
-    var cardNumber = ""
-    var expiry = ""
-    var cvv = ""
     var isSummaryExpanded = false
     private(set) var isLoadingAddress = false
     private(set) var isSubmitting = false
@@ -32,7 +28,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private let submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol
     private let statusStore: UserDefaultsStatusStoreProtocol?
     private let onRequestCreated: (CompleteRequestSubmission) async -> Bool
-    private let now: () -> Date
     private var hasLoadedAddress = false
 
     init(
@@ -40,14 +35,12 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
         statusStore: UserDefaultsStatusStoreProtocol? = nil,
-        now: @escaping () -> Date = Date.init,
         onRequestCreated: @escaping (CompleteRequestSubmission) async -> Bool
     ) {
         self.draft = draft
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
         self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
         self.statusStore = statusStore
-        self.now = now
         self.onRequestCreated = onRequestCreated
     }
 
@@ -55,8 +48,8 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         receiveMethod == .delivery
     }
 
-    var showsVisaForm: Bool {
-        showsDeliveryDetails && paymentMethod == .visa
+    var showsOnlinePaymentInfo: Bool {
+        showsDeliveryDetails && paymentMethod == .online
     }
 
     var canSubmit: Bool {
@@ -109,48 +102,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         deliveryLocation = location
         savedAddress = location.address
         clearValidationFeedback()
-    }
-
-    func formatCardNumber() {
-        let digits = cardNumber.filter(\.isNumber).prefix(16)
-        cardNumber = stride(from: 0, to: digits.count, by: 4)
-            .map { start in
-                let startIndex = digits.index(digits.startIndex, offsetBy: start)
-                let endIndex = digits.index(
-                    startIndex,
-                    offsetBy: min(4, digits.distance(from: startIndex, to: digits.endIndex))
-                )
-                return String(digits[startIndex..<endIndex])
-            }
-            .joined(separator: " ")
-    }
-
-    func formatExpiry() {
-        let digits = String(expiry.filter(\.isNumber).prefix(4))
-        if digits.count > 2 {
-            expiry = "\(digits.prefix(2))/\(digits.dropFirst(2))"
-        } else {
-            expiry = digits
-        }
-    }
-
-    func formatCVV() {
-        cvv = String(cvv.filter(\.isNumber).prefix(3))
-    }
-
-    func validationMessage(for field: CompleteRequestCardField) -> String? {
-        let error: CompleteRequestValidationError
-        switch field {
-        case .cardholderName:
-            error = .cardholderNameRequired
-        case .cardNumber:
-            error = .invalidCardNumber
-        case .expiry:
-            error = .invalidExpiry
-        case .cvv:
-            error = .invalidCVV
-        }
-        return validationErrors.contains(error) ? error.localizedMessage : nil
     }
 
     func dismissSubmissionError() {
@@ -224,52 +175,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
             errors.append(.locationRequired)
         }
 
-        guard paymentMethod == .visa else { return errors }
-        if cardholderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            errors.append(.cardholderNameRequired)
-        }
-        if !isValidVisaNumber {
-            errors.append(.invalidCardNumber)
-        }
-        if !isValidExpiry {
-            errors.append(.invalidExpiry)
-        }
-        if cvv.count != 3 || !cvv.allSatisfy(\.isNumber) {
-            errors.append(.invalidCVV)
-        }
         return errors
-    }
-
-    private var isValidVisaNumber: Bool {
-        let digits = cardNumber.filter(\.isNumber)
-        guard digits.count == 16, digits.first == "4" else { return false }
-
-        let values = digits.compactMap(\.wholeNumberValue)
-        guard values.count == 16 else { return false }
-        let checksum = values.reversed().enumerated().reduce(0) { result, entry in
-            let (index, value) = entry
-            guard index.isMultiple(of: 2) == false else {
-                return result + value
-            }
-            let doubled = value * 2
-            return result + (doubled > 9 ? doubled - 9 : doubled)
-        }
-        return checksum.isMultiple(of: 10)
-    }
-
-    private var isValidExpiry: Bool {
-        let parts = expiry.split(separator: "/")
-        guard parts.count == 2,
-              let month = Int(parts[0]),
-              let year = Int(parts[1]),
-              (1...12).contains(month) else {
-            return false
-        }
-
-        let calendar = Calendar(identifier: .gregorian)
-        let currentYear = calendar.component(.year, from: now()) % 100
-        let currentMonth = calendar.component(.month, from: now())
-        return year > currentYear || (year == currentYear && month >= currentMonth)
     }
 
     private func clearValidationFeedback() {

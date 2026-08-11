@@ -5,6 +5,7 @@
 //  Created by Ahmed Elkady on 17/07/2026.
 //
 
+import StripePaymentSheet
 import SwiftUI
 
 @main
@@ -35,7 +36,8 @@ struct MedsyApp: App {
             ChatbotAssembly(),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
-            OffersAssembly()
+            OffersAssembly(),
+            PaymentAssembly()
         ])
 
         languageManager = AppAssembler.shared.container.resolve(LanguageManager.self)
@@ -65,6 +67,9 @@ struct MedsyApp: App {
                      .localizedEnvironment()
             .environment(languageManager)
             .id(languageManager.currentLanguage)
+            .onOpenURL { url in
+                _ = StripeAPI.handleURLCallback(with: url)
+            }
         }
     }
 }
