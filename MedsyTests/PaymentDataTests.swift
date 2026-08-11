@@ -95,6 +95,62 @@ final class PaymentDataTests: XCTestCase {
         XCTAssertEqual(result, PaymentIntent(id: "pi_17", clientSecret: "pi_17_secret"))
         XCTAssertEqual(remoteDataSource.createdIntentMasterOrderIds, [17])
     }
+
+    func testOfferSelectionEndpointMatchesCurrentBackendContract() throws {
+        let endpoint = OffersEndpoint.selectOffer(
+            requestId: 12,
+            body: ConfirmOfferRequestDTO(
+                selectedItems: [
+                    ConfirmOfferSelectionDTO(requestItemId: 3, productId: 99)
+                ]
+            )
+        )
+
+        XCTAssertEqual(endpoint.path, "requests/12/select")
+        let body = try XCTUnwrap(endpoint.body)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: body) as? [String: Any]
+        )
+        let selectedItems = try XCTUnwrap(json["selectedItems"] as? [[String: Int]])
+        XCTAssertEqual(selectedItems, [["requestItemId": 3, "productId": 99]])
+    }
+
+    func testFulfillmentConfirmationMapsMasterOrderPaymentState() throws {
+        let selectionJSON = try XCTUnwrap("""
+        {
+          "requestId": 12,
+          "offers": [
+            {
+              "offerId": 71,
+              "pharmacyId": 8,
+              "pharmacyName": "Medsy Pharmacy",
+              "items": []
+            }
+          ],
+          "deliveryFees": 10,
+          "totalPrice": 120
+        }
+        """.data(using: .utf8))
+        let selection = try JSONDecoder().decode(ConfirmOfferResponseDTO.self, from: selectionJSON)
+        let data = ConfirmOfferDataDTO(
+            selection: selection,
+            fulfillment: FulfillmentConfirmationResponseDTO(
+                masterOrderId: 501,
+                orderStatus: "PENDING_PAYMENT",
+                paymentMethod: "CARD",
+                paymentStatus: "PENDING"
+            ),
+            selectedRequestItemIds: [3]
+        )
+
+        let result = OfferResultMapper.map(data)
+
+        XCTAssertEqual(result.masterOrderId, 501)
+        XCTAssertEqual(result.orderStatus, .pendingPayment)
+        XCTAssertEqual(result.paymentMethod, .card)
+        XCTAssertEqual(result.paymentStatus, .pending)
+        XCTAssertEqual(result.orders.first?.itemIds, [3])
+    }
 }
 
 private enum PaymentDataTestError: Error {
