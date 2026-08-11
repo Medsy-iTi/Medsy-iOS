@@ -607,6 +607,12 @@
 "payment.action.expired" = "انتهت مهلة الدفع";
 "payment.action.view_order" = "عرض الطلب";
 "payment.action.done" = "تم";
+"payment.error.unsupported_method" = "طريقة الدفع هذه غير مدعومة لهذا الطلب.";
+"payment.error.unknown_status" = "تعذر التحقق من أحدث حالة للدفع.";
+"payment.error.missing_publishable_key" = "الدفع بالبطاقة غير مُهيأ حاليًا. يرجى المحاولة لاحقًا.";
+"payment.error.screen_unavailable" = "شاشة الدفع الآمن غير متاحة. يرجى المحاولة مرة أخرى.";
+"payment.error.master_order_unavailable" = "تعذر تحميل الطلب الرئيسي.";
+"offers.error.missing_selected_product" = "تعذر تحديد أحد الأدوية المختارة.";
 "complete_request.notes.title" = "ملاحظات الطلب";
 "complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
 "complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";

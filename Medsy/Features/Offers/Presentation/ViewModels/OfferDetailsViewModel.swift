@@ -121,7 +121,7 @@ final class OfferDetailsViewModel {
         }
 
         guard selections.count == selectedMedicines.count else {
-            confirmErrorMessage = "Unable to identify one of the selected medicines."
+            confirmErrorMessage = "offers.error.missing_selected_product".localized
             return false
         }
 

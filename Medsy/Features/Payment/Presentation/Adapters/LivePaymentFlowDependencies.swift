@@ -47,7 +47,7 @@ struct LivePaymentOrderRefresher: PaymentOrderRefreshingProtocol {
         }
 
         guard order.paymentMethod == .card else {
-            return .failed(message: "Unsupported payment method")
+            return .failed(message: "payment.error.unsupported_method".localized)
         }
         guard order.orderStatus == .pendingPayment else {
             return .cancelled
@@ -61,7 +61,7 @@ struct LivePaymentOrderRefresher: PaymentOrderRefreshingProtocol {
         case .expired:
             return .expired
         case .unknown:
-            return .failed(message: "Unknown payment status")
+            return .failed(message: "payment.error.unknown_status".localized)
         }
     }
 }

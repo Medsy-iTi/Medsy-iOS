@@ -609,6 +609,12 @@
 "payment.action.expired" = "Payment expired";
 "payment.action.view_order" = "View order";
 "payment.action.done" = "Done";
+"payment.error.unsupported_method" = "This payment method is not supported for this order.";
+"payment.error.unknown_status" = "The latest payment status could not be verified.";
+"payment.error.missing_publishable_key" = "Card payment is not configured. Please try again later.";
+"payment.error.screen_unavailable" = "The secure payment screen is unavailable. Please try again.";
+"payment.error.master_order_unavailable" = "Unable to load the master order.";
+"offers.error.missing_selected_product" = "Unable to identify one of the selected medicines.";
 "complete_request.notes.title" = "Request notes";
 "complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
 "complete_request.notes.placeholder" = "Add notes for the pharmacy";

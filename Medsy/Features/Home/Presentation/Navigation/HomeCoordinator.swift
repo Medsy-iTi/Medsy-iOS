@@ -192,7 +192,7 @@ struct HomeCoordinatorView: View {
                         )
                     } else {
                         PaymentStatusView(
-                            status: .failure(message: "Unable to load the master order."),
+                            status: .failure(message: "payment.error.master_order_unavailable".localized),
                             onPrimaryAction: coordinator.goBack,
                             onSecondaryAction: coordinator.goBack
                         )
