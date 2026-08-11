@@ -12,7 +12,9 @@ enum PaymentMapper {
         MasterOrderPayment(
             id: dto.id,
             paymentMethod: MasterOrderPaymentMethod(rawValue: dto.paymentMethod.uppercased()) ?? .unknown,
-            paymentStatus: MasterOrderPaymentStatus(rawValue: dto.paymentStatus.uppercased()) ?? .unknown,
+            paymentStatus: dto.paymentStatus.flatMap {
+                MasterOrderPaymentStatus(rawValue: $0.uppercased())
+            } ?? .unpaid,
             orderStatus: MasterOrderStatus(rawValue: dto.orderStatus.uppercased()) ?? .unknown,
             paymentExpiresAt: parseBackendDate(dto.paymentExpiresAt),
             paidAt: parseBackendDate(dto.paidAt)
