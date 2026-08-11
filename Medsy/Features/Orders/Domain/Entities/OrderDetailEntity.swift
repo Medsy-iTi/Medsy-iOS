@@ -19,6 +19,41 @@ struct OrderDetailEntity: Identifiable {
     let itemsSubtotal: Double
     let deliveryFee: Double?
     let totalPrice: Double
+    let paymentMethod: MasterOrderPaymentMethod
+    let paymentStatus: MasterOrderPaymentStatus
+    let paymentExpiresAt: Date?
+
+    init(
+        id: Int,
+        orderNumber: Int,
+        pharmacyName: String,
+        pharmacyId: Int,
+        status: OrderStatus,
+        fulfillmentType: OrderFulfillmentType,
+        date: Date,
+        items: [OrderDetailItemEntity],
+        itemsSubtotal: Double,
+        deliveryFee: Double?,
+        totalPrice: Double,
+        paymentMethod: MasterOrderPaymentMethod = .unknown,
+        paymentStatus: MasterOrderPaymentStatus = .unknown,
+        paymentExpiresAt: Date? = nil
+    ) {
+        self.id = id
+        self.orderNumber = orderNumber
+        self.pharmacyName = pharmacyName
+        self.pharmacyId = pharmacyId
+        self.status = status
+        self.fulfillmentType = fulfillmentType
+        self.date = date
+        self.items = items
+        self.itemsSubtotal = itemsSubtotal
+        self.deliveryFee = deliveryFee
+        self.totalPrice = totalPrice
+        self.paymentMethod = paymentMethod
+        self.paymentStatus = paymentStatus
+        self.paymentExpiresAt = paymentExpiresAt
+    }
 }
 
 struct OrderDetailItemEntity: Identifiable {
