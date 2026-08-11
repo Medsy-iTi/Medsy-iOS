@@ -13,7 +13,7 @@ typealias PaymentIntentResponseDTO = APIResponseDTO<PaymentIntentDTO>
 struct MasterOrderPaymentDTO: Decodable, Equatable {
     let id: Int
     let paymentMethod: String
-    let paymentStatus: String
+    let paymentStatus: String?
     let orderStatus: String
     let paymentExpiresAt: String?
     let paidAt: String?
