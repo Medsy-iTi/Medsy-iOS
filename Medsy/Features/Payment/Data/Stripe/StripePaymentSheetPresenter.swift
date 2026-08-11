@@ -36,7 +36,7 @@ final class StripePaymentSheetPresenter: PaymentSheetPresentingProtocol {
                 configuration.paymentMethodOrder = ["card"]
 
                 let paymentSheet = PaymentSheet(
-                    paymentIntentClientSecret: request.opaqueReference,
+                    paymentIntentClientSecret: request.clientSecret,
                     configuration: configuration
                 )
                 paymentSheet.present(from: viewController) { result in

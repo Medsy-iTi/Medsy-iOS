@@ -9,7 +9,7 @@ import Foundation
 
 struct PaymentSheetPresentationRequest: Equatable, Sendable {
     let masterOrderId: Int
-    let opaqueReference: String
+    let clientSecret: String
 }
 
 enum PaymentOrderPresentationStatus: Equatable, Sendable {
