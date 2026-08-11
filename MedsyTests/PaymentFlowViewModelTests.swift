@@ -208,7 +208,7 @@ private actor PaymentPreparerSpy: PaymentPreparingProtocol {
         masterOrderIds.append(masterOrderId)
         return PaymentSheetPresentationRequest(
             masterOrderId: masterOrderId,
-            opaqueReference: "test-reference"
+            clientSecret: "test-reference"
         )
     }
 }
