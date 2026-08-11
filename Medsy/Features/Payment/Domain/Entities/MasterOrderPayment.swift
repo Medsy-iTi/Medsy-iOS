@@ -14,18 +14,21 @@ enum MasterOrderPaymentMethod: String, Equatable, Sendable {
 }
 
 enum MasterOrderPaymentStatus: String, Equatable, Sendable {
+    case unpaid = "UNPAID"
     case pending = "PENDING"
     case paid = "PAID"
     case failed = "FAILED"
-    case cancelled = "CANCELLED"
+    case cancelled = "CANCELED"
     case expired = "EXPIRED"
     case unknown
 }
 
 enum MasterOrderStatus: String, Equatable, Sendable {
+    case pending = "PENDING"
     case pendingPayment = "PENDING_PAYMENT"
     case preparing = "PREPARING"
-    case ready = "READY"
+    case readyForPickup = "READY_FOR_PICKUP"
+    case readyForDelivery = "READY_FOR_DELIVERY"
     case outForDelivery = "OUT_FOR_DELIVERY"
     case delivered = "DELIVERED"
     case completed = "COMPLETED"
