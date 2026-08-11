@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA1100013110800000000001 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = AA1100033110800000000001 /* StripePaymentSheet */; };
 		6D5530B6301700FB0018B619 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 6D5530B5301700FB0018B619 /* Lottie */; };
 		6D8B26573006BA48001616C8 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
 		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
@@ -111,6 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA1100013110800000000001 /* StripePaymentSheet in Frameworks */,
 				6D8B26573006BA48001616C8 /* Alamofire in Frameworks */,
 				6D8B29BA3006F319001616C8 /* Swinject in Frameworks */,
 				780F75C03017A8A80005EA77 /* Lottie in Frameworks */,
@@ -205,6 +207,7 @@
 			);
 			name = Medsy;
 			packageProductDependencies = (
+				AA1100033110800000000001 /* StripePaymentSheet */,
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
 				780F75BF3017A8A80005EA77 /* Lottie */,
@@ -375,6 +378,7 @@
 			mainGroup = 7834991030055416001D87B6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 				6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */,
 				6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */,
@@ -950,6 +954,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 25.13.0;
+			};
+		};
 		6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -977,6 +989,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		AA1100033110800000000001 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripePaymentSheet;
+		};
 		6D5530B5301700FB0018B619 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */;

@@ -30,18 +30,24 @@ enum OfferResultMapper {
         )
     }
 
-    static func map(_ dto: ConfirmOfferResponseDTO) -> ConfirmOfferResult {
-        let orders = dto.orders.map { orderDTO in
+    static func map(_ dto: ConfirmOfferDataDTO) -> ConfirmOfferResult {
+        let orders = dto.selection.orders.map { orderDTO in
             ConfirmOfferOrder(
                 orderId: orderDTO.orderId,
                 pharmacyId: orderDTO.pharmacyId,
                 pharmacyName: orderDTO.pharmacyName,
-                itemIds: orderDTO.itemIds
+                itemIds: orderDTO.itemIds.isEmpty ? dto.selectedRequestItemIds : orderDTO.itemIds
             )
         }
         return ConfirmOfferResult(
-            requestId: dto.requestId,
-            orders: orders
+            requestId: dto.selection.requestId,
+            orders: orders,
+            masterOrderId: dto.fulfillment.masterOrderId,
+            orderStatus: MasterOrderStatus(rawValue: dto.fulfillment.orderStatus.uppercased()) ?? .unknown,
+            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.fulfillment.paymentMethod.uppercased()) ?? .unknown,
+            paymentStatus: dto.fulfillment.paymentStatus.flatMap {
+                MasterOrderPaymentStatus(rawValue: $0.uppercased()) ?? .unknown
+            }
         )
     }
 }

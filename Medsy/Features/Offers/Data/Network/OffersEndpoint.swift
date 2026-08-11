@@ -10,13 +10,16 @@ import Foundation
 
 enum OffersEndpoint: ApiEndpoint {
     case getResult(requestId: Int)
-    case confirmOffer(requestId: Int, body: ConfirmOfferRequestDTO)
+    case selectOffer(requestId: Int, body: ConfirmOfferRequestDTO)
+    case confirmFulfillment(requestId: Int, body: FulfillmentConfirmationRequestDTO)
 
     var path: String {
         switch self {
         case let .getResult(requestId):
             return "requests/\(requestId)/result"
-        case let .confirmOffer(requestId, _):
+        case let .selectOffer(requestId, _):
+            return "requests/\(requestId)/select"
+        case let .confirmFulfillment(requestId, _):
             return "requests/\(requestId)/confirm"
         }
     }
@@ -25,7 +28,7 @@ enum OffersEndpoint: ApiEndpoint {
         switch self {
         case .getResult:
             return .get
-        case .confirmOffer:
+        case .selectOffer, .confirmFulfillment:
             return .post
         }
     }
@@ -34,7 +37,9 @@ enum OffersEndpoint: ApiEndpoint {
         switch self {
         case .getResult:
             return nil
-        case let .confirmOffer(_, body):
+        case let .selectOffer(_, body):
+            return try? JSONEncoder().encode(body)
+        case let .confirmFulfillment(_, body):
             return try? JSONEncoder().encode(body)
         }
     }
