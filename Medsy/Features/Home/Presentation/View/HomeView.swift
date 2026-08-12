@@ -8,6 +8,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
+    @State private var favoriteCountViewModel = DIContainer.shared.resolve(FavoriteCountViewModel.self)
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
@@ -25,6 +26,7 @@ struct HomeView: View {
             VStack(spacing: 20) {
                 HomeHeaderView(
                     homeAddress: homeAddress,
+                    favoriteCount: favoriteCountViewModel.count,
                     onFavoritesTap: onFavoritesTap,
                     onAddressTap: onAddressTap
                 )
@@ -87,6 +89,14 @@ struct HomeView: View {
         .background(AppColor.bg)
         .onAppear {
             viewModel.checkAndStartPolling()
+        }
+        .task {
+            await favoriteCountViewModel.refresh()
+
+            for await _ in NotificationCenter.default.notifications(named: .favoritesDidChange) {
+                guard !Task.isCancelled else { return }
+                await favoriteCountViewModel.refresh()
+            }
         }
     }
 }
