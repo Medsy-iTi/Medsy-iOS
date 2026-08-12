@@ -115,9 +115,55 @@ final class OrdersFeatureTests: XCTestCase {
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
+        XCTAssertEqual(OrderStatus(rawValue: "PENDING_PAYMENT").rawValue, "PENDING_PAYMENT")
         XCTAssertEqual(OrderStatus(rawValue: "PREPARING").rawValue, "PREPARING")
         XCTAssertEqual(OrderStatus(rawValue: "READY_FOR_PICKUP").rawValue, "READY_FOR_PICKUP")
+        XCTAssertEqual(OrderStatus(rawValue: "READY_FOR_DELIVERY").rawValue, "READY_FOR_DELIVERY")
         XCTAssertEqual(OrderStatus(rawValue: "OUT_FOR_DELIVERY").rawValue, "OUT_FOR_DELIVERY")
+    }
+
+    func testDomainDetailMapsPharmacyGroupsAndUnavailableProduct() throws {
+        let item = OrderDetailItemEntity(
+            id: 11,
+            productId: nil,
+            productName: "Unavailable medicine",
+            originalProductName: nil,
+            quantity: 2,
+            unitPrice: 42.5,
+            imageURL: nil
+        )
+        let detail = OrderDetailEntity(
+            id: 7,
+            orderNumber: 7,
+            pharmacyName: "Medsy Pharmacy",
+            pharmacyId: 3,
+            status: .pendingPayment,
+            fulfillmentType: .delivery,
+            date: .now,
+            items: [item],
+            itemsSubtotal: 85,
+            deliveryFee: 10,
+            totalPrice: 95,
+            requestID: 41,
+            pharmacies: [
+                OrderPharmacyEntity(
+                    id: 71,
+                    pharmacyId: 3,
+                    pharmacyName: "Medsy Pharmacy",
+                    coordinate: OrderCoordinateEntity(latitude: 30, longitude: 31),
+                    items: [item]
+                )
+            ],
+            paymentMethod: .card,
+            paymentStatus: .pending
+        )
+
+        let presentation = OrderEntityMapper.mapDetail(detail)
+
+        XCTAssertEqual(presentation.pharmacies.first?.id, 71)
+        XCTAssertEqual(presentation.pharmacies.first?.name, "Medsy Pharmacy")
+        XCTAssertEqual(presentation.pharmacies.first?.coordinate?.latitude, 30)
+        XCTAssertNil(presentation.pharmacies.first?.items.first?.productId)
     }
 
     func testDetailUsesPaidSnapshotAndAlternativeMetadata() throws {

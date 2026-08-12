@@ -470,6 +470,7 @@
 "orders.filter.completed"            = "المنتهية";
 "orders.filter.cancelled"            = "ملغاة";
 "orders.status.pending"              = "تم تأكيد الطلب";
+"orders.status.pending_payment"      = "في انتظار الدفع";
 "orders.status.confirmed"            = "تم تأكيد الطلب";
 "orders.status.processing"           = "جاري التجهيز";
 "orders.status.shipped"              = "تم الشحن";
@@ -478,6 +479,7 @@
 "orders.status.rejected"             = "مرفوض";
 "orders.status.preparing"            = "جاري التجهيز";
 "orders.status.ready_for_pickup"     = "جاهز للاستلام";
+"orders.status.ready_for_delivery"   = "جاهز للتوصيل";
 "orders.status.out_for_delivery"     = "خرج للتوصيل";
 "orders.pharmacy_fallback"           = "صيدلية #%d";
 "orders.product_fallback"            = "منتج #%d";
