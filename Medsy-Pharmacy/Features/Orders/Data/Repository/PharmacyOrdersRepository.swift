@@ -18,7 +18,7 @@ final class PharmacyOrdersRepository: PharmacyOrdersRepositoryProtocol {
         let endpoint = PharmacyOrdersEndpoint.fetchOrders(pharmacyId: pharmacyId, page: page, size: size)
 
         do {
-            let envelope: APIEnvelope<PageResponseDTO<PharmacyMedicineRequestDTO>> =
+            let envelope: APIEnvelope<PageResponseDTO<PharmacyRequestAssignmentDTO>> =
                 try await networkService.request(endpoint: endpoint)
 
             guard let pageDTO = envelope.data else {
