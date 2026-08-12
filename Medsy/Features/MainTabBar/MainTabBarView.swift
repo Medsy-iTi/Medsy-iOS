@@ -19,7 +19,9 @@ struct MainTabBarView: View {
     @State private var cartFeedbackTask: Task<Void, Never>?
     @State private var requestSuccessTask: Task<Void, Never>?
     @State private var isShowingRequestSuccess = false
+    @State private var aiIconGlow: Bool = false
     @ObservedObject private var appSettings = AppSettings.shared
+    @Environment(LanguageManager.self) private var lang
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -64,11 +66,16 @@ struct MainTabBarView: View {
             .badge(cartViewModel.distinctProductCount)
             .tag(AppTab.cart)
 
-            ChatbotRootView { hidden in
-                isTabBarHidden = hidden
-            }
+            ChatbotRootView(
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
+                onOpenCart: { coordinator.select(.cart) },
+                onOpenCompleteRequest: {
+                    isTabBarHidden = false
+                    coordinator.select(.cart)
+                }
+            )
             .tabItem {
-                Label("tab.medsy_chatbot".localized, systemImage: "sparkles")
+                Label("tab.medsy_ai".localized, systemImage: "sparkles")
             }
             .tag(AppTab.chatbot)
 
@@ -98,11 +105,17 @@ struct MainTabBarView: View {
             }
             .tag(AppTab.profile)
         }
+        .id(lang.languageCode)   // forces UIKit tab-bar labels to re-render on language change
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
         .toolbarBackground(AppColor.card, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+                aiIconGlow = true
+            }
+        }
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
         .overlay(alignment: .top) {

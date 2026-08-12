@@ -1,6 +1,7 @@
 "pharmacy.tab.home" = "Home";
 "pharmacy.tab.orders" = "Requests";
 "pharmacy.tab.products" = "Products";
+"pharmacy.tab.chatBot" = "Medsy AI";
 "pharmacy.tab.completedOrders" = "Orders";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
@@ -446,3 +447,60 @@
 "pharmacy_pending_invitations.pharmacist_id" = "Pharmacist ID";
 "pharmacy_pending_invitations.invitation_id" = "Invitation ID";
 "pharmacy_pending_invitations.created_at" = "Created at";
+
+/* AI ChatBot */
+"pharmacy.chatbot.title" = "Medsy AI Assistant";
+"pharmacy.chatbot.status.online" = "Online";
+"pharmacy.chatbot.menu.new_chat" = "New Chat";
+"pharmacy.chatbot.input.placeholder" = "Ask about pharmacy operations...";
+"pharmacy.chatbot.state.loading_history" = "Loading conversation...";
+"pharmacy.chatbot.state.error_loading" = "Failed to load chat history.";
+"pharmacy.chatbot.state.retry" = "Retry";
+"pharmacy.chatbot.empty.title" = "How can I help you today?";
+"pharmacy.chatbot.empty.subtitle" = "I can help you review your pharmacy performance, answer drug interaction questions, and more.";
+"pharmacy.chatbot.error.generic" = "An error occurred while sending your message. Please try again.";
+"pharmacy.chatbot.camera.image_preview" = "Image attached";
+
+"pharmacy.chatbot.product.add_to_cart" = "Add to Cart";
+"pharmacy.chatbot.product.details" = "View Details";
+
+"pharmacy.chatbot.alternatives" = "Suggested Alternatives";
+"pharmacy.chatbot.specialization.header" = "Relevant Specializations";
+
+"pharmacy.chatbot.emergency.title" = "Emergency Services";
+"pharmacy.chatbot.emergency.call" = "Call";
+"pharmacy.chatbot.emergency.ambulance" = "Ambulance";
+"pharmacy.chatbot.emergency.police" = "Police";
+"pharmacy.chatbot.emergency.fire" = "Fire Department";
+
+"pharmacy.chatbot.suggestion.performance" = "Show my performance ranking for this month";
+"pharmacy.chatbot.suggestion.drug_info" = "Check interactions for Panadol and Aspirin";
+"pharmacy.chatbot.suggestion.interactions" = "What are the side effects of Amoxicillin?";
+
+"pharmacy.chatbot.ranking.empty" = "No performance data available.";
+"pharmacy.chatbot.ranking.metric.offers" = "Offers Created";
+"pharmacy.chatbot.ranking.metric.orders" = "Successful Orders";
+"pharmacy.chatbot.ranking.period.day" = "Today";
+"pharmacy.chatbot.ranking.period.week" = "This Week";
+"pharmacy.chatbot.ranking.period.month" = "This Month";
+"pharmacy.chatbot.ranking.period.year" = "This Year";
+"pharmacy.chatbot.ranking.direction.top" = "Top Performers";
+"pharmacy.chatbot.ranking.direction.bottom" = "Needs Improvement";
+
+/* AI ChatBot — mic, disclaimer, suggestion grid */
+"pharmacy.chatbot.disclaimer" = "Medsy AI provides general information only and does not replace professional medical advice.";
+"pharmacy.chatbot.mic.error" = "Could not access microphone. Please check permissions in Settings.";
+"pharmacy.chatbot.suggestion.alternative" = "What is an alternative for Panadol?";
+"pharmacy.chatbot.suggestion.performance.title" = "Performance";
+"pharmacy.chatbot.suggestion.performance.subtitle" = "View my monthly ranking";
+"pharmacy.chatbot.suggestion.drug_info.title" = "Drug Info";
+"pharmacy.chatbot.suggestion.drug_info.subtitle" = "Check drug interactions";
+"pharmacy.chatbot.suggestion.interactions.title" = "Side Effects";
+"pharmacy.chatbot.suggestion.interactions.subtitle" = "Find out about side effects";
+"pharmacy.chatbot.suggestion.alternative.title" = "Alternatives";
+"pharmacy.chatbot.suggestion.alternative.subtitle" = "Find a substitute medication";
+"pharmacy.chatbot.product.hide_details" = "Hide Details";
+"pharmacy.chatbot.product.scientific_name" = "Scientific Name: ";
+"pharmacy.chatbot.product.company" = "Company: ";
+"pharmacy.chatbot.product.category" = "Category: ";
+"pharmacy.chatbot.product.route" = "Route: ";
