@@ -10,8 +10,10 @@ import Foundation
 struct OrdersAssembly: ModuleAssembly {
     func register(in container: DIContainer) {
         container.register(OrdersRemoteDataSourceProtocol.self) { container in
+            let languageManager = container.resolve(LanguageManager.self)
             OrdersRemoteDataSource(
-                networkService: container.resolve(NetworkServiceProtocol.self)
+                networkService: container.resolve(NetworkServiceProtocol.self),
+                languageProvider: { languageManager.languageCode }
             )
         }
 
@@ -39,6 +41,18 @@ struct OrdersAssembly: ModuleAssembly {
             )
         }
 
+        container.register(OrderCurrentLocationProviding.self) { _ in
+            MainActor.assumeIsolated { OrderCurrentLocationProvider() }
+        }
+
+        container.register(OrderRouteProviding.self) { _ in
+            MainActor.assumeIsolated { OrderRouteProvider() }
+        }
+
+        container.register(OrderDirectionsOpening.self) { _ in
+            MainActor.assumeIsolated { OrderDirectionsOpener() }
+        }
+
         container.register(OrderHistoryViewModel.self) { container in
             MainActor.assumeIsolated {
                 OrderHistoryViewModel(
@@ -51,10 +65,12 @@ struct OrdersAssembly: ModuleAssembly {
             MainActor.assumeIsolated {
                 OrderDetailViewModel(
                     getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self),
-                    reorderUseCase: container.resolve(ReorderUseCaseProtocol.self)
+                    reorderUseCase: container.resolve(ReorderUseCaseProtocol.self),
+                    locationProvider: container.resolve(OrderCurrentLocationProviding.self),
+                    routeProvider: container.resolve(OrderRouteProviding.self),
+                    directionsOpener: container.resolve(OrderDirectionsOpening.self)
                 )
             }
         }
     }
 }
-

@@ -481,6 +481,7 @@
 "orders.status.ready_for_pickup"     = "جاهز للاستلام";
 "orders.status.ready_for_delivery"   = "جاهز للتوصيل";
 "orders.status.out_for_delivery"     = "خرج للتوصيل";
+"orders.product_unavailable"         = "الدواء لم يعد متاحًا";
 "orders.pharmacy_fallback"           = "صيدلية #%d";
 "orders.product_fallback"            = "منتج #%d";
 "orders.fulfillment.delivery"        = "توصيل";
