@@ -10,7 +10,7 @@ struct OrderPharmacyMapView: View {
     let onShowPharmacyLocation: (Int) -> Void
     let onOpenDirections: (OrderPharmacyPresentationModel) -> Void
 
-    @State private var cameraPosition: MapCameraPosition
+    @State private var isMapSheetPresented = false
 
     init(
         pharmacies: [OrderPharmacyPresentationModel],
@@ -28,9 +28,6 @@ struct OrderPharmacyMapView: View {
         self.onSelectPharmacy = onSelectPharmacy
         self.onShowPharmacyLocation = onShowPharmacyLocation
         self.onOpenDirections = onOpenDirections
-        _cameraPosition = State(initialValue: .region(Self.region(
-            for: pharmacies.compactMap(\.coordinate) + [deliveryLocation].compactMap { $0 }
-        )))
     }
 
     var body: some View {
@@ -39,14 +36,8 @@ struct OrderPharmacyMapView: View {
                 .font(AppColor.sans(15, .semibold))
                 .foregroundStyle(AppColor.textPrim)
 
-            if shouldShowMap {
-                mapContent
-            } else {
-                locationPrompt
-            }
-
+            locationPrompt
             pharmacySelector
-            routeStatus
         }
         .padding(MedsySpacing.md)
         .background(AppColor.card)
@@ -56,17 +47,124 @@ struct OrderPharmacyMapView: View {
                 .stroke(AppColor.border, lineWidth: 1)
         )
         .medsyCardShadow()
-        .onChange(of: selectedPharmacyID) { _, _ in focusSelectedPharmacy() }
-        .onChange(of: deliveryLocation) { _, _ in focusSelectedPharmacy() }
+        .sheet(isPresented: $isMapSheetPresented) {
+            NavigationStack {
+                OrderPharmacyMapSheetView(
+                    pharmacies: pharmacies,
+                    selectedPharmacyID: selectedPharmacyID ?? pharmacies.first?.id,
+                    deliveryLocation: deliveryLocation,
+                    routeState: routeState,
+                    onSelectPharmacy: onShowPharmacyLocation,
+                    onOpenDirections: onOpenDirections
+                )
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
     }
 
-    private var shouldShowMap: Bool {
-        switch routeState {
-        case .idle:
-            return deliveryLocation != nil
-        default:
-            return true
+    private var locationPrompt: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Text("orders.detail.location_prompt".localized)
+                .font(AppColor.sans(13))
+                .foregroundStyle(AppColor.textSec)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let selectedPharmacy {
+                PrimaryButton(
+                    title: "orders.detail.show_location_path".localized,
+                    systemImage: "map",
+                    style: .secondary
+                ) {
+                    onShowPharmacyLocation(selectedPharmacy.id)
+                    isMapSheetPresented = true
+                }
+            }
         }
+        .padding(MedsySpacing.md)
+        .background(AppColor.lightGreen.opacity(0.35))
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+    }
+
+    private var pharmacySelector: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: MedsySpacing.xs) {
+                ForEach(pharmacies) { pharmacy in
+                    Button { onSelectPharmacy(pharmacy.id) } label: {
+                        HStack(spacing: MedsySpacing.xxs) {
+                            Image(systemName: "cross.case.fill")
+                            Text(pharmacy.name).lineLimit(1)
+                        }
+                        .font(AppColor.sans(13, .semibold))
+                        .foregroundStyle(pharmacy.id == selectedPharmacyID ? .white : AppColor.green)
+                        .padding(.horizontal, MedsySpacing.sm)
+                        .padding(.vertical, MedsySpacing.xs)
+                        .background(pharmacy.id == selectedPharmacyID ? AppColor.green : AppColor.lightGreen)
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private var selectedPharmacy: OrderPharmacyPresentationModel? {
+        pharmacies.first { $0.id == selectedPharmacyID } ?? pharmacies.first
+    }
+}
+
+private struct OrderPharmacyMapSheetView: View {
+    let pharmacies: [OrderPharmacyPresentationModel]
+    let selectedPharmacyID: Int?
+    let deliveryLocation: OrderCoordinatePresentation?
+    let routeState: OrderRoutePresentationState
+    let onSelectPharmacy: (Int) -> Void
+    let onOpenDirections: (OrderPharmacyPresentationModel) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var cameraPosition: MapCameraPosition
+
+    init(
+        pharmacies: [OrderPharmacyPresentationModel],
+        selectedPharmacyID: Int?,
+        deliveryLocation: OrderCoordinatePresentation?,
+        routeState: OrderRoutePresentationState,
+        onSelectPharmacy: @escaping (Int) -> Void,
+        onOpenDirections: @escaping (OrderPharmacyPresentationModel) -> Void
+    ) {
+        self.pharmacies = pharmacies
+        self.selectedPharmacyID = selectedPharmacyID
+        self.deliveryLocation = deliveryLocation
+        self.routeState = routeState
+        self.onSelectPharmacy = onSelectPharmacy
+        self.onOpenDirections = onOpenDirections
+        _cameraPosition = State(initialValue: .region(Self.region(
+            for: pharmacies.compactMap(\.coordinate) + [deliveryLocation].compactMap { $0 }
+        )))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.md) {
+            mapContent
+            pharmacySelector
+            routeStatus
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.bg)
+        .navigationTitle("orders.detail.pharmacy_locations".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AppColor.textPrim)
+                }
+                .accessibilityLabel("common.cancel".localized)
+            }
+        }
+        .onChange(of: selectedPharmacyID) { _, _ in focusSelectedPharmacy() }
+        .onChange(of: deliveryLocation) { _, _ in focusSelectedPharmacy() }
     }
 
     private var mapContent: some View {
@@ -106,34 +204,12 @@ struct OrderPharmacyMapView: View {
             }
         }
         .mapStyle(.standard(elevation: .realistic))
-        .frame(height: 230)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
                 .stroke(AppColor.border, lineWidth: 1)
         )
-    }
-
-    private var locationPrompt: some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
-            Text("orders.detail.location_prompt".localized)
-                .font(AppColor.sans(13))
-                .foregroundStyle(AppColor.textSec)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if let selectedPharmacy {
-                PrimaryButton(
-                    title: "orders.detail.show_location_path".localized,
-                    systemImage: "map",
-                    style: .secondary
-                ) {
-                    onShowPharmacyLocation(selectedPharmacy.id)
-                }
-            }
-        }
-        .padding(MedsySpacing.md)
-        .background(AppColor.lightGreen.opacity(0.35))
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
     }
 
     private var pharmacySelector: some View {
@@ -225,7 +301,7 @@ struct OrderPharmacyMapView: View {
     }
 
     private var selectedPharmacy: OrderPharmacyPresentationModel? {
-        pharmacies.first { $0.id == selectedPharmacyID }
+        pharmacies.first { $0.id == selectedPharmacyID } ?? pharmacies.first
     }
 
     private func focusSelectedPharmacy() {

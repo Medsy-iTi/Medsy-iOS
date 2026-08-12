@@ -107,7 +107,9 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         }
 
         selectedPharmacyID = id
-        requestRoute(to: pharmacy, in: order)
+        if routeState != .idle || deliveryLocation != nil {
+            requestRoute(to: pharmacy, in: order)
+        }
     }
 
     private func showPharmacyLocation(id: Int) {
