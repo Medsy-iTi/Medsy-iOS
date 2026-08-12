@@ -10,6 +10,10 @@ import Foundation
 struct CoreAssembly: ModuleAssembly {
     func register(in container: DIContainer) {
 
+        let connectivityMonitor = MainActor.assumeIsolated {
+            NetworkConnectivityMonitor()
+        }
+
         container.register(LanguageManager.self) { _ in
             LanguageManager.shared
         }
@@ -20,6 +24,16 @@ struct CoreAssembly: ModuleAssembly {
 
         container.register(TokenStoreProtocol.self) { _ in
             KeychainTokenStore()
+        }
+
+        container.register(AccountScopeProviderProtocol.self) { container in
+            AccountScopeProvider(
+                tokenStore: container.resolve(TokenStoreProtocol.self)
+            )
+        }
+
+        container.register(NetworkConnectivityProviding.self) { _ in
+            connectivityMonitor
         }
 
         container.register(UserDefaultsStatusStoreProtocol.self) { _ in
