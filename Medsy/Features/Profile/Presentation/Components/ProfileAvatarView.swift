@@ -17,14 +17,14 @@ struct ProfileAvatarView: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color(hex: "#0D8653"),
-                            Color(hex: "#0A6B42")
+                            AppColor.green,
+                            Color(hex: "#047A43")
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: Color(hex: "#0D8653").opacity(0.36), radius: 10, y: 6)
+                .shadow(color: AppColor.green.opacity(0.36), radius: 10, y: 6)
                 .frame(width: size, height: size)
                 .overlay {
                     Image(systemName: "person")
@@ -34,7 +34,7 @@ struct ProfileAvatarView: View {
 
             if showsBadge {
                 Circle()
-                    .fill(Color(hex: "#22C55E"))
+                    .fill(AppColor.successGreen)
                     .frame(width: size * 0.32, height: size * 0.32)
                     .overlay {
                         Image(systemName: "checkmark")
@@ -50,7 +50,7 @@ struct ProfileAvatarView: View {
 
 #Preview {
     ZStack {
-        Color(hex: "#141E18")
+        AppColor.background
         ProfileAvatarView(size: 80, showsBadge: true)
     }
 }
