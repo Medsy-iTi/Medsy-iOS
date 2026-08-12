@@ -11,7 +11,7 @@ struct OrdersAssembly: ModuleAssembly {
     func register(in container: DIContainer) {
         container.register(OrdersRemoteDataSourceProtocol.self) { container in
             let languageManager = container.resolve(LanguageManager.self)
-            OrdersRemoteDataSource(
+            return OrdersRemoteDataSource(
                 networkService: container.resolve(NetworkServiceProtocol.self),
                 languageProvider: { languageManager.languageCode }
             )
