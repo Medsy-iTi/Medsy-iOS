@@ -10,8 +10,9 @@ import Foundation
 protocol OffersRemoteDataSourceProtocol {
     func getOfferResult(requestId: Int) async throws -> OfferResultResponseDTO
     func streamOfferResult(requestId: Int) -> AsyncThrowingStream<OfferResultResponseDTO, Error>
-    func confirmOffer(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> ConfirmOfferResponseDTO
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> SelectPharmacyResponseDTO
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResponseDTO
 }
 
 final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
@@ -130,7 +131,7 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
         }
     }
 
-    func confirmOffer(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> ConfirmOfferResponseDTO {
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> SelectPharmacyResponseDTO {
         let selectBody = ConfirmOfferRequestDTO(selectedItems: selectedItems)
         let selectResponse: APIResponseDTO<SelectPharmacyResponseDTO> = try await networkService.request(
             endpoint: OffersEndpoint.selectPharmacy(requestId: requestId, body: selectBody)
@@ -138,9 +139,21 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
         guard selectResponse.success else {
             throw NetworkError.validationError(selectResponse.message)
         }
+        guard let data = selectResponse.data else {
+            throw NetworkError.decodingFailed
+        }
+        return data
+    }
 
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO {
+        let items = selectedRequestItemIds.map { ConfirmOfferItemDTO(requestItemId: $0, productId: nil) }
+        return try await selectPharmacy(requestId: requestId, selectedItems: items)
+    }
+
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResponseDTO {
+        let body = ConfirmOfferFulfillmentRequestDTO(fulfillmentMethod: fulfillmentMethod)
         let response: ConfirmOfferResponseDTOContainer = try await networkService.request(
-            endpoint: OffersEndpoint.confirmOffer(requestId: requestId)
+            endpoint: OffersEndpoint.confirmOffer(requestId: requestId, body: body)
         )
         guard response.success else {
             throw NetworkError.validationError(response.message)
@@ -149,10 +162,5 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
             throw NetworkError.decodingFailed
         }
         return data
-    }
-
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResponseDTO {
-        let items = selectedRequestItemIds.map { ConfirmOfferItemDTO(requestItemId: $0, productId: nil) }
-        return try await confirmOffer(requestId: requestId, selectedItems: items)
     }
 }

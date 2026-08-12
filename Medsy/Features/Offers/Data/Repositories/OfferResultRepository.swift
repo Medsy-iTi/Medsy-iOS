@@ -41,17 +41,21 @@ final class OfferResultRepository: OfferResultRepositoryProtocol {
         }
     }
 
-    func confirmOffer(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> ConfirmOfferResult {
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> SelectPharmacyResponseDTO {
         let itemDTOs = selectedItems.map { ConfirmOfferItemDTO(requestItemId: $0.requestItemId, productId: $0.productId) }
-        let dto = try await remoteDataSource.confirmOffer(
+        return try await remoteDataSource.selectPharmacy(
             requestId: requestId,
             selectedItems: itemDTOs
         )
-        return OfferResultMapper.map(dto)
     }
 
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult {
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO {
         let items = selectedRequestItemIds.map { ConfirmSelectedItem(requestItemId: $0, productId: nil) }
-        return try await confirmOffer(requestId: requestId, selectedItems: items)
+        return try await selectPharmacy(requestId: requestId, selectedItems: items)
+    }
+
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResult {
+        let dto = try await remoteDataSource.confirmOffer(requestId: requestId, fulfillmentMethod: fulfillmentMethod)
+        return OfferResultMapper.map(dto, requestId: requestId)
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 protocol OfferResultRepositoryProtocol {
     func getOfferResult(requestId: Int) async throws -> OfferResult
     func streamOfferResult(requestId: Int) -> AsyncThrowingStream<OfferResult, Error>
-    func confirmOffer(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> ConfirmOfferResult
-    func confirmOffer(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> SelectPharmacyResponseDTO
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResult
 }
