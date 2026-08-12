@@ -13,11 +13,28 @@
 "common.welcome"  = "مرحباً، %@!";
 "common.language" = "اللغة";
 
+/* Splash */
+"splash.brand" = "ميدسي";
+"splash.tagline" = "صحتك، أولويتنا";
+"splash.subtitle" = "الدواء والرعاية الصحية بكل سهولة.";
+"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا. الدواء والرعاية الصحية بكل سهولة.";
+
+/* Pharmacy Profile */
+"pharmacyProfile.title" = "الملف الشخصي للصيدلية";
+"pharmacyProfile.badge" = "صيدلية";
+"pharmacyProfile.verified" = "موثقة";
+"pharmacyProfile.location" = "موقع الصيدلية";
+"pharmacyProfile.contact" = "بيانات الاتصال بالصيدلية";
+"pharmacyProfile.phoneNumber" = "رقم الهاتف";
+"pharmacyProfile.call" = "اتصال";
+"pharmacyProfile.directions" = "الاتجاهات";
+"pharmacyProfile.share" = "مشاركة";
+
 "language.english" = "الإنجليزية";
 "language.arabic"  = "العربية";
 
 /* Home */
-"home.deliveryTo" = "التوصيل إلى شارع النيل، المعادي";
+"home.deliveryTo" = "التوصيل إلى";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
 "home.promoTitle" = "صحتك تهمنا";
 "home.promoDiscount" = "خصم حتى 30%";
@@ -36,6 +53,36 @@
 "home.uploadPrescriptionDesc" = "ارفع صورة الروشتة وسنقوم بمراجعتها";
 "home.searchForMedicine" = "ابحث عن دواء";
 "home.searchForMedicineDesc" = "ابحث عن أي دواء تحتاجه بسهولة";
+"medicineAnalyze.title" = "تحليل الدواء";
+"medicineAnalyze.heading" = "تعرّف على دوائك";
+"medicineAnalyze.message" = "التقط صورة واضحة لعبوة الدواء وسنساعدك على التعرّف عليها.";
+"medicineAnalyze.camera.title" = "التقاط صورة";
+"medicineAnalyze.camera.message" = "استخدم الكاميرا لتصوير عبوة الدواء";
+"medicineAnalyze.gallery.title" = "اختيار من المعرض";
+"medicineAnalyze.gallery.message" = "اختر صورة دواء محفوظة على جهازك";
+"medicineAnalyze.tips.title" = "لأفضل نتيجة";
+"medicineAnalyze.tips.clear" = "اجعل اسم الدواء والعبوة ظاهرين بوضوح";
+"medicineAnalyze.tips.single" = "التقط عبوة دواء واحدة في كل صورة";
+"medicineAnalyze.tips.light" = "استخدم إضاءة جيدة وتجنب الانعكاسات";
+"medicineAnalyze.preview.heading" = "راجع صورة الدواء";
+"medicineAnalyze.preview.message" = "تأكد من وضوح تفاصيل العبوة قبل المتابعة.";
+"medicineAnalyze.changeImage" = "اختر صورة أخرى";
+"medicineAnalyze.analyze" = "تحليل الدواء";
+"medicineAnalyze.cameraUnavailable.title" = "الكاميرا غير متاحة";
+"medicineAnalyze.cameraUnavailable.message" = "استخدم جهازًا مزودًا بكاميرا أو اختر صورة من المعرض.";
+"medicineAnalyze.imageError.message" = "تعذر تجهيز هذه الصورة. يرجى اختيار صورة أخرى.";
+"medicineAnalyze.loading.title" = "جارٍ التعرّف على الدواء";
+"medicineAnalyze.loading.message" = "نتحقق من تفاصيل العبوة ونبحث عن المنتجات المطابقة.";
+"medicineAnalyze.results.recognized" = "اكتمل التحليل";
+"medicineAnalyze.results.count" = "%d منتجات مطابقة";
+"medicineAnalyze.results.message" = "راجع النتائج واختر الدواء الذي تحتاجه.";
+"medicineAnalyze.results.match" = "نتيجة محتملة";
+"medicineAnalyze.results.guidance.title" = "ماذا تريد أن تفعل؟";
+"medicineAnalyze.results.guidance.details" = "اضغط على الدواء لمراجعة جميع تفاصيله.";
+"medicineAnalyze.results.guidance.cart" = "استخدم زر الإضافة لإضافة الدواء مباشرةً إلى السلة.";
+"medicineAnalyze.empty.title" = "لم يتم العثور على دواء";
+"medicineAnalyze.empty.message" = "تعذر التعرّف على منتج من هذه الصورة. جرّب صورة أوضح يظهر فيها اسم العبوة.";
+"medicineAnalyze.failure.title" = "فشل التحليل";
 "home.shopByCategories" = "تسوق من الفئات";
 "home.viewAll" = "عرض الكل";
 "home.category.medicines" = "أدوية";
@@ -47,6 +94,15 @@
 "home.category.skinCare" = "عناية بالبشرة";
 "home.category.hairCare" = "عناية بالشعر";
 "home.category.dailyEssentials" = "مستلزمات يومية";
+"home.category.allergy" = "الحساسية";
+"home.category.antibiotics" = "المضادات الحيوية";
+"home.category.antifungals" = "مضادات الفطريات";
+"home.category.antiparasitics" = "مضادات الطفيليات";
+"home.category.antivirals" = "مضادات الفيروسات";
+"home.category.asthmaBreathing" = "الربو والتنفس";
+"home.category.brainNerves" = "المخ والأعصاب";
+"home.category.cancerImmunity" = "الأورام والمناعة";
+"home.category.cholesterol" = "الكوليسترول";
 "home.fastDelivery" = "توصيل سريع";
 "home.toYourDoorstep" = "إلى باب منزلك";
 
@@ -107,6 +163,7 @@
 
 /* Filter */
 "filter.sort" = "ترتيب";
+"filter.title" = "تصفية";
 "filter.sort_title" = "رتب حسب";
 "filter.sort_by" = "خيارات الترتيب";
 "filter.clear" = "مسح التصفية";
@@ -114,6 +171,13 @@
 "filter.type" = "النوع";
 "filter.price" = "السعر";
 "filter.most_relevant" = "الأكثر صلة";
+"company.lilly" = "إيلي ليلي";
+"company.novartis" = "نوفارتيس";
+"company.roche" = "فهوفمان لا روتش";
+"company.pfizer" = "بفيزير";
+"company.astrazeneca" = "أسترا زينيكا";
+"company.novonordisk" = "نوفو نورديسك";
+"company.eva_pharm" = "إيفا فارما > أندالاوس فارما";
 
 /* Empty state */
 "empty.title" = "لم نجد نتائج";
@@ -133,6 +197,11 @@
 
 /* Product detail */
 "product.info_title" = "معلومات المنتج";
+"product.form" = "الشكل الدوائي";
+"product.strength" = "التركيز";
+"product.pack_size" = "حجم العبوة";
+"product.scientific_category" = "الفئة العلمية";
+"product.consumer_category" = "فئة المستهلك";
 "product.add_to_cart" = "أضف إلى السلة";
 "product.consult_pharmacist" = "استشارة صيدلي";
 "product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
@@ -180,9 +249,9 @@
 "cart.estimated_total_disclaimer" = "الأسعار تقريبية. السعر النهائي يتم تأكيده من الصيدلية.";
 "cart.continue" = "متابعة";
 "cart.empty.title" = "السلة فارغة";
-"cart.empty.message" = "ابحث عن الأدوية أو ارفع روشتة لبدء طلب.";
+"cart.empty.message" = "ابحث عن الأدوية أو امسح روشتة لإضافة الأدوية أولًا.";
 "cart.empty.search" = "ابحث عن أدوية";
-"cart.empty.upload" = "رفع روشتة";
+"cart.empty.scan_prescription" = "مسح الروشتة";
 "cart.error.title" = "تعذر تحميل السلة";
 "cart.removed_message" = "تم حذف %@";
 "cart.undo" = "تراجع";
@@ -203,6 +272,12 @@
 "cart.clear_confirmation.title" = "إفراغ السلة؟";
 "cart.clear_confirmation.message" = "سيتم حذف جميع الأدوية والروشتة المرفقة.";
 "cart.clear_confirmation.action" = "إفراغ السلة";
+"cart.interactions.title" = "سلامة الأدوية";
+"cart.interactions.subtitle" = "راجع التفاعلات المحتملة قبل المتابعة.";
+"cart.interactions.loading" = "جاري فحص التفاعلات بين الأدوية...";
+"cart.interactions.failure" = "تعذر فحص سلامة الأدوية. ما زال بإمكانك استخدام السلة.";
+"cart.interactions.severity.high" = "خطورة عالية";
+"cart.interactions.severity.moderate" = "خطورة متوسطة";
 
 /* Onboarding */
 "onboarding.skip" = "تخطي";
@@ -252,7 +327,7 @@
 "auth.verification.code_accessibility" = "رمز التحقق المكون من ستة أرقام";
 "auth.password.show" = "إظهار كلمة المرور";
 "auth.password.hide" = "إخفاء كلمة المرور";
-"auth.brand.name" = "Medesy";
+"auth.brand.name" = "Medsy";
 "auth.brand.tagline" = "صحتك، أولويتنا";
 
 /* Profile */
@@ -304,6 +379,11 @@
 "profile.change_photo" = "تغيير الصورة";
 "profile.full_name" = "الاسم بالكامل";
 "profile.full_name.placeholder" = "اكتب الاسم بالكامل";
+"profile.first_name" = "الاسم الأول";
+"profile.first_name.placeholder" = "أدخل الاسم الأول";
+"profile.last_name" = "اسم العائلة";
+"profile.last_name.placeholder" = "أدخل اسم العائلة";
+"profile.name_required_error" = "هذا الحقل مطلوب";
 "profile.email" = "البريد الإلكتروني";
 "profile.phone" = "رقم الهاتف";
 "profile.home_address" = "عنوان المنزل";
@@ -315,6 +395,9 @@
 "profile.verified" = "موثق";
 "profile.phone_support_note" = "لتغيير رقم الهاتف، يرجى التواصل مع الدعم";
 "profile.save_changes" = "حفظ التغييرات";
+"profile.delivery_location.title" = "أضف موقع التوصيل";
+"profile.delivery_location.subtitle" = "اختر موقعك على الخريطة لمساعدة الصيدليات القريبة على خدمتك بدقة.";
+"profile.unsaved_changes_toast" = "يرجى حفظ بيانات الملف الشخصي الجديدة.";
 "profile.name_error" = "يجب ألا يقل الاسم عن حرفين";
 "profile.address_error" = "يجب ألا يقل العنوان عن 4 أحرف";
 
@@ -347,8 +430,21 @@
 "prescription.review.confirmed" = "تم التأكيد";
 "prescription.review.needsReview" = "تحتاج مراجعة";
 "prescription.review.addToCart" = "أضف إلى السلة";
+"prescription.review.addingToCart" = "جارٍ الإضافة إلى السلة...";
 "prescription.review.confirm" = "تأكيد";
 "prescription.review.chooseAnother" = "اختيار دواء آخر";
+"prescription.review.foundCount" = "تم العثور على %d أدوية";
+"prescription.review.recognized" = "تم التعرف";
+"prescription.review.showImage" = "عرض صورة الروشتة";
+"prescription.review.noImage" = "لا توجد صورة روشتة متاحة";
+"prescription.review.perPack" = "للعبوة";
+"prescription.review.edit" = "تعديل";
+"prescription.review.unclearMessage" = "الدواء غير واضح وقد يكون مشابهًا لـ:";
+"prescription.review.blocked" = "أكد الأدوية غير الواضحة أولًا لتفعيل الإضافة";
+"prescription.review.showCandidates" = "مراجعة البدائل";
+"prescription.review.hideCandidates" = "إخفاء البدائل";
+"prescription.review.noCandidates" = "لم يتم اقتراح منتجات مطابقة. ابحث في قائمة الأدوية لاختيار هذا الدواء.";
+"prescription.review.searchCatalog" = "البحث في قائمة الأدوية";
 "prescription.needsReview" = "تحتاج مراجعة";
 "prescription.added.title" = "تمت الإضافة إلى السلة!";
 "prescription.added.message" = "يمكنك مراجعة الكميات وإتمام طلبك من السلة.";
@@ -357,6 +453,7 @@
 "prescription.uploadFailed.title" = "فشل الرفع";
 "prescription.uploadFailed.message" = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "prescription.retry" = "إعادة المحاولة";
+"prescription.analysisFailed.title" = "تعذر تحليل الروشتة";
 "prescription.readingFailed.title" = "تعذرت قراءة الروشتة";
 "prescription.readingFailed.message" = "جرّب صورة أوضح أو تابع ليتمكن الصيدلي من مراجعتها.";
 "prescription.readingFailed.continue" = "المتابعة بالروشتة";
@@ -373,34 +470,47 @@
 "orders.filter.completed"            = "المنتهية";
 "orders.filter.cancelled"            = "ملغاة";
 "orders.status.pending"              = "تم تأكيد الطلب";
+"orders.status.pending_payment"      = "في انتظار الدفع";
 "orders.status.confirmed"            = "تم تأكيد الطلب";
 "orders.status.processing"           = "جاري التجهيز";
 "orders.status.shipped"              = "تم الشحن";
 "orders.status.delivered"            = "تم التسليم";
 "orders.status.cancelled"            = "ملغى";
 "orders.status.rejected"             = "مرفوض";
-"orders.from_pharmacy"               = "من %@";
+"orders.status.preparing"            = "جاري التجهيز";
+"orders.status.ready_for_pickup"     = "جاهز للاستلام";
+"orders.status.ready_for_delivery"   = "جاهز للتوصيل";
+"orders.status.out_for_delivery"     = "خرج للتوصيل";
+"orders.pharmacy_fallback"           = "صيدلية #%d";
+"orders.product_fallback"            = "منتج #%d";
+"orders.fulfillment.delivery"        = "توصيل";
+"orders.fulfillment.pickup"          = "استلام من الصيدلية";
 "orders.items_count"                 = "%d منتجات";
 "orders.item_count"                  = "%d منتج";
 "orders.price_format"                = "%.0f جنيه";
 "orders.empty.title"                 = "لا توجد طلبات بعد";
 "orders.empty.subtitle"              = "سيظهر تاريخ طلباتك هنا بمجرد تقديم طلبك الأول.";
+"orders.empty.search"                = "البحث عن أدوية";
 "orders.empty.active.title"          = "لا توجد طلبات جارية";
 "orders.empty.active.subtitle"       = "ستظهر هنا الطلبات التي تنتظر تسليمها حالياً.";
 "orders.empty.completed.title"       = "لا توجد طلبات منتهية";
 "orders.empty.completed.subtitle"    = "ستظهر هنا الطلبات التي تم تسليمها.";
 "orders.empty.cancelled.title"       = "لا توجد طلبات ملغاة";
 "orders.empty.cancelled.subtitle"    = "ستظهر هنا الطلبات التي تم إلغاؤها.";
+"orders.empty.filtered.title"        = "لا توجد طلبات مطابقة";
+"orders.empty.filtered.subtitle"     = "لا توجد طلبات تطابق الفلاتير الحالية. جرّب تعديلها أو مسحها.";
+"orders.empty.clear_filters"         = "مسح الفلاتير";
 "orders.error.title"                 = "تعذر تحميل الطلبات";
 "orders.error.subtitle"              = "تحقق من اتصالك بالإنترنت وحاول مرة أخرى.";
 "orders.loading"                     = "جاري تحميل الطلبات…";
 "orders.section.today"               = "اليوم";
 "orders.section.yesterday"           = "أمس";
+"orders.section.active"              = "الطلبات الجارية";
+"orders.section.history"             = "سجل الطلبات";
 "orders.detail.title"                = "تفاصيل الطلب";
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
 "orders.detail.status"               = "الحالة";
-"orders.detail.pharmacy"             = "الصيدلية";
 "orders.detail.items"                = "سعر المنتجات";
 "orders.detail.items_label"          = "المنتجات";
 "orders.detail.item_unit_price"      = "%.0f جنيه للقطعة";
@@ -408,3 +518,287 @@
 "orders.detail.total"                = "الإجمالي";
 "orders.detail.not_found"            = "الطلب غير موجود";
 "orders.detail.error"                = "تعذر تحميل تفاصيل الطلب";
+"orders.detail.delivery"             = "توصيل";
+"orders.detail.item_qty_price"       = "%d × %.0f جنيه";
+"orders.detail.order_summary"        = "ملخص الطلب";
+"orders.detail.items_subtotal"       = "إجمالي المنتجات";
+"orders.detail.reorder"              = "إعادة الطلب";
+"orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
+"orders.detail.your_location"        = "موقعك الحالي";
+"orders.detail.locating"             = "جارٍ تحديد موقعك الحالي…";
+"orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
+"orders.detail.location_permission_denied" = "فعّل إذن الموقع لعرض المسار من موقعك الحالي.";
+"orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
+"orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
+"orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
+"orders.reorder.go_to_cart"          = "الذهاب للسلة";
+"orders.reorder.continue_shopping"   = "متابعة التصفح";
+"orders.reorder.success.title"       = "تمت الإضافة بنجاح";
+"orders.reorder.partial.title"       = "تمت إضافة بعض المنتجات";
+"orders.reorder.failed.title"        = "تعذرت الإضافة";
+"orders.reorder.success.message"     = "تمت إضافة جميع المنتجات إلى السلة بنجاح.";
+"orders.reorder.partial.message"     = "تمت إضافة %d من إجمالي %d منتجات إلى السلة.";
+"orders.reorder.failed.message"      = "حدث خطأ ولم نتمكن من إضافة المنتجات إلى السلة. يرجى المحاولة مرة أخرى.";
+
+"orders.filter.title"                 = "تصفية الطلبات";
+"orders.filter.reset"                 = "إعادة ضبط";
+"orders.filter.apply"                 = "تطبيق";
+"orders.filter.button.accessibility" = "تصفية الطلبات";
+"orders.filter.section.status"       = "الحالة";
+"orders.filter.section.fulfillment"  = "طريقة الاستلام";
+"orders.filter.section.date"         = "نطاق التاريخ";
+"orders.filter.fulfillment.all"      = "الكل";
+"orders.filter.fulfillment.delivery" = "توصيل";
+"orders.filter.fulfillment.pickup"   = "استلام";
+"orders.date_range.anytime"          = "أي وقت";
+"orders.date_range.today"            = "اليوم";
+"orders.date_range.last_7_days"      = "آخر 7 أيام";
+"orders.date_range.last_30_days"     = "آخر 30 يومًا";
+"orders.date_range.last_3_months"    = "آخر 3 أشهر";
+"orders.date_range.custom"           = "مخصص";
+"orders.filter.date.from"            = "من";
+"orders.filter.date.to"              = "إلى";
+
+/* Address Picker */
+"address.title" = "اختر عنوانك";
+"address.search_placeholder" = "ابحث عن موقع";
+"address.confirm" = "تأكيد الموقع";
+"address.current_location" = "استخدم موقعي الحالي";
+"profile.pick_on_map" = "اختر على الخريطة";
+"address.permission_denied" = "يجب السماح بالوصول إلى الموقع لاختيار عنوانك";
+
+/* إكمال الطلب */
+"complete_request.title" = "إكمال الطلب";
+"complete_request.summary.title" = "ملخص الطلب";
+"complete_request.summary.items_count" = "%d أدوية";
+"complete_request.summary.prescriptions_count" = "%d روشتات";
+"complete_request.summary.show_items" = "عرض الأدوية المختارة";
+"complete_request.summary.hide_items" = "إخفاء الأدوية المختارة";
+"complete_request.receive.title" = "كيف تريد استلام طلبك؟";
+"complete_request.receive.subtitle" = "اختر التوصيل إلى عنوانك أو الاستلام من الصيدلية التي سيتم اختيارها لاحقًا.";
+"complete_request.receive.delivery" = "توصيل";
+"complete_request.receive.delivery.subtitle" = "التوصيل إلى الموقع الذي اخترته";
+"complete_request.receive.pickup" = "استلام";
+"complete_request.receive.pickup.subtitle" = "استلم الطلب من الصيدلية";
+"complete_request.address.title" = "عنوان التوصيل";
+"complete_request.address.loading" = "جارٍ تحميل عنوانك المحفوظ…";
+"complete_request.address.empty" = "لا يوجد عنوان محفوظ. اختر عنوانًا وأكّد موقعه على الخريطة لهذا الطلب.";
+"complete_request.address.saved_unconfirmed" = "هذا هو العنوان المحفوظ في ملفك الشخصي. أكّد موقعه على الخريطة قبل إرسال الطلب.";
+"complete_request.address.confirm_on_map" = "تأكيد العنوان على الخريطة";
+"complete_request.address.choose" = "اختر الموقع على الخريطة";
+"complete_request.address.change" = "تغيير الموقع على الخريطة";
+"complete_request.address.confirmed" = "تم تأكيد الموقع على الخريطة";
+"complete_request.payment.title" = "كيف تريد الدفع؟";
+"complete_request.payment.subtitle" = "اختر طريقة دفع واحدة لهذا الطلب.";
+"complete_request.payment.cash" = "نقدًا";
+"complete_request.payment.cash.subtitle" = "ادفع عند استلام الطلب";
+"complete_request.payment.visa" = "فيزا";
+"complete_request.payment.visa.subtitle" = "أدخل بيانات البطاقة";
+"complete_request.notes.title" = "ملاحظات الطلب";
+"complete_request.notes.subtitle" = "أضف أي تعليمات قد تساعد الصيدلية. هذا الحقل اختياري.";
+"complete_request.notes.placeholder" = "أضف ملاحظات للصيدلية";
+"complete_request.card.title" = "بيانات بطاقة فيزا";
+"complete_request.card.cardholder" = "اسم حامل البطاقة";
+"complete_request.card.number" = "رقم البطاقة";
+"complete_request.card.expiry" = "تاريخ الانتهاء (شهر/سنة)";
+"complete_request.card.cvv" = "رمز الأمان";
+"complete_request.card.security" = "يتم التحقق من بيانات البطاقة على هذا الجهاز ولا يتم حفظها.";
+"complete_request.validation.location" = "أكّد موقع التوصيل للمتابعة.";
+"complete_request.validation.pickup_unsupported" = "خدمة الطلب الحالية لا تدعم الاستلام من الصيدلية بعد. اختر التوصيل للمتابعة.";
+"complete_request.validation.cardholder_name" = "أدخل الاسم المكتوب على البطاقة.";
+"complete_request.validation.card_number" = "أدخل رقم بطاقة فيزا صالحًا مكوّنًا من 16 رقمًا.";
+"complete_request.validation.expiry" = "أدخل تاريخ انتهاء صالحًا وغير منتهي بصيغة شهر/سنة.";
+"complete_request.validation.cvv" = "أدخل رمز الأمان المكوّن من ثلاثة أرقام.";
+"complete_request.submit" = "إرسال طلب الدواء";
+"complete_request.success.title" = "تم إرسال الطلب بنجاح";
+"complete_request.success.subtitle" = "عدنا بك للرئيسية لتتمكن من مشاهدة العروض الحالية.";
+"complete_request.submit_error.title" = "تعذر إكمال الطلب";
+"complete_request.submit_error" = "لم يكتمل طلبك لتعذر إفراغ السلة. حاول مرة أخرى.";
+"complete_request.location.title" = "اختر موقع التوصيل";
+"complete_request.location.pin" = "موقع التوصيل";
+"complete_request.location.preview" = "معاينة موقع التوصيل المؤكد على الخريطة";
+"complete_request.location.unavailable" = "موقعك الحالي غير متاح. ابحث عن عنوان أو ضع علامة على الخريطة.";
+"complete_request.location.search_error" = "تعذر البحث عن هذا العنوان. حاول مرة أخرى.";
+"complete_request.location.resolve_error" = "تعذر تحديد هذا العنوان. اختر نقطة أخرى على الخريطة.";
+"NSLocationWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "نحتاج إلى الوصول إلى موقعك لعرض العناوين القريبة ومساعدتك في اختيار عنوان التوصيل.";
+
+/* Offers */
+"order_complete.thank_you" = "شكرًا لك!";
+"order_complete.success_message" = "تمت الموافقة وتأكيد طلبك بنجاح. سنوافيك بالتحديثات قريبًا.";
+"order_complete.summary_title" = "تفاصيل الطلب المؤكد";
+"order_complete.pharmacy" = "الصيدلية";
+"order_complete.medicines_count" = "عدد الأدوية";
+"order_complete.medicines_count_value" = "%d أدوية";
+"order_complete.order_id" = "رقم الطلب";
+"order_complete.total" = "الإجمالي المؤكد";
+"order_complete.back_home" = "العودة للرئيسية";
+"common.egp" = "جنيه";
+"home.status.firstOffer.currency" = "جنيه";
+"home.status.firstOffer.medsUnit" = "دواء";
+"home.deleteOffer.title" = "حذف العرض";
+"home.deleteOffer.message" = "هل أنت متأكد من حذف العرض؟";
+"home.deleteOffer.confirm" = "حذف";
+"home.deleteOffer.cancel" = "إلغاء";
+
+"offers.list.title" = "العروض المتاحة";
+"offers.list.subtitleFormat" = "%d عروض متاحة لطلبك";
+"offers.list.badge.full" = "عرض كامل";
+"offers.list.badge.partial" = "عرض جزئي";
+"offers.list.badge.combined" = "عرض مركب";
+"offers.list.priceFrom" = "من";
+"offers.list.currency" = "جنيه";
+"offers.list.info.title" = "الأسعار ثابتة من Medsy";
+"offers.list.info.desc" = "الصيدليات يمكنها فقط تطبيق خصم وإضافة رسوم التوصيل";
+"offers.list.pharmacy.nahda" = "صيدلية النهضة";
+"offers.list.pharmacy.shifa" = "صيدلية الشفاء";
+"offers.list.pharmacy.twoPharmacies" = "عرض من صيدليتين";
+"offers.list.subtitle.bestPrice" = "أفضل سعر";
+"offers.list.subtitle.unavailableMeds" = "يحتوي على أدوية غير متوفرة";
+"offers.list.subtitle.fullCoverage" = "تغطية كاملة للطلب";
+
+"offers.details.requestedMeds" = "الأدوية المطلوبة";
+"offers.details.available" = "متوفر";
+"offers.details.unavailable" = "غير متوفر";
+"offers.details.pharmacistComment" = "تعليق من الصيدلي";
+"offers.details.viewPrescription" = "عرض الروشتة";
+"offers.details.selectOffer" = "اختار هذا العرض";
+"offers.details.managerSuffix" = " (المدير)";
+"offers.details.defaultComment" = "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿";
+"offers.details.med.panadol" = "بانادول اكسترا";
+"offers.details.dosage.panadol" = "20 قرص";
+"offers.details.med.amoxicillin" = "أموكسيسيلين 500 مجم";
+"offers.details.dosage.amoxicillin" = "16 كبسولة";
+"offers.details.med.brufen" = "بروفين 400 مجم";
+"offers.details.dosage.brufen" = "10 أقراص";
+"offers.details.med.vitaminc" = "فيتامين سي 1000 مجم";
+"offers.details.dosage.vitaminc" = "10 أقراص";
+
+/* Order Review */
+"orderReview.title" = "مراجعة الطلب";
+"orderReview.section.medicines" = "الأدوية";
+"orderReview.section.deliveryAddress" = "عنوان التوصيل";
+"orderReview.section.deliveryDetails" = "تفاصيل التوصيل";
+"orderReview.address.edit" = "تعديل";
+"orderReview.address.text" = "شارع النيل المعادي - القاهرة\nأمام برج النيل، الدور 3، شقة 12";
+"orderReview.delivery.type" = "توصيل للمنزل";
+"orderReview.delivery.feeLabel" = "رسوم التوصيل";
+"orderReview.summary.subtotal" = "إجمالي سعر الأدوية";
+"orderReview.summary.deliveryFee" = "رسوم التوصيل";
+"orderReview.summary.total" = "الإجمالي";
+"orderReview.confirmOrder" = "تأكيد الطلب";
+
+
+"tab.medsy_chatbot" = "شات بوت";
+
+/* شخصية الذكاء الاصطناعي */
+"chatbot.ai.name"          = "Medsy AI";
+"chatbot.ai.status.online" = "متصل";
+
+/* تبويبات السيناريو */
+"chatbot.scenario.symptom"      = "الأعراض";
+"chatbot.scenario.prescription" = "الروشتة";
+"chatbot.scenario.pharmacy"     = "الصيدليات";
+"chatbot.scenario.reorder"      = "إعادة الطلب";
+
+/* إخلاء المسؤولية */
+"chatbot.disclaimer" = "معلومات فقط — وليست تشخيصاً طبياً. تأكد دائماً مع الصيدلي أو الطبيب.";
+
+/* أزرار الإجراءات السريعة */
+"chatbot.chip.how_to_take"         = "كيف أتناوله؟";
+"chatbot.chip.side_effects"        = "الآثار الجانبية؟";
+"chatbot.chip.cheaper"             = "بديل أرخص";
+"chatbot.chip.side_effects_concor" = "آثار جانبية كونكور؟";
+"chatbot.chip.remind_daily"        = "ذكرني يومياً";
+"chatbot.chip.nearest_hospital"    = "أقرب مستشفى";
+"chatbot.chip.share_location"      = "مشاركة الموقع";
+"chatbot.chip.switch_to_ator"      = "التحويل لأتور — وفر ١٢٢ جنيه";
+"chatbot.chip.keep_lipitor"        = "الاحتفاظ بليبيتور";
+
+/* تسميات الأزرار الشائعة */
+"chatbot.action.add_to_cart"  = "+ أضف للسلة";
+"chatbot.action.details"      = "التفاصيل";
+"chatbot.action.add_both"     = "أضف كليهما للسلة";
+"chatbot.action.review_each"  = "مراجعة كل منهما";
+"chatbot.action.end_call"     = "إنهاء المكالمة";
+"chatbot.action.take_over"    = "التحكم في المكالمة";
+
+/* شريط الإدخال */
+"chatbot.input.placeholder" = "اكتب رسالتك لـ Medsy AI...";
+
+/* ── سيناريو ١: الأعراض ── */
+"chatbot.demo.symptom.q1" = "عندي صداع شديد من الصبح وعيني بتتأذى لما بشوف الشاشات";
+"chatbot.demo.symptom.a1" = "آسف على ذلك يا عمر. بعض الأسئلة السريعة — هل الألم يشبه الضغط حول الجبهة، وهل كنت أمام الشاشات وقتاً طويلاً اليوم؟";
+"chatbot.demo.symptom.q2" = "نعم، ضغط حول الجبهة. شغلت على اللاب توب طول اليوم";
+"chatbot.demo.symptom.a2" = "يبدو أن هذا صداع توتر ناتج عن إجهاد العين — عادةً غير خطير. مسكن للألم بدون وصفة يمكن أن يساعد. إذا استمر الصداع، أنصح بزيارة طبيب عيون لفحصها.";
+
+/* ── سيناريو ١: المنتجات ── */
+"chatbot.demo.product.eyebrow.otc"      = "مقترح · بدون وصفة";
+"chatbot.demo.product.panadol.name"     = "بنادول إكسترا";
+"chatbot.demo.product.panadol.subtitle" = "٥٠٠ ملجم · ٢٤ قرص";
+"chatbot.demo.product.panadol.price"    = "٦٨ جنيه";
+"chatbot.demo.product.panadol.footnote" = "استشر الصيدلي للتأكد من الجرعة المناسبة لحالتك.";
+
+/* ── سيناريو ٢: الروشتة ── */
+"chatbot.demo.rx.q1"      = "ممكن تقرأ ده وتشرحه بكلام بسيط؟";
+"chatbot.demo.rx.a1"      = "قرأت الروشتة — للضغط العالي والكوليسترول. بكلام بسيط: دواء يضبط ضغط الدم والآخر ينظف الشرايين. وجدت كليهما في كتالوج Medsy:";
+"chatbot.demo.rx.lowconf" = "عنصر واحد ثقة التعرف عليه منخفضة — أكد ليبيتور قبل إضافته. ستراجع كل شيء في السلة قبل إرسال أي طلب.";
+
+"chatbot.demo.product.concor.name"     = "كونكور ٥ ملجم";
+"chatbot.demo.product.concor.subtitle" = "لضغط الدم · قرص واحد كل صباح";
+"chatbot.demo.product.concor.price"    = "٩٦ جنيه";
+"chatbot.demo.product.concor.badge"    = "✓ تطابق ٩٨٪";
+"chatbot.demo.product.lipitor.name"    = "ليبيتور ٢٠ ملجم";
+"chatbot.demo.product.lipitor.subtitle"= "للكوليسترول · قرص واحد ليلاً";
+"chatbot.demo.product.lipitor.price"   = "٢١٠ جنيه";
+"chatbot.demo.product.lipitor.badge"   = "⚠ تحقق";
+
+/* ── سيناريو ٣: الصيدليات ── */
+"chatbot.demo.pharmacy.q1" = "أي صيدليات قريبة مني مفتوحة دلوقتي؟";
+"chatbot.demo.pharmacy.a1" = "وجدت ٣ صيدليات مفتوحة الآن بالقرب من شارع النيل، المعادي:";
+"chatbot.demo.pharmacy.a2" = "تريد مني أتصل بالعزبي وأسأل إذا كان بنادول إكسترا متاح؟";
+"chatbot.demo.pharmacy.q2" = "نعم، اتصل بهم من فضلك";
+
+"chatbot.demo.pharmacy.elezaby.name"     = "صيدلية العزبي";
+"chatbot.demo.pharmacy.elezaby.distance" = "٣٥٠ م · ١٢ شارع النيل · ~٤ دقائق مشياً";
+"chatbot.demo.pharmacy.misr.name"        = "صيدلية مصر";
+"chatbot.demo.pharmacy.misr.distance"    = "٦٠٠ م · طريق ٩ · تغلق ١٢ ص";
+"chatbot.demo.pharmacy.seif.name"        = "صيدلية سيف";
+"chatbot.demo.pharmacy.seif.distance"    = "١٫١ كم · كورنيش النيل · تغلق ١١ م";
+"chatbot.demo.pharmacy.open"             = "مفتوح";
+"chatbot.demo.pharmacy.open24h"          = "مفتوح ٢٤ ساعة";
+
+"chatbot.demo.call.title"    = "جارٍ الاتصال بصيدلية العزبي...";
+"chatbot.demo.call.subtitle" = "الاستفسار عن توفر بنادول إكسترا ٥٠٠ ملجم";
+
+/* ── سيناريو ٤: إعادة الطلب ── */
+"chatbot.demo.interaction.title"          = "تحذير: تفاعل دوائي";
+"chatbot.demo.interaction.message"        = "عصير الجريب فروت قد يقلل من تأثير كونكور. توجد خيارات أفضل — استشر الصيدلي قبل الجمع بينهما.";
+"chatbot.demo.interaction.action_title"   = "تواصل مع الصيدلي — ١٦٦٦٧";
+"chatbot.demo.interaction.action_subtitle"= "خط هيئة الدواء المصرية";
+
+"chatbot.demo.reorder.a1" = "أيضاً — ستنفد كمية كونكور لديك خلال ٣ أيام. تريد إعادة طلب أدوية ضغط الدم المعتادة؟";
+"chatbot.demo.reorder.q1" = "نعم أعد الطلب، وذكرني بأخذه يومياً الساعة ٩ صباحاً";
+
+"chatbot.demo.reminder.title"    = "تم ضبط التذكير اليومي";
+"chatbot.demo.reminder.subtitle" = "كونكور ٥ ملجم · كل يوم الساعة ٩:٠٠ صباحاً";
+
+"chatbot.demo.order.label"    = "إعادة طلب · طلب";
+"chatbot.demo.order.status"   = "جارٍ البحث عن صيدليات";
+"chatbot.demo.order.items"    = "كونكور ٥ ملجم ×١ · ليبيتور ٢٠ ملجم ×١";
+"chatbot.demo.order.subtotal" = "إجمالي ثابت ٣٠٦ جنيه · البحث في نطاق ٥٠٠ م";
+"chatbot.demo.order.phase"    = "المرحلة ١";
+"chatbot.demo.order.time_left"= "٧:١٢ متبقية";
+
+"chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
+
+// MARK: - Chatbot – AI Live
+
+"chatbot.ai.thinking"         = "ميدسي AI يفكر…";
+"chatbot.error.generic"        = "حدث خطأ ما. يرجى المحاولة مجدداً.";
+"chatbot.error.dismiss"        = "إغلاق";
+"chatbot.sources.match"        = "✓ %d%% تطابق";
+"chatbot.sources.eyebrow"      = "مقترح بالذكاء الاصطناعي";
+"chatbot.empty.title"          = "اسأل ميدسي AI";
+"chatbot.empty.subtitle"       = "اسألني عن الأدوية أو الأعراض أو وصفتك الطبية.";

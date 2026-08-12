@@ -13,11 +13,16 @@ import Observation
 final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
 
     private(set) var historyState: OrderHistoryViewState = .idle
+    private(set) var activeFilters: ActiveOrderFilters = .default
     private(set) var isLoadingNextPage = false
 
     private let loadOrdersUseCase: LoadOrdersUseCaseProtocol?
     private var loadTask: Task<Void, Never>?
-    private var currentFilter: OrderFilter = .all
+    private var currentPage = 0
+    private var isLastPage = false
+    private var loadedOrders: [OrderPresentationModel] = []
+
+    private static let pageSize = 20
 
     init(loadOrdersUseCase: LoadOrdersUseCaseProtocol? = nil) {
         self.loadOrdersUseCase = loadOrdersUseCase
@@ -31,42 +36,95 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
     func handle(_ event: OrderHistoryEvent) {
         switch event {
         case .load:
-            load(filter: currentFilter, reset: true)
+            load(reset: true)
         case .retry:
-            load(filter: currentFilter, reset: true)
-        case .selectFilter(let filter):
-            currentFilter = filter
-            load(filter: filter, reset: true)
+            load(reset: true)
+        case .applyFilters(let filters):
+            activeFilters = filters
+            renderLoadedOrders()
         case .loadNextPage:
-            break
+            guard !isLastPage, !isLoadingNextPage else { return }
+            loadNextPage()
         }
     }
 
-    private func load(filter: OrderFilter, reset: Bool) {
+    private func load(reset: Bool) {
         loadTask?.cancel()
-        loadMockData(filter: filter)
-    }
-
-    private func loadMockData(filter: OrderFilter) {
+        if reset {
+            currentPage = 0
+            isLastPage = false
+            isLoadingNextPage = false
+            loadedOrders = []
+        }
         historyState = .loading
         loadTask = Task {
-            try? await Task.sleep(for: .milliseconds(600))
+            await fetchOrders(page: 0, appending: false)
+        }
+    }
+
+    private func loadNextPage() {
+        loadTask?.cancel()
+        let nextPage = currentPage + 1
+        isLoadingNextPage = true
+        loadTask = Task {
+            await fetchOrders(page: nextPage, appending: true)
+            isLoadingNextPage = false
+        }
+    }
+
+    private func fetchOrders(page: Int, appending: Bool) async {
+        guard let useCase = loadOrdersUseCase else { return }
+        do {
+            let result = try await useCase.execute(
+                filter: .empty,
+                page: page,
+                size: Self.pageSize
+            )
             guard !Task.isCancelled else { return }
-            historyState = .loaded(buildSections(from: filtered(by: filter)))
+
+            let mapped = result.items.map(OrderEntityMapper.map)
+            if appending {
+                loadedOrders.append(contentsOf: mapped)
+            } else {
+                loadedOrders = mapped
+            }
+
+            currentPage = result.page
+            isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
+            renderLoadedOrders()
+        } catch {
+            guard !Task.isCancelled else { return }
+            if !appending {
+                historyState = .error(error.localizedDescription)
+            }
         }
     }
 
-    private func filtered(by filter: OrderFilter) -> [OrderPresentationModel] {
-        let all = OrderPresentationModel.mockOrders
-        switch filter {
-        case .all:       return all
-        case .active:    return all.filter { $0.status.isActive }
-        case .completed: return all.filter { $0.status.isCompleted }
-        case .cancelled: return all.filter { $0.status.isCancelled }
-        }
+    private func renderLoadedOrders() {
+        let filteredOrders = loadedOrders.filter(activeFilters.matches)
+        let sections = buildSections(from: filteredOrders, filters: activeFilters)
+        historyState = .loaded(sections)
     }
 
-    private func buildSections(from orders: [OrderPresentationModel]) -> [OrderDateSection] {
+    private func buildSections(from orders: [OrderPresentationModel], filters: ActiveOrderFilters) -> [OrderDateSection] {
+        if filters == .default {
+            let activeOrders = orders.filter(\.status.isActive)
+            let historyOrders = orders.filter { !$0.status.isActive }
+            return [
+                OrderDateSection(
+                    id: "active",
+                    title: "orders.section.active".localized,
+                    orders: activeOrders
+                ),
+                OrderDateSection(
+                    id: "history",
+                    title: "orders.section.history".localized,
+                    orders: historyOrders
+                )
+            ]
+            .filter { !$0.orders.isEmpty }
+        }
+
         let calendar = Calendar.current
         var todayOrders: [OrderPresentationModel] = []
         var yesterdayOrders: [OrderPresentationModel] = []

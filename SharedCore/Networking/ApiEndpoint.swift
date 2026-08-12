@@ -8,6 +8,25 @@
 import Foundation
 import Alamofire
 
+struct MultipartFormPart {
+    let data: Data
+    let name: String
+    let fileName: String?
+    let mimeType: String?
+
+    init(
+        data: Data,
+        name: String,
+        fileName: String? = nil,
+        mimeType: String? = nil
+    ) {
+        self.data = data
+        self.name = name
+        self.fileName = fileName
+        self.mimeType = mimeType
+    }
+}
+
 protocol ApiEndpoint {
     var baseURL: String? { get }
     var path: String { get }
@@ -15,7 +34,9 @@ protocol ApiEndpoint {
     var queryParameters: Parameters? { get }
     var headers: HTTPHeaders? { get }
     var body: Data? { get }
+    var multipartFormParts: [MultipartFormPart]? { get }
     var requiresAuthentication: Bool { get }
+    var allowsResponseLogging: Bool { get }
 }
 
 extension ApiEndpoint {
@@ -33,5 +54,13 @@ extension ApiEndpoint {
 
     var requiresAuthentication: Bool {
         false
+    }
+
+    var multipartFormParts: [MultipartFormPart]? {
+        nil
+    }
+
+    var allowsResponseLogging: Bool {
+        true
     }
 }

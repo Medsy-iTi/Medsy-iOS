@@ -1,8 +1,4 @@
-//  PharmacyOrderItemsCard.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 19/07/2026.
-//
+// PharmacyOrderItemsCard.swift
 
 import SwiftUI
 
@@ -10,119 +6,166 @@ struct PharmacyOrderItemsCard: View {
     @Binding var items: [PharmacyOrderItem]
     let deliveryFee: Double
     let total: Double
-    let onToggleAlternative: (String) -> Void
+    let isOfferSubmitted: Bool
+    let isEditable: Bool
+    var onSelectAlternative: ((PharmacyOrderItem) -> Void)? = nil
+
+    init(items: Binding<[PharmacyOrderItem]>, deliveryFee: Double, total: Double, isOfferSubmitted: Bool, isEditable: Bool = true, onSelectAlternative: ((PharmacyOrderItem) -> Void)? = nil) {
+        self._items = items
+        self.deliveryFee = deliveryFee
+        self.total = total
+        self.isOfferSubmitted = isOfferSubmitted
+        self.isEditable = isEditable
+        self.onSelectAlternative = onSelectAlternative
+    }
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: PharmacySpacing.sm) {
-            HStack(spacing: 8) {
-                Spacer()
+        VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
+            Text("pharmacy.request.requested_medicines".localized)
+                .font(PharmacyColor.sans(16, .bold))
+                .foregroundStyle(PharmacyColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 2)
 
-                Text("تفاصيل الطلب")
-                    .font(PharmacyColor.sans(15, .bold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
+            VStack(spacing: 0) {
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    if index > 0 {
+                        Divider()
+                            .overlay(PharmacyColor.border)
+                            .padding(.vertical, 12)
+                    }
 
-                Image(systemName: "bag")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
-            }
-
-            VStack(spacing: 12) {
-                ForEach(items.indices, id: \.self) { index in
-                    let item = items[index]
-                    
-                    VStack(alignment: .trailing, spacing: 6) {
-                        HStack(alignment: .center, spacing: 12) {
-                            Text("\(item.quantity) × \(Int(item.price))")
-                                .font(PharmacyColor.sans(14, .bold))
-                                .foregroundStyle(PharmacyColor.textPrimary)
-
-                            Spacer()
-
-                            VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(alignment: .center, spacing: 14) {
+                            ZStack {
+                                if let imageUrlStr = item.imageUrl, let url = URL(string: imageUrlStr) {
+                                    AsyncImage(url: url) { image in
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                    } placeholder: {
+                                        ProgressView()
+                                            .redacted(reason: .placeholder)
+                                    }
+                                } else {
+                                    ZStack {
+                                        PharmacyColor.primarySoft.opacity(0.5)
+                                        Image(systemName: "pills.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(PharmacyColor.primary.opacity(0.7))
+                                    }
+                                }
+                            }
+                            .frame(width: 48, height: 48)
+                            .padding(4)
+                            .background(PharmacyColor.card)
+                            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
+                            
+                            VStack(alignment: .leading, spacing: 4) {
                                 Text(item.name)
-                                    .font(PharmacyColor.sans(14, .bold))
-                                    .foregroundStyle(item.isAvailable ? PharmacyColor.textPrimary : PharmacyColor.danger)
+                                    .font(PharmacyColor.sans(15, .bold))
+                                    .foregroundStyle(PharmacyColor.textPrimary)
 
-                                Text(item.spec)
-                                    .font(PharmacyColor.sans(12, .medium))
+                                if item.form != nil || item.strength != nil || item.packSize != nil {
+                                    HStack(spacing: 6) {
+                                        if let form = item.form, !form.isEmpty {
+                                            Text(form)
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.primary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.primarySoft.opacity(0.5), in: Capsule())
+                                        }
+                                        if let strength = item.strength, !strength.isEmpty {
+                                            Text(strength)
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.textSecondary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.border, in: Capsule())
+                                        }
+                                        if let packSize = item.packSize, !packSize.isEmpty {
+                                            Text("pharmacy.request.pack_size_label".localized(packSize))
+                                                .font(PharmacyColor.sans(11, .medium))
+                                                .foregroundStyle(PharmacyColor.textSecondary)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 2)
+                                                .background(PharmacyColor.border, in: Capsule())
+                                        }
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+
+                                Text("\(item.quantity) x \(Int(item.price)) \("pharmacy.request.currency_unit".localized)")
+                                    .font(PharmacyColor.sans(14, .bold))
                                     .foregroundStyle(PharmacyColor.textSecondary)
                             }
 
-                            ZStack {
-                                RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous)
-                                    .fill(PharmacyColor.mutedSurface)
-                                    .frame(width: 44, height: 44)
-
-                                Image(systemName: "pill.fill")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(PharmacyColor.primary)
-                            }
-                        }
-
-                        HStack {
-                            Button(action: {
-                                onToggleAlternative(item.id)
-                            }) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: item.isAvailable ? "exclamationmark.triangle" : "arrow.triangle.2.circlepath")
-                                        .font(.system(size: 11, weight: .bold))
-                                    Text(item.isAvailable ? "غير متوفر / إضافة بديل" : (item.alternativeMedicine ?? "تم تحديد بديل"))
-                                        .font(PharmacyColor.sans(11, .semibold))
-                                }
-                                .foregroundStyle(item.isAvailable ? PharmacyColor.warning : PharmacyColor.secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(item.isAvailable ? PharmacyColor.warningSoft : PharmacyColor.secondarySoft, in: Capsule())
-                            }
-                            .buttonStyle(.plain)
-
                             Spacer()
+
+                            if isEditable {
+                                Button {
+                                    items[index].isAvailable.toggle()
+                                } label: {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous)
+                                            .fill(item.isAvailable ? PharmacyColor.primary.opacity(0.1) : Color.clear)
+                                            .frame(width: 36, height: 36)
+
+                                        Image(systemName: item.isAvailable ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(item.isAvailable ? PharmacyColor.primary : PharmacyColor.textSecondary)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .disabled(isOfferSubmitted)
+                            }
+                        }
+
+                        if isEditable {
+                            if !item.isAvailable && !isOfferSubmitted {
+                                Button {
+                                    onSelectAlternative?(item)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "arrow.2.squarepath")
+                                            .font(.system(size: 14))
+                                        Text("pharmacy.request.select_alternative".localized)
+                                            .font(PharmacyColor.sans(14, .semibold))
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
+                                    .foregroundStyle(.white)
+                                }
+                                .buttonStyle(.plain)
+                            } else {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "box.truck.fill")
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(PharmacyColor.primary)
+                                    Text("pharmacy.request.offer_product".localized(item.name))
+                                        .font(PharmacyColor.sans(13, .semibold))
+                                        .foregroundStyle(PharmacyColor.primary)
+                                    Spacer()
+                                    Text("ID: \(item.selectedOfferProductId)")
+                                        .font(PharmacyColor.sans(12, .medium))
+                                        .foregroundStyle(PharmacyColor.textSecondary)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(PharmacyColor.primarySoft.opacity(0.3), in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
+                            }
                         }
                     }
-
-                    if index < items.count - 1 {
-                        Divider()
-                            .overlay(PharmacyColor.border)
-                    }
                 }
             }
-            .padding(.vertical, 4)
-
-            Divider()
-                .overlay(PharmacyColor.border)
-
-            VStack(spacing: 8) {
-                HStack {
-                    Text("\(Int(deliveryFee)) جنيه")
-                        .font(PharmacyColor.sans(13, .semibold))
-                        .foregroundStyle(PharmacyColor.textPrimary)
-
-                    Spacer()
-
-                    Text("رسوم التوصيل")
-                        .font(PharmacyColor.sans(13, .medium))
-                        .foregroundStyle(PharmacyColor.textSecondary)
-                }
-
-                HStack {
-                    Text("\(Int(total)) جنيه")
-                        .font(PharmacyColor.sans(16, .bold))
-                        .foregroundStyle(PharmacyColor.primary)
-
-                    Spacer()
-
-                    Text("الإجمالي")
-                        .font(PharmacyColor.sans(16, .bold))
-                        .foregroundStyle(PharmacyColor.textPrimary)
-                }
-            }
-            .padding(.top, 4)
+            .padding(PharmacySpacing.md)
+            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+                    .stroke(PharmacyColor.border, lineWidth: 1)
+            )
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
     }
 }

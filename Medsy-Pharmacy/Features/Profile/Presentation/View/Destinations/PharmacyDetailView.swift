@@ -14,44 +14,59 @@ struct PharmacyDetailView: View {
     let isLeaving: Bool
     let deleteErrorMessage: String?
     let leaveErrorMessage: String?
+    let pendingInvitations: [PharmacyInvitation]
+    let isLoadingPendingInvitations: Bool
+    let pendingInvitationDeletingId: Int?
+    let pendingInvitationsErrorMessage: String?
+    let onLoadPendingInvitations: () -> Void
+    let onRefreshPendingInvitations: () -> Void
+    let onInvitationTap: (PharmacyInvitation) -> Void
+    let onDeleteInvitation: (PharmacyInvitation) async -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onLeave: () -> Void
     let onDismissError: () -> Void
-    let onBack: () -> Void
     
     @State private var showDeleteConfirmation = false
     @State private var showLeaveConfirmation = false
 
     var body: some View {
-        ZStack {
-            PharmacyColor.bg.ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                header
-                
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: PharmacySpacing.lg) {
-                        pharmacyInfoCard
-                        
-                        if isAdmin {
-                            adminActions
-                        } else {
-                            leaveAction
-                        }
-                        
-                        if let deleteErrorMessage {
-                            errorCard(deleteErrorMessage)
-                        }
-                        
-                        if let leaveErrorMessage {
-                            errorCard(leaveErrorMessage)
-                        }
-                    }
-                    .padding(.horizontal, PharmacySpacing.md)
-                    .padding(.top, PharmacySpacing.sm)
-                    .padding(.bottom, PharmacySpacing.xl)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: PharmacySpacing.lg) {
+                pharmacyInfoCard
+
+                if isAdmin {
+                    adminActions
+                    PendingInvitationsSectionView(
+                        invitations: pendingInvitations,
+                        isLoading: isLoadingPendingInvitations,
+                        deletingInvitationId: pendingInvitationDeletingId,
+                        errorMessage: pendingInvitationsErrorMessage,
+                        onRefresh: onRefreshPendingInvitations,
+                        onInvitationTap: onInvitationTap,
+                        onDeleteInvitation: onDeleteInvitation
+                    )
+                } else {
+                    leaveAction
                 }
+
+                if let deleteErrorMessage {
+                    errorCard(deleteErrorMessage)
+                }
+
+                if let leaveErrorMessage {
+                    errorCard(leaveErrorMessage)
+                }
+            }
+            .padding(.horizontal, PharmacySpacing.md)
+            .padding(.vertical, PharmacySpacing.md)
+        }
+        .background(PharmacyColor.bg.ignoresSafeArea())
+        .navigationTitle("pharmacy_details_title".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            if isAdmin {
+                onLoadPendingInvitations()
             }
         }
         .confirmationDialog(
@@ -78,29 +93,6 @@ struct PharmacyDetailView: View {
         } message: {
             Text("pharmacy_card.leave_confirm_message".localized)
         }
-    }
-    
-    private var header: some View {
-        HStack {
-            Button(action: onBack) {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
-                    .background(PharmacyColor.surface)
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-            
-            Text("pharmacy_details_title".localized)
-                .font(PharmacyColor.sans(17, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity)
-            
-            Color.clear.frame(width: 36, height: 36)
-        }
-        .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
     }
     
     private var pharmacyInfoCard: some View {
@@ -264,7 +256,3 @@ struct PharmacyDetailView: View {
         .background(PharmacyColor.danger.opacity(0.1), in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
     }
 }
-
-
-
-

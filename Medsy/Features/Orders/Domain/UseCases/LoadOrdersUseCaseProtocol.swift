@@ -8,7 +8,7 @@
 import Foundation
 
 protocol LoadOrdersUseCaseProtocol: AnyObject {
-    func execute(statuses: [OrderStatus]?, page: Int, size: Int) async throws -> PagedResult<OrderEntity>
+    func execute(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity>
 }
 
 final class LoadOrdersUseCase: LoadOrdersUseCaseProtocol {
@@ -18,8 +18,7 @@ final class LoadOrdersUseCase: LoadOrdersUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(statuses: [OrderStatus]?, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
-        let statusParam = statuses.map { $0.map(\.rawValue).joined(separator: ",") }
-        return try await repository.fetchOrders(status: statusParam, page: page, size: size)
+    func execute(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
+        try await repository.fetchOrders(filter: filter, page: page, size: size)
     }
 }

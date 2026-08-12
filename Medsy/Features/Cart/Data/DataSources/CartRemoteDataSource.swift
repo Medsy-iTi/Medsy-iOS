@@ -12,6 +12,7 @@ protocol CartRemoteDataSourceProtocol {
     func removeItem(id: Int64) async throws -> CartDTO
     func clearCart() async throws
     func fetchItemCount() async throws -> Int
+    func fetchInteractions(language: String) async throws -> [CartInteractionWarningDTO]
 }
 
 final class CartRemoteDataSource: CartRemoteDataSourceProtocol {
@@ -61,6 +62,16 @@ final class CartRemoteDataSource: CartRemoteDataSourceProtocol {
             throw NetworkError.decodingFailed
         }
         return count
+    }
+
+    func fetchInteractions(language: String) async throws -> [CartInteractionWarningDTO] {
+        let response: CartInteractionsResponseDTO = try await networkService.request(
+            endpoint: CartEndpoint.interactions(language: language)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+        return response.data?.warnings ?? []
     }
 
     private func cart(from response: CartResponseDTO) throws -> CartDTO {

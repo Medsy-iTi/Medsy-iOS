@@ -90,6 +90,7 @@ actor CartLocalDataSource: CartLocalDataSourceProtocol {
         existingItems.forEach(context.delete)
 
         for (index, item) in cart.items.enumerated() {
+            let decodedDosage = item.dosageInfo.isEmpty ? nil : item.dosageInfo
             context.insert(
                 CachedCartItemModel(
                     cacheIdentifier: "\(accountIdentifier)|\(item.id)",
@@ -97,7 +98,10 @@ actor CartLocalDataSource: CartLocalDataSourceProtocol {
                     cartItemID: item.id,
                     productID: item.productId,
                     productName: item.productName,
-                    dosageInfo: dosageByProductID[item.productId] ?? existingDosage[item.productId] ?? "",
+                    dosageInfo: dosageByProductID[item.productId]
+                        ?? decodedDosage
+                        ?? existingDosage[item.productId]
+                        ?? "",
                     imageURL: item.imageUrl,
                     unitPrice: item.unitPrice,
                     quantity: item.quantity,
@@ -133,37 +137,45 @@ actor CartLocalDataSource: CartLocalDataSourceProtocol {
             predicate: #Predicate { $0.accountIdentifier == accountIdentifier },
             sortBy: [SortDescriptor(\.createdAt)]
         )
-        return try context.fetch(descriptor).map {
-            guard let source = CartPrescriptionSource(rawValue: $0.source) else {
-                throw CartPersistenceError.invalidPrescriptionSource
-            }
-            return CachedCartPrescriptionDTO(
-                id: $0.prescriptionID,
-                data: $0.data,
-                source: source,
-                createdAt: $0.createdAt
-            )
+        let storedPrescriptions = try context.fetch(descriptor)
+        guard let newestPrescription = storedPrescriptions.last else { return [] }
+
+        if storedPrescriptions.count > 1 {
+            storedPrescriptions.dropLast().forEach(context.delete)
+            try context.save()
         }
+
+        guard let source = CartPrescriptionSource(rawValue: newestPrescription.source) else {
+            throw CartPersistenceError.invalidPrescriptionSource
+        }
+        return [
+            CachedCartPrescriptionDTO(
+                id: newestPrescription.prescriptionID,
+                data: newestPrescription.data,
+                source: source,
+                createdAt: newestPrescription.createdAt
+            )
+        ]
     }
 
     func addPrescription(_ prescription: CachedCartPrescriptionDTO) throws {
         let accountIdentifier = try accountScopeProvider.currentIdentifier()
         let context = ModelContext(modelContainer)
+        let descriptor = FetchDescriptor<CachedCartPrescriptionModel>(
+            predicate: #Predicate { $0.accountIdentifier == accountIdentifier }
+        )
+        try context.fetch(descriptor).forEach(context.delete)
         context.insert(model(from: prescription, accountIdentifier: accountIdentifier))
         try context.save()
     }
 
-    func replacePrescription(id: UUID, with prescription: CachedCartPrescriptionDTO) throws {
+    func replacePrescription(id _: UUID, with prescription: CachedCartPrescriptionDTO) throws {
         let accountIdentifier = try accountScopeProvider.currentIdentifier()
         let context = ModelContext(modelContainer)
         let descriptor = FetchDescriptor<CachedCartPrescriptionModel>(
-            predicate: #Predicate {
-                $0.accountIdentifier == accountIdentifier && $0.prescriptionID == id
-            }
+            predicate: #Predicate { $0.accountIdentifier == accountIdentifier }
         )
-        if let existing = try context.fetch(descriptor).first {
-            context.delete(existing)
-        }
+        try context.fetch(descriptor).forEach(context.delete)
         context.insert(model(from: prescription, accountIdentifier: accountIdentifier))
         try context.save()
     }
