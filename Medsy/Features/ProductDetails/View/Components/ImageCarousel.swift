@@ -10,7 +10,8 @@ import SwiftUI
 struct ImageCarousel: View {
     let images: [String]
     @Binding var selectedIndex: Int
-    @Binding var isFavorite: Bool
+    let isFavorite: Bool
+    let onToggleFavorite: () -> Void
     var showFavorite: Bool = true
     var height: CGFloat = 240
 
@@ -46,7 +47,11 @@ struct ImageCarousel: View {
 			.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
 
             if showFavorite {
-                FavoriteButton(isFavorite: $isFavorite, size: 40)
+                FavoriteButton(
+                    isFavorite: isFavorite,
+                    size: 40,
+                    action: onToggleFavorite
+                )
                     .padding(MedsySpacing.sm)
             }
         }

@@ -29,10 +29,16 @@ struct CartPrescriptionAttachment: Identifiable, Equatable {
 struct CartRequestDraft: Equatable {
     let items: [CartDisplayItem]
     let prescriptions: [CartPrescriptionAttachment]
+    let pharmacistNote: String
 
-    init(items: [CartDisplayItem], prescriptions: [CartPrescriptionAttachment]) {
+    init(
+        items: [CartDisplayItem],
+        prescriptions: [CartPrescriptionAttachment],
+        pharmacistNote: String = ""
+    ) {
         self.items = items
         self.prescriptions = prescriptions
+        self.pharmacistNote = pharmacistNote
     }
 
 }

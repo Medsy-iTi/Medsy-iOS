@@ -7,14 +7,9 @@
 
 import Foundation
 
-enum CompleteRequestReceiveMethod: String, CaseIterable, Equatable {
-    case delivery
-    case pickup
-}
-
 enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
     case cash = "CASH"
-    case online = "CARD"
+    case visa = "CARD"
 }
 
 struct CompleteRequestLocation: Equatable {
@@ -62,15 +57,18 @@ struct CompleteRequestDraft: Equatable {
     let items: [CompleteRequestItem]
     let prescriptionCount: Int
     let prescriptionData: Data?
+    let pharmacistNote: String
 
     init(
         items: [CompleteRequestItem],
         prescriptionCount: Int,
-        prescriptionData: Data? = nil
+        prescriptionData: Data? = nil,
+        pharmacistNote: String = ""
     ) {
         self.items = items
         self.prescriptionCount = prescriptionCount
         self.prescriptionData = prescriptionData
+        self.pharmacistNote = pharmacistNote
     }
 
     var itemCount: Int {
@@ -87,9 +85,8 @@ struct CompleteRequestDraft: Equatable {
 }
 
 struct CompleteRequestSubmission: Equatable {
-    let receiveMethod: CompleteRequestReceiveMethod
     let deliveryLocation: CompleteRequestLocation?
-    let paymentMethod: CompleteRequestPaymentMethod?
+    let paymentMethod: CompleteRequestPaymentMethod
     let itemCount: Int
     let prescriptionCount: Int
     let estimatedTotal: Double
@@ -97,14 +94,11 @@ struct CompleteRequestSubmission: Equatable {
 
 enum CompleteRequestValidationError: Hashable {
     case locationRequired
-    case pickupUnsupported
 
     var localizedMessage: String {
         switch self {
         case .locationRequired:
             "complete_request.validation.location".localized
-        case .pickupUnsupported:
-            "complete_request.validation.pickup_unsupported".localized
         }
     }
 }

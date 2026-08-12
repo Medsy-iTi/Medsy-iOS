@@ -2,7 +2,7 @@
 //  MedsyLottieView.swift
 //  Medsy
 //
-//  Created by Codex on 26/07/2026.
+//  Created by Ahmed Elkady on 26/07/2026.
 //
 
 import Lottie
@@ -13,12 +13,14 @@ struct MedsyLottieView: UIViewRepresentable {
     let animationName: String
     var loopMode: LottieLoopMode = .loop
     var contentMode: UIView.ContentMode = .scaleAspectFit
+    var animationSpeed: CGFloat = 1
 
     func makeUIView(context: Context) -> LottieAnimationView {
         let animationView = LottieAnimationView()
         animationView.backgroundBehavior = .pauseAndRestore
         animationView.contentMode = contentMode
         animationView.loopMode = loopMode
+        animationView.animationSpeed = animationSpeed
         animationView.animation = loadAnimation()
         animationView.play()
         return animationView
@@ -27,6 +29,7 @@ struct MedsyLottieView: UIViewRepresentable {
     func updateUIView(_ animationView: LottieAnimationView, context: Context) {
         animationView.contentMode = contentMode
         animationView.loopMode = loopMode
+        animationView.animationSpeed = animationSpeed
 
         if animationView.animation == nil {
             animationView.animation = loadAnimation()

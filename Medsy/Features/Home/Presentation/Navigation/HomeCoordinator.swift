@@ -10,13 +10,12 @@ import SwiftUI
 
 enum HomeRoute: Hashable {
     case search(String)
+    case favorites
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
     case offerResult(OfferResult, Int)
-    // OLD:
-    // case orderReview(OfferDetailPresentationModel)
-    case orderReview(OfferDetailPresentationModel, Int? = nil)
+    case orderReview(OfferDetailPresentationModel, Int? = nil, SelectPharmacyResponseDTO? = nil)
     case payment(ConfirmOfferResult, OfferDetailPresentationModel)
     case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
     case medicineAnalyze
@@ -29,6 +28,10 @@ final class HomeCoordinator {
 
     func openSearch() {
         path.append(HomeRoute.search(""))
+    }
+
+    func openFavorites() {
+        path.append(HomeRoute.favorites)
     }
 
     func showPrescription() {
@@ -47,13 +50,8 @@ final class HomeCoordinator {
         path.append(HomeRoute.offerResult(result, requestId))
     }
 
-    // OLD:
-    // func openOrderReview(_ offerDetail: OfferDetailPresentationModel) {
-    //     path.append(HomeRoute.orderReview(offerDetail))
-    // }
-
-    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil) {
-        path.append(HomeRoute.orderReview(offerDetail, requestId))
+    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil, selectResult: SelectPharmacyResponseDTO? = nil) {
+        path.append(HomeRoute.orderReview(offerDetail, requestId, selectResult))
     }
 
     func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
@@ -86,6 +84,10 @@ final class HomeCoordinator {
         if !path.isEmpty {
             path.removeLast()
         }
+    }
+
+    func goToHome() {
+        path = NavigationPath()
     }
 }
 
@@ -122,6 +124,7 @@ struct HomeCoordinatorView: View {
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
+                onFavoritesTap: coordinator.openFavorites,
                 onCompareOffers: coordinator.openOffersList,
                 onOpenOfferResult: coordinator.openOfferResult,
                 homeAddress: homeAddress,
@@ -133,6 +136,16 @@ struct HomeCoordinatorView: View {
                     SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                         coordinator.path.append(dest)
                     })
+                case .favorites:
+                    FavoriteView(
+                        onBack: coordinator.goBack,
+                        onBrowse: coordinator.openSearch,
+                        onSelectMedicine: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
+                            )
+                        }
+                    )
                 case .prescription:
                     PrescriptionCoordinatorView(
                         onExit: coordinator.goBack,
@@ -151,8 +164,8 @@ struct HomeCoordinatorView: View {
                         offer: offer,
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
-                        onSelectOffer: { updatedDetail in
-                            coordinator.openOrderReview(updatedDetail)
+                        onSelectOffer: { updatedDetail, selectResult in
+                            coordinator.openOrderReview(updatedDetail, selectResult: selectResult)
                         }
                     )
                 case let .offerResult(result, requestId):
@@ -161,15 +174,16 @@ struct HomeCoordinatorView: View {
                         requestId: requestId,
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
-                        onSelectOffer: { updatedDetail in
-                            coordinator.openOrderReview(updatedDetail, requestId: requestId)
+                        onSelectOffer: { updatedDetail, selectResult in
+                            coordinator.openOrderReview(updatedDetail, requestId: requestId, selectResult: selectResult)
                         }
                     )
-                case let .orderReview(offerDetail, requestId):
+                case let .orderReview(offerDetail, requestId, selectResult):
                     OrderReviewView(
                         offerDetail: offerDetail,
                         requestId: requestId,
-                        onBack: coordinator.goBack,
+                        selectResult: selectResult,
+                        onBack: coordinator.goToHome,
                         onConfirmOrder: { result in
                             coordinator.openPayment(result, offerDetail: offerDetail)
                         }

@@ -19,11 +19,43 @@ final class OfferResultRepository: OfferResultRepositoryProtocol {
         return OfferResultMapper.map(dto)
     }
 
-    func confirmOffer(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferResult {
-        let dto = try await remoteDataSource.confirmOffer(
+    func streamOfferResult(requestId: Int) -> AsyncThrowingStream<OfferResult, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    let stream = remoteDataSource.streamOfferResult(requestId: requestId)
+                    for try await dto in stream {
+                        if Task.isCancelled { break }
+                        let domainModel = OfferResultMapper.map(dto)
+                        continuation.yield(domainModel)
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> SelectPharmacyResponseDTO {
+        let itemDTOs = selectedItems.map { ConfirmOfferItemDTO(requestItemId: $0.requestItemId, productId: $0.productId) }
+        return try await remoteDataSource.selectPharmacy(
             requestId: requestId,
-            selections: selections
+            selectedItems: itemDTOs
         )
-        return OfferResultMapper.map(dto)
+    }
+
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO {
+        let items = selectedRequestItemIds.map { ConfirmSelectedItem(requestItemId: $0, productId: nil) }
+        return try await selectPharmacy(requestId: requestId, selectedItems: items)
+    }
+
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResult {
+        let dto = try await remoteDataSource.confirmOffer(requestId: requestId, fulfillmentMethod: fulfillmentMethod)
+        return OfferResultMapper.map(dto, requestId: requestId)
     }
 }

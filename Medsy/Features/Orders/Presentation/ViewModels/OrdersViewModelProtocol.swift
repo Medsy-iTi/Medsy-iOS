@@ -18,6 +18,9 @@ enum OrderDetailEvent {
     case load(orderId: Int)
     case retry(orderId: Int)
     case reorder
+    case selectPharmacy(Int)
+    case showPharmacyLocation(Int)
+    case openDirections
     case dismissReorderFeedback
 }
 
@@ -55,5 +58,8 @@ protocol OrderDetailViewModelProtocol: AnyObject {
     var detailState: OrderDetailViewState { get }
     var reorderState: ReorderState { get }
     var paymentAction: PaymentOrderActionPresentation? { get }
+    var selectedPharmacyID: Int? { get }
+    var deliveryLocation: OrderCoordinatePresentation? { get }
+    var routeState: OrderRoutePresentationState { get }
     func handle(_ event: OrderDetailEvent)
 }

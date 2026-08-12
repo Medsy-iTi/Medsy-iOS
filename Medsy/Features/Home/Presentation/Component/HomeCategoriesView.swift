@@ -7,6 +7,7 @@ import SwiftUI
 
 struct HomeCategoriesView: View {
     private let categories: [Category]
+    @ObservedObject private var appSettings = AppSettings.shared
 
     private var visibleCategories: [Category] {
         Array(categories.prefix(9))
@@ -41,14 +42,14 @@ struct HomeCategoriesView: View {
                             if visibleCategories.indices.contains(index) {
                                 let category = visibleCategories[index]
                                 NavigationLink(destination: ProductsView(category: category)) {
-                                    CategoryGridCard(category: category, artworkHeight: 96)
+                                    CategoryGridCard(category: category, style: .home)
                                 }
                                 .buttonStyle(.plain)
                                 .frame(maxWidth: .infinity)
                             } else {
                                 Color.clear
                                     .frame(maxWidth: .infinity)
-                                    .frame(height: 138)
+                                    .frame(height: 130)
                                     .accessibilityHidden(true)
                             }
                         }
@@ -58,5 +59,41 @@ struct HomeCategoriesView: View {
             .frame(maxWidth: .infinity)
             .padding(.horizontal)
         }
+        .padding(.top, MedsySpacing.md)
+        .padding(.bottom, MedsySpacing.lg)
+        .background(homeGridBackground)
+        .id(appSettings.isDarkMode)
+    }
+
+    private var homeGridBackground: some View {
+        ZStack {
+            sectionBaseColor
+
+            if appSettings.isDarkMode {
+                LinearGradient(
+                    colors: [
+                        AppColor.green.opacity(0.12),
+                        sectionBaseColor.opacity(0.97),
+                        sectionBaseColor
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .blur(radius: 20)
+            } else {
+                LinearGradient(
+                    colors: [
+                        Color(hex: "#EAF7F0"),
+                        Color(hex: "#F6FBF8")
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+    }
+
+    private var sectionBaseColor: Color {
+        appSettings.isDarkMode ? Color(hex: "#0B1014") : Color(hex: "#F6FBF8")
     }
 }

@@ -17,6 +17,7 @@ enum CartEvent: Equatable {
     case setPrescription(Data, CartPrescriptionSource)
     case replacePrescription(id: UUID, data: Data, source: CartPrescriptionSource)
     case removePrescriptionByID(UUID)
+    case updatePharmacistNote(String)
     case clear
     case retry
     case dismissFeedback
@@ -63,6 +64,7 @@ protocol CartViewModelProtocol: AnyObject {
     var interactionWarnings: [CartInteractionWarning] { get }
     var interactionsState: CartInteractionsState { get }
     var prescriptions: [CartPrescriptionAttachment] { get }
+    var pharmacistNote: String { get }
     var itemCount: Int { get }
     var estimatedTotal: Double { get }
     var hasContent: Bool { get }

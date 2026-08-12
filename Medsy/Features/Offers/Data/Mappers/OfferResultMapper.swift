@@ -30,22 +30,22 @@ enum OfferResultMapper {
         )
     }
 
-    static func map(_ dto: ConfirmOfferDataDTO) -> ConfirmOfferResult {
-        let orders = dto.selection.orders.map { orderDTO in
+    static func map(_ dto: ConfirmOfferResponseDTO, requestId: Int) -> ConfirmOfferResult {
+        let orders = [
             ConfirmOfferOrder(
-                orderId: orderDTO.orderId,
-                pharmacyId: orderDTO.pharmacyId,
-                pharmacyName: orderDTO.pharmacyName,
-                itemIds: orderDTO.itemIds.isEmpty ? dto.selectedRequestItemIds : orderDTO.itemIds
+                orderId: dto.masterOrderId,
+                pharmacyId: 0,
+                pharmacyName: "",
+                itemIds: []
             )
-        }
+        ]
         return ConfirmOfferResult(
-            requestId: dto.selection.requestId,
+            requestId: requestId,
             orders: orders,
-            masterOrderId: dto.fulfillment.masterOrderId,
-            orderStatus: MasterOrderStatus(rawValue: dto.fulfillment.orderStatus.uppercased()) ?? .unknown,
-            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.fulfillment.paymentMethod.uppercased()) ?? .unknown,
-            paymentStatus: dto.fulfillment.paymentStatus.flatMap {
+            masterOrderId: dto.masterOrderId,
+            orderStatus: MasterOrderStatus(rawValue: dto.orderStatus.uppercased()) ?? .unknown,
+            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.paymentMethod.uppercased()) ?? .unknown,
+            paymentStatus: dto.paymentStatus.flatMap {
                 MasterOrderPaymentStatus(rawValue: $0.uppercased()) ?? .unknown
             }
         )

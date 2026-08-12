@@ -36,17 +36,17 @@
 /* Home */
 "home.deliveryTo" = "التوصيل إلى";
 "home.searchPlaceholder" = "ابحث باسم الدواء";
-"home.promoTitle" = "صحتك تهمنا";
-"home.promoDiscount" = "خصم حتى 30%";
-"home.promoTarget" = "على مجموعة مختارة";
+"home.promoTitle" = "ابحث عن أي دواء";
+"home.promoDiscount" = "بحث سريع بنتائج ذكية";
+"home.promoTarget" = "اطّلع على البدائل إذا لم يكن الدواء متوفرًا";
 "home.shopNow" = "تسوق الآن";
-"home.promo2.title" = "عروض الفيتامينات";
-"home.promo2.discount" = "اشترِ 1 واحصل على 1 مجاناً";
-"home.promo2.target" = "لفترة محدودة";
+"home.promo2.title" = "ارفع وصفتك الطبية";
+"home.promo2.discount" = "وسنتولى الباقي";
+"home.promo2.target" = "لا مزيد من الحيرة بسبب خط الأطباء";
 "home.promo2.button" = "اكتشف الآن";
-"home.promo3.title" = "توصيل سريع ومجاني";
-"home.promo3.discount" = "للطلبات فوق 200 جنيه";
-"home.promo3.target" = "تطبق الشروط والأحكام";
+"home.promo3.title" = "استشر طبيبًا";
+"home.promo3.discount" = "احصل على استشارة في أي وقت";
+"home.promo3.target" = "تحدث مع أطباء معتمدين فورًا";
 "home.promo3.button" = "اطلب الآن";
 "home.weMadeOrderEasy" = "سهلنا الطلب عليك";
 "home.orderByPrescription" = "اطلب بالروشتة";
@@ -229,6 +229,20 @@
 "accessibility.back" = "رجوع";
 "accessibility.share" = "مشاركة";
 
+/* Favorites */
+"favorites.title" = "المفضلة";
+"favorites.open.accessibility" = "فتح المفضلة";
+"favorites.count.accessibility" = "%d من الأدوية المفضلة";
+"favorites.empty.title" = "لا توجد أدوية مفضلة بعد";
+"favorites.empty.subtitle" = "احفظ الأدوية باستخدام زر القلب لتجدها هنا بسهولة.";
+"favorites.empty.action" = "تصفح الأدوية";
+"favorites.error.title" = "تعذر تحميل المفضلة";
+"favorites.error.subtitle" = "تعذر قراءة الأدوية المحفوظة. حاول مرة أخرى.";
+"favorites.persistence_error.title" = "تعذر تحديث المفضلة";
+"favorites.persistence_error.subtitle" = "تعذر حفظ التغيير في المفضلة. حاول مرة أخرى.";
+"favorites.offline.title" = "لا يوجد اتصال بالإنترنت";
+"favorites.offline.subtitle" = "اتصل بالإنترنت لفتح تفاصيل الدواء.";
+
 /* Tab bar */
 "tab.home" = "الرئيسية";
 "tab.favorites" = "المفضلة";
@@ -247,10 +261,17 @@
 "cart.remove" = "حذف العنصر";
 "cart.estimated_total" = "الإجمالي التقديري";
 "cart.estimated_total_disclaimer" = "الأسعار تقريبية. السعر النهائي يتم تأكيده من الصيدلية.";
+"cart.total_price" = "إجمالي السعر";
+"cart.note.add" = "إضافة ملاحظة للصيدلي";
+"cart.note.edit" = "تعديل ملاحظة الصيدلي";
+"cart.note.title" = "ملاحظة للصيدلي";
+"cart.note.hint" = "أضف أي تفاصيل يجب أن يراجعها الصيدلي";
+"cart.note.save" = "حفظ";
+"cart.note.cancel" = "إلغاء";
 "cart.continue" = "متابعة";
-"cart.empty.title" = "السلة فارغة";
-"cart.empty.message" = "ابحث عن الأدوية أو امسح روشتة لإضافة الأدوية أولًا.";
-"cart.empty.search" = "ابحث عن أدوية";
+"cart.empty.title" = "سلة الأدوية فارغة";
+"cart.empty.message" = "أضف دواءً واحدًا على الأقل للمتابعة. الروشتة والملاحظات تفاصيل مساعدة فقط.";
+"cart.empty.search" = "ابحث عن دواء";
 "cart.empty.scan_prescription" = "مسح الروشتة";
 "cart.error.title" = "تعذر تحميل السلة";
 "cart.removed_message" = "تم حذف %@";
@@ -340,6 +361,8 @@
 "profile.section.about" = "حول Medsy";
 "profile.personal_info" = "البيانات الشخصية";
 "profile.personal_info.subtitle" = "تعديل الاسم والبيانات الأساسية";
+"profile.favorites" = "الأدوية المفضلة";
+"profile.favorites.subtitle" = "عرض الأدوية المحفوظة";
 "profile.notifications" = "الإشعارات";
 "profile.notifications.subtitle" = "إدارة إشعارات الطلبات والعروض";
 "profile.order_history" = "الطلبات";
@@ -470,6 +493,7 @@
 "orders.filter.completed"            = "المنتهية";
 "orders.filter.cancelled"            = "ملغاة";
 "orders.status.pending"              = "تم تأكيد الطلب";
+"orders.status.pending_payment"      = "في انتظار الدفع";
 "orders.status.confirmed"            = "تم تأكيد الطلب";
 "orders.status.processing"           = "جاري التجهيز";
 "orders.status.shipped"              = "تم الشحن";
@@ -478,11 +502,28 @@
 "orders.status.rejected"             = "مرفوض";
 "orders.status.preparing"            = "جاري التجهيز";
 "orders.status.ready_for_pickup"     = "جاهز للاستلام";
+"orders.status.ready_for_delivery"   = "جاهز للتوصيل";
 "orders.status.out_for_delivery"     = "خرج للتوصيل";
+"orders.product_unavailable"         = "الدواء لم يعد متاحًا";
+"orders.detail.request_number"       = "الطلب رقم %d";
+"orders.detail.payment"              = "الدفع";
+"orders.detail.payment_method"       = "الطريقة";
+"orders.detail.payment_status"       = "الحالة";
+"orders.detail.paid_at"              = "تم الدفع في";
+"orders.detail.payment_expires_at"   = "تنتهي مهلة الدفع";
+"orders.payment_method.cash"         = "نقدًا";
+"orders.payment_method.card"         = "بطاقة";
+"orders.payment_status.unpaid"       = "غير مدفوع";
+"orders.payment_status.pending"      = "قيد الانتظار";
+"orders.payment_status.paid"         = "مدفوع";
+"orders.payment_status.failed"       = "فشل";
+"orders.payment_status.canceled"     = "ملغى";
+"orders.payment_status.expired"      = "منتهي";
 "orders.pharmacy_fallback"           = "صيدلية #%d";
 "orders.product_fallback"            = "منتج #%d";
 "orders.fulfillment.delivery"        = "توصيل";
 "orders.fulfillment.pickup"          = "استلام من الصيدلية";
+"orders.fulfillment.not_selected"    = "لم يتم التحديد بعد";
 "orders.items_count"                 = "%d منتجات";
 "orders.item_count"                  = "%d منتج";
 "orders.price_format"                = "%.0f جنيه";
@@ -509,6 +550,7 @@
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
 "orders.detail.status"               = "الحالة";
+"orders.detail.delivery_status"      = "حالة الطلب";
 "orders.detail.items"                = "سعر المنتجات";
 "orders.detail.items_label"          = "المنتجات";
 "orders.detail.item_unit_price"      = "%.0f جنيه للقطعة";
@@ -522,6 +564,17 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
+"orders.detail.delivery_location"    = "موقع التوصيل";
+"orders.detail.location_prompt"      = "اعرض الصيدلية على الخريطة وارسم المسار إلى موقع التوصيل المحفوظ لهذا الطلب.";
+"orders.detail.show_location_path"   = "عرض الموقع والمسار";
+"orders.detail.locating"             = "جارٍ تحميل موقع التوصيل…";
+"orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
+"orders.detail.location_permission_denied" = "إذن الموقع غير متاح.";
+"orders.detail.location_unavailable" = "موقع التوصيل لهذا الطلب غير متاح. لا يزال بإمكانك فتح الصيدلية في الخرائط.";
+"orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
+"orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
+"orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
 "orders.reorder.go_to_cart"          = "الذهاب للسلة";
 "orders.reorder.continue_shopping"   = "متابعة التصفح";
 "orders.reorder.success.title"       = "تمت الإضافة بنجاح";
@@ -801,12 +854,82 @@
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
 
+"tab.medsy_ai"       = "مساعد ميدسي";
 // MARK: - Chatbot – AI Live
 
 "chatbot.ai.thinking"         = "ميدسي AI يفكر…";
 "chatbot.error.generic"        = "حدث خطأ ما. يرجى المحاولة مجدداً.";
 "chatbot.error.dismiss"        = "إغلاق";
+"chatbot.specialization.header" = "الأطباء المقترحون";
 "chatbot.sources.match"        = "✓ %d%% تطابق";
 "chatbot.sources.eyebrow"      = "مقترح بالذكاء الاصطناعي";
 "chatbot.empty.title"          = "اسأل ميدسي AI";
 "chatbot.empty.subtitle"       = "اسألني عن الأدوية أو الأعراض أو وصفتك الطبية.";
+
+// MARK: - Medsy AI — New Chat + History
+"chatbot.new_chat"                    = "محادثة جديدة";
+"chatbot.new_chat.confirm"             = "بدء محادثة جديدة؟ سيتم مسح سجل المحادثة الحالية.";
+"chatbot.history.loading"              = "جارٍ تحميل المحادثة…";
+"chatbot.history.failed"               = "تعذّر تحميل السجل. يمكنك إرسال رسالة.";
+"chatbot.send.wait_for_history"        = "جارٍ تحميل السجل…";
+
+// MARK: - Medsy AI — Mic + Camera
+"chatbot.mic.tap_to_speak"            = "اضغط للتحدث";
+"chatbot.mic.listening"               = "جارٍ الاستماع…";
+"chatbot.mic.error"                   = "تعذّر الوصول للميكروفون. تحقق من الإعدادات.";
+"chatbot.camera.select"               = "إرفاق صورة";
+"chatbot.camera.image_preview"        = "📷 صورة";
+
+// MARK: - Medsy AI — Suggestions (empty-state grid)
+"chatbot.suggestion.symptoms"            = "وصف الأعراض";
+"chatbot.suggestion.symptoms.subtitle"   = "سأقترح الدواء المناسب";
+"chatbot.suggestion.symptoms.prompt"     = "عندي صداع وحرارة، ماذا آخذ؟";
+"chatbot.suggestion.prescription"        = "قراءة الروشتة";
+"chatbot.suggestion.prescription.subtitle" = "ارفع صورة الروشتة";
+"chatbot.suggestion.prescription.prompt" = "هل يمكنك قراءة هذه الروشتة وشرحها لي؟";
+"chatbot.suggestion.order"              = "طلب دواء";
+"chatbot.suggestion.order.subtitle"     = "ابحث وأضف للسلة مباشرة";
+"chatbot.suggestion.order.prompt"       = "أحتاج بنادول إكسترا";
+"chatbot.suggestion.reminder"           = "ضبط تذكير";
+"chatbot.suggestion.reminder.subtitle"  = "سأذكرك بتناول دوائك";
+"chatbot.suggestion.reminder.prompt"    = "ذكرني بتناول دوائي يومياً الساعة ٩ صباحاً";
+"chatbot.suggestion.browse"             = "تصفّح الأقسام";
+"chatbot.suggestion.browse.subtitle"    = "اكتشف جميع أقسام الأدوية";
+"chatbot.suggestion.browse.prompt"      = "أرني جميع أقسام الأدوية";
+"chatbot.suggestion.doctor"             = "إيجاد طبيب";
+"chatbot.suggestion.doctor.subtitle"    = "توصيات أخصائيين";
+"chatbot.suggestion.doctor.prompt"      = "أحتاج طبيب قلب";
+"chatbot.suggestion.emergency"          = "أرقام الطوارئ";
+"chatbot.suggestion.emergency.subtitle" = "إسعاف، شرطة، إطفاء";
+"chatbot.suggestion.emergency.prompt"   = "ما هي أرقام الطوارئ التي يجب أن أعرفها؟";
+
+// MARK: - Medsy AI — Cart success action
+"chatbot.cart_success.title"           = "تمت الإضافة لسلتك";
+"chatbot.cart_success.subtitle"        = "×%d منتج · %d في السلة";
+"chatbot.cart_success.view_cart"       = "عرض السلة";
+
+// MARK: - Medsy AI — Confirm request action
+"chatbot.confirm_request.title"        = "طلبك جاهز";
+"chatbot.confirm_request.subtitle"     = "أكمل تفاصيل التوصيل والدفع";
+"chatbot.confirm_request.action"       = "تأكيد الطلب";
+
+// MARK: - Medsy AI — Reminder bubble
+"chatbot.reminder.bubble_title"        = "تم ضبط التذكير";
+
+// MARK: - Medsy AI — Emergency call button
+"chatbot.emergency.call"              = "اتصال";
+"chatbot.emergency.title"             = "خدمات الطوارئ";
+"chatbot.emergency.ambulance"         = "إسعاف";
+"chatbot.emergency.police"            = "شرطة";
+"chatbot.emergency.fire"              = "إطفاء";
+
+// MARK: - Medsy AI — Disclaimer row
+"chatbot.disclaimer.row"              = "ⓘ للاستخدام المعلوماتي فقط";
+
+// MARK: - Medsy AI — AI offline window
+"chatbot.error.ai_offline"            = "Medsy AI غير متاح من ١١ م حتى ٨ ص. يرجى المحاولة بعد الساعة ٨:٠٠ صباحاً.";
+
+// MARK: - Medsy AI — Product card
+"chatbot.product.add_to_cart"         = "أضف للسلة";
+"chatbot.product.details"             = "تفاصيل";
+"chatbot.product.rx_only"             = "بوصفة طبية فقط";

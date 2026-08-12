@@ -12,7 +12,6 @@ import Observation
 @Observable
 final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     let draft: CompleteRequestDraft
-    var receiveMethod: CompleteRequestReceiveMethod = .delivery
     var paymentMethod: CompleteRequestPaymentMethod = .cash
     private(set) var savedAddress: String?
     private(set) var deliveryLocation: CompleteRequestLocation?
@@ -28,6 +27,7 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private let submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol
     private let statusStore: UserDefaultsStatusStoreProtocol?
     private let onRequestCreated: (CompleteRequestSubmission) async -> Bool
+    private let now: () -> Date
     private var hasLoadedAddress = false
 
     init(
@@ -35,21 +35,16 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         getCustomerProfileUseCase: GetCustomerProfileUseCaseProtocol,
         submitCompleteRequestUseCase: SubmitCompleteRequestUseCaseProtocol,
         statusStore: UserDefaultsStatusStoreProtocol? = nil,
+        now: @escaping () -> Date = Date.init,
         onRequestCreated: @escaping (CompleteRequestSubmission) async -> Bool
     ) {
         self.draft = draft
+        self.notes = draft.pharmacistNote
         self.getCustomerProfileUseCase = getCustomerProfileUseCase
         self.submitCompleteRequestUseCase = submitCompleteRequestUseCase
         self.statusStore = statusStore
+        self.now = now
         self.onRequestCreated = onRequestCreated
-    }
-
-    var showsDeliveryDetails: Bool {
-        receiveMethod == .delivery
-    }
-
-    var showsOnlinePaymentInfo: Bool {
-        showsDeliveryDetails && paymentMethod == .online
     }
 
     var canSubmit: Bool {
@@ -84,11 +79,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         }
     }
 
-    func selectReceiveMethod(_ method: CompleteRequestReceiveMethod) {
-        receiveMethod = method
-        clearValidationFeedback()
-    }
-
     func selectPaymentMethod(_ method: CompleteRequestPaymentMethod) {
         paymentMethod = method
         clearValidationFeedback()
@@ -115,11 +105,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         validationErrors = errors
         submissionErrorMessage = nil
         guard errors.isEmpty else {
-            if errors.contains(.pickupUnsupported) {
-                submissionErrorMessage = CompleteRequestValidationError
-                    .pickupUnsupported
-                    .localizedMessage
-            }
             return false
         }
 
@@ -132,7 +117,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         }
 
         let submission = CompleteRequestSubmission(
-            receiveMethod: receiveMethod,
             deliveryLocation: deliveryLocation,
             paymentMethod: paymentMethod,
             itemCount: draft.itemCount,
@@ -141,13 +125,14 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         )
 
         if submittedRequest == nil {
+            let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
             do {
                 let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
                         deliveryLatitude: deliveryLocation.latitude,
-                                       deliveryLongitude: deliveryLocation.longitude,
-                                       deliveryAddress: deliveryLocation.address,
-                        notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
+                        deliveryLongitude: deliveryLocation.longitude,
+                        deliveryAddress: deliveryLocation.address,
+                        notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
                         paymentMethod: paymentMethod.rawValue,
                         prescriptionData: draft.prescriptionData
                     )
@@ -168,13 +153,10 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     }
 
     private var currentValidationErrors: [CompleteRequestValidationError] {
-        guard receiveMethod == .delivery else { return [.pickupUnsupported] }
-
         var errors: [CompleteRequestValidationError] = []
         if deliveryLocation == nil {
             errors.append(.locationRequired)
         }
-
         return errors
     }
 

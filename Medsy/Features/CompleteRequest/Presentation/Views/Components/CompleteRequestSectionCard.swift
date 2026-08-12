@@ -36,5 +36,10 @@ struct CompleteRequestSectionCard<Content: View>: View {
             RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
                 .stroke(AppColor.border, lineWidth: 1)
         }
+        .shadow(
+            color: AppSettings.shared.isDarkMode ? .clear : AppColor.green.opacity(0.06),
+            radius: 10,
+            y: 4
+        )
     }
 }

@@ -47,6 +47,8 @@ final class ProfileDataContractTests: XCTestCase {
 
     func testUpdateRequestOmitsUnchangedValues() throws {
         let input = UpdateCustomerProfileInput(
+            firstName: "",
+            lastName: "",
             homeAddress: "Nasr City",
             homeLatitude: 30.0444,
             homeLongitude: 31.2357,
@@ -73,6 +75,8 @@ final class ProfileDataContractTests: XCTestCase {
     private func emptyUpdateRequest() -> UpdateCustomerProfileRequestDTO {
         UpdateCustomerProfileRequestDTO(
             input: UpdateCustomerProfileInput(
+                firstName: "",
+                lastName: "",
                 homeAddress: nil,
                 homeLatitude: nil,
                 homeLongitude: nil,

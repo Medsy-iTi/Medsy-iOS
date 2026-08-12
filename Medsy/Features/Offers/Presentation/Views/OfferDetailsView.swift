@@ -12,7 +12,8 @@ struct OfferDetailsView: View {
     var onPrescriptionTap: (() -> Void)? = nil
     // OLD:
     // var onSelectOffer: (() -> Void)? = nil
-    var onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
+    var onSelectOffer: ((OfferDetailPresentationModel, SelectPharmacyResponseDTO) -> Void)? = nil
+    @State private var hasRedirected = false
 
     init(
         offer: OfferPresentationModel? = nil,
@@ -20,7 +21,7 @@ struct OfferDetailsView: View {
         requestId: Int? = nil,
         onBack: @escaping () -> Void,
         onPrescriptionTap: (() -> Void)? = nil,
-        onSelectOffer: ((OfferDetailPresentationModel) -> Void)? = nil
+        onSelectOffer: ((OfferDetailPresentationModel, SelectPharmacyResponseDTO) -> Void)? = nil
     ) {
         _viewModel = State(
             initialValue: OfferDetailsViewModel(
@@ -99,7 +100,11 @@ struct OfferDetailsView: View {
 
             VStack(spacing: 0) {
                 Button {
-                    onSelectOffer?(viewModel.offerDetail)
+                    Task {
+                        if let selectResult = await viewModel.selectOffer() {
+                            onSelectOffer?(viewModel.offerDetail, selectResult)
+                        }
+                    }
                 } label: {
                     HStack {
                         if viewModel.isConfirming {
@@ -121,7 +126,7 @@ struct OfferDetailsView: View {
                             .fill(AppColor.green)
                     )
                 }
-                .disabled(viewModel.isConfirming)
+                .disabled(viewModel.isConfirming || viewModel.isConfirmed)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
@@ -130,5 +135,14 @@ struct OfferDetailsView: View {
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
+        .onAppear {
+            if !hasRedirected, let reqId = viewModel.requestId {
+                if let savedData = UserDefaults.standard.data(forKey: "request.selectResult.\(reqId)"),
+                   let selectResult = try? JSONDecoder().decode(SelectPharmacyResponseDTO.self, from: savedData) {
+                    hasRedirected = true
+                    onSelectOffer?(viewModel.offerDetail, selectResult)
+                }
+            }
+        }
     }
 }

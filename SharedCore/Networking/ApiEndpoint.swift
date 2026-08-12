@@ -27,6 +27,12 @@ struct MultipartFormPart {
     }
 }
 
+struct SSEEvent: Equatable, Sendable {
+    let event: String
+    let data: String
+}
+
+
 protocol ApiEndpoint {
     var baseURL: String? { get }
     var path: String { get }

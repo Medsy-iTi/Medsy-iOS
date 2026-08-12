@@ -211,6 +211,16 @@ private final class NetworkServiceSpy: NetworkServiceProtocol {
         }
         return response
     }
+
+    func requestData(endpoint: ApiEndpoint) async throws -> Data {
+        Data()
+    }
+
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
+        AsyncThrowingStream { continuation in
+            continuation.finish()
+        }
+    }
 }
 
 private final class AuthNetworkDataSourceSpy: AuthNetworkDataSourceProtocol {

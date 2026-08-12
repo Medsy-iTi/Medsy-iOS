@@ -25,6 +25,7 @@ struct ProfileScreen: View {
     let onLanguage: () -> Void
     let onTheme: () -> Void
     let onOrders: () -> Void
+    let onFavorites: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -44,6 +45,13 @@ struct ProfileScreen: View {
                 subtitleKey: "profile.personal_info.subtitle",
                 iconName: "person",
                 iconColor: ProfileStyle.green
+            ),
+            ProfileRowItem(
+                id: "favorites",
+                titleKey: "profile.favorites",
+                subtitleKey: "profile.favorites.subtitle",
+                iconName: "heart.fill",
+                iconColor: Color(hex: "#EC4899")
             ),
             ProfileRowItem(
                 id: "orders",
@@ -248,6 +256,8 @@ struct ProfileScreen: View {
             onTheme()
         case "orders":
             onOrders()
+        case "favorites":
+            onFavorites()
         default:
             break
         }
@@ -264,7 +274,7 @@ struct ProfileScreen: View {
         hasDeliveryLocation: true,
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
+        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onFavorites: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }

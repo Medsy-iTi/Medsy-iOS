@@ -2,6 +2,7 @@
 //  Medsy
 //
 //  Created by Antoneos Philip on 17/07/2026.
+//
 
 import SwiftUI
 
@@ -15,11 +16,12 @@ struct CategoriesView: View {
     }
 
     private var filteredCategories: [Category] {
-        if searchText.isEmpty {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if query.isEmpty {
             return viewModel.categories
         } else {
             return viewModel.categories.filter {
-                $0.displayName.localizedCaseInsensitiveContains(searchText)
+                $0.displayName.localizedCaseInsensitiveContains(query)
             }
         }
     }
@@ -33,6 +35,9 @@ struct CategoriesView: View {
         VStack(spacing: 0) {
             MedsyNavBar(title: "categories.title".localized, onBack: {dismiss()})
             HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(AppColor.textSec)
+
                 TextField("", text: $searchText, prompt:
                     Text("categories.searchPlaceholder".localized)
                         .foregroundStyle(AppColor.textSec)
@@ -40,16 +45,13 @@ struct CategoriesView: View {
                 .font(AppColor.sans(14))
                 .foregroundStyle(AppColor.textPrim)
                 .multilineTextAlignment(.leading)
-
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(AppColor.textSec)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(AppColor.border, lineWidth: 1)
-                    .background(AppColor.card.cornerRadius(12))
+                RoundedRectangle(cornerRadius: 28)
+                    .stroke(AppColor.green, lineWidth: 1)
+                    .background(AppColor.card.cornerRadius(28))
             )
             .padding()
 
@@ -68,33 +70,39 @@ struct CategoriesView: View {
                     .padding(.bottom, 20)
                 }
             case .success:
-                ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
-                        ForEach(filteredCategories) { category in
-                            NavigationLink(destination: ProductsView(category: category)) {
-                                CategoryGridCard(category: category)
-                            }
-                            .buttonStyle(.plain)
-                            .onAppear {
-                                if category == filteredCategories.last {
-                                    Task {
-                                        await viewModel.loadNextPage()
+                if filteredCategories.isEmpty {
+                    CategorySearchEmptyView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: columns, spacing: MedsySpacing.md) {
+                            ForEach(filteredCategories) { category in
+                                NavigationLink(destination: ProductsView(category: category)) {
+                                    CategoryGridCard(category: category)
+                                }
+                                .buttonStyle(.plain)
+                                .onAppear {
+                                    if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                       category == filteredCategories.last {
+                                        Task {
+                                            await viewModel.loadNextPage()
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    .padding(.horizontal)
+                        .padding(.horizontal)
 
 
-                    if viewModel.isFetchingNextPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                                .tint(AppColor.green)
-                            Spacer()
+                        if viewModel.isFetchingNextPage {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                    .tint(AppColor.green)
+                                Spacer()
+                            }
+                            .padding(.vertical, 16)
                         }
-                        .padding(.vertical, 16)
                     }
                 }
             case .error:

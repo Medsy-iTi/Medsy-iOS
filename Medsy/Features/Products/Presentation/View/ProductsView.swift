@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct ProductsView: View {
+    @Environment(LanguageManager.self) private var languageManager
     @Environment(\.dismiss) private var dismiss
     @Environment(CartViewModel.self) private var cartViewModel
     @State private var viewModel: ProductsViewModel
@@ -68,6 +69,11 @@ struct ProductsView: View {
                                         cartViewModel.handle(.decreaseQuantity(itemID: product.id))
                                         product.quantity = cartQuantity(for: product)
                                     },
+                                    onToggleFavorite: {
+                                        Task {
+                                            await viewModel.toggleFavorite(productID: product.id)
+                                        }
+                                    },
                                     onTap: { selectedProductID = product.id }
                                 )
                                 .onAppear {
@@ -117,8 +123,24 @@ struct ProductsView: View {
                 }
             }
         }
-        .task {
-            await viewModel.loadProducts()
+        .onAppear {
+            Task { await viewModel.loadProducts() }
+        }
+        .alert(
+            "favorites.persistence_error.title".localized,
+            isPresented: Binding(
+                get: { viewModel.favoriteErrorMessage != nil },
+                set: { if !$0 { viewModel.favoriteErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {
+                viewModel.favoriteErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.favoriteErrorMessage ?? "")
+        }
+        .onChange(of: languageManager.languageCode) { _, _ in
+            Task { await viewModel.loadProducts() }
         }
     }
 

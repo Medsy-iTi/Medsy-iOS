@@ -16,6 +16,12 @@ struct OrderDetailView: View {
     var onSelectProduct: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
+    var selectedPharmacyID: Int? = nil
+    var deliveryLocation: OrderCoordinatePresentation? = nil
+    var routeState: OrderRoutePresentationState = .idle
+    var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onShowPharmacyLocation: ((Int) -> Void)? = nil
+    var onOpenDirections: ((OrderPharmacyPresentationModel) -> Void)? = nil
     var paymentAction: PaymentOrderActionPresentation? = nil
     var onPaymentAction: (() -> Void)? = nil
 
@@ -116,7 +122,21 @@ struct OrderDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.md) {
                     statusHeader(order: order)
-                    itemsSection(order: order)
+                    OrderStatusProgressView(order: order)
+                    if !order.pharmacies.isEmpty {
+                        pharmacyMap(order: order)
+                        ForEach(order.pharmacies) { pharmacy in
+                            OrderPharmacySectionView(
+                                pharmacy: pharmacy,
+                                onSelectProduct: { onSelectProduct?($0) }
+                            )
+                        }
+                    } else {
+                        itemsSection(order: order)
+                    }
+                    if order.paymentMethod != nil {
+                        paymentCard(order: order)
+                    }
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
@@ -132,6 +152,22 @@ struct OrderDetailView: View {
                         .frame(height: paymentAction == nil ? 96 : 162)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                 )
+        }
+    }
+
+    @ViewBuilder
+    private func pharmacyMap(order: OrderDetailPresentationModel) -> some View {
+        let mappedPharmacies = order.pharmacies.filter { $0.coordinate != nil }
+        if !mappedPharmacies.isEmpty {
+            OrderPharmacyMapView(
+                pharmacies: mappedPharmacies,
+                selectedPharmacyID: selectedPharmacyID ?? mappedPharmacies.first?.id,
+                deliveryLocation: deliveryLocation,
+                routeState: routeState,
+                onSelectPharmacy: { onSelectPharmacy?($0) },
+                onShowPharmacyLocation: { onShowPharmacyLocation?($0) },
+                onOpenDirections: { onOpenDirections?($0) }
+            )
         }
     }
 
@@ -152,6 +188,12 @@ struct OrderDetailView: View {
             Text(dateLabel(for: order.date))
                 .font(AppColor.sans(13))
                 .foregroundStyle(AppColor.textSec)
+
+            if let requestID = order.requestID {
+                Text(String(format: "orders.detail.request_number".localized, requestID))
+                    .font(AppColor.sans(13))
+                    .foregroundStyle(AppColor.textSec)
+            }
         }
         .padding(MedsySpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -166,13 +208,9 @@ struct OrderDetailView: View {
 
     private func fulfillmentBadge(for type: OrderFulfillmentType) -> some View {
         HStack(spacing: MedsySpacing.xxs) {
-            Image(systemName: type == .delivery ? "shippingbox.fill" : "bag.fill")
+            Image(systemName: fulfillmentIcon(for: type))
                 .font(.system(size: 13))
-            Text(
-                type == .delivery
-                    ? "orders.fulfillment.delivery".localized
-                    : "orders.fulfillment.pickup".localized
-            )
+            Text(fulfillmentLabel(for: type))
             .font(AppColor.sans(13, .medium))
         }
         .foregroundStyle(AppColor.green)
@@ -180,6 +218,25 @@ struct OrderDetailView: View {
         .padding(.vertical, MedsySpacing.xxs + 2)
         .background(AppColor.lightGreen)
         .clipShape(Capsule())
+    }
+
+    private func fulfillmentLabel(for type: OrderFulfillmentType) -> String {
+        switch type {
+        case .delivery:
+            return "orders.fulfillment.delivery".localized
+        case .pickup:
+            return "orders.fulfillment.pickup".localized
+        case .notSelected:
+            return "orders.fulfillment.not_selected".localized
+        }
+    }
+
+    private func fulfillmentIcon(for type: OrderFulfillmentType) -> String {
+        switch type {
+        case .delivery: return "shippingbox.fill"
+        case .pickup: return "bag.fill"
+        case .notSelected: return "clock.fill"
+        }
     }
 
     private func itemsSection(order: OrderDetailPresentationModel) -> some View {
@@ -210,7 +267,9 @@ struct OrderDetailView: View {
 
     private func itemRow(item: OrderDetailItemModel) -> some View {
         Button {
-            onSelectProduct?(item.productId)
+            if let productId = item.productId {
+                onSelectProduct?(productId)
+            }
         } label: {
             HStack(alignment: .center, spacing: MedsySpacing.sm) {
                 OrderProductImageView(imageURL: item.imageURL, size: 48)
@@ -240,13 +299,16 @@ struct OrderDetailView: View {
                         .font(AppColor.sans(14, .semibold))
                         .foregroundStyle(AppColor.textPrim)
 
-                    Image(systemName: "chevron.forward")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AppColor.textSec)
+                    if item.productId != nil {
+                        Image(systemName: "chevron.forward")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(AppColor.textSec)
+                    }
                 }
             }
         }
         .buttonStyle(.plain)
+        .disabled(item.productId == nil)
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
     }
@@ -294,6 +356,64 @@ struct OrderDetailView: View {
                 .stroke(AppColor.border, lineWidth: 1)
         )
         .medsyCardShadow()
+    }
+
+    private func paymentCard(order: OrderDetailPresentationModel) -> some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Label("orders.detail.payment".localized, systemImage: "creditcard.fill")
+                .font(AppColor.sans(15, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+
+            if let paymentMethod = order.paymentMethod {
+                detailTextRow(
+                    label: "orders.detail.payment_method".localized,
+                    value: paymentMethod.labelKey.localized
+                )
+            }
+
+            if let paymentStatus = order.paymentStatus {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.payment_status".localized,
+                    value: paymentStatus.labelKey.localized
+                )
+            }
+
+            if let paidAt = order.paidAt {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.paid_at".localized,
+                    value: paidAt.formatted(date: .abbreviated, time: .shortened)
+                )
+            } else if order.paymentStatus == .pending, let expiresAt = order.paymentExpiresAt {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.payment_expires_at".localized,
+                    value: expiresAt.formatted(date: .abbreviated, time: .shortened)
+                )
+            }
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+        .medsyCardShadow()
+    }
+
+    private func detailTextRow(label: String, value: String) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(label)
+                .font(AppColor.sans(14))
+                .foregroundStyle(AppColor.textSec)
+            Spacer(minLength: MedsySpacing.sm)
+            Text(value)
+                .font(AppColor.sans(14, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+                .multilineTextAlignment(.trailing)
+        }
     }
 
     private func summaryRow(label: String, amount: Double, isTotal: Bool) -> some View {
@@ -345,6 +465,162 @@ struct OrderDetailView: View {
     }
 }
 
+private struct OrderStatusProgressView: View {
+    let order: OrderDetailPresentationModel
+
+    private var stages: [String] {
+        let firstStage = usesPaymentStage
+            ? "orders.status.pending_payment"
+            : "orders.status.pending"
+
+        switch order.fulfillmentType {
+        case .delivery:
+            return [
+                firstStage,
+                "orders.status.preparing",
+                "orders.status.ready_for_delivery",
+                "orders.status.out_for_delivery",
+                "orders.status.delivered"
+            ]
+        case .pickup:
+            return [
+                firstStage,
+                "orders.status.preparing",
+                "orders.status.ready_for_pickup",
+                "orders.status.delivered"
+            ]
+        case .notSelected:
+            return [
+                firstStage,
+                "orders.status.preparing",
+                "orders.status.delivered"
+            ]
+        }
+    }
+
+    private var usesPaymentStage: Bool {
+        guard order.paymentMethod == .card else { return false }
+        if case .notSelected = order.fulfillmentType {
+            if case .pendingPayment = order.status { return true }
+            return false
+        }
+        return true
+    }
+
+    private var currentIndex: Int {
+        switch order.status {
+        case .pending, .pendingPayment, .confirmed, .unknown:
+            return 0
+        case .preparing:
+            return min(1, stages.count - 1)
+        case .readyForPickup, .readyForDelivery:
+            return min(2, stages.count - 1)
+        case .outForDelivery:
+            return order.fulfillmentType == .delivery
+                ? min(3, stages.count - 1)
+                : min(2, stages.count - 1)
+        case .delivered:
+            return stages.count - 1
+        case .cancelled:
+            return 0
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Text("orders.detail.delivery_status".localized)
+                .font(AppColor.sans(15, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+
+            if order.status.isCancelled {
+                Label("orders.status.cancelled".localized, systemImage: "xmark.circle.fill")
+                    .font(AppColor.sans(14, .semibold))
+                    .foregroundStyle(AppColor.errorRed)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, MedsySpacing.xs)
+            } else {
+                HStack(alignment: .top, spacing: 0) {
+                    ForEach(Array(stages.enumerated()), id: \.offset) { index, labelKey in
+                        progressNode(labelKey: labelKey, index: index)
+
+                        if index < stages.count - 1 {
+                            Rectangle()
+                                .fill(index < currentIndex ? AppColor.green : AppColor.border)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 2)
+                                .padding(.top, 13)
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+        .medsyCardShadow()
+    }
+
+    private func progressNode(labelKey: String, index: Int) -> some View {
+        let isReached = index <= currentIndex
+        let isCurrent = index == currentIndex
+
+        return VStack(spacing: MedsySpacing.xxs) {
+            ZStack {
+                Circle()
+                    .fill(isReached ? AppColor.green : AppColor.card)
+                    .frame(width: 28, height: 28)
+                    .overlay(
+                        Circle()
+                            .stroke(isReached ? AppColor.green : AppColor.border, lineWidth: isCurrent ? 3 : 2)
+                    )
+
+                if isReached {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+            }
+
+            Text(labelKey.localized)
+                .font(AppColor.sans(10, isCurrent ? .semibold : .regular))
+                .foregroundStyle(isReached ? AppColor.textPrim : AppColor.textSec)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: 64)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isCurrent ? .isSelected : [])
+    }
+}
+
+private extension OrderPaymentMethod {
+    var labelKey: String {
+        switch self {
+        case .cash: "orders.payment_method.cash"
+        case .card: "orders.payment_method.card"
+        }
+    }
+}
+
+private extension OrderPaymentStatus {
+    var labelKey: String {
+        switch self {
+        case .unpaid: "orders.payment_status.unpaid"
+        case .pending: "orders.payment_status.pending"
+        case .paid: "orders.payment_status.paid"
+        case .failed: "orders.payment_status.failed"
+        case .canceled: "orders.payment_status.canceled"
+        case .expired: "orders.payment_status.expired"
+        }
+    }
+}
+
 
 enum OrderDetailViewState {
     case loading
@@ -372,8 +648,12 @@ extension ReorderState {
         reorderState: .idle,
         onRetry: {},
         onBack: {},
-        paymentAction: .payNow,
-        onPaymentAction: {}
+        selectedPharmacyID: 71,
+        deliveryLocation: OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
+        routeState: .ready(points: [
+            OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
+            OrderCoordinatePresentation(latitude: 30.0444, longitude: 31.2357)
+        ])
     )
     .environment(LanguageManager.shared)
 }

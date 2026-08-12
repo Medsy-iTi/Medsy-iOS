@@ -1,5 +1,5 @@
 //
-//  OffersRemoteDataSource.swift
+//  OfferResultDTOs.swift
 //  Medsy
 //
 //  Created by Antoneos Philip on 25/07/2026.
@@ -7,67 +7,184 @@
 
 import Foundation
 
-protocol OffersRemoteDataSourceProtocol {
-    func getOfferResult(requestId: Int) async throws -> OfferResultResponseDTO
-    func confirmOffer(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferDataDTO
+typealias GetOfferResultResponseDTO = APIResponseDTO<OfferResultResponseDTO>
+typealias ConfirmOfferResponseDTOContainer = APIResponseDTO<ConfirmOfferResponseDTO>
+
+struct OfferResultResponseDTO: Decodable, Equatable {
+    let items: [OfferResultItemDTO]
+    let totalPrice: Double
+    let prescriptionUrl: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case items = "medicineRequestResultItemList"
+        case fallbackItems = "items"
+        case totalPrice
+        case prescriptionUrl
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let itemsList = try container.decodeIfPresent([OfferResultItemDTO].self, forKey: .items) {
+            items = itemsList
+        } else if let fallback = try container.decodeIfPresent([OfferResultItemDTO].self, forKey: .fallbackItems) {
+            items = fallback
+        } else {
+            items = []
+        }
+        totalPrice = try container.decodeIfPresent(Double.self, forKey: .totalPrice) ?? 0.0
+        prescriptionUrl = try container.decodeIfPresent(String.self, forKey: .prescriptionUrl)
+    }
+
+    init(items: [OfferResultItemDTO], totalPrice: Double, prescriptionUrl: String? = nil) {
+        self.items = items
+        self.totalPrice = totalPrice
+        self.prescriptionUrl = prescriptionUrl
+    }
 }
 
-final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
-    private let networkService: NetworkServiceProtocol
+struct ProductNestedDTO: Decodable, Equatable {
+    let id: Int?
+    let name: String?
+    let productName: String?
+    let price: Double?
+    let imageUrl: String?
 
-    init(networkService: NetworkServiceProtocol) {
-        self.networkService = networkService
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case productName
+        case price
+        case imageUrl
+    }
+}
+
+struct OfferResultItemDTO: Decodable, Equatable {
+    let requestItemId: Int
+    let productId: Int?
+    let productName: String
+    let imageUrl: String?
+    let unitPrice: Double
+    let isAlternative: Bool
+    let isAvailable: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case requestItemId
+        case productId
+        case productName
+        case imageUrl
+        case unitPrice
+        case isAlternative
+        case alternative
+        case isAvailable
+        case available
+        case product
     }
 
-    func getOfferResult(requestId: Int) async throws -> OfferResultResponseDTO {
-        let response: GetOfferResultResponseDTO = try await networkService.request(
-            endpoint: OffersEndpoint.getResult(requestId: requestId)
-        )
-        guard response.success else {
-            throw NetworkError.validationError(response.message)
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let nestedProduct = try container.decodeIfPresent(ProductNestedDTO.self, forKey: .product)
+
+        requestItemId = try container.decode(Int.self, forKey: .requestItemId)
+        productId = try container.decodeIfPresent(Int.self, forKey: .productId) ?? nestedProduct?.id
+
+        let nameAtTop = try container.decodeIfPresent(String.self, forKey: .productName)
+        let nameCandidate = (nameAtTop?.isEmpty == false ? nameAtTop : nil) ?? nestedProduct?.name ?? nestedProduct?.productName ?? ""
+        productName = nameCandidate
+
+        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl) ?? nestedProduct?.imageUrl
+
+        if let price = try container.decodeIfPresent(Double.self, forKey: .unitPrice), price > 0 {
+            unitPrice = price
+        } else {
+            unitPrice = nestedProduct?.price ?? 0.0
         }
-        guard let data = response.data else {
-            throw NetworkError.decodingFailed
+
+        if let alt = try container.decodeIfPresent(Bool.self, forKey: .isAlternative) {
+            isAlternative = alt
+        } else if let alt = try container.decodeIfPresent(Bool.self, forKey: .alternative) {
+            isAlternative = alt
+        } else {
+            isAlternative = false
         }
-        return data
+
+        if let avail = try container.decodeIfPresent(Bool.self, forKey: .isAvailable) {
+            isAvailable = avail
+        } else if let avail = try container.decodeIfPresent(Bool.self, forKey: .available) {
+            isAvailable = avail
+        } else {
+            isAvailable = (nestedProduct != nil)
+        }
     }
 
-    func confirmOffer(requestId: Int, selections: [ConfirmOfferSelection]) async throws -> ConfirmOfferDataDTO {
-        let selectionBody = ConfirmOfferRequestDTO(
-            selectedItems: selections.map {
-                ConfirmOfferSelectionDTO(
-                    requestItemId: $0.requestItemId,
-                    productId: $0.productId
-                )
-            }
-        )
-        let selectionResponse: ConfirmOfferResponseDTOContainer = try await networkService.request(
-            endpoint: OffersEndpoint.selectOffer(requestId: requestId, body: selectionBody)
-        )
-        let selection = try unwrap(selectionResponse)
-
-        let fulfillmentResponse: FulfillmentConfirmationResponseDTOContainer = try await networkService.request(
-            endpoint: OffersEndpoint.confirmFulfillment(
-                requestId: requestId,
-                body: FulfillmentConfirmationRequestDTO(fulfillmentMethod: "DELIVERY")
-            )
-        )
-        let fulfillment = try unwrap(fulfillmentResponse)
-
-        return ConfirmOfferDataDTO(
-            selection: selection,
-            fulfillment: fulfillment,
-            selectedRequestItemIds: selections.map(\.requestItemId)
-        )
+    init(requestItemId: Int, productId: Int?, productName: String, imageUrl: String?, unitPrice: Double, isAlternative: Bool, isAvailable: Bool) {
+        self.requestItemId = requestItemId
+        self.productId = productId
+        self.productName = productName
+        self.imageUrl = imageUrl
+        self.unitPrice = unitPrice
+        self.isAlternative = isAlternative
+        self.isAvailable = isAvailable
     }
+}
 
-    private func unwrap<T>(_ response: APIResponseDTO<T>) throws -> T {
-        guard response.success else {
-            throw NetworkError.validationError(response.message)
-        }
-        guard let data = response.data else {
-            throw NetworkError.decodingFailed
-        }
-        return data
-    }
+struct RequestItemUpdatedEventDTO: Decodable, Equatable {
+    let requestId: Int?
+    let updatedItems: [UpdatedItemDTO]
+}
+
+struct UpdatedItemDTO: Decodable, Equatable {
+    let requestItemId: Int
+    let status: String?
+    let product: ProductNestedDTO?
+}
+
+struct ConfirmOfferItemDTO: Encodable, Equatable {
+    let requestItemId: Int
+    let productId: Int?
+}
+
+struct ConfirmOfferRequestDTO: Encodable, Equatable {
+    let selectedItems: [ConfirmOfferItemDTO]
+}
+
+struct ConfirmOfferResponseDTO: Decodable, Equatable {
+    let masterOrderId: Int
+    let orderStatus: String
+    let paymentMethod: String
+    let paymentStatus: String?
+}
+
+struct ConfirmOfferFulfillmentRequestDTO: Encodable, Equatable {
+    let fulfillmentMethod: String
+}
+
+struct SelectPharmacyResponseDTO: Codable, Equatable, Hashable, Sendable {
+    let requestId: Int
+    let offers: [SelectPharmacyOfferDTO]
+    let deliveryFees: Double
+    let totalPrice: Double
+}
+
+struct SelectPharmacyOfferDTO: Codable, Equatable, Hashable, Sendable {
+    let offerId: Int
+    let pharmacyId: Int
+    let pharmacyName: String
+    let latitude: Double
+    let longitude: Double
+    let items: [SelectPharmacyItemDTO]
+}
+
+struct SelectPharmacyItemDTO: Codable, Equatable, Hashable, Sendable {
+    let id: Int
+    let productId: Int
+    let quantity: Int
+    let unitPrice: Double
+    let totalPrice: Double
+}
+
+struct ConfirmOfferOrderDTO: Decodable, Equatable {
+    let orderId: Int
+    let pharmacyId: Int
+    let pharmacyName: String
+    let itemIds: [Int]
 }

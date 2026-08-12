@@ -46,7 +46,7 @@ final class CompleteRequestContractTests: XCTestCase {
         XCTAssertEqual(json["deliveryLatitude"] as? Double, 30.0444)
         XCTAssertEqual(json["deliveryLongitude"] as? Double, 31.2357)
         XCTAssertEqual(json["deliveryAddress"] as? String, "Tahrir Square, Cairo")
-        XCTAssertEqual(json.count, 3)
+        XCTAssertEqual(json.count, 5)
     }
 
     func testSuccessResponseDecodesAndMapsRequest() throws {

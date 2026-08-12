@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct ConfirmOfferSelection: Equatable, Hashable, Sendable {
+struct ConfirmSelectedItem: Equatable, Hashable {
     let requestItemId: Int
-    let productId: Int
+    let productId: Int?
 }
 
 struct ConfirmOfferOrder: Equatable, Hashable {

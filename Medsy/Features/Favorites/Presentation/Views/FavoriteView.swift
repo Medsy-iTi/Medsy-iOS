@@ -1,0 +1,122 @@
+//
+//  FavoriteView.swift
+//  Medsy
+//
+//  Created by Ehab Salah on 13/08/2026.
+//
+
+import SwiftUI
+
+struct FavoriteView: View {
+    @State private var viewModel: FavoriteViewModel
+    @Environment(CartViewModel.self) private var cartViewModel
+
+    private let onBack: () -> Void
+    private let onBrowse: () -> Void
+    private let onSelectMedicine: (String) -> Void
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: MedsySpacing.sm, alignment: .top), count: 2)
+
+    init(
+        viewModel: FavoriteViewModel = DIContainer.shared.resolve(FavoriteViewModel.self),
+        onBack: @escaping () -> Void,
+        onBrowse: @escaping () -> Void,
+        onSelectMedicine: @escaping (String) -> Void
+    ) {
+        _viewModel = State(initialValue: viewModel)
+        self.onBack = onBack
+        self.onBrowse = onBrowse
+        self.onSelectMedicine = onSelectMedicine
+    }
+
+    var body: some View {
+        @Bindable var viewModel = viewModel
+
+        VStack(spacing: 0) {
+            MedsyNavBar(title: "favorites.title".localized, onBack: onBack)
+            content
+        }
+        .background(AppColor.bg.ignoresSafeArea())
+        .onAppear { Task { await viewModel.load() } }
+        .alert("favorites.offline.title".localized, isPresented: $viewModel.isShowingOfflineAlert) {
+            Button("common.ok".localized, role: .cancel) {}
+        } message: {
+            Text("favorites.offline.subtitle".localized)
+        }
+        .alert(
+            "favorites.persistence_error.title".localized,
+            isPresented: Binding(
+                get: { viewModel.persistenceErrorMessage != nil },
+                set: { if !$0 { viewModel.persistenceErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) { viewModel.persistenceErrorMessage = nil }
+        } message: {
+            Text(viewModel.persistenceErrorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .loading:
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns, spacing: MedsySpacing.sm) {
+                    ForEach(0..<6, id: \.self) { _ in FavoriteMedicineCardSkeleton() }
+                }
+                .padding(MedsySpacing.sm)
+            }
+        case let .loaded(products):
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns, spacing: MedsySpacing.sm) {
+                    ForEach(products) { product in
+                        FavoriteMedicineCard(
+                            product: product,
+                            quantity: cartQuantity(for: product),
+                            onToggleFavorite: { Task { await viewModel.remove(product) } },
+                            onAdd: { addOneToCart(product) },
+                            onIncrement: { addOneToCart(product) },
+                            onDecrement: {
+                                guard let itemID = cartViewModel.itemID(forProductID: Int64(product.id)) else { return }
+                                cartViewModel.handle(.decreaseQuantity(itemID: itemID))
+                            },
+                            onTap: {
+                                guard let productID = viewModel.detailDestination(for: product.id) else { return }
+                                onSelectMedicine(productID)
+                            }
+                        )
+                    }
+                }
+                .padding(MedsySpacing.sm)
+            }
+            .refreshable { await viewModel.load() }
+        case .empty:
+            MedsyStatusView(config: MedsyStatusConfig(
+                systemIcon: "heart.slash",
+                iconColor: { AppColor.green },
+                iconBackground: { AppColor.green.opacity(0.12) },
+                title: "favorites.empty.title".localized,
+                subtitle: "favorites.empty.subtitle".localized,
+                primaryButtonTitle: "favorites.empty.action".localized,
+                primaryAction: onBrowse
+            ))
+        case let .failed(message):
+            MedsyStatusView(config: MedsyStatusConfig(
+                systemIcon: "exclamationmark.triangle",
+                iconColor: { AppColor.danger },
+                iconBackground: { AppColor.danger.opacity(0.12) },
+                title: "favorites.error.title".localized,
+                subtitle: message,
+                primaryButtonTitle: "error.retry".localized,
+                primaryAction: { Task { await viewModel.load() } }
+            ))
+        }
+    }
+
+    private func addOneToCart(_ product: FavoriteMedicineDisplayModel) {
+        cartViewModel.handle(.addItem(FavoriteCartItemPresentationMapper.map(product)))
+    }
+
+    private func cartQuantity(for product: FavoriteMedicineDisplayModel) -> Int {
+        cartViewModel.quantity(forProductID: Int64(product.id))
+    }
+}

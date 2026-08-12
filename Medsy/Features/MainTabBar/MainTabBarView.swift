@@ -19,7 +19,12 @@ struct MainTabBarView: View {
     @State private var cartFeedbackTask: Task<Void, Never>?
     @State private var requestSuccessTask: Task<Void, Never>?
     @State private var isShowingRequestSuccess = false
+    @State private var pendingChatbotPrompt: String?
+    @State private var chatbotPromptSequence = 0
+    @State private var tabBeforeChatbot: AppTab = .home
+    @State private var showsProductChatbotBackButton = false
     @ObservedObject private var appSettings = AppSettings.shared
+    @Environment(LanguageManager.self) private var lang
 
     init(coordinator: MainTabCoordinator) {
         _coordinator = State(initialValue: coordinator)
@@ -64,11 +69,19 @@ struct MainTabBarView: View {
             .badge(cartViewModel.distinctProductCount)
             .tag(AppTab.cart)
 
-            ChatbotRootView { hidden in
-                isTabBarHidden = hidden
-            }
+            ChatbotRootView(
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
+                onOpenCart: { coordinator.select(.cart) },
+                onOpenCompleteRequest: {
+                    isTabBarHidden = false
+                    coordinator.select(.cart)
+                },
+                pendingPrompt: $pendingChatbotPrompt,
+                promptSequence: chatbotPromptSequence,
+                onBackToProduct: chatbotBackAction
+            )
             .tabItem {
-                Label("tab.medsy_chatbot".localized, systemImage: "sparkles")
+                Label("tab.medsy_ai".localized, systemImage: "sparkles")
             }
             .tag(AppTab.chatbot)
 
@@ -89,6 +102,10 @@ struct MainTabBarView: View {
 
             ProfileCoordinatorView(
                 onOrders: { coordinator.select(.orders) },
+                onFavorites: {
+                    requestedHomeRoute = .favorites
+                    coordinator.select(.home)
+                },
                 onLogout: coordinator.logout,
                 viewModel: profileViewModel
             )
@@ -98,12 +115,21 @@ struct MainTabBarView: View {
             }
             .tag(AppTab.profile)
         }
+        .id("\(lang.languageCode)-\(appSettings.isDarkMode)")
+        .environment(\.openChatbotPrompt, { prompt in
+            openChatbot(prompt: prompt)
+        })
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
-        .toolbarBackground(AppColor.card, for: .tabBar)
+        .toolbarBackground(tabBarBackground, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(appSettings.isDarkMode ? .dark : .light, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .onAppear(perform: configureTabBarAppearance)
+        .onChange(of: appSettings.isDarkMode) { _, _ in
+            configureTabBarAppearance()
+        }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
@@ -137,6 +163,7 @@ struct MainTabBarView: View {
             get: { coordinator.selectedTab },
             set: {
                 isTabBarHidden = false
+                showsProductChatbotBackButton = false
                 coordinator.select($0)
             }
         )
@@ -145,6 +172,28 @@ struct MainTabBarView: View {
     private var addedProductName: String? {
         guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
         return productName
+    }
+
+    private var chatbotBackAction: (() -> Void)? {
+        guard showsProductChatbotBackButton else { return nil }
+        return { returnFromChatbot() }
+    }
+
+    private func openChatbot(prompt: String) {
+        if coordinator.selectedTab != .chatbot {
+            tabBeforeChatbot = coordinator.selectedTab
+        }
+        pendingChatbotPrompt = prompt
+        chatbotPromptSequence += 1
+        showsProductChatbotBackButton = true
+        isTabBarHidden = false
+        coordinator.select(.chatbot)
+    }
+
+    private func returnFromChatbot() {
+        isTabBarHidden = false
+        showsProductChatbotBackButton = false
+        coordinator.select(tabBeforeChatbot)
     }
 
     private func scheduleFeedbackDismissal() {
@@ -171,6 +220,34 @@ struct MainTabBarView: View {
                 isShowingRequestSuccess = false
             }
         }
+    }
+
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(tabBarBackground)
+        appearance.shadowColor = UIColor(tabBarBorder)
+
+        let selectedColor = UIColor(AppColor.green)
+        let normalColor = UIColor(AppColor.textSec)
+        [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance]
+            .forEach { itemAppearance in
+                itemAppearance.selected.iconColor = selectedColor
+                itemAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+                itemAppearance.normal.iconColor = normalColor
+                itemAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+            }
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
+    private var tabBarBackground: Color {
+        appSettings.isDarkMode ? Color(hex: "#0B1014") : Color(hex: "#FFFFFF")
+    }
+
+    private var tabBarBorder: Color {
+        appSettings.isDarkMode ? Color(hex: "#26312C") : Color(hex: "#D9E2DC")
     }
 }
 

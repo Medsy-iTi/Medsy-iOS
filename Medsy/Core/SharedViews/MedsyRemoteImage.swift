@@ -1,3 +1,10 @@
+//
+//  MedsyRemoteImage.swift
+//  Medsy
+//
+//  Created by Ahmed Elkady on 12/08/2026.
+//
+
 import Foundation
 import Observation
 import SwiftUI
@@ -143,30 +150,34 @@ private actor MedsyImagePipeline {
     private nonisolated static func download(from url: URL) async throws -> Data {
         var lastError: Error = URLError(.cannotLoadFromNetwork)
 
-        for attempt in 0..<2 {
+        let acceptedTypes = [
+            "image/jpeg,image/png,image/*;q=0.8,*/*;q=0.5",
+            "image/*,*/*;q=0.8"
+        ]
+
+        for accept in acceptedTypes {
             do {
                 var request = URLRequest(
                     url: url,
-                    cachePolicy: .returnCacheDataElseLoad,
+                    cachePolicy: .reloadRevalidatingCacheData,
                     timeoutInterval: 20
                 )
-                request.setValue("image/avif,image/webp,image/*,*/*;q=0.8", forHTTPHeaderField: "Accept")
+                request.setValue(accept, forHTTPHeaderField: "Accept")
 
                 let (data, response) = try await URLSession.shared.data(for: request)
                 guard let httpResponse = response as? HTTPURLResponse,
                       (200..<300).contains(httpResponse.statusCode),
-                      httpResponse.mimeType?.hasPrefix("image/") == true,
                       !data.isEmpty else {
                     throw URLError(.badServerResponse)
+                }
+                guard UIImage(data: data) != nil else {
+                    throw URLError(.cannotDecodeContentData)
                 }
                 return data
             } catch is CancellationError {
                 throw CancellationError()
             } catch {
                 lastError = error
-                if attempt == 0 {
-                    try await Task.sleep(for: .milliseconds(250))
-                }
             }
         }
 

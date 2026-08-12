@@ -14,6 +14,7 @@ struct ProductDetailEntity: Identifiable, Equatable {
     let scientificName: String
     let price: Double
     let imageUrl: String?
+    let categoryId: Int
     let categoryName: String
     let company: String
     let route: String
