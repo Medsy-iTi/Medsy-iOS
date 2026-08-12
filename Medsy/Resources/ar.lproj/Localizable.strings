@@ -232,6 +232,7 @@
 /* Favorites */
 "favorites.title" = "المفضلة";
 "favorites.open.accessibility" = "فتح المفضلة";
+"favorites.count.accessibility" = "%d من الأدوية المفضلة";
 "favorites.empty.title" = "لا توجد أدوية مفضلة بعد";
 "favorites.empty.subtitle" = "احفظ الأدوية باستخدام زر القلب لتجدها هنا بسهولة.";
 "favorites.empty.action" = "تصفح الأدوية";
@@ -353,6 +354,8 @@
 "profile.section.about" = "حول Medsy";
 "profile.personal_info" = "البيانات الشخصية";
 "profile.personal_info.subtitle" = "تعديل الاسم والبيانات الأساسية";
+"profile.favorites" = "الأدوية المفضلة";
+"profile.favorites.subtitle" = "عرض الأدوية المحفوظة";
 "profile.notifications" = "الإشعارات";
 "profile.notifications.subtitle" = "إدارة إشعارات الطلبات والعروض";
 "profile.order_history" = "الطلبات";

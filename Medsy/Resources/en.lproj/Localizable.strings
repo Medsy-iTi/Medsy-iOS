@@ -233,6 +233,7 @@
 /* Favorites */
 "favorites.title" = "Favorites";
 "favorites.open.accessibility" = "Open favorites";
+"favorites.count.accessibility" = "%d favorite medicines";
 "favorites.empty.title" = "No favorites yet";
 "favorites.empty.subtitle" = "Save medicines with the heart button to find them quickly here.";
 "favorites.empty.action" = "Browse medicines";
@@ -354,6 +355,8 @@
 "profile.section.about" = "About Medsy";
 "profile.personal_info" = "Personal Information";
 "profile.personal_info.subtitle" = "Edit name and basic details";
+"profile.favorites" = "Favorite Medicines";
+"profile.favorites.subtitle" = "View your saved medicines";
 "profile.notifications" = "Notifications";
 "profile.notifications.subtitle" = "Manage order and offer notifications";
 "profile.order_history" = "Order History";
