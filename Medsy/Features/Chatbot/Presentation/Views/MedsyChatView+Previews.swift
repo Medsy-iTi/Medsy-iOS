@@ -6,53 +6,84 @@
 import SwiftUI
 
 #Preview("Chat – Empty (Light)") {
-    let lang = LanguageManager.shared
-    let vm = ChatViewModel(
-        sendMessageUseCase:      PreviewSendMessageUseCase(),
-        fetchChatHistoryUseCase: PreviewFetchChatHistoryUseCase(),
-        addCartItemUseCase:      PreviewAddCartItemUseCase(),
-        languageManager:         lang
-    )
-    return NavigationStack {
-        MedsyChatView(viewModel: vm)
-            .environment(lang)
-            .localizedEnvironment()
-    }
+    MedsyChatPreviewWrapper()
 }
 
 #Preview("Chat – Dark / Arabic") {
-    let lang = LanguageManager.shared
-    AppSettings.shared.isDarkMode = true
-    lang.set(.arabic)
-    let vm = ChatViewModel(
-        sendMessageUseCase:      PreviewSendMessageUseCase(),
-        fetchChatHistoryUseCase: PreviewFetchChatHistoryUseCase(),
-        addCartItemUseCase:      PreviewAddCartItemUseCase(),
-        languageManager:         lang
-    )
-    return NavigationStack {
-        MedsyChatView(viewModel: vm)
-            .environment(lang)
-            .localizedEnvironment()
-            .preferredColorScheme(.dark)
+    MedsyChatPreviewWrapper(isDark: true, isArabic: true)
+}
+
+struct MedsyChatPreviewWrapper: View {
+    var isDark: Bool = false
+    var isArabic: Bool = false
+    
+    @State private var vm: AiChatViewModel
+    private var lang = LanguageManager.shared
+    
+    init(isDark: Bool = false, isArabic: Bool = false) {
+        self.isDark = isDark
+        self.isArabic = isArabic
+        
+        let session = AIChatSessionDataSource()
+        _vm = State(initialValue: AiChatViewModel(
+            sendTextUseCase: PreviewSendTextUseCase(),
+            sendImageUseCase: PreviewSendImageUseCase(),
+            loadHistoryUseCase: PreviewLoadHistoryUseCase(),
+            startNewChatUseCase: PreviewStartNewChatUseCase(),
+            session: session,
+            speechRecognizer: AiChatSpeechRecognizer()
+        ))
+    }
+    
+    var body: some View {
+        NavigationStack {
+            MedsyChatView(viewModel: vm)
+                .environment(lang)
+                .localizedEnvironment()
+                .preferredColorScheme(isDark ? .dark : .light)
+        }
+        .onAppear {
+            AppSettings.shared.isDarkMode = isDark
+            if isArabic {
+                lang.set(.arabic)
+            } else {
+                lang.set(.english)
+            }
+        }
     }
 }
 
 // MARK: - Preview fakes
 
-struct PreviewAddCartItemUseCase: AddCartItemUseCaseProtocol {
-    func execute(input: AddCartItemInput) async throws -> Cart {
-        throw NetworkError.validationError("Preview Error")
-    }
-}
-
-struct PreviewSendMessageUseCase: SendMessageUseCaseProtocol {
-    func execute(text: String, lang: String, limit: Int) async throws -> ChatMessage {
+struct PreviewSendTextUseCase: SendAiChatTextMessageUseCaseProtocol {
+    func execute(text: String) async throws -> AIChatAssistantResponse {
         try await Task.sleep(nanoseconds: 800_000_000)
-        return ChatMessage(id: UUID().uuidString, text: "This is a preview response.", sender: .ai, timestamp: Date(), customCard: .none)
+        return AIChatAssistantResponse(
+            conversationID: 1, messageID: 1, intent: .other,
+            answer: "This is a preview response.", products: [], alternatives: [],
+            doctorSpecializations: [], emergencyNumbers: [],
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil
+        )
     }
 }
 
-struct PreviewFetchChatHistoryUseCase: FetchChatHistoryUseCaseProtocol {
-    func execute() async throws -> [ChatMessage] { [] }
+struct PreviewSendImageUseCase: SendAiChatImageMessageUseCaseProtocol {
+    func execute(imageData: Data, mimeType: String, message: String?) async throws -> AIChatAssistantResponse {
+        return AIChatAssistantResponse(
+            conversationID: 1, messageID: 1, intent: .other,
+            answer: "Image received.", products: [], alternatives: [],
+            doctorSpecializations: [], emergencyNumbers: [],
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil
+        )
+    }
+}
+
+struct PreviewLoadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol {
+    func execute() async throws -> AIChatHistory {
+        return AIChatHistory(conversationID: nil, messages: [])
+    }
+}
+
+struct PreviewStartNewChatUseCase: StartNewAiChatUseCaseProtocol {
+    func execute() async throws {}
 }

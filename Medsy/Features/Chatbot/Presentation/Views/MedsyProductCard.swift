@@ -2,16 +2,13 @@
 //  MedsyProductCard.swift
 //  Medsy
 //
-//  Created by ITI_JETS on 23/07/2026.
-//
-
 
 import SwiftUI
-
 
 struct MedsyProductCard: View {
     var eyebrow: String? = nil
     var iconName: String = "cross.case.fill"
+    var imageURL: String? = nil   // ← new: real product image URL
 
     var name: String
     var subtitle: String
@@ -39,20 +36,20 @@ struct MedsyProductCard: View {
             }
 
             HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(accentColor.opacity(0.12))
-                    Image(systemName: iconName)
-                        .foregroundColor(accentColor)
-                }
-                .frame(width: 44, height: 44)
+                // Product image
+                productImage
+                    .frame(width: 52, height: 52)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(name)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                     Text(price)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(accentColor)
@@ -103,8 +100,36 @@ struct MedsyProductCard: View {
             }
         }
         .padding(16)
+        .padding(.bottom, 12)    // ← extra bottom padding per requirement
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var productImage: some View {
+        if let urlString = imageURL, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure, .empty:
+                    fallbackIcon
+                @unknown default:
+                    fallbackIcon
+                }
+            }
+        } else {
+            fallbackIcon
+        }
+    }
+
+    private var fallbackIcon: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(accentColor.opacity(0.12))
+            Image(systemName: iconName)
+                .foregroundColor(accentColor)
+        }
     }
 }
 

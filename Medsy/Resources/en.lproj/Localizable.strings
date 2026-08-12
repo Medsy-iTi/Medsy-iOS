@@ -683,7 +683,7 @@
 "orderReview.confirmOrder" = "Confirm Order";
 
 
-"tab.medsy_chatbot" = "Chatbot";
+"tab.medsy_ai"       = "Medsy AI";
 
 /* ─────────────────────────────────────────────────────────── */
 /* Chatbot – MedsyChatView                                     */
@@ -795,7 +795,76 @@
 "chatbot.ai.thinking"         = "Medsy AI is thinking…";
 "chatbot.error.generic"        = "Something went wrong. Please try again.";
 "chatbot.error.dismiss"        = "Dismiss";
+"chatbot.specialization.header" = "Recommended Specialists";
 "chatbot.sources.match"        = "✓ %d%% match";
 "chatbot.sources.eyebrow"      = "AI SUGGESTED";
 "chatbot.empty.title"          = "Ask Medsy AI";
 "chatbot.empty.subtitle"       = "Ask me about medications, symptoms, or your prescription.";
+
+// MARK: - Medsy AI — New Chat + History
+"chatbot.new_chat"                   = "New Chat";
+"chatbot.new_chat.confirm"            = "Start a new conversation? Your current chat history will be cleared.";
+"chatbot.history.loading"             = "Loading conversation…";
+"chatbot.history.failed"              = "Couldn't load history. You can still send a message.";
+"chatbot.send.wait_for_history"       = "Loading history…";
+
+// MARK: - Medsy AI — Mic + Camera
+"chatbot.mic.tap_to_speak"           = "Tap to speak";
+"chatbot.mic.listening"              = "Listening…";
+"chatbot.mic.error"                  = "Couldn't access microphone. Check Settings.";
+"chatbot.camera.select"              = "Attach image";
+"chatbot.camera.image_preview"       = "📷 Image";
+
+// MARK: - Medsy AI — Suggestions (empty-state grid)
+"chatbot.suggestion.symptoms"           = "Describe Symptoms";
+"chatbot.suggestion.symptoms.subtitle"  = "I'll suggest the right medicine";
+"chatbot.suggestion.symptoms.prompt"    = "I have a headache and fever, what should I take?";
+"chatbot.suggestion.prescription"       = "Read My Prescription";
+"chatbot.suggestion.prescription.subtitle" = "Upload a photo of your prescription";
+"chatbot.suggestion.prescription.prompt" = "Can you read this prescription and explain it to me?";
+"chatbot.suggestion.order"             = "Order Medicine";
+"chatbot.suggestion.order.subtitle"    = "Find and add to cart directly";
+"chatbot.suggestion.order.prompt"      = "I need Panadol Extra";
+"chatbot.suggestion.reminder"          = "Set a Reminder";
+"chatbot.suggestion.reminder.subtitle" = "I'll remind you to take your medicine";
+"chatbot.suggestion.reminder.prompt"   = "Remind me to take my medicine daily at 9 AM";
+"chatbot.suggestion.browse"            = "Browse Categories";
+"chatbot.suggestion.browse.subtitle"   = "Explore all medicine categories";
+"chatbot.suggestion.browse.prompt"     = "Show me all medicine categories";
+"chatbot.suggestion.doctor"            = "Find a Doctor";
+"chatbot.suggestion.doctor.subtitle"   = "Get specialist recommendations";
+"chatbot.suggestion.doctor.prompt"     = "I need a cardiologist";
+"chatbot.suggestion.emergency"         = "Emergency Numbers";
+"chatbot.suggestion.emergency.subtitle"= "Ambulance, police, fire hotlines";
+"chatbot.suggestion.emergency.prompt"  = "What are the emergency numbers I should know?";
+
+// MARK: - Medsy AI — Cart success action
+"chatbot.cart_success.title"          = "Added to your cart";
+"chatbot.cart_success.subtitle"       = "×%d item(s) · %d in cart";
+"chatbot.cart_success.view_cart"      = "View Cart";
+
+// MARK: - Medsy AI — Confirm request action
+"chatbot.confirm_request.title"       = "Your request is ready";
+"chatbot.confirm_request.subtitle"    = "Complete your delivery and payment details";
+"chatbot.confirm_request.action"      = "Confirm Request";
+
+// MARK: - Medsy AI — Reminder bubble
+"chatbot.reminder.bubble_title"       = "Reminder set";
+
+// MARK: - Medsy AI — Emergency call button
+"chatbot.emergency.call"             = "Call";
+"chatbot.emergency.title"            = "Emergency Services";
+"chatbot.emergency.ambulance"        = "Ambulance";
+"chatbot.emergency.police"           = "Police";
+"chatbot.emergency.fire"             = "Fire";
+
+// MARK: - Medsy AI — Disclaimer row
+"chatbot.disclaimer.row"             = "ⓘ For informational use only";
+
+// MARK: - Medsy AI — AI offline window
+"chatbot.error.ai_offline"           = "Medsy AI is offline between 11 PM and 8 AM. Please try again after 8:00 AM.";
+
+// MARK: - Medsy AI — Product card
+"chatbot.product.add_to_cart"        = "Add to Cart";
+"chatbot.product.details"            = "Details";
+"chatbot.product.rx_only"            = "Rx Only";
