@@ -9,7 +9,7 @@ import Foundation
 
 enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
     case cash = "CASH"
-    case visa = "VISA"
+    case visa = "CARD"
 }
 
 struct CompleteRequestLocation: Equatable {

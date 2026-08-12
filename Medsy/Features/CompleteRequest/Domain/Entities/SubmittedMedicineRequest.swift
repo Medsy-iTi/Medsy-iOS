@@ -18,7 +18,7 @@ struct SubmitCompleteRequestInput: Equatable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let deliveryAddress: String
-    let notes: String
+    let notes: String?
     let paymentMethod: String
     let prescriptionData: Data?
 
@@ -26,8 +26,8 @@ struct SubmitCompleteRequestInput: Equatable {
         deliveryLatitude: Double,
         deliveryLongitude: Double,
         deliveryAddress: String,
-        notes: String = "",
-        paymentMethod: String = "cash",
+        notes: String? = nil,
+        paymentMethod: String = "CASH",
         prescriptionData: Data? = nil
     ) {
         self.deliveryLatitude = deliveryLatitude

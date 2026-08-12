@@ -125,13 +125,14 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         )
 
         if submittedRequest == nil {
+            let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
             do {
                 let result = try await submitCompleteRequestUseCase.execute(
                     input: SubmitCompleteRequestInput(
                         deliveryLatitude: deliveryLocation.latitude,
                         deliveryLongitude: deliveryLocation.longitude,
                         deliveryAddress: deliveryLocation.address,
-                        notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
+                        notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
                         paymentMethod: paymentMethod.rawValue,
                         prescriptionData: draft.prescriptionData
                     )
