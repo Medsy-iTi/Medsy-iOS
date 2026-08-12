@@ -19,6 +19,9 @@ final class PharmacyRequestDetailsViewModel {
     let requestId: Int
     private let orderStatus: PharmacyOrderAPIStatus
 
+    private(set) var requestStatus: RequestStatus = .open
+    private(set) var assignmentStatus: AssignmentStatus = .canOffer
+
     var isSubmitting: Bool = false
     var isOfferSubmitted: Bool = false
     var showSuccessAlert: Bool = false
@@ -35,24 +38,30 @@ final class PharmacyRequestDetailsViewModel {
     }
 
     var bottomButtonTitle: String {
-        switch orderStatus {
-        case .pending:
-            return isOfferSubmitted ? "pharmacy.orders.status.pending".localized : "pharmacy.orders.action.send_offer".localized
-        case .accepted, .preparing, .outForDelivery, .delivered, .completed:
+        if requestStatus == .completed {
             return "pharmacy.orders.status.completed".localized
-        case .cancelled, .expired:
+        }
+        if requestStatus == .expired {
             return "pharmacy.orders.action.expired".localized
-        case .unknown(let val):
-            return val
+        }
+        
+        switch assignmentStatus {
+        case .offered:
+            return "pharmacy.orders.status.pending".localized
+        case .canOffer:
+            return "pharmacy.orders.action.send_offer".localized
+        case .cannotOffer:
+            return "pharmacy.orders.action.expired".localized
         }
     }
 
     var isBottomButtonDisabled: Bool {
-        return isOfferSubmitted || orderStatus != .pending || isSubmitting
+        if isSubmitting { return true }
+        return requestStatus != .open || assignmentStatus != .canOffer
     }
 
     var showSecondaryButtons: Bool {
-        return orderStatus == .pending && !isOfferSubmitted
+        return requestStatus == .open && assignmentStatus == .canOffer
     }
 
     init(
@@ -68,7 +77,11 @@ final class PharmacyRequestDetailsViewModel {
         self.prescriptionImageDataSource = prescriptionImageDataSource
         if PharmacySubmittedOffersStore.shared.contains(requestId) {
             self.isOfferSubmitted = true
+            self.assignmentStatus = .offered
+        } else {
+            self.assignmentStatus = .canOffer
         }
+        self.requestStatus = .open
     }
 
     init(
@@ -84,9 +97,37 @@ final class PharmacyRequestDetailsViewModel {
         self.prescriptionImageDataSource = prescriptionImageDataSource
         self.requestModel = PharmacyOrderMapper.mapToDetailsPresentationModel(order)
         self.state = .loaded
-        if order.status != .pending || PharmacySubmittedOffersStore.shared.contains(order.id) {
-            self.isOfferSubmitted = true
+        
+        switch order.status {
+        case .completed:
+            self.requestStatus = .completed
+        case .expired:
+            self.requestStatus = .expired
+        default:
+            self.requestStatus = .open
         }
+        
+        if let rawAssignment = order.assignmentStatus?.uppercased() {
+            if rawAssignment == "OFFER_CREATED" || rawAssignment == "OFFER_MADE" || rawAssignment == "SUBMITTED" || rawAssignment == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(order.id) {
+                self.assignmentStatus = .offered
+            } else if rawAssignment == "PENDING" {
+                self.assignmentStatus = .canOffer
+            } else {
+                self.assignmentStatus = .cannotOffer
+            }
+        } else {
+            if PharmacySubmittedOffersStore.shared.contains(order.id) {
+                self.assignmentStatus = .offered
+            } else {
+                self.assignmentStatus = .canOffer
+            }
+        }
+        
+        if self.requestStatus == .completed || self.requestStatus == .expired {
+            self.assignmentStatus = .cannotOffer
+        }
+        
+        self.isOfferSubmitted = (self.assignmentStatus == .offered)
     }
 
     func loadDetails() async {
@@ -98,6 +139,11 @@ final class PharmacyRequestDetailsViewModel {
             let useCase = fetchRequestsUseCase ?? PharmacyAppAssembler.shared.container.resolve(FetchPharmacyRequestsUseCaseProtocol.self)
             let entity = try await useCase.execute(requestId: requestId)
             self.requestModel = PharmacyMedicineRequestMapper.mapToPresentationModel(entity)
+            self.requestStatus = entity.requestStatus
+            self.assignmentStatus = entity.resolvedAssignmentStatus
+            if self.assignmentStatus == .offered {
+                self.isOfferSubmitted = true
+            }
             self.state = .loaded
         } catch {
             let errMsg = (error as? NetworkError)?.errorDescription ?? error.localizedDescription
@@ -167,6 +213,7 @@ final class PharmacyRequestDetailsViewModel {
             if success {
                 PharmacySubmittedOffersStore.shared.insert(self.requestId)
                 self.isOfferSubmitted = true
+                self.assignmentStatus = .offered
                 self.alertMessage = "تم إرسال العرض بنجاح"
                 self.showSuccessAlert = true
                 if var currentModel = self.requestModel {

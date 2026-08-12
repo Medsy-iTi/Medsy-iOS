@@ -32,17 +32,24 @@ enum PharmacyMedicineRequestMapper {
             return fallbackFormatter.date(from: trimmed)
         }()
 
-        let items = (dto.items ?? []).map { itemDTO in
-            PharmacyMedicineRequestItemEntity(
+        let items = (dto.items ?? []).map { itemDTO -> PharmacyMedicineRequestItemEntity in
+            let imageUrl = itemDTO.product?.imageUrl ?? itemDTO.imageUrl
+            let productName = itemDTO.product?.name ?? itemDTO.product?.productName ?? itemDTO.productName ?? "pharmacy.request.product_label".localized(String(itemDTO.product?.id ?? itemDTO.productId ?? 0))
+            let unitPrice = itemDTO.product?.price ?? itemDTO.unitPrice ?? 0.0
+            let form = itemDTO.product?.form ?? itemDTO.form
+            let strength = itemDTO.product?.strength ?? itemDTO.strength
+            let packSize = itemDTO.product?.packSize ?? itemDTO.packSize
+
+            return PharmacyMedicineRequestItemEntity(
                 id: itemDTO.id,
-                productId: itemDTO.productId,
-                imageUrl: itemDTO.imageUrl,
-                productName: itemDTO.productName ?? "pharmacy.request.product_label".localized(String(itemDTO.productId)),
+                productId: itemDTO.product?.id ?? itemDTO.productId ?? 0,
+                imageUrl: imageUrl,
+                productName: productName,
                 quantity: itemDTO.quantity,
-                unitPrice: itemDTO.unitPrice ?? 0.0,
-                form: itemDTO.form,
-                strength: itemDTO.strength,
-                packSize: itemDTO.packSize
+                unitPrice: unitPrice,
+                form: form,
+                strength: strength,
+                packSize: packSize
             )
         }
 
@@ -58,7 +65,58 @@ enum PharmacyMedicineRequestMapper {
             createdAt: parsedDate,
             items: items,
             prescriptionUrl: dto.prescriptionUrl,
-            notes: dto.notes
+            notes: dto.notes,
+            distanceKm: nil,
+            assignmentStatus: nil
+        )
+    }
+
+    static func map(_ dto: PharmacyRequestAssignmentDTO) -> PharmacyMedicineRequestEntity {
+        let parsedDate: Date? = {
+            guard let dateStr = dto.request.createdAt else { return nil }
+            if let date = isoFormatter.date(from: dateStr) {
+                return date
+            }
+            let trimmed = String(dateStr.prefix(19))
+            return fallbackFormatter.date(from: trimmed)
+        }()
+
+        let items = (dto.request.items ?? []).map { itemDTO -> PharmacyMedicineRequestItemEntity in
+            let imageUrl = itemDTO.product?.imageUrl ?? itemDTO.imageUrl
+            let productName = itemDTO.product?.name ?? itemDTO.product?.productName ?? itemDTO.productName ?? "pharmacy.request.product_label".localized(String(itemDTO.product?.id ?? itemDTO.productId ?? 0))
+            let unitPrice = itemDTO.product?.price ?? itemDTO.unitPrice ?? 0.0
+            let form = itemDTO.product?.form ?? itemDTO.form
+            let strength = itemDTO.product?.strength ?? itemDTO.strength
+            let packSize = itemDTO.product?.packSize ?? itemDTO.packSize
+
+            return PharmacyMedicineRequestItemEntity(
+                id: itemDTO.id,
+                productId: itemDTO.product?.id ?? itemDTO.productId ?? 0,
+                imageUrl: imageUrl,
+                productName: productName,
+                quantity: itemDTO.quantity,
+                unitPrice: unitPrice,
+                form: form,
+                strength: strength,
+                packSize: packSize
+            )
+        }
+
+        return PharmacyMedicineRequestEntity(
+            id: dto.request.id,
+            customerId: dto.request.customerId,
+            customerName: dto.request.customerName,
+            customerPhone: dto.request.customerPhone,
+            deliveryLatitude: dto.request.deliveryLatitude ?? 0.0,
+            deliveryLongitude: dto.request.deliveryLongitude ?? 0.0,
+            deliveryAddress: dto.request.deliveryAddress ?? "pharmacy.orders.address.fallback".localized,
+            status: PharmacyOrderAPIStatus(rawValue: dto.request.status),
+            createdAt: parsedDate,
+            items: items,
+            prescriptionUrl: dto.request.prescriptionUrl,
+            notes: dto.request.notes,
+            distanceKm: dto.distanceKm,
+            assignmentStatus: dto.assignmentStatus
         )
     }
 
