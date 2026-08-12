@@ -16,6 +16,11 @@ struct OrderDetailView: View {
     var onSelectProduct: ((Int) -> Void)? = nil
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
+    var selectedPharmacyID: Int? = nil
+    var currentLocation: OrderCoordinatePresentation? = nil
+    var routeState: OrderRoutePresentationState = .idle
+    var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onOpenDirections: ((OrderPharmacyPresentationModel) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -114,7 +119,17 @@ struct OrderDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.md) {
                     statusHeader(order: order)
-                    itemsSection(order: order)
+                    if !order.pharmacies.isEmpty {
+                        pharmacyMap(order: order)
+                        ForEach(order.pharmacies) { pharmacy in
+                            OrderPharmacySectionView(
+                                pharmacy: pharmacy,
+                                onSelectProduct: { onSelectProduct?($0) }
+                            )
+                        }
+                    } else {
+                        itemsSection(order: order)
+                    }
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
@@ -130,6 +145,21 @@ struct OrderDetailView: View {
                         .frame(height: 96)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                 )
+        }
+    }
+
+    @ViewBuilder
+    private func pharmacyMap(order: OrderDetailPresentationModel) -> some View {
+        let mappedPharmacies = order.pharmacies.filter { $0.coordinate != nil }
+        if !mappedPharmacies.isEmpty {
+            OrderPharmacyMapView(
+                pharmacies: mappedPharmacies,
+                selectedPharmacyID: selectedPharmacyID ?? mappedPharmacies.first?.id,
+                currentLocation: currentLocation,
+                routeState: routeState,
+                onSelectPharmacy: { onSelectPharmacy?($0) },
+                onOpenDirections: { onOpenDirections?($0) }
+            )
         }
     }
 
@@ -356,7 +386,13 @@ extension ReorderState {
         state: .loaded(.mock),
         reorderState: .idle,
         onRetry: {},
-        onBack: {}
+        onBack: {},
+        selectedPharmacyID: 71,
+        currentLocation: OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
+        routeState: .ready(points: [
+            OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
+            OrderCoordinatePresentation(latitude: 30.0444, longitude: 31.2357)
+        ])
     )
     .environment(LanguageManager.shared)
 }

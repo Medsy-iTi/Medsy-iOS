@@ -37,6 +37,8 @@ struct OrderCardView: View {
                     .font(AppColor.sans(14, .semibold))
                     .foregroundStyle(order.status.color)
 
+                pharmacyNames
+
                 fulfillmentBadge
 
                 HStack(alignment: .bottom) {
@@ -74,6 +76,19 @@ struct OrderCardView: View {
             .medsyCardShadow()
         }
         .buttonStyle(.plain)
+    }
+
+    private var pharmacyNames: some View {
+        HStack(spacing: MedsySpacing.xxs) {
+            Image(systemName: "cross.case.fill")
+                .font(.system(size: 11))
+                .foregroundStyle(AppColor.green)
+            Text(order.displayedPharmacyNames.joined(separator: " • "))
+                .font(AppColor.sans(12, .medium))
+                .foregroundStyle(AppColor.textSec)
+                .lineLimit(2)
+        }
+        .accessibilityElement(children: .combine)
     }
 
     private var dateLabel: String {

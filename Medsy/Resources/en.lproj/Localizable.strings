@@ -523,6 +523,14 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.detail.pharmacy_locations"   = "Pharmacy locations";
+"orders.detail.your_location"        = "Your location";
+"orders.detail.locating"             = "Finding your current location…";
+"orders.detail.loading_route"        = "Finding the best driving route…";
+"orders.detail.location_permission_denied" = "Enable location access to see a route from your location.";
+"orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
+"orders.detail.open_directions"      = "Open turn-by-turn directions";
+"orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
 "orders.reorder.go_to_cart"          = "Go to Cart";
 "orders.reorder.continue_shopping"   = "Continue Shopping";
 "orders.reorder.success.title"       = "Added Successfully";
