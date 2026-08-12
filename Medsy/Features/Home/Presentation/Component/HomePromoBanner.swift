@@ -1,3 +1,4 @@
+//
 //  HomePromoBanner.swift
 //  Medsy
 //
@@ -6,154 +7,107 @@
 
 import SwiftUI
 
-struct PromoData: Identifiable {
-    let id = UUID()
+private struct HomeBanner: Identifiable {
+    let id: Int
+    let imageName: String
     let titleKey: String
-    let discountKey: String
-    let targetKey: String
-    let buttonKey: String
-    let colors: [Color]
-    let systemIcon1: String
-    let systemIcon2: String
-    let systemIcon3: String
-    let iconColor1: Color
-    let iconColor2: Color
-    let iconColor3: Color
+    let subtitleKey: String
+    let extraTitleKey: String
+    let accessibilityKey: String
 }
 
 struct HomePromoBanner: View {
     @State private var currentIndex = 0
-    
+
     private let banners = [
-        PromoData(
+        HomeBanner(
+            id: 0,
+            imageName: "HomeBannerOne",
             titleKey: "home.promoTitle",
-            discountKey: "home.promoDiscount",
-            targetKey: "home.promoTarget",
-            buttonKey: "home.shopNow",
-            colors: [Color(hex: "#1A5F35"), Color(hex: "#2A8754"), Color(hex: "#1C6B40")],
-            systemIcon1: "bag.fill",
-            systemIcon2: "plus.circle.fill",
-            systemIcon3: "pills.fill",
-            iconColor1: .white,
-            iconColor2: Color(hex: "#2A8754"),
-            iconColor3: Color(hex: "#F1C40F")
+            subtitleKey: "home.promoDiscount",
+            extraTitleKey: "home.promoTarget",
+            accessibilityKey: "home.banner.image.desc.one"
         ),
-        PromoData(
+        HomeBanner(
+            id: 1,
+            imageName: "HomeBannerTwo",
             titleKey: "home.promo2.title",
-            discountKey: "home.promo2.discount",
-            targetKey: "home.promo2.target",
-            buttonKey: "home.promo2.button",
-            colors: [Color(hex: "#C2410C"), Color(hex: "#EA580C"), Color(hex: "#F97316")],
-            systemIcon1: "leaf.fill",
-            systemIcon2: "heart.text.square.fill",
-            systemIcon3: "capsule.fill",
-            iconColor1: .white,
-            iconColor2: Color(hex: "#FECACA"),
-            iconColor3: Color(hex: "#FDE047")
+            subtitleKey: "home.promo2.discount",
+            extraTitleKey: "home.promo2.target",
+            accessibilityKey: "home.banner.image.desc.two"
         ),
-        PromoData(
+        HomeBanner(
+            id: 2,
+            imageName: "HomeBannerThree",
             titleKey: "home.promo3.title",
-            discountKey: "home.promo3.discount",
-            targetKey: "home.promo3.target",
-            buttonKey: "home.promo3.button",
-            colors: [Color(hex: "#0369A1"), Color(hex: "#0284C7"), Color(hex: "#38BDF8")],
-            systemIcon1: "scooter",
-            systemIcon2: "clock.badge.checkmark.fill",
-            systemIcon3: "bolt.fill",
-            iconColor1: .white,
-            iconColor2: Color(hex: "#7DD3FC"),
-            iconColor3: Color(hex: "#F59E0B")
+            subtitleKey: "home.promo3.discount",
+            extraTitleKey: "home.promo3.target",
+            accessibilityKey: "home.banner.image.desc.three"
         )
     ]
-    
+
     var body: some View {
-        VStack(spacing: 12) {
-            TabView(selection: $currentIndex) {
-                ForEach(0..<banners.count, id: \.self) { index in
-                    let promo = banners[index]
-                    ZStack {
-                        LinearGradient(
-                            colors: promo.colors,
-                            startPoint: .topTrailing,
-                            endPoint: .bottomLeading
-                        )
-                        .cornerRadius(18)
-                        
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(promo.titleKey.localized)
-                                    .font(AppColor.sans(20, .bold))
-                                    .foregroundStyle(.white)
-                                    .multilineTextAlignment(.leading)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(promo.discountKey.localized)
-                                        .font(AppColor.sans(14, .bold))
-                                        .foregroundStyle(.white.opacity(0.95))
-                                        .multilineTextAlignment(.leading)
-                                    
-                                    Text(promo.targetKey.localized)
-                                        .font(AppColor.sans(12))
-                                        .foregroundStyle(.white.opacity(0.85))
-                                        .multilineTextAlignment(.leading)
-                                }
-                                
-                                Button {
-                                } label: {
-                                    Text(promo.buttonKey.localized)
-                                        .font(AppColor.sans(12, .bold))
-                                        .foregroundStyle(promo.colors[1])
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
-                                        .background(.white, in: .capsule)
-                                }
-                                .padding(.top, 4)
-                            }
-                            .padding(.leading, 20)
-                            
-                            Spacer()
-                            
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.white.opacity(0.15))
-                                    .frame(width: 80, height: 95)
-                                    .offset(y: 5)
-                                
-                                VStack(spacing: 4) {
-                                    Image(systemName: promo.systemIcon2)
-                                        .font(.system(size: 24))
-                                        .foregroundStyle(promo.iconColor2)
-                                    
-                                    Image(systemName: promo.systemIcon1)
-                                        .font(.system(size: 32))
-                                        .foregroundStyle(promo.iconColor1)
-                                }
-                                .offset(x: -5, y: -5)
-                                
-                                Image(systemName: promo.systemIcon3)
-                                    .font(.system(size: 28))
-                                    .foregroundStyle(promo.iconColor3)
-                                    .offset(x: 25, y: 25)
-                            }
-                            .padding(.trailing, 20)
-                        }
-                        .padding(.vertical, 16)
-                    }
-                    .padding(.horizontal)
-                    .tag(index)
+        VStack(spacing: MedsySpacing.sm) {
+            banner(banners[currentIndex])
+
+            HStack(spacing: 6) {
+                ForEach(banners.indices, id: \.self) { index in
+                    Capsule()
+                        .fill(index == currentIndex ? AppColor.green : AppColor.border)
+                        .frame(width: index == currentIndex ? 18 : 8, height: 8)
                 }
             }
-            .frame(height: 160)
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            
-            HStack(spacing: 6) {
-                ForEach(0..<banners.count, id: \.self) { index in
-                    Circle()
-                        .fill(currentIndex == index ? AppColor.green : AppColor.border)
-                        .frame(width: 7, height: 7)
-                        .animation(.spring(), value: currentIndex)
+            .animation(.easeInOut(duration: 0.25), value: currentIndex)
+        }
+        .padding(.horizontal, MedsySpacing.md)
+        .frame(maxWidth: .infinity)
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(4))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    currentIndex = (currentIndex + 1) % banners.count
                 }
             }
         }
+    }
+
+    private func banner(_ item: HomeBanner) -> some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Image(item.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+
+                LinearGradient(
+                    colors: [.black.opacity(0.65), .black.opacity(0.15)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(item.extraTitleKey.localized)
+                        .font(AppColor.sans(12, .semibold))
+                        .foregroundStyle(.white.opacity(0.8))
+                    Text(item.titleKey.localized)
+                        .font(AppColor.sans(22, .bold))
+                        .foregroundStyle(.white)
+                    Text(item.subtitleKey.localized)
+                        .font(AppColor.sans(14))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(20)
+            }
+        }
+        .frame(height: 210)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: AppColor.green.opacity(0.18), radius: 8, y: 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(item.accessibilityKey.localized)
     }
 }

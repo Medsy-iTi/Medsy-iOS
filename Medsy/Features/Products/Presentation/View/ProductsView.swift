@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct ProductsView: View {
+    @Environment(LanguageManager.self) private var languageManager
     @Environment(\.dismiss) private var dismiss
     @Environment(CartViewModel.self) private var cartViewModel
     @State private var viewModel: ProductsViewModel
@@ -119,6 +120,9 @@ struct ProductsView: View {
         }
         .task {
             await viewModel.loadProducts()
+        }
+        .onChange(of: languageManager.languageCode) { _, _ in
+            Task { await viewModel.loadProducts() }
         }
     }
 

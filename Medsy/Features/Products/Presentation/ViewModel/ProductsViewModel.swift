@@ -30,7 +30,12 @@ final class ProductsViewModel {
         isLastPage = false
         isFetchingNextPage = false
         do {
-            let data = try await getProductsUseCase.execute(id: category.id, page: currentPage, size: 20)
+            let data = try await getProductsUseCase.execute(
+                id: category.id,
+                page: currentPage,
+                size: 20,
+                language: LanguageManager.shared.languageCode
+            )
             products = data.items.map { ProductItemPresentationMapper.map($0, isRTL: LanguageManager.shared.isRTL) }
             isLastPage = data.isLast ?? true
             state = .success
@@ -44,7 +49,12 @@ final class ProductsViewModel {
         isFetchingNextPage = true
         do {
             let nextPage = currentPage + 1
-            let data = try await getProductsUseCase.execute(id: category.id, page: nextPage, size: 20)
+            let data = try await getProductsUseCase.execute(
+                id: category.id,
+                page: nextPage,
+                size: 20,
+                language: LanguageManager.shared.languageCode
+            )
             let newProducts = data.items.map { ProductItemPresentationMapper.map($0, isRTL: LanguageManager.shared.isRTL) }
             products.append(contentsOf: newProducts)
             isLastPage = data.isLast ?? true

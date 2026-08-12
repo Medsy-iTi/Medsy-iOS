@@ -12,6 +12,7 @@ struct ProductDetailView: View {
     @Environment(CartViewModel.self) private var cartViewModel
     @ObservedObject private var appSettings = AppSettings.shared
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openChatbotPrompt) private var openChatbotPrompt
 
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(productId: productId))
@@ -133,7 +134,7 @@ struct ProductDetailView: View {
                         systemImage: "bubble.left.and.bubble.right",
                         style: .secondary
                     ) {
-                        viewModel.consultPharmacist()
+                        openChatbotPrompt?("tell me about \(product.title)")
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)

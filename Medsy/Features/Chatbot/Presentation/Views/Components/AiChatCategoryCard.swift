@@ -1,3 +1,10 @@
+//
+//  AiChatCategoryCard.swift
+//  Medsy
+//
+//  Created by Shahd Ashraf on 06/08/2026.
+//
+
 import SwiftUI
 
 struct AiChatCategoryCard: View {
@@ -37,12 +44,12 @@ struct AiChatCategoryCard: View {
 
     private func bgColor(for id: Int) -> Color {
         switch id % 6 {
-        case 0:  return Color(hex: "#E8F8F1")
-        case 1:  return Color(hex: "#EEF3FF")
-        case 2:  return Color(hex: "#FFF2DE")
-        case 3:  return Color(hex: "#FCEAF4")
-        case 4:  return Color(hex: "#F2EAFE")
-        default: return Color(hex: "#EAF8FA")
+        case 0:  return AppColor.categoryContainer
+        case 1:  return AppColor.blueContainer
+        case 2:  return AppColor.orangeContainer
+        case 3:  return AppColor.pinkContainer
+        case 4:  return AppColor.purpleContainer
+        default: return AppColor.tertiaryContainer
         }
     }
 
@@ -143,4 +150,3 @@ struct AiChatCategoryCard: View {
     .padding()
     .background(Color(UIColor.systemGroupedBackground))
 }
-
