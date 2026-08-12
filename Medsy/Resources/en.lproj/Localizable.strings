@@ -482,6 +482,7 @@
 "orders.status.ready_for_pickup"     = "Ready for pickup";
 "orders.status.ready_for_delivery"   = "Ready for delivery";
 "orders.status.out_for_delivery"     = "Out for delivery";
+"orders.product_unavailable"         = "Medicine no longer available";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";

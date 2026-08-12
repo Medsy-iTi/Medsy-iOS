@@ -23,7 +23,7 @@ final class OrdersFeatureTests: XCTestCase {
             """.utf8
         )
 
-        let page = try JSONDecoder().decode(PageDTO<OrderGroupDTO>.self, from: data)
+        let page = try JSONDecoder().decode(PageDTO<MasterOrderDTO>.self, from: data)
 
         XCTAssertEqual(page.number, 2)
         XCTAssertEqual(page.size, 20)
@@ -32,7 +32,7 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(page.last, true)
     }
 
-    func testGroupedBackendOrdersAndNestedProductsAreMapped() throws {
+    func testMasterOrdersAndNestedPharmaciesAreMapped() throws {
         let data = Data(
             """
             {
@@ -41,22 +41,15 @@ final class OrdersFeatureTests: XCTestCase {
               "data": {
                 "content": [
                   {
+                    "id": 7,
                     "requestId": 41,
-                    "orders": [
+                    "orderResponses": [
                       {
-                        "id": 71,
-                        "customerId": 2,
+                        "offerId": 71,
                         "pharmacyId": 3,
                         "pharmacyName": "Medsy Pharmacy",
-                        "pharmacistId": 4,
-                        "offerId": 5,
-                        "subTotal": 85,
-                        "deliveryFee": 10,
-                        "total": 95,
-                        "deliveryLatitude": 30.0,
-                        "deliveryLongitude": 31.0,
-                        "status": "CONFIRMED",
-                        "createdAt": "2026-08-04",
+                        "latitude": 30.0,
+                        "longitude": 31.0,
                         "items": [
                           {
                             "id": 11,
@@ -68,12 +61,28 @@ final class OrdersFeatureTests: XCTestCase {
                               "id": 12,
                               "name": "Medicine",
                               "productName": "Received medicine",
+                              "strength": "500 mg",
+                              "packSize": "20 tablets",
+                              "form": "Tablet",
+                              "price": 50,
+                              "scientificName": "Medicine ingredient",
+                              "company": "Medsy Labs",
+                              "route": "Oral",
+                              "description": "Pain relief",
                               "imageUrl": "https://example.com/medicine.png"
                             }
                           }
                         ]
                       }
-                    ]
+                    ],
+                    "paymentMethod": "CARD",
+                    "paymentStatus": "PENDING",
+                    "fulfillmentMethod": "DELIVERY",
+                    "deliveryFee": 10,
+                    "totalPrice": 95,
+                    "orderStatus": "PENDING_PAYMENT",
+                    "paymentExpiresAt": "2026-08-04T12:15:00",
+                    "paidAt": null
                   }
                 ],
                 "pageNumber": 0,
@@ -89,29 +98,39 @@ final class OrdersFeatureTests: XCTestCase {
         let response = try JSONDecoder().decode(OrdersPageResponseDTO.self, from: data)
         let page = try XCTUnwrap(response.data)
         let result = OrderMapper.mapToPagedResult(page)
-        let order = try XCTUnwrap(page.content.first?.orders.first)
+        let order = try XCTUnwrap(page.content.first)
         let detail = OrderMapper.mapToDetailEntity(order)
 
         XCTAssertEqual(page.content.first?.requestId, 41)
-        XCTAssertEqual(result.items.map(\.id), [71])
+        XCTAssertEqual(result.items.map(\.id), [7])
+        XCTAssertEqual(result.items.first?.pharmacyNames, ["Medsy Pharmacy"])
         XCTAssertEqual(result.items.first?.itemImageURLs, ["https://example.com/medicine.png"])
+        XCTAssertEqual(detail.pharmacies.first?.id, 71)
+        XCTAssertEqual(detail.pharmacies.first?.coordinate?.latitude, 30)
         XCTAssertEqual(detail.items.first?.productName, "Received medicine")
+        XCTAssertEqual(detail.items.first?.product?.strength, "500 mg")
         XCTAssertEqual(detail.items.first?.imageURL, "https://example.com/medicine.png")
         XCTAssertEqual(detail.itemsSubtotal, 85)
         XCTAssertEqual(detail.totalPrice, 95)
+        XCTAssertEqual(detail.paymentMethod, .card)
+        XCTAssertEqual(detail.paymentStatus, .pending)
     }
 
-    func testOrdersEndpointUsesOnlySupportedPaginationParameters() {
-        let parameters = OrdersEndpoint
-            .fetchOrders(page: 1, size: 20)
-            .queryParameters
+    func testMasterOrdersEndpointsUsePaginationAndExplicitLanguage() {
+        let listEndpoint = OrdersEndpoint.fetchOrders(page: 1, size: 20, language: "ar")
+        let detailEndpoint = OrdersEndpoint.fetchOrderDetail(id: 7, language: "ar")
+        let parameters = listEndpoint.queryParameters
 
+        XCTAssertEqual(listEndpoint.path, "masterorders")
         XCTAssertEqual(parameters?["page"] as? Int, 1)
         XCTAssertEqual(parameters?["size"] as? Int, 20)
+        XCTAssertEqual(parameters?["lang"] as? String, "ar")
         XCTAssertNil(parameters?["sort"])
         XCTAssertNil(parameters?["status"])
         XCTAssertNil(parameters?["dateFrom"])
         XCTAssertNil(parameters?["dateTo"])
+        XCTAssertEqual(detailEndpoint.path, "masterorders/7")
+        XCTAssertEqual(detailEndpoint.queryParameters?["lang"] as? String, "ar")
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
@@ -166,34 +185,15 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertNil(presentation.pharmacies.first?.items.first?.productId)
     }
 
-    func testDetailUsesPaidSnapshotAndAlternativeMetadata() throws {
-        let dto = try decodeOrder(
-            fulfillmentType: "DELIVERY",
-            deliveryFee: 10,
-            totalPrice: 95
-        )
-
-        let detail = OrderMapper.mapToDetailEntity(dto)
-
-        XCTAssertEqual(detail.itemsSubtotal, 85)
-        XCTAssertEqual(detail.deliveryFee, 10)
-        XCTAssertEqual(detail.totalPrice, 95)
-        XCTAssertEqual(detail.items.first?.unitPrice, 42.5)
-        XCTAssertEqual(detail.items.first?.productName, "Received medicine")
-        XCTAssertEqual(detail.items.first?.originalProductName, "Requested medicine")
-    }
-
-    func testPickupOrderNeverDisplaysDeliveryFeeRow() throws {
-        let dto = try decodeOrder(
-            fulfillmentType: "PICKUP",
-            deliveryFee: 10,
-            totalPrice: 85
-        )
+    func testCashPickupOrderAcceptsNullPaymentStatusAndHidesDeliveryFee() throws {
+        let dto = try decodeMasterOrder(fulfillmentMethod: "PICKUP")
 
         let detail = OrderMapper.mapToDetailEntity(dto)
 
         XCTAssertEqual(detail.fulfillmentType, .pickup)
         XCTAssertNil(detail.deliveryFee)
+        XCTAssertEqual(detail.paymentMethod, .cash)
+        XCTAssertNil(detail.paymentStatus)
     }
 
     @MainActor
@@ -328,42 +328,34 @@ final class OrdersFeatureTests: XCTestCase {
         try await waitUntil { viewModel.routeState == .permissionDenied }
     }
 
-    private func decodeOrder(
-        fulfillmentType: String,
-        deliveryFee: Double,
-        totalPrice: Double
-    ) throws -> OrderDTO {
+    private func decodeMasterOrder(fulfillmentMethod: String) throws -> MasterOrderDTO {
         let json =
             """
             {
               "id": 7,
-              "userId": 2,
-              "pharmacyId": 3,
-              "pharmacistId": 4,
-              "offerId": 5,
-              "totalPrice": \(totalPrice),
-              "deliveryLatitude": 30.0,
-              "deliveryLongitude": 31.0,
-              "status": "DELIVERED",
-              "date": "2026-07-20",
-              "pharmacyName": "Snapshot Pharmacy",
-              "fulfillmentType": "\(fulfillmentType)",
-              "deliveryFee": \(deliveryFee),
-              "itemsSubtotal": 85,
-              "items": [
+              "requestId": 41,
+              "orderResponses": [
                 {
-                  "id": 11,
-                  "productId": 12,
-                  "quantity": 2,
-                  "unitPrice": 42.5,
-                  "productName": "Received medicine",
-                  "originalProductName": "Requested medicine"
+                  "offerId": 71,
+                  "pharmacyId": 3,
+                  "pharmacyName": "Snapshot Pharmacy",
+                  "latitude": 30,
+                  "longitude": 31,
+                  "items": []
                 }
-              ]
+              ],
+              "paymentMethod": "CASH",
+              "paymentStatus": null,
+              "fulfillmentMethod": "\(fulfillmentMethod)",
+              "deliveryFee": 10,
+              "totalPrice": 85,
+              "orderStatus": "PREPARING",
+              "paymentExpiresAt": null,
+              "paidAt": null
             }
             """
 
-        return try JSONDecoder().decode(OrderDTO.self, from: Data(json.utf8))
+        return try JSONDecoder().decode(MasterOrderDTO.self, from: Data(json.utf8))
     }
 
     private func orderEntity(id: Int, status: OrderStatus = .delivered) -> OrderEntity {
