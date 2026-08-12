@@ -96,6 +96,10 @@ struct MainTabBarView: View {
 
             ProfileCoordinatorView(
                 onOrders: { coordinator.select(.orders) },
+                onFavorites: {
+                    requestedHomeRoute = .favorites
+                    coordinator.select(.home)
+                },
                 onLogout: coordinator.logout,
                 viewModel: profileViewModel
             )

@@ -13,13 +13,16 @@ struct ProfileCoordinatorView: View {
     @State private var coordinator: ProfileCoordinator
 
     let onOrders: () -> Void
+    let onFavorites: () -> Void
 
     init(
         onOrders: @escaping () -> Void,
+        onFavorites: @escaping () -> Void,
         onLogout: @escaping () -> Void,
         viewModel: ProfileViewModel = DIContainer.shared.resolve(ProfileViewModel.self)
     ) {
         self.onOrders = onOrders
+        self.onFavorites = onFavorites
         _coordinator = State(initialValue: ProfileCoordinator(viewModel: viewModel, onLogout: onLogout))
     }
 
@@ -40,6 +43,7 @@ struct ProfileCoordinatorView: View {
             onLanguage: coordinator.showLanguagePicker,
             onTheme: coordinator.showThemePicker,
             onOrders: onOrders,
+            onFavorites: onFavorites,
             onLogout: coordinator.requestLogout
         )
         .task {
