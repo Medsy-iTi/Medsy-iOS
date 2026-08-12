@@ -36,7 +36,12 @@ enum OrderEntityMapper {
             itemsSubtotal: entity.itemsSubtotal,
             deliveryFee: entity.deliveryFee,
             totalPrice: entity.totalPrice,
-            pharmacies: entity.pharmacies.map(mapPharmacy)
+            pharmacies: entity.pharmacies.map(mapPharmacy),
+            requestID: entity.requestID,
+            paymentMethod: entity.paymentMethod,
+            paymentStatus: entity.paymentStatus,
+            paymentExpiresAt: entity.paymentExpiresAt,
+            paidAt: entity.paidAt
         )
     }
 

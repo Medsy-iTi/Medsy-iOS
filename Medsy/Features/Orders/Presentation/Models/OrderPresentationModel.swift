@@ -57,6 +57,11 @@ struct OrderDetailPresentationModel: Identifiable {
     let deliveryFee: Double?
     let totalPrice: Double
     let pharmacies: [OrderPharmacyPresentationModel]
+    let requestID: Int?
+    let paymentMethod: OrderPaymentMethod?
+    let paymentStatus: OrderPaymentStatus?
+    let paymentExpiresAt: Date?
+    let paidAt: Date?
 
     init(
         id: Int,
@@ -70,7 +75,12 @@ struct OrderDetailPresentationModel: Identifiable {
         itemsSubtotal: Double,
         deliveryFee: Double?,
         totalPrice: Double,
-        pharmacies: [OrderPharmacyPresentationModel] = []
+        pharmacies: [OrderPharmacyPresentationModel] = [],
+        requestID: Int? = nil,
+        paymentMethod: OrderPaymentMethod? = nil,
+        paymentStatus: OrderPaymentStatus? = nil,
+        paymentExpiresAt: Date? = nil,
+        paidAt: Date? = nil
     ) {
         self.id = id
         self.orderNumber = orderNumber
@@ -84,6 +94,11 @@ struct OrderDetailPresentationModel: Identifiable {
         self.deliveryFee = deliveryFee
         self.totalPrice = totalPrice
         self.pharmacies = pharmacies
+        self.requestID = requestID
+        self.paymentMethod = paymentMethod
+        self.paymentStatus = paymentStatus
+        self.paymentExpiresAt = paymentExpiresAt
+        self.paidAt = paidAt
     }
 }
 
