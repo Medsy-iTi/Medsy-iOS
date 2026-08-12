@@ -15,12 +15,12 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
     private(set) var detailState: OrderDetailViewState = .loading
     private(set) var reorderState: ReorderState = .idle
     private(set) var selectedPharmacyID: Int?
-    private(set) var currentLocation: OrderCoordinatePresentation?
+    private(set) var deliveryLocation: OrderCoordinatePresentation?
     private(set) var routeState: OrderRoutePresentationState = .idle
 
     private let getOrderDetailUseCase: GetOrderDetailUseCaseProtocol?
+    private let getOrderDeliveryLocationUseCase: GetOrderDeliveryLocationUseCaseProtocol?
     private let reorderUseCase: ReorderUseCaseProtocol?
-    private let locationProvider: OrderCurrentLocationProviding?
     private let routeProvider: OrderRouteProviding?
     private let directionsOpener: OrderDirectionsOpening?
     private var loadTask: Task<Void, Never>?
@@ -29,14 +29,14 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     init(
         getOrderDetailUseCase: GetOrderDetailUseCaseProtocol? = nil,
+        getOrderDeliveryLocationUseCase: GetOrderDeliveryLocationUseCaseProtocol? = nil,
         reorderUseCase: ReorderUseCaseProtocol? = nil,
-        locationProvider: OrderCurrentLocationProviding? = nil,
         routeProvider: OrderRouteProviding? = nil,
         directionsOpener: OrderDirectionsOpening? = nil
     ) {
         self.getOrderDetailUseCase = getOrderDetailUseCase
+        self.getOrderDeliveryLocationUseCase = getOrderDeliveryLocationUseCase
         self.reorderUseCase = reorderUseCase
-        self.locationProvider = locationProvider
         self.routeProvider = routeProvider
         self.directionsOpener = directionsOpener
     }
@@ -44,21 +44,17 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
     init(
         state: OrderDetailViewState,
         reorderState: ReorderState = .idle,
-        locationProvider: OrderCurrentLocationProviding? = nil,
+        getOrderDeliveryLocationUseCase: GetOrderDeliveryLocationUseCaseProtocol? = nil,
         routeProvider: OrderRouteProviding? = nil,
         directionsOpener: OrderDirectionsOpening? = nil
     ) {
         detailState = state
         self.reorderState = reorderState
         getOrderDetailUseCase = nil
+        self.getOrderDeliveryLocationUseCase = getOrderDeliveryLocationUseCase
         reorderUseCase = nil
-        self.locationProvider = locationProvider
         self.routeProvider = routeProvider
         self.directionsOpener = directionsOpener
-
-        if case .loaded(let order) = state {
-            prepareRoute(for: order)
-        }
     }
 
 
@@ -73,6 +69,8 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
             handleReorder()
         case .selectPharmacy(let pharmacyID):
             selectPharmacy(id: pharmacyID)
+        case .showPharmacyLocation(let pharmacyID):
+            showPharmacyLocation(id: pharmacyID)
         case .openDirections:
             openDirections()
         case .dismissReorderFeedback:
@@ -86,7 +84,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         detailState = .loading
         reorderState = .idle
         selectedPharmacyID = nil
-        currentLocation = nil
+        deliveryLocation = nil
         routeState = .idle
         loadTask = Task {
             guard let useCase = getOrderDetailUseCase else { return }
@@ -95,23 +93,11 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
                 guard !Task.isCancelled else { return }
                 let order = OrderEntityMapper.mapDetail(entity)
                 detailState = .loaded(order)
-                prepareRoute(for: order)
             } catch {
                 guard !Task.isCancelled else { return }
                 detailState = .error(error.localizedDescription)
             }
         }
-    }
-
-    private func prepareRoute(for order: OrderDetailPresentationModel) {
-        guard let pharmacy = order.pharmacies.first(where: { $0.coordinate != nil }) else {
-            selectedPharmacyID = nil
-            routeState = .idle
-            return
-        }
-
-        selectedPharmacyID = pharmacy.id
-        requestRoute(to: pharmacy)
     }
 
     private func selectPharmacy(id: Int) {
@@ -121,13 +107,24 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         }
 
         selectedPharmacyID = id
-        requestRoute(to: pharmacy)
+        requestRoute(to: pharmacy, in: order)
     }
 
-    private func requestRoute(to pharmacy: OrderPharmacyPresentationModel) {
+    private func showPharmacyLocation(id: Int) {
+        guard case .loaded(let order) = detailState,
+              let pharmacy = order.pharmacies.first(where: { $0.id == id && $0.coordinate != nil }) else {
+            return
+        }
+
+        selectedPharmacyID = id
+        requestRoute(to: pharmacy, in: order)
+    }
+
+    private func requestRoute(to pharmacy: OrderPharmacyPresentationModel, in order: OrderDetailPresentationModel) {
         routeTask?.cancel()
         guard let destination = pharmacy.coordinate,
-              let locationProvider,
+              let requestID = order.requestID,
+              let getOrderDeliveryLocationUseCase,
               let routeProvider else {
             routeState = .routeUnavailable
             return
@@ -136,13 +133,17 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         routeTask = Task {
             do {
                 let source: OrderCoordinatePresentation
-                if let currentLocation {
-                    source = currentLocation
+                if let deliveryLocation {
+                    source = deliveryLocation
                 } else {
                     routeState = .locating
-                    source = try await locationProvider.currentLocation()
+                    let coordinate = try await getOrderDeliveryLocationUseCase.execute(requestID: requestID)
                     guard !Task.isCancelled else { return }
-                    currentLocation = source
+                    source = OrderCoordinatePresentation(
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude
+                    )
+                    deliveryLocation = source
                 }
 
                 routeState = .routing

@@ -4,9 +4,10 @@ import SwiftUI
 struct OrderPharmacyMapView: View {
     let pharmacies: [OrderPharmacyPresentationModel]
     let selectedPharmacyID: Int?
-    let currentLocation: OrderCoordinatePresentation?
+    let deliveryLocation: OrderCoordinatePresentation?
     let routeState: OrderRoutePresentationState
     let onSelectPharmacy: (Int) -> Void
+    let onShowPharmacyLocation: (Int) -> Void
     let onOpenDirections: (OrderPharmacyPresentationModel) -> Void
 
     @State private var cameraPosition: MapCameraPosition
@@ -14,19 +15,21 @@ struct OrderPharmacyMapView: View {
     init(
         pharmacies: [OrderPharmacyPresentationModel],
         selectedPharmacyID: Int?,
-        currentLocation: OrderCoordinatePresentation?,
+        deliveryLocation: OrderCoordinatePresentation?,
         routeState: OrderRoutePresentationState,
         onSelectPharmacy: @escaping (Int) -> Void,
+        onShowPharmacyLocation: @escaping (Int) -> Void,
         onOpenDirections: @escaping (OrderPharmacyPresentationModel) -> Void
     ) {
         self.pharmacies = pharmacies
         self.selectedPharmacyID = selectedPharmacyID
-        self.currentLocation = currentLocation
+        self.deliveryLocation = deliveryLocation
         self.routeState = routeState
         self.onSelectPharmacy = onSelectPharmacy
+        self.onShowPharmacyLocation = onShowPharmacyLocation
         self.onOpenDirections = onOpenDirections
         _cameraPosition = State(initialValue: .region(Self.region(
-            for: pharmacies.compactMap(\.coordinate) + [currentLocation].compactMap { $0 }
+            for: pharmacies.compactMap(\.coordinate) + [deliveryLocation].compactMap { $0 }
         )))
     }
 
@@ -36,48 +39,11 @@ struct OrderPharmacyMapView: View {
                 .font(AppColor.sans(15, .semibold))
                 .foregroundStyle(AppColor.textPrim)
 
-            Map(position: $cameraPosition) {
-                if let currentLocation {
-                    Annotation("orders.detail.your_location".localized, coordinate: currentLocation.coordinate) {
-                        ZStack {
-                            Circle().fill(.white).frame(width: 22, height: 22)
-                            Circle().fill(.blue).frame(width: 14, height: 14)
-                        }
-                        .shadow(radius: 2)
-                    }
-                }
-
-                ForEach(pharmacies) { pharmacy in
-                    if let coordinate = pharmacy.coordinate {
-                        Annotation(pharmacy.name, coordinate: coordinate.coordinate) {
-                            Button { onSelectPharmacy(pharmacy.id) } label: {
-                                Image(systemName: "cross.case.fill")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .padding(8)
-                                    .background(
-                                        pharmacy.id == selectedPharmacyID ? AppColor.green : AppColor.textSec,
-                                        in: Circle()
-                                    )
-                                    .shadow(radius: 3)
-                            }
-                            .accessibilityLabel(pharmacy.name)
-                        }
-                    }
-                }
-
-                if case .ready(let points) = routeState, points.count > 1 {
-                    MapPolyline(coordinates: points.map(\.coordinate))
-                        .stroke(AppColor.green, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                }
+            if shouldShowMap {
+                mapContent
+            } else {
+                locationPrompt
             }
-            .mapStyle(.standard(elevation: .realistic))
-            .frame(height: 230)
-            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
-                    .stroke(AppColor.border, lineWidth: 1)
-            )
 
             pharmacySelector
             routeStatus
@@ -91,7 +57,83 @@ struct OrderPharmacyMapView: View {
         )
         .medsyCardShadow()
         .onChange(of: selectedPharmacyID) { _, _ in focusSelectedPharmacy() }
-        .onChange(of: currentLocation) { _, _ in focusSelectedPharmacy() }
+        .onChange(of: deliveryLocation) { _, _ in focusSelectedPharmacy() }
+    }
+
+    private var shouldShowMap: Bool {
+        switch routeState {
+        case .idle:
+            return deliveryLocation != nil
+        default:
+            return true
+        }
+    }
+
+    private var mapContent: some View {
+        Map(position: $cameraPosition) {
+            if let deliveryLocation {
+                Annotation("orders.detail.delivery_location".localized, coordinate: deliveryLocation.coordinate) {
+                    ZStack {
+                        Circle().fill(.white).frame(width: 22, height: 22)
+                        Circle().fill(.blue).frame(width: 14, height: 14)
+                    }
+                    .shadow(radius: 2)
+                }
+            }
+
+            ForEach(pharmacies) { pharmacy in
+                if let coordinate = pharmacy.coordinate {
+                    Annotation(pharmacy.name, coordinate: coordinate.coordinate) {
+                        Button { onSelectPharmacy(pharmacy.id) } label: {
+                            Image(systemName: "cross.case.fill")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .padding(8)
+                                .background(
+                                    pharmacy.id == selectedPharmacyID ? AppColor.green : AppColor.textSec,
+                                    in: Circle()
+                                )
+                                .shadow(radius: 3)
+                        }
+                        .accessibilityLabel(pharmacy.name)
+                    }
+                }
+            }
+
+            if case .ready(let points) = routeState, points.count > 1 {
+                MapPolyline(coordinates: points.map(\.coordinate))
+                    .stroke(AppColor.green, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+            }
+        }
+        .mapStyle(.standard(elevation: .realistic))
+        .frame(height: 230)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+    }
+
+    private var locationPrompt: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Text("orders.detail.location_prompt".localized)
+                .font(AppColor.sans(13))
+                .foregroundStyle(AppColor.textSec)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let selectedPharmacy {
+                PrimaryButton(
+                    title: "orders.detail.show_location_path".localized,
+                    systemImage: "map",
+                    style: .secondary
+                ) {
+                    onShowPharmacyLocation(selectedPharmacy.id)
+                }
+            }
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.lightGreen.opacity(0.35))
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
     }
 
     private var pharmacySelector: some View {
@@ -132,7 +174,9 @@ struct OrderPharmacyMapView: View {
         case .routeUnavailable:
             statusRow("orders.detail.route_unavailable".localized, showsProgress: false)
             routeRecoveryActions
-        case .idle, .ready:
+        case .idle:
+            EmptyView()
+        case .ready:
             openDirectionsButton
         }
     }
@@ -185,7 +229,7 @@ struct OrderPharmacyMapView: View {
     }
 
     private func focusSelectedPharmacy() {
-        let coordinates = [currentLocation, selectedPharmacy?.coordinate].compactMap { $0 }
+        let coordinates = [deliveryLocation, selectedPharmacy?.coordinate].compactMap { $0 }
         guard !coordinates.isEmpty else { return }
         withAnimation { cameraPosition = .region(Self.region(for: coordinates)) }
     }

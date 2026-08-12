@@ -7,12 +7,6 @@
 
 import Foundation
 
-enum OrderLocationError: Error, Equatable {
-    case permissionDenied
-    case locationUnavailable
-    case routeUnavailable
-}
-
 @MainActor
 protocol OrderCurrentLocationProviding: AnyObject {
     func currentLocation() async throws -> OrderCoordinatePresentation

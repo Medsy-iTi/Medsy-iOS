@@ -65,6 +65,16 @@ enum OrderMapper {
         )
     }
 
+    static func mapDeliveryLocation(_ dto: OrderRequestDetailDTO) throws -> OrderCoordinateEntity {
+        guard let coordinate = coordinate(
+            latitude: dto.deliveryLatitude,
+            longitude: dto.deliveryLongitude
+        ) else {
+            throw OrderLocationError.locationUnavailable
+        }
+        return coordinate
+    }
+
     static func mapToPagedResult(_ page: PageDTO<MasterOrderDTO>) -> PagedResult<OrderEntity> {
         PagedResult(
             items: page.content.map(mapToEntity),

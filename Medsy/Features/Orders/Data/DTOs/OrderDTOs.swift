@@ -9,6 +9,7 @@ import Foundation
 
 typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<MasterOrderDTO>>
 typealias OrderDetailResponseDTO = APIResponseDTO<MasterOrderDTO>
+typealias OrderRequestDetailResponseDTO = APIResponseDTO<OrderRequestDetailDTO>
 
 struct MasterOrderDTO: Decodable {
     let id: Int
@@ -55,4 +56,10 @@ struct MasterOrderProductDTO: Decodable {
     let route: String?
     let description: String?
     let imageUrl: String?
+}
+
+struct OrderRequestDetailDTO: Decodable {
+    let id: Int
+    let deliveryLatitude: Double?
+    let deliveryLongitude: Double?
 }

@@ -65,9 +65,10 @@ struct OrdersCoordinatorView: View {
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
                         onGoToCart: onGoToCart,
                         selectedPharmacyID: detailViewModel.selectedPharmacyID,
-                        currentLocation: detailViewModel.currentLocation,
+                        deliveryLocation: detailViewModel.deliveryLocation,
                         routeState: detailViewModel.routeState,
                         onSelectPharmacy: { detailViewModel.handle(.selectPharmacy($0)) },
+                        onShowPharmacyLocation: { detailViewModel.handle(.showPharmacyLocation($0)) },
                         onOpenDirections: { _ in detailViewModel.handle(.openDirections) }
                     )
                     .onChange(of: detailViewModel.reorderState) { _, state in

@@ -17,9 +17,10 @@ struct OrderDetailView: View {
     var onDismissReorderFeedback: (() -> Void)? = nil
     var onGoToCart: (() -> Void)? = nil
     var selectedPharmacyID: Int? = nil
-    var currentLocation: OrderCoordinatePresentation? = nil
+    var deliveryLocation: OrderCoordinatePresentation? = nil
     var routeState: OrderRoutePresentationState = .idle
     var onSelectPharmacy: ((Int) -> Void)? = nil
+    var onShowPharmacyLocation: ((Int) -> Void)? = nil
     var onOpenDirections: ((OrderPharmacyPresentationModel) -> Void)? = nil
 
     var body: some View {
@@ -159,9 +160,10 @@ struct OrderDetailView: View {
             OrderPharmacyMapView(
                 pharmacies: mappedPharmacies,
                 selectedPharmacyID: selectedPharmacyID ?? mappedPharmacies.first?.id,
-                currentLocation: currentLocation,
+                deliveryLocation: deliveryLocation,
                 routeState: routeState,
                 onSelectPharmacy: { onSelectPharmacy?($0) },
+                onShowPharmacyLocation: { onShowPharmacyLocation?($0) },
                 onOpenDirections: { onOpenDirections?($0) }
             )
         }
@@ -632,7 +634,7 @@ extension ReorderState {
         onRetry: {},
         onBack: {},
         selectedPharmacyID: 71,
-        currentLocation: OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
+        deliveryLocation: OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
         routeState: .ready(points: [
             OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250),
             OrderCoordinatePresentation(latitude: 30.0444, longitude: 31.2357)

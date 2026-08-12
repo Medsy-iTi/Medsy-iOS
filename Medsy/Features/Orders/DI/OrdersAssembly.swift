@@ -35,6 +35,12 @@ struct OrdersAssembly: ModuleAssembly {
             )
         }
 
+        container.register(GetOrderDeliveryLocationUseCaseProtocol.self) { container in
+            GetOrderDeliveryLocationUseCase(
+                repository: container.resolve(OrdersRepositoryProtocol.self)
+            )
+        }
+
         container.register(ReorderUseCaseProtocol.self) { container in
             ReorderUseCase(
                 addCartItemUseCase: container.resolve(AddCartItemUseCaseProtocol.self)
@@ -65,8 +71,8 @@ struct OrdersAssembly: ModuleAssembly {
             MainActor.assumeIsolated {
                 OrderDetailViewModel(
                     getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self),
+                    getOrderDeliveryLocationUseCase: container.resolve(GetOrderDeliveryLocationUseCaseProtocol.self),
                     reorderUseCase: container.resolve(ReorderUseCaseProtocol.self),
-                    locationProvider: container.resolve(OrderCurrentLocationProviding.self),
                     routeProvider: container.resolve(OrderRouteProviding.self),
                     directionsOpener: container.resolve(OrderDirectionsOpening.self)
                 )

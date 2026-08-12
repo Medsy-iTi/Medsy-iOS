@@ -8,6 +8,7 @@
 protocol OrdersRemoteDataSourceProtocol {
     func fetchOrders(page: Int, size: Int) async throws -> PageDTO<MasterOrderDTO>
     func fetchOrderDetail(id: Int) async throws -> MasterOrderDTO
+    func fetchRequestDetail(id: Int) async throws -> OrderRequestDetailDTO
 }
 
 final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
@@ -40,6 +41,13 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
         return try unwrapOrder(from: response)
     }
 
+    func fetchRequestDetail(id: Int) async throws -> OrderRequestDetailDTO {
+        let response: OrderRequestDetailResponseDTO = try await networkService.request(
+            endpoint: OrdersEndpoint.fetchRequestDetail(id: id, language: languageProvider())
+        )
+        return try unwrapRequest(from: response)
+    }
+
     private func unwrapPage(from response: OrdersPageResponseDTO) throws -> PageDTO<MasterOrderDTO> {
         guard response.success else {
             throw NetworkError.validationError(response.message)
@@ -58,5 +66,15 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
             throw NetworkError.decodingFailed
         }
         return order
+    }
+
+    private func unwrapRequest(from response: OrderRequestDetailResponseDTO) throws -> OrderRequestDetailDTO {
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+        guard let request = response.data else {
+            throw NetworkError.decodingFailed
+        }
+        return request
     }
 }

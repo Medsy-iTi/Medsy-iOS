@@ -119,6 +119,7 @@ final class OrdersFeatureTests: XCTestCase {
     func testMasterOrdersEndpointsUsePaginationAndExplicitLanguage() {
         let listEndpoint = OrdersEndpoint.fetchOrders(page: 1, size: 20, language: "ar")
         let detailEndpoint = OrdersEndpoint.fetchOrderDetail(id: 7, language: "ar")
+        let requestEndpoint = OrdersEndpoint.fetchRequestDetail(id: 41, language: "ar")
         let parameters = listEndpoint.queryParameters
 
         XCTAssertEqual(listEndpoint.path, "masterorders")
@@ -131,6 +132,34 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertNil(parameters?["dateTo"])
         XCTAssertEqual(detailEndpoint.path, "masterorders/7")
         XCTAssertEqual(detailEndpoint.queryParameters?["lang"] as? String, "ar")
+        XCTAssertEqual(requestEndpoint.path, "requests/41")
+        XCTAssertEqual(requestEndpoint.queryParameters?["lang"] as? String, "ar")
+    }
+
+    func testRequestDeliveryLocationIsDecodedAndMapped() throws {
+        let data = Data(
+            """
+            {
+              "success": true,
+              "message": "Medicine request fetched",
+              "data": {
+                "id": 119,
+                "deliveryLatitude": 30.0400,
+                "deliveryLongitude": 31.2250,
+                "deliveryAddress": "Saved order destination",
+                "status": "CONFIRMED",
+                "items": []
+              }
+            }
+            """.utf8
+        )
+
+        let response = try JSONDecoder().decode(OrderRequestDetailResponseDTO.self, from: data)
+        let request = try XCTUnwrap(response.data)
+        let coordinate = try OrderMapper.mapDeliveryLocation(request)
+
+        XCTAssertEqual(coordinate.latitude, 30.0400)
+        XCTAssertEqual(coordinate.longitude, 31.2250)
     }
 
     func testBackendOrderStatusesMapToKnownCases() {
@@ -342,21 +371,23 @@ final class OrdersFeatureTests: XCTestCase {
 
     @MainActor
     func testDetailRoutesToSelectedPharmacyAndOpensDirections() async throws {
-        let source = OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250)
-        let locationProvider = OrderLocationProviderStub(result: .success(source))
+        let deliveryLocation = OrderCoordinateEntity(latitude: 30.0400, longitude: 31.2250)
+        let deliveryLocationUseCase = OrderDeliveryLocationUseCaseStub(result: .success(deliveryLocation))
         let routeProvider = OrderRouteProviderStub()
         let directionsOpener = OrderDirectionsOpenerSpy()
         let viewModel = OrderDetailViewModel(
             state: .loaded(.mock),
-            locationProvider: locationProvider,
+            getOrderDeliveryLocationUseCase: deliveryLocationUseCase,
             routeProvider: routeProvider,
             directionsOpener: directionsOpener
         )
 
-        try await waitUntil {
-            guard case .ready = viewModel.routeState else { return false }
-            return viewModel.selectedPharmacyID == 71
-        }
+        XCTAssertEqual(viewModel.routeState, .idle)
+        XCTAssertNil(viewModel.selectedPharmacyID)
+        XCTAssertNil(viewModel.deliveryLocation)
+
+        viewModel.handle(.showPharmacyLocation(71))
+        try await waitUntil { viewModel.routeState.isReady && viewModel.selectedPharmacyID == 71 }
 
         viewModel.handle(.selectPharmacy(72))
         try await waitUntil {
@@ -367,6 +398,8 @@ final class OrdersFeatureTests: XCTestCase {
 
         viewModel.handle(.openDirections)
 
+        let requestedRequestIDs = await deliveryLocationUseCase.requestedRequestIDs
+        XCTAssertEqual(requestedRequestIDs, [41])
         XCTAssertEqual(routeProvider.destinations.count, 2)
         XCTAssertEqual(directionsOpener.openedName, "Al Shifa Pharmacy")
         XCTAssertEqual(
@@ -376,23 +409,14 @@ final class OrdersFeatureTests: XCTestCase {
     }
 
     @MainActor
-    func testDetailShowsPermissionDeniedWhenLocationAccessIsDenied() async throws {
+    func testDetailShowsLocationUnavailableWhenRequestHasNoDeliveryCoordinate() async throws {
         let viewModel = OrderDetailViewModel(
             state: .loaded(.mock),
-            locationProvider: OrderLocationProviderStub(result: .failure(.permissionDenied)),
+            getOrderDeliveryLocationUseCase: OrderDeliveryLocationUseCaseStub(result: .failure(.locationUnavailable)),
             routeProvider: OrderRouteProviderStub()
         )
 
-        try await waitUntil { viewModel.routeState == .permissionDenied }
-    }
-
-    @MainActor
-    func testDetailDistinguishesUnavailableCurrentLocationFromRouteFailure() async throws {
-        let viewModel = OrderDetailViewModel(
-            state: .loaded(.mock),
-            locationProvider: OrderLocationProviderStub(result: .failure(.locationUnavailable)),
-            routeProvider: OrderRouteProviderStub()
-        )
+        viewModel.handle(.showPharmacyLocation(71))
 
         try await waitUntil { viewModel.routeState == .locationUnavailable }
     }
@@ -490,15 +514,16 @@ private enum OrdersUseCaseStubError: Error {
     case missingPage(Int)
 }
 
-@MainActor
-private final class OrderLocationProviderStub: OrderCurrentLocationProviding {
-    let result: Result<OrderCoordinatePresentation, OrderLocationError>
+private actor OrderDeliveryLocationUseCaseStub: GetOrderDeliveryLocationUseCaseProtocol {
+    private let result: Result<OrderCoordinateEntity, OrderLocationError>
+    private(set) var requestedRequestIDs: [Int] = []
 
-    init(result: Result<OrderCoordinatePresentation, OrderLocationError>) {
+    init(result: Result<OrderCoordinateEntity, OrderLocationError>) {
         self.result = result
     }
 
-    func currentLocation() async throws -> OrderCoordinatePresentation {
+    func execute(requestID: Int) async throws -> OrderCoordinateEntity {
+        requestedRequestIDs.append(requestID)
         try result.get()
     }
 }
@@ -524,5 +549,12 @@ private final class OrderDirectionsOpenerSpy: OrderDirectionsOpening {
     func openDirections(to destination: OrderCoordinatePresentation, name: String) {
         openedDestination = destination
         openedName = name
+    }
+}
+
+private extension OrderRoutePresentationState {
+    var isReady: Bool {
+        if case .ready = self { return true }
+        return false
     }
 }

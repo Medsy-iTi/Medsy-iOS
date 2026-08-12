@@ -542,11 +542,13 @@
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
 "orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
-"orders.detail.your_location"        = "موقعك الحالي";
-"orders.detail.locating"             = "جارٍ تحديد موقعك الحالي…";
+"orders.detail.delivery_location"    = "موقع التوصيل";
+"orders.detail.location_prompt"      = "اعرض الصيدلية على الخريطة وارسم المسار إلى موقع التوصيل المحفوظ لهذا الطلب.";
+"orders.detail.show_location_path"   = "عرض الموقع والمسار";
+"orders.detail.locating"             = "جارٍ تحميل موقع التوصيل…";
 "orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
-"orders.detail.location_permission_denied" = "فعّل إذن الموقع لعرض المسار من موقعك الحالي.";
-"orders.detail.location_unavailable" = "تعذر تحديد موقعك الحالي. تحقق من خدمات الموقع ثم أعد المحاولة.";
+"orders.detail.location_permission_denied" = "إذن الموقع غير متاح.";
+"orders.detail.location_unavailable" = "موقع التوصيل لهذا الطلب غير متاح. لا يزال بإمكانك فتح الصيدلية في الخرائط.";
 "orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
 "orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
 "orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";

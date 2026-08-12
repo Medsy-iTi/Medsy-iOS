@@ -543,11 +543,13 @@
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
 "orders.detail.pharmacy_locations"   = "Pharmacy locations";
-"orders.detail.your_location"        = "Your location";
-"orders.detail.locating"             = "Finding your current location…";
+"orders.detail.delivery_location"    = "Delivery location";
+"orders.detail.location_prompt"      = "View the pharmacy on the map and draw the route to the delivery location saved on this order.";
+"orders.detail.show_location_path"   = "Show location and path";
+"orders.detail.locating"             = "Loading delivery location…";
 "orders.detail.loading_route"        = "Finding the best driving route…";
-"orders.detail.location_permission_denied" = "Enable location access to see a route from your location.";
-"orders.detail.location_unavailable" = "Your current location is unavailable. Check Location Services and try again.";
+"orders.detail.location_permission_denied" = "Location access is unavailable.";
+"orders.detail.location_unavailable" = "The delivery location for this order is unavailable. You can still open the pharmacy in Maps.";
 "orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
 "orders.detail.open_directions"      = "Open turn-by-turn directions";
 "orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
