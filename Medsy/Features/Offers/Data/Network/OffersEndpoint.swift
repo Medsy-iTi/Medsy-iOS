@@ -12,7 +12,7 @@ enum OffersEndpoint: ApiEndpoint {
     case getResult(requestId: Int)
     case getStream(requestId: Int)
     case selectPharmacy(requestId: Int, body: ConfirmOfferRequestDTO)
-    case confirmOffer(requestId: Int)
+    case confirmOffer(requestId: Int, body: ConfirmOfferFulfillmentRequestDTO)
 
     var path: String {
         switch self {
@@ -22,7 +22,7 @@ enum OffersEndpoint: ApiEndpoint {
             return "requests/\(requestId)/stream"
         case let .selectPharmacy(requestId, _):
             return "requests/\(requestId)/select"
-        case let .confirmOffer(requestId):
+        case let .confirmOffer(requestId, _):
             return "requests/\(requestId)/confirm"
         }
     }
@@ -47,9 +47,11 @@ enum OffersEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .getResult, .getStream, .confirmOffer:
+        case .getResult, .getStream:
             return nil
         case let .selectPharmacy(_, body):
+            return try? JSONEncoder().encode(body)
+        case let .confirmOffer(_, body):
             return try? JSONEncoder().encode(body)
         }
     }

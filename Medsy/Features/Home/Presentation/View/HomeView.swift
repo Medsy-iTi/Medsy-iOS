@@ -86,9 +86,6 @@ struct HomeView: View {
         .onAppear {
             viewModel.checkAndStartPolling()
         }
-        .onDisappear {
-            viewModel.stopPolling()
-        }
     }
 }
 

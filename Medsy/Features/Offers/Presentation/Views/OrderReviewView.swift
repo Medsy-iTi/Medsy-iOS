@@ -14,10 +14,11 @@ struct OrderReviewView: View {
     init(
         offerDetail: OfferDetailPresentationModel? = nil,
         requestId: Int? = nil,
+        selectResult: SelectPharmacyResponseDTO? = nil,
         onBack: @escaping () -> Void,
         onConfirmOrder: ((ConfirmOfferResult) -> Void)? = nil
     ) {
-        _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail, requestId: requestId))
+        _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail, requestId: requestId, selectResult: selectResult))
         self.onBack = onBack
         self.onConfirmOrder = onConfirmOrder
     }
@@ -42,7 +43,91 @@ struct OrderReviewView: View {
 
                     OrderReviewMedicinesCardView(medicines: viewModel.orderReview.medicines)
 
-                    OrderReviewAddressCardView(address: viewModel.orderReview.deliveryAddress)
+                    // Choose how to receive your order section
+                    VStack(alignment: .trailing, spacing: 12) {
+                        Text("complete_request.receive.title".localized)
+                            .font(AppColor.sans(16, .bold))
+                            .foregroundStyle(AppColor.textPrim)
+                            .padding(.horizontal, 4)
+
+                        // Delivery Option
+                        Button {
+                            viewModel.selectedReceiveMethod = .delivery
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "truck.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(AppColor.green)
+                                    .frame(width: 40, height: 40)
+                                    .background(AppColor.green.opacity(0.1))
+                                    .cornerRadius(8)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("complete_request.receive.delivery".localized)
+                                        .font(AppColor.sans(14, .bold))
+                                        .foregroundStyle(AppColor.textPrim)
+
+                                    Text("Total: \(Int(viewModel.orderReview.medicinesSubtotal + (viewModel.selectResult?.deliveryFees ?? 0.0))) EGP")
+                                        .font(AppColor.sans(12))
+                                        .foregroundStyle(AppColor.textSec)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: viewModel.selectedReceiveMethod == .delivery ? "largecircle.fill.circle" : "circle")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(viewModel.selectedReceiveMethod == .delivery ? AppColor.green : AppColor.textSec)
+                            }
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(viewModel.selectedReceiveMethod == .delivery ? AppColor.green.opacity(0.05) : AppColor.card)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(viewModel.selectedReceiveMethod == .delivery ? AppColor.green : AppColor.border, lineWidth: 1)
+                                    )
+                            )
+                        }
+
+                        // Pickup Option
+                        Button {
+                            viewModel.selectedReceiveMethod = .pickup
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "house.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(AppColor.green)
+                                    .frame(width: 40, height: 40)
+                                    .background(AppColor.green.opacity(0.1))
+                                    .cornerRadius(8)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("complete_request.receive.pickup".localized)
+                                        .font(AppColor.sans(14, .bold))
+                                        .foregroundStyle(AppColor.textPrim)
+
+                                    Text("Total: \(Int(viewModel.orderReview.medicinesSubtotal)) EGP")
+                                        .font(AppColor.sans(12))
+                                        .foregroundStyle(AppColor.textSec)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: viewModel.selectedReceiveMethod == .pickup ? "largecircle.fill.circle" : "circle")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(viewModel.selectedReceiveMethod == .pickup ? AppColor.green : AppColor.textSec)
+                            }
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(viewModel.selectedReceiveMethod == .pickup ? AppColor.green.opacity(0.05) : AppColor.card)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(viewModel.selectedReceiveMethod == .pickup ? AppColor.green : AppColor.border, lineWidth: 1)
+                                    )
+                            )
+                        }
+                    }
 
                     OrderReviewSummaryCardView(
                         medicinesSubtotal: viewModel.orderReview.medicinesSubtotal,
@@ -84,7 +169,7 @@ struct OrderReviewView: View {
                             .fill(AppColor.green)
                     )
                 }
-                .disabled(viewModel.isConfirming)
+                .disabled(viewModel.isConfirming || viewModel.isConfirmed)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }

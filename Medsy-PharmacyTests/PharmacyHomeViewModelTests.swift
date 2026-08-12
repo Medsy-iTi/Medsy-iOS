@@ -403,6 +403,12 @@ private struct DashboardNetworkService: NetworkServiceProtocol {
     func requestData(endpoint: ApiEndpoint) async throws -> Data {
         throw NetworkError.decodingFailed
     }
+
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
+        AsyncThrowingStream { continuation in
+            continuation.finish()
+        }
+    }
 }
 
 private func makeProfile(isAdmin: Bool = true) -> PharmacyProfile {

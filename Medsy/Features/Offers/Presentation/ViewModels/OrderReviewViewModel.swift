@@ -6,6 +6,11 @@
 import Foundation
 import Observation
 
+enum ReceiveMethod: String, Equatable, CaseIterable, Sendable {
+    case delivery
+    case pickup
+}
+
 @MainActor
 @Observable
 final class OrderReviewViewModel {
@@ -18,13 +23,22 @@ final class OrderReviewViewModel {
     private let confirmOfferUseCase: ConfirmOfferUseCaseProtocol?
     private let statusStore: UserDefaultsStatusStoreProtocol?
 
+    let selectResult: SelectPharmacyResponseDTO?
+    var selectedReceiveMethod: ReceiveMethod = .pickup {
+        didSet {
+            updateTotals()
+        }
+    }
+
     init(
         offerDetail: OfferDetailPresentationModel? = nil,
         requestId: Int? = nil,
+        selectResult: SelectPharmacyResponseDTO? = nil,
         confirmOfferUseCase: ConfirmOfferUseCaseProtocol? = nil,
         statusStore: UserDefaultsStatusStoreProtocol? = nil
     ) {
         self.requestId = requestId
+        self.selectResult = selectResult
         self.confirmOfferUseCase = confirmOfferUseCase ?? DIContainer.shared.resolve(ConfirmOfferUseCaseProtocol.self)
         self.statusStore = statusStore ?? DIContainer.shared.resolve(UserDefaultsStatusStoreProtocol.self)
 
@@ -32,7 +46,7 @@ final class OrderReviewViewModel {
         let managerSuffix = "offers.details.managerSuffix".localized
         let managerName = offerDetail?.managerName ?? ("محمد أحمد" + managerSuffix)
         let medicines = (offerDetail?.medicines ?? []).filter { $0.isAvailable && $0.isSelected }
-        let subtotal = medicines.reduce(0.0) { $0 + $1.price }
+        let subtotal = selectResult?.totalPrice ?? medicines.reduce(0.0) { $0 + $1.price }
         let deliveryFee = 0.0
         let total = subtotal + deliveryFee
 
@@ -48,9 +62,27 @@ final class OrderReviewViewModel {
         )
     }
 
+    private func updateTotals() {
+        let subtotal = selectResult?.totalPrice ?? orderReview.medicines.reduce(0.0) { $0 + $1.price }
+        let deliveryFee = selectedReceiveMethod == .delivery ? (selectResult?.deliveryFees ?? 0.0) : 0.0
+        let total = subtotal + deliveryFee
+
+        self.orderReview = OrderReviewPresentationModel(
+            id: orderReview.id,
+            pharmacyName: orderReview.pharmacyName,
+            managerName: orderReview.managerName,
+            medicines: orderReview.medicines,
+            deliveryAddress: orderReview.deliveryAddress,
+            deliveryFee: deliveryFee,
+            medicinesSubtotal: subtotal,
+            totalPrice: total
+        )
+    }
+
     private(set) var confirmOfferResult: ConfirmOfferResult?
 
     func confirmOrder() async -> Bool {
+        guard !isConfirming && !isConfirmed else { return false }
         guard let requestId else {
             isConfirmed = true
             return true
@@ -65,14 +97,12 @@ final class OrderReviewViewModel {
         confirmErrorMessage = nil
         defer { isConfirming = false }
 
-        let selectedItemIds = orderReview.medicines
-            .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
-
         do {
-            let result = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
+            let methodStr = selectedReceiveMethod == .delivery ? "DELIVERY" : "PICKUP"
+            let result = try await confirmOfferUseCase.confirmOffer(requestId: requestId, fulfillmentMethod: methodStr)
             self.confirmOfferResult = result
-            statusStore?.clearPendingRequestId(requestId) // Clear this specific request ID from UserDefaults!
+            UserDefaults.standard.removeObject(forKey: "request.selectResult.\(requestId)")
+            statusStore?.clearPendingRequestId(requestId)
             isConfirmed = true
             return true
         } catch {
