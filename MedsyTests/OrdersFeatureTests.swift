@@ -183,6 +183,9 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(presentation.pharmacies.first?.name, "Medsy Pharmacy")
         XCTAssertEqual(presentation.pharmacies.first?.coordinate?.latitude, 30)
         XCTAssertNil(presentation.pharmacies.first?.items.first?.productId)
+        XCTAssertEqual(presentation.requestID, 41)
+        XCTAssertEqual(presentation.paymentMethod, .card)
+        XCTAssertEqual(presentation.paymentStatus, .pending)
     }
 
     func testCashPickupOrderAcceptsNullPaymentStatusAndHidesDeliveryFee() throws {
