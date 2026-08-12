@@ -1,10 +1,3 @@
-//
-//  PharmacyMedicineRequestEntity.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
 
 struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
@@ -20,6 +13,35 @@ struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
     let items: [PharmacyMedicineRequestItemEntity]
     let prescriptionUrl: String?
     let notes: String?
+    let distanceKm: Double?
+    let assignmentStatus: String?
+
+    var requestStatus: RequestStatus {
+        switch status {
+        case .completed:
+            return .completed
+        case .expired:
+            return .expired
+        default:
+            return .open
+        }
+    }
+
+    var resolvedAssignmentStatus: AssignmentStatus {
+        let reqStatus = requestStatus
+        if reqStatus == .completed || reqStatus == .expired {
+            return .cannotOffer
+        }
+        guard let assignmentStatus = assignmentStatus else { return .cannotOffer }
+        let rawStatus = assignmentStatus.uppercased()
+        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(id) {
+            return .offered
+        }
+        if rawStatus == "PENDING" {
+            return .canOffer
+        }
+        return .cannotOffer
+    }
 }
 
 struct PharmacyMedicineRequestItemEntity: Identifiable, Equatable, Sendable {

@@ -114,3 +114,5 @@ struct ConfirmOfferOrderDTO: Decodable, Equatable {
     let pharmacyName: String
     let itemIds: [Int]
 }
+
+struct SelectPharmacyResponseDTO: Decodable, Equatable {}
