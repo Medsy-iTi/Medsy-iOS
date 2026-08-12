@@ -17,6 +17,7 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
     private(set) var prescriptions: [CartPrescriptionAttachment]
+    private(set) var pharmacistNote = ""
     private(set) var interactionWarnings: [CartInteractionWarning]
     private(set) var interactionsState: CartInteractionsState = .idle
 
@@ -247,6 +248,8 @@ final class CartViewModel: CartViewModelProtocol {
             return handleReplacePrescription(id: id, data: data, source: source)
         case let .removePrescriptionByID(id):
             return handleRemovePrescription(id: id)
+        case let .updatePharmacistNote(note):
+            pharmacistNote = String(note.prefix(500))
         case .clear:
             return handleClear()
         case .dismissFeedback:
@@ -263,7 +266,11 @@ final class CartViewModel: CartViewModelProtocol {
         case .continueRequest:
             guard hasContent else { return nil }
             return .continueRequest(
-                CartRequestDraft(items: items, prescriptions: prescriptions)
+                CartRequestDraft(
+                    items: items,
+                    prescriptions: prescriptions,
+                    pharmacistNote: pharmacistNote
+                )
             )
         }
 
@@ -276,6 +283,7 @@ final class CartViewModel: CartViewModelProtocol {
         guard let clearCartUseCase else {
             replaceItems([])
             prescriptions = []
+            pharmacistNote = ""
             clearRemoval()
             clearInteractions()
             syncState = .synced
@@ -288,6 +296,7 @@ final class CartViewModel: CartViewModelProtocol {
             try await clearCartUseCase.execute()
             replaceItems([])
             prescriptions = []
+            pharmacistNote = ""
             clearRemoval()
             clearInteractions()
             syncState = .synced
@@ -561,6 +570,7 @@ final class CartViewModel: CartViewModelProtocol {
         guard let clearCartUseCase else {
             replaceItems([])
             prescriptions = []
+            pharmacistNote = ""
             clearRemoval()
             clearInteractions()
             return .sync
@@ -572,6 +582,7 @@ final class CartViewModel: CartViewModelProtocol {
                 try await clearCartUseCase.execute()
                 replaceItems([])
                 prescriptions = []
+                pharmacistNote = ""
                 clearRemoval()
                 clearInteractions()
                 syncState = .synced

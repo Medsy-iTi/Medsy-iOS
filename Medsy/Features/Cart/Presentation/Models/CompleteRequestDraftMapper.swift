@@ -24,7 +24,8 @@ enum CompleteRequestDraftMapper {
             prescriptionCount: draft.prescriptions.count,
             prescriptionData: normalizedPrescriptionData(
                 from: draft.prescriptions.first?.imageData
-            )
+            ),
+            pharmacistNote: draft.pharmacistNote
         )
     }
 
