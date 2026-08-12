@@ -17,11 +17,14 @@ struct ProfileScreen: View {
     let email: String
     let homeAddress: String
     let dateOfBirthText: String
+    let hasDeliveryLocation: Bool
     let state: ProfileViewState
     let onRetry: () -> Void
     let onEditProfile: () -> Void
+    let onAddDeliveryLocation: () -> Void
     let onLanguage: () -> Void
     let onTheme: () -> Void
+    let onOrders: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -41,13 +44,6 @@ struct ProfileScreen: View {
                 subtitleKey: "profile.personal_info.subtitle",
                 iconName: "person",
                 iconColor: ProfileStyle.green
-            ),
-            ProfileRowItem(
-                id: "notifications",
-                titleKey: "profile.notifications",
-                subtitleKey: "profile.notifications.subtitle",
-                iconName: "bell",
-                iconColor: Color(hex: "#3B5BDB")
             ),
             ProfileRowItem(
                 id: "orders",
@@ -104,28 +100,14 @@ struct ProfileScreen: View {
         ]
     }
 
-    private var aboutRows: [ProfileRowItem] {
-        [
-            ProfileRowItem(
-                id: "about",
-                titleKey: "profile.about_medsy",
-                iconName: "info.circle",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "terms",
-                titleKey: "profile.terms",
-                iconName: "doc.text",
-                iconColor: Color(hex: "#94A3B8")
-            ),
-            ProfileRowItem(
-                id: "privacy",
-                titleKey: "profile.privacy",
-                iconName: "shield",
-                iconColor: Color(hex: "#94A3B8")
-            )
-        ]
+    private var isProfileLoading: Bool {
+        state == .idle || state == .loading
     }
+
+    private var shouldShowDeliveryLocationCard: Bool {
+        !hasDeliveryLocation
+    }
+
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -137,11 +119,14 @@ struct ProfileScreen: View {
                     header
 
                     VStack(spacing: 20) {
+                        if shouldShowDeliveryLocationCard {
+                            ProfileDeliveryLocationCard(onTap: onAddDeliveryLocation)
+                        }
                         stateContent
                         ProfileSectionView(titleKey: "profile.section.account", rows: accountRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.preferences", rows: preferenceRows, onSelect: handleRowSelection)
                         ProfileSectionView(titleKey: "profile.section.support", rows: supportRows, onSelect: handleRowSelection)
-                        ProfileSectionView(titleKey: "profile.section.about", rows: aboutRows, onSelect: handleRowSelection)
+
                         logoutButton
                         footer
                     }
@@ -162,35 +147,40 @@ struct ProfileScreen: View {
                 .foregroundStyle(ProfileStyle.primaryText)
                 .frame(maxWidth: .infinity)
 
-            HStack(spacing: 16) {
-                ProfileAvatarView(size: 64, showsBadge: true)
+            if isProfileLoading {
+                ProfileHeaderLoadingSkeleton()
+                    .padding(.horizontal, 20)
+            } else {
+                HStack(spacing: 16) {
+                    ProfileAvatarView(size: 64, showsBadge: true)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(patientName)
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(ProfileStyle.primaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.78)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(patientName)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(ProfileStyle.primaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
 
-                    Label(phoneNumber, systemImage: "checkmark.circle.fill")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(ProfileStyle.secondaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
+                        Label(phoneNumber, systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(ProfileStyle.secondaryText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
+                    }
+
+                    Spacer(minLength: 0)
                 }
-
-                Spacer(minLength: 0)
+                .padding(.horizontal, 21)
+                .padding(.vertical, 17)
+                .background(ProfileStyle.card)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(ProfileStyle.border, lineWidth: 1)
+                }
+                .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 21)
-            .padding(.vertical, 17)
-            .background(ProfileStyle.card)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(ProfileStyle.border, lineWidth: 1)
-            }
-            .shadow(color: ProfileStyle.green.opacity(0.08), radius: 10, y: 4)
-            .padding(.horizontal, 20)
         }
         .padding(.top, 16)
         .padding(.bottom, 20)
@@ -206,10 +196,8 @@ struct ProfileScreen: View {
     @ViewBuilder
     private var stateContent: some View {
         switch state {
-        case .idle:
-            EmptyView()
-        case .loading:
-            ProfileLoadingCard()
+        case .idle, .loading:
+            ProfileDetailsLoadingSkeleton()
         case .loaded:
             ProfileDetailsCard(items: profileDetails)
         case .failed(let message):
@@ -258,6 +246,8 @@ struct ProfileScreen: View {
             onLanguage()
         case "theme":
             onTheme()
+        case "orders":
+            onOrders()
         default:
             break
         }
@@ -271,9 +261,10 @@ struct ProfileScreen: View {
         email: "customer@dawanow.com",
         homeAddress: "Cairo, Egypt",
         dateOfBirthText: "Jun 15, 1995",
+        hasDeliveryLocation: true,
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onLanguage: {}, onTheme: {}, onLogout: {}
+        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }
@@ -317,6 +308,52 @@ private struct ProfileDetailsCard: View {
     }
 }
 
+private struct ProfileDeliveryLocationCard: View {
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(ProfileStyle.green.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                    .overlay {
+                        Image(systemName: "mappin.and.ellipse")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(ProfileStyle.green)
+                    }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("profile.delivery_location.title".localized)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(ProfileStyle.primaryText)
+
+                    Text("profile.delivery_location.subtitle".localized)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(ProfileStyle.secondaryText)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(ProfileStyle.primaryText)
+                    .flipsForRightToLeftLayoutDirection(true)
+            }
+            .padding(14)
+            .background(ProfileStyle.green.opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(ProfileStyle.green.opacity(0.35), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 private struct ProfileDetailRow: View {
     let item: ProfileDetailItem
 
@@ -347,28 +384,6 @@ private struct ProfileDetailRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-    }
-}
-
-private struct ProfileLoadingCard: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            ProgressView()
-                .tint(ProfileStyle.green)
-
-            Text("profile.loading".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(ProfileStyle.secondaryText)
-
-            Spacer(minLength: 0)
-        }
-        .padding(16)
-        .background(ProfileStyle.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(ProfileStyle.border, lineWidth: 1)
-        }
     }
 }
 

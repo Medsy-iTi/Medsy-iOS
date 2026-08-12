@@ -1,10 +1,3 @@
-//
-//  PrescriptionState.swift
-//  Medsy
-//
-//  Created by Ahmed Elkady on 18/07/2026.
-//
-
 import Foundation
 
 enum PrescriptionImageSource: Equatable {
@@ -14,23 +7,28 @@ enum PrescriptionImageSource: Equatable {
 
 enum PrescriptionFlowResult: Equatable {
     case added
-    case uploadFailed
-    case readingFailed
+    case analysisFailed(String)
     case noMedicines
 }
 
-enum PrescriptionReadingStage: Int, CaseIterable, Equatable {
-    case uploading
-    case analysing
-    case extracting
+enum PrescriptionMedicineSearchContext: Equatable {
+    case replace(medicineID: String, query: String)
+    case add(query: String)
+
+    var query: String {
+        switch self {
+        case let .replace(_, query), let .add(query):
+            return query
+        }
+    }
 }
 
 enum PrescriptionViewState: Equatable {
     case upload
     case preview
-    case reading(PrescriptionReadingStage)
+    case reading
     case review
-    case medicineSearch(UUID)
+    case medicineSearch(PrescriptionMedicineSearchContext)
     case result(PrescriptionFlowResult)
 }
 
@@ -40,26 +38,23 @@ enum PrescriptionEvent {
     case changeImage
     case deleteImage
     case cancelReading
-    case confirmMedicine(UUID)
-    case chooseAlternative(UUID)
-    case replaceMedicine(UUID, MedsyProduct)
+    case toggleCandidates(String)
+    case selectCandidate(medicineID: String, candidateID: Int)
+    case searchCatalog(String)
+    case selectSearchedMedicine(MedsyProduct)
     case cancelMedicineSearch
+    case increaseQuantity(String)
+    case decreaseQuantity(String)
+    case deleteMedicine(String)
     case addToCart
+    case addToCartSucceeded
+    case addToCartFailed(String)
     case retry
-    case continueWithoutReading
     case addMedicineManually
-    case viewCart
     case backHome
     case back
 }
 
 enum PrescriptionEffect {
     case exit
-}
-
-enum PrescriptionMockOutcome {
-    case success
-    case uploadFailed
-    case readingFailed
-    case noMedicines
 }

@@ -11,22 +11,22 @@ import SwiftUI
 enum OrderStatusPresentation {
     case pending
     case confirmed
-    case processing
-    case shipped
+    case preparing
+    case readyForPickup
+    case outForDelivery
     case delivered
     case cancelled
-    case rejected
     case unknown(String)
 
     init(rawValue: String) {
         switch rawValue.uppercased() {
         case "PENDING":    self = .pending
         case "CONFIRMED":  self = .confirmed
-        case "PROCESSING": self = .processing
-        case "SHIPPED":    self = .shipped
+        case "PREPARING":        self = .preparing
+        case "READY_FOR_PICKUP": self = .readyForPickup
+        case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED":  self = .delivered
         case "CANCELLED":  self = .cancelled
-        case "REJECTED":   self = .rejected
         default:           self = .unknown(rawValue)
         }
     }
@@ -35,22 +35,22 @@ enum OrderStatusPresentation {
         switch self {
         case .pending:             "orders.status.pending"
         case .confirmed:           "orders.status.confirmed"
-        case .processing:          "orders.status.processing"
-        case .shipped:             "orders.status.shipped"
+        case .preparing:           "orders.status.preparing"
+        case .readyForPickup:      "orders.status.ready_for_pickup"
+        case .outForDelivery:      "orders.status.out_for_delivery"
         case .delivered:           "orders.status.delivered"
         case .cancelled:           "orders.status.cancelled"
-        case .rejected:            "orders.status.rejected"
         case .unknown(let raw):    raw
         }
     }
 
     var color: Color {
         switch self {
-        case .pending, .confirmed, .processing, .shipped:
+        case .pending, .confirmed, .preparing, .readyForPickup, .outForDelivery:
             return AppColor.green
         case .delivered:
             return AppColor.green
-        case .cancelled, .rejected:
+        case .cancelled:
             return AppColor.errorRed
         case .unknown:
             return AppColor.textSec
@@ -59,7 +59,7 @@ enum OrderStatusPresentation {
 
     var isActive: Bool {
         switch self {
-        case .pending, .confirmed, .processing, .shipped: return true
+        case .pending, .confirmed, .preparing, .readyForPickup, .outForDelivery: return true
         default: return false
         }
     }
@@ -71,7 +71,7 @@ enum OrderStatusPresentation {
 
     var isCancelled: Bool {
         switch self {
-        case .cancelled, .rejected: return true
+        case .cancelled: return true
         default: return false
         }
     }

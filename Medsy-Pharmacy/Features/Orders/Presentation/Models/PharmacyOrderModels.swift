@@ -10,8 +10,9 @@ import Foundation
 enum PharmacyOrdersFilter: String, CaseIterable, Identifiable, Sendable {
     case all
     case new
-    case preparing
-    case delivered
+    case pendingApproval
+    case expired
+    case completed
 
     var id: String { rawValue }
 }
@@ -20,6 +21,9 @@ enum PharmacyOrderListStatus: Equatable, Sendable {
     case new
     case preparing
     case delivered
+    case completed
+    case expired
+    case pendingApproval
 }
 
 enum PharmacyOrderPaymentMethod: Equatable, Sendable {
@@ -34,6 +38,6 @@ struct PharmacyOrderListItem: Identifiable, Equatable, Sendable {
     let address: String
     let paymentMethod: PharmacyOrderPaymentMethod
     let amount: Int
-    let minutesAgo: Int
+    let createdAt: Date
     let status: PharmacyOrderListStatus
 }

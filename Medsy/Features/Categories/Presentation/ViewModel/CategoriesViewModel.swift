@@ -16,9 +16,14 @@ final class CategoriesViewModel {
     private var currentPage = 0
     private var isLastPage = false
     private let getCategoriesUseCase: GetCategoriesUseCase
+    private let languageManager: LanguageManager
 
-    nonisolated init(getCategoriesUseCase: GetCategoriesUseCase) {
+    nonisolated init(
+        getCategoriesUseCase: GetCategoriesUseCase,
+        languageManager: LanguageManager = .shared
+    ) {
         self.getCategoriesUseCase = getCategoriesUseCase
+        self.languageManager = languageManager
     }
 
     func loadCategories() async {
@@ -27,7 +32,7 @@ final class CategoriesViewModel {
         isLastPage = false
         isFetchingNextPage = false
         do {
-            let data = try await getCategoriesUseCase.execute(page: currentPage)
+            let data = try await getCategoriesUseCase.execute(page: currentPage, lang: languageManager.currentLanguage.rawValue)
             categories = data.items
             isLastPage = data.isLast ?? true
             state = .success
@@ -41,7 +46,7 @@ final class CategoriesViewModel {
         isFetchingNextPage = true
         do {
             let nextPage = currentPage + 1
-            let data = try await getCategoriesUseCase.execute(page: nextPage)
+            let data = try await getCategoriesUseCase.execute(page: nextPage, lang: languageManager.currentLanguage.rawValue)
             categories.append(contentsOf: data.items)
             isLastPage = data.isLast ?? true
             currentPage = nextPage

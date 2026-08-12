@@ -21,6 +21,8 @@ enum ProfileEndpoint: ApiEndpoint {
     case deletePharmacy(id: Int)
     case removePharmacist(pharmacistId: Int, pharmacyId: Int)
     case invitePharmacist(pharmacyId: Int, request: InvitePharmacistRequestDTO)
+    case fetchPendingInvitations(pharmacyId: Int)
+    case deletePendingInvitation(id: Int)
 
     // MARK: Auth
     case logout(refreshToken: String)
@@ -44,6 +46,10 @@ enum ProfileEndpoint: ApiEndpoint {
             return "pharmacists/\(pharmacistId)/pharmacy/\(pharmacyId)"
         case let .invitePharmacist(pharmacyId, _):
             return "pharmacy-invitations/pharmacy/\(pharmacyId)"
+        case let .fetchPendingInvitations(pharmacyId):
+            return "pharmacy-invitations/pharmacy/\(pharmacyId)"
+        case let .deletePendingInvitation(id):
+            return "pharmacy-invitations/\(id)"
         case .logout:
             return "auth/logout"
         }
@@ -52,11 +58,11 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: - Method
     var method: HTTPMethod {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine:
+        case .fetchPharmacistMe, .fetchPharmacyMine, .fetchPendingInvitations:
             return .get
         case .updateMyProfile, .updateUser, .updatePharmacy:
             return .put
-        case .leavePharmacy, .deletePharmacy, .removePharmacist:
+        case .leavePharmacy, .deletePharmacy, .removePharmacist, .deletePendingInvitation:
             return .delete
         case .invitePharmacist:
             return .post
@@ -68,7 +74,8 @@ enum ProfileEndpoint: ApiEndpoint {
     // MARK: - Body
     var body: Data? {
         switch self {
-        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy, .removePharmacist:
+        case .fetchPharmacistMe, .fetchPharmacyMine, .leavePharmacy, .deletePharmacy,
+             .removePharmacist, .fetchPendingInvitations, .deletePendingInvitation:
             return nil
         case let .invitePharmacist(_, request):
             return try? JSONEncoder().encode(request)

@@ -1,10 +1,3 @@
-//
-//  PrescriptionViewModel.swift
-//  Medsy
-//
-//  Created by Ahmed Elkady on 18/07/2026.
-//
-
 import Foundation
 import Observation
 
@@ -14,21 +7,49 @@ final class PrescriptionViewModel {
     private(set) var state: PrescriptionViewState = .upload
     private(set) var selectedImageData: Data?
     private(set) var medicines: [PrescriptionMedicineDisplay] = []
+    private(set) var expandedMedicineID: String?
+    private(set) var isAddingToCart = false
+    private(set) var cartErrorMessage: String?
 
-    private let mockOutcome: PrescriptionMockOutcome
+    private let analyzePrescriptionUseCase: AnalyzePrescriptionUseCaseProtocol?
+    private let languageProvider: () -> String
     private var selectedSource: PrescriptionImageSource?
     private var processingTask: Task<Void, Never>?
+    private var analysisRequestID: UUID?
 
-    init(mockOutcome: PrescriptionMockOutcome = .success) {
-        self.mockOutcome = mockOutcome
+    init(
+        analyzePrescriptionUseCase: AnalyzePrescriptionUseCaseProtocol? = nil,
+        languageProvider: @escaping () -> String = { "en" },
+        initialMedicines: [PrescriptionMedicineDisplay] = []
+    ) {
+        self.analyzePrescriptionUseCase = analyzePrescriptionUseCase
+        self.languageProvider = languageProvider
+        medicines = initialMedicines
+        if !initialMedicines.isEmpty {
+            state = .review
+        }
     }
 
     var canAddToCart: Bool {
-        !medicines.isEmpty && medicines.allSatisfy(\.isConfirmed)
+        !isAddingToCart
+            && !medicines.isEmpty
+            && medicines.allSatisfy { $0.cartItem != nil }
+    }
+
+    var cartItems: [CartDisplayItem] {
+        medicines.compactMap(\.cartItem)
+    }
+
+    var selectedImageSource: PrescriptionImageSource? {
+        selectedSource
     }
 
     var confirmedMedicineCount: Int {
         medicines.filter(\.isConfirmed).count
+    }
+
+    var needsReviewMedicineCount: Int {
+        medicines.filter(\.needsReview).count
     }
 
     @discardableResult
@@ -42,24 +63,35 @@ final class PrescriptionViewModel {
             reset()
         case .cancelReading:
             cancelProcessing()
-        case let .confirmMedicine(id):
-            confirmMedicine(id: id)
-        case let .chooseAlternative(id):
-            guard medicines.contains(where: { $0.id == id && !$0.isConfirmed }) else { break }
-            state = .medicineSearch(id)
-        case let .replaceMedicine(id, product):
-            replaceMedicine(id: id, with: product)
+        case let .toggleCandidates(id):
+            toggleCandidates(for: id)
+        case let .selectCandidate(medicineID, candidateID):
+            selectCandidate(medicineID: medicineID, candidateID: candidateID)
+        case let .searchCatalog(id):
+            openCatalogSearch(for: id)
+        case let .selectSearchedMedicine(product):
+            selectSearchedMedicine(product)
         case .cancelMedicineSearch:
-            state = .review
+            cancelMedicineSearch()
+        case let .increaseQuantity(id):
+            updateQuantity(for: id, by: 1)
+        case let .decreaseQuantity(id):
+            updateQuantity(for: id, by: -1)
+        case let .deleteMedicine(id):
+            deleteMedicine(id: id)
         case .addToCart:
             guard canAddToCart else { break }
+            cartErrorMessage = nil
+            isAddingToCart = true
+        case .addToCartSucceeded:
+            guard isAddingToCart else { break }
+            isAddingToCart = false
             state = .result(.added)
-        case .continueWithoutReading:
-            break
+        case let .addToCartFailed(message):
+            isAddingToCart = false
+            cartErrorMessage = message
         case .addMedicineManually:
-            break
-        case .viewCart:
-            break
+            state = .medicineSearch(.add(query: ""))
         case .backHome:
             return .exit
         case .back:
@@ -70,89 +102,174 @@ final class PrescriptionViewModel {
     }
 
     private func selectImage(_ data: Data, from source: PrescriptionImageSource) {
-        processingTask?.cancel()
+        cancelActiveRequest()
         selectedImageData = data
         selectedSource = source
+        medicines = []
+        expandedMedicineID = nil
+        cartErrorMessage = nil
         state = .preview
     }
 
     private func startProcessing() {
-        guard selectedSource != nil, selectedImageData != nil else {
+        guard let selectedImageData, selectedSource != nil else {
             state = .upload
             return
         }
+        guard let analyzePrescriptionUseCase else {
+            state = .result(.analysisFailed("Prescription analysis is unavailable."))
+            return
+        }
 
-        processingTask?.cancel()
-        state = .reading(.uploading)
+        cancelActiveRequest()
+        let requestID = UUID()
+        analysisRequestID = requestID
+        state = .reading
+        cartErrorMessage = nil
+
+        let language = languageProvider()
         processingTask = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(700))
-            guard !Task.isCancelled else { return }
-            self?.state = .reading(.analysing)
-            try? await Task.sleep(for: .milliseconds(900))
-            guard !Task.isCancelled else { return }
-            self?.state = .reading(.extracting)
-            try? await Task.sleep(for: .seconds(1))
-            guard !Task.isCancelled else { return }
-            self?.completeProcessing()
+            do {
+                let analysis = try await analyzePrescriptionUseCase.execute(
+                    imageData: selectedImageData,
+                    language: language
+                )
+                guard !Task.isCancelled else { return }
+                self?.completeAnalysis(analysis, requestID: requestID)
+            } catch {
+                guard !Task.isCancelled else { return }
+                self?.failAnalysis(with: error, requestID: requestID)
+            }
         }
     }
 
-    private func completeProcessing() {
-        switch mockOutcome {
-        case .success:
-            medicines = PrescriptionMedicineDisplay.samples
-            state = .review
-        case .uploadFailed:
-            state = .result(.uploadFailed)
-        case .readingFailed:
-            state = .result(.readingFailed)
-        case .noMedicines:
-            state = .result(.noMedicines)
-        }
+    private func completeAnalysis(_ analysis: PrescriptionAnalysis, requestID: UUID) {
+        guard analysisRequestID == requestID else { return }
+        medicines = PrescriptionPresentationMapper.map(analysis)
+        expandedMedicineID = nil
+        state = medicines.isEmpty ? .result(.noMedicines) : .review
+        finishRequest(requestID)
+    }
+
+    private func failAnalysis(with error: Error, requestID: UUID) {
+        guard analysisRequestID == requestID else { return }
+        state = .result(.analysisFailed(error.localizedDescription))
+        finishRequest(requestID)
+    }
+
+    private func finishRequest(_ requestID: UUID) {
+        guard analysisRequestID == requestID else { return }
+        analysisRequestID = nil
         processingTask = nil
     }
 
     private func cancelProcessing() {
+        cancelActiveRequest()
+        state = selectedSource == nil ? .upload : .preview
+    }
+
+    private func cancelActiveRequest() {
         processingTask?.cancel()
         processingTask = nil
-
-        if selectedSource != nil {
-            state = .preview
-        } else {
-            state = .upload
-        }
+        analysisRequestID = nil
     }
 
     private func reset() {
-        processingTask?.cancel()
-        processingTask = nil
+        cancelActiveRequest()
         selectedSource = nil
         selectedImageData = nil
         medicines = []
+        expandedMedicineID = nil
+        isAddingToCart = false
+        cartErrorMessage = nil
         state = .upload
     }
 
-    private func confirmMedicine(id: UUID) {
-        guard let index = medicines.firstIndex(where: { $0.id == id }), !medicines[index].isConfirmed else { return }
-        medicines[index].isConfirmed = true
-        state = .review
+    private func toggleCandidates(for id: String) {
+        guard medicines.contains(where: { $0.id == id }) else { return }
+        expandedMedicineID = expandedMedicineID == id ? nil : id
     }
 
-    private func replaceMedicine(id: UUID, with product: MedsyProduct) {
-        guard let index = medicines.firstIndex(where: { $0.id == id }), !medicines[index].isConfirmed else {
-            state = .review
+    private func selectCandidate(medicineID: String, candidateID: Int) {
+        guard let medicineIndex = medicines.firstIndex(where: { $0.id == medicineID }),
+              let candidate = medicines[medicineIndex].candidates.first(where: { $0.id == candidateID }) else {
             return
         }
 
-        medicines[index].name = product.name
-        medicines[index].details = product.dosageInfo.isEmpty ? product.categoryName : product.dosageInfo
-        medicines[index].price = String(format: "%.2f EGP", product.price)
-        medicines[index].confidence = .identified
-        medicines[index].isConfirmed = false
+        medicines[medicineIndex].selectedProduct = PrescriptionPresentationMapper.selectedProduct(from: candidate)
+        expandedMedicineID = nil
+        cartErrorMessage = nil
         state = .review
     }
 
+    private func openCatalogSearch(for id: String) {
+        guard let medicine = medicines.first(where: { $0.id == id }) else { return }
+        expandedMedicineID = nil
+        state = .medicineSearch(.replace(medicineID: id, query: medicine.extractedName))
+    }
+
+    private func selectSearchedMedicine(_ product: MedsyProduct) {
+        guard case let .medicineSearch(context) = state,
+              let selectedProduct = PrescriptionPresentationMapper.selectedProduct(from: product) else {
+            return
+        }
+
+        switch context {
+        case let .replace(medicineID, _):
+            guard let index = medicines.firstIndex(where: { $0.id == medicineID }) else {
+                state = .review
+                return
+            }
+            medicines[index].selectedProduct = selectedProduct
+        case .add:
+            medicines.append(
+                PrescriptionMedicineDisplay(
+                    id: "manual-\(UUID().uuidString)",
+                    rawText: product.name,
+                    extractedName: product.name,
+                    extractedStrength: nil,
+                    extractedForm: nil,
+                    matchStatus: "MANUAL",
+                    confidence: 1,
+                    candidates: [],
+                    selectedProduct: selectedProduct
+                )
+            )
+        }
+
+        cartErrorMessage = nil
+        state = .review
+    }
+
+    private func cancelMedicineSearch() {
+        guard case let .medicineSearch(context) = state else { return }
+        switch context {
+        case .replace:
+            state = .review
+        case .add:
+            state = medicines.isEmpty ? .result(.noMedicines) : .review
+        }
+    }
+
+    private func updateQuantity(for id: String, by delta: Int) {
+        guard let index = medicines.firstIndex(where: { $0.id == id }) else { return }
+        medicines[index].quantity = max(1, medicines[index].quantity + delta)
+        cartErrorMessage = nil
+    }
+
+    private func deleteMedicine(id: String) {
+        medicines.removeAll { $0.id == id }
+        if expandedMedicineID == id {
+            expandedMedicineID = nil
+        }
+        cartErrorMessage = nil
+        if medicines.isEmpty {
+            state = .result(.noMedicines)
+        }
+    }
+
     private func goBack() -> PrescriptionEffect? {
+        guard !isAddingToCart else { return nil }
         switch state {
         case .upload:
             return .exit
@@ -161,23 +278,15 @@ final class PrescriptionViewModel {
         case .reading:
             cancelProcessing()
         case .review:
-            if selectedSource != nil {
-                state = .preview
-            } else {
-                state = .upload
-            }
+            state = selectedSource == nil ? .upload : .preview
         case .medicineSearch:
-            state = .review
+            cancelMedicineSearch()
         case let .result(result):
             switch result {
             case .added:
                 state = .review
-            case .uploadFailed, .readingFailed, .noMedicines:
-                if selectedSource != nil {
-                    state = .preview
-                } else {
-                    state = .upload
-                }
+            case .analysisFailed, .noMedicines:
+                state = selectedSource == nil ? .upload : .preview
             }
         }
 

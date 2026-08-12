@@ -10,50 +10,60 @@ import Observation
 @Observable
 @MainActor
 final class RootCoordinator {
-    private(set) var flow: RootFlow = .splash
-    let mainTabCoordinator = PharmacyMainTabCoordinator()
-    
-    private let hasCompletedOnboardingUseCase: HasCompletedOnboardingUseCaseProtocol
-    private let completeOnboardingUseCase: CompleteOnboardingUseCaseProtocol
-    private let tokenStore: TokenStoreProtocol
-    
-    var isAuthenticated: Bool
+	private(set) var flow: RootFlow = .splash
+	private(set) var mainTabCoordinator = PharmacyMainTabCoordinator()
 
-    init(container: PharmacyDIContainer) {
-        self.hasCompletedOnboardingUseCase = container.resolve(HasCompletedOnboardingUseCaseProtocol.self)
-        self.completeOnboardingUseCase = container.resolve(CompleteOnboardingUseCaseProtocol.self)
-        self.tokenStore = container.resolve(TokenStoreProtocol.self)
+	private let hasCompletedOnboardingUseCase: HasCompletedOnboardingUseCaseProtocol
+	private let completeOnboardingUseCase: CompleteOnboardingUseCaseProtocol
+	private let tokenStore: TokenStoreProtocol
+	private let pharmacySession: PharmacySessionSettings
 
-        
-        let isFreshInstall = !container.resolve(HasCompletedOnboardingUseCaseProtocol.self).execute()
-        if isFreshInstall {
-            try? container.resolve(TokenStoreProtocol.self).clearTokens()
-        }
+	var isAuthenticated: Bool
 
-        self.isAuthenticated = isFreshInstall ? false : (self.tokenStore.accessToken() != nil)
-    }
+	init(container: PharmacyDIContainer) {
+		self.hasCompletedOnboardingUseCase = container.resolve(HasCompletedOnboardingUseCaseProtocol.self)
+		self.completeOnboardingUseCase = container.resolve(CompleteOnboardingUseCaseProtocol.self)
+		self.tokenStore = container.resolve(TokenStoreProtocol.self)
+		self.pharmacySession = container.resolve(PharmacySessionSettings.self)
 
-    func finishSplash() {
-        if isAuthenticated {
-            flow = .main
-        } else {
-            flow = hasCompletedOnboardingUseCase.execute() ? .authentication : .onboarding
-        }
-    }
 
-    func finishOnboarding() {
-        completeOnboardingUseCase.execute()
-        flow = .authentication
-    }
+		let isFreshInstall = !container.resolve(HasCompletedOnboardingUseCaseProtocol.self).execute()
+		if isFreshInstall {
+			try? container.resolve(TokenStoreProtocol.self).clearTokens()
+			self.pharmacySession.clear()
+		}
 
-    func finishAuthentication() {
-        isAuthenticated = true
-        flow = .main
-    }
+		self.isAuthenticated = isFreshInstall ? false : (self.tokenStore.accessToken() != nil)
+	}
 
-    func logout() {
-        isAuthenticated = false
-        try? tokenStore.clearTokens()
-        flow = .authentication
-    }
+	func finishSplash() {
+		flow = hasCompletedOnboardingUseCase.execute() ? .authentication : .onboarding
+	}
+
+	func finishOnboarding() {
+		completeOnboardingUseCase.execute()
+		flow = .authentication
+	}
+
+	func finishAuthentication() {
+		isAuthenticated = true
+		mainTabCoordinator = PharmacyMainTabCoordinator()
+		flow = .main
+	}
+
+	func logout() {
+		isAuthenticated = false
+		try? tokenStore.clearTokens()
+		pharmacySession.clear()
+		mainTabCoordinator.select(.home)
+		flow = .authentication
+	}
+
+	func returnToSignIn() {
+		isAuthenticated = false
+		try? tokenStore.clearTokens()
+		pharmacySession.clear()
+		mainTabCoordinator.select(.home)
+		flow = .authentication
+	}
 }
