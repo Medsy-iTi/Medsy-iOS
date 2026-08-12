@@ -186,6 +186,102 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(requestedPages, [0, 1])
     }
 
+    @MainActor
+    func testHistoryFiltersCachedOrdersWithoutRequestingAgain() async throws {
+        let useCase = OrdersUseCaseStub(
+            pages: [
+                0: PagedResult(
+                    items: [
+                        orderEntity(id: 1, status: .delivered),
+                        orderEntity(id: 2, status: .cancelled)
+                    ],
+                    page: 0,
+                    size: 20,
+                    totalElements: 3,
+                    totalPages: 2,
+                    isLast: false
+                ),
+                1: PagedResult(
+                    items: [orderEntity(id: 3, status: .cancelled)],
+                    page: 1,
+                    size: 20,
+                    totalElements: 3,
+                    totalPages: 2,
+                    isLast: true
+                )
+            ]
+        )
+        let viewModel = OrderHistoryViewModel(loadOrdersUseCase: useCase)
+
+        viewModel.handle(.load)
+        try await waitUntil { self.orderCount(in: viewModel.historyState) == 2 }
+
+        var filters = ActiveOrderFilters.default
+        filters.statusFilter = .cancelled
+        viewModel.handle(.applyFilters(filters))
+
+        XCTAssertEqual(orderIDs(in: viewModel.historyState), [2])
+        var requestedPages = await useCase.requestedPages
+        var requestedFilters = await useCase.requestedFilters
+        XCTAssertEqual(requestedPages, [0])
+        XCTAssertEqual(requestedFilters, [.empty])
+
+        viewModel.handle(.loadNextPage)
+        try await waitUntil { self.orderCount(in: viewModel.historyState) == 2 }
+
+        XCTAssertEqual(orderIDs(in: viewModel.historyState), [2, 3])
+        requestedPages = await useCase.requestedPages
+        requestedFilters = await useCase.requestedFilters
+        XCTAssertEqual(requestedPages, [0, 1])
+        XCTAssertEqual(requestedFilters, [.empty, .empty])
+    }
+
+    @MainActor
+    func testDetailRoutesToSelectedPharmacyAndOpensDirections() async throws {
+        let source = OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250)
+        let locationProvider = OrderLocationProviderStub(result: .success(source))
+        let routeProvider = OrderRouteProviderStub()
+        let directionsOpener = OrderDirectionsOpenerSpy()
+        let viewModel = OrderDetailViewModel(
+            state: .loaded(.mock),
+            locationProvider: locationProvider,
+            routeProvider: routeProvider,
+            directionsOpener: directionsOpener
+        )
+
+        try await waitUntil {
+            guard case .ready = viewModel.routeState else { return false }
+            return viewModel.selectedPharmacyID == 71
+        }
+
+        viewModel.handle(.selectPharmacy(72))
+        try await waitUntil {
+            guard case .ready(let points) = viewModel.routeState else { return false }
+            return viewModel.selectedPharmacyID == 72
+                && points.last == OrderCoordinatePresentation(latitude: 30.0520, longitude: 31.2300)
+        }
+
+        viewModel.handle(.openDirections)
+
+        XCTAssertEqual(routeProvider.destinations.count, 2)
+        XCTAssertEqual(directionsOpener.openedName, "Al Shifa Pharmacy")
+        XCTAssertEqual(
+            directionsOpener.openedDestination,
+            OrderCoordinatePresentation(latitude: 30.0520, longitude: 31.2300)
+        )
+    }
+
+    @MainActor
+    func testDetailShowsPermissionDeniedWhenLocationAccessIsDenied() async throws {
+        let viewModel = OrderDetailViewModel(
+            state: .loaded(.mock),
+            locationProvider: OrderLocationProviderStub(result: .failure(.permissionDenied)),
+            routeProvider: OrderRouteProviderStub()
+        )
+
+        try await waitUntil { viewModel.routeState == .permissionDenied }
+    }
+
     private func decodeOrder(
         fulfillmentType: String,
         deliveryFee: Double,
@@ -224,12 +320,12 @@ final class OrdersFeatureTests: XCTestCase {
         return try JSONDecoder().decode(OrderDTO.self, from: Data(json.utf8))
     }
 
-    private func orderEntity(id: Int) -> OrderEntity {
+    private func orderEntity(id: Int, status: OrderStatus = .delivered) -> OrderEntity {
         OrderEntity(
             id: id,
             orderNumber: id,
             pharmacyName: "Pharmacy",
-            status: .delivered,
+            status: status,
             fulfillmentType: .pickup,
             date: Date(timeIntervalSince1970: TimeInterval(id)),
             totalPrice: 10,
@@ -242,6 +338,12 @@ final class OrdersFeatureTests: XCTestCase {
     private func orderCount(in state: OrderHistoryViewState) -> Int {
         guard case let .loaded(sections) = state else { return 0 }
         return sections.flatMap(\.orders).count
+    }
+
+    @MainActor
+    private func orderIDs(in state: OrderHistoryViewState) -> [Int] {
+        guard case let .loaded(sections) = state else { return [] }
+        return sections.flatMap(\.orders).map(\.id)
     }
 
     @MainActor
@@ -260,15 +362,16 @@ final class OrdersFeatureTests: XCTestCase {
 private actor OrdersUseCaseStub: LoadOrdersUseCaseProtocol {
     private let pages: [Int: PagedResult<OrderEntity>]
     private(set) var requestedPages: [Int] = []
+    private(set) var requestedFilters: [OrdersFilter] = []
 
     init(pages: [Int: PagedResult<OrderEntity>]) {
         self.pages = pages
     }
 
     func execute(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
-        _ = filter
         _ = size
         requestedPages.append(page)
+        requestedFilters.append(filter)
         guard let result = pages[page] else {
             throw OrdersUseCaseStubError.missingPage(page)
         }
@@ -278,4 +381,41 @@ private actor OrdersUseCaseStub: LoadOrdersUseCaseProtocol {
 
 private enum OrdersUseCaseStubError: Error {
     case missingPage(Int)
+}
+
+@MainActor
+private final class OrderLocationProviderStub: OrderCurrentLocationProviding {
+    let result: Result<OrderCoordinatePresentation, OrderLocationError>
+
+    init(result: Result<OrderCoordinatePresentation, OrderLocationError>) {
+        self.result = result
+    }
+
+    func currentLocation() async throws -> OrderCoordinatePresentation {
+        try result.get()
+    }
+}
+
+@MainActor
+private final class OrderRouteProviderStub: OrderRouteProviding {
+    private(set) var destinations: [OrderCoordinatePresentation] = []
+
+    func route(
+        from source: OrderCoordinatePresentation,
+        to destination: OrderCoordinatePresentation
+    ) async throws -> [OrderCoordinatePresentation] {
+        destinations.append(destination)
+        return [source, destination]
+    }
+}
+
+@MainActor
+private final class OrderDirectionsOpenerSpy: OrderDirectionsOpening {
+    private(set) var openedDestination: OrderCoordinatePresentation?
+    private(set) var openedName: String?
+
+    func openDirections(to destination: OrderCoordinatePresentation, name: String) {
+        openedDestination = destination
+        openedName = name
+    }
 }
