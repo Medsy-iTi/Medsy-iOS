@@ -142,6 +142,31 @@ final class FavoriteFeatureTests: XCTestCase {
         XCTAssertEqual(arabic.title, "بانادول إكسترا")
     }
 
+    func testFavoriteCountRefreshesFromPersistedFavorites() async {
+        let fetch = FetchFavoritesUseCaseStub(result: .success([medicine(id: 1), medicine(id: 2)]))
+        let viewModel = FavoriteCountViewModel(fetchFavoritesUseCase: fetch)
+
+        await viewModel.refresh()
+
+        XCTAssertEqual(viewModel.count, 2)
+
+        fetch.result = .success([medicine(id: 2)])
+        await viewModel.refresh()
+
+        XCTAssertEqual(viewModel.count, 1)
+    }
+
+    func testFavoriteCountKeepsLastValueWhenRefreshFails() async {
+        let fetch = FetchFavoritesUseCaseStub(result: .success([medicine(id: 1)]))
+        let viewModel = FavoriteCountViewModel(fetchFavoritesUseCase: fetch)
+        await viewModel.refresh()
+
+        fetch.result = .failure(TestError.failed)
+        await viewModel.refresh()
+
+        XCTAssertEqual(viewModel.count, 1)
+    }
+
     private func makeViewModel(
         fetch: FetchFavoritesUseCaseStub = FetchFavoritesUseCaseStub(result: .success([])),
         set: SetFavoriteUseCaseSpy = SetFavoriteUseCaseSpy(),
