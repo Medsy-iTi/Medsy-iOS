@@ -522,6 +522,14 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
+"orders.detail.your_location"        = "موقعك الحالي";
+"orders.detail.locating"             = "جارٍ تحديد موقعك الحالي…";
+"orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
+"orders.detail.location_permission_denied" = "فعّل إذن الموقع لعرض المسار من موقعك الحالي.";
+"orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
+"orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
+"orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
 "orders.reorder.go_to_cart"          = "الذهاب للسلة";
 "orders.reorder.continue_shopping"   = "متابعة التصفح";
 "orders.reorder.success.title"       = "تمت الإضافة بنجاح";
