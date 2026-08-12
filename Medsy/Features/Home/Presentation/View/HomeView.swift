@@ -11,6 +11,7 @@ struct HomeView: View {
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
+    let onFavoritesTap: () -> Void
     var onCompareOffers: (() -> Void)? = nil
     var onOpenOfferResult: ((OfferResult, Int) -> Void)? = nil
     let homeAddress: String
@@ -24,6 +25,7 @@ struct HomeView: View {
             VStack(spacing: 20) {
                 HomeHeaderView(
                     homeAddress: homeAddress,
+                    onFavoritesTap: onFavoritesTap,
                     onAddressTap: onAddressTap
                 )
                 HomeSearchBar(onTap: onSearchTap)
@@ -91,4 +93,3 @@ struct HomeView: View {
         }
     }
 }
-

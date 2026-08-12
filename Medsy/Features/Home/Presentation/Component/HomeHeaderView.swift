@@ -7,29 +7,25 @@
 import SwiftUI
 
 struct HomeHeaderView: View {
-    @Environment(LanguageManager.self) private var languageManager
     let homeAddress: String
+    let onFavoritesTap: () -> Void
     let onAddressTap: () -> Void
 
     var body: some View {
         HStack(spacing: MedsySpacing.sm) {
             Button {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    languageManager.toggle()
+                    onFavoritesTap()
                 }
             } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "globe")
-                    Text(languageManager.currentLanguage.toggled.displayName)
-                        .font(AppColor.sans(13, .bold))
-                }
+                Image(systemName: "heart")
+                    .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AppColor.textPrim)
-                .padding(.horizontal, 10)
-                .frame(minHeight: 44)
-                .background(AppColor.card, in: Capsule())
+                .frame(width: 44, height: 44)
+                .background(AppColor.card, in: Circle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("common.language".localized)
+            .accessibilityLabel("favorites.open.accessibility".localized)
             
             Spacer()
             
