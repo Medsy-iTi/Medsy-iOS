@@ -130,6 +130,9 @@ struct OrderDetailView: View {
                     } else {
                         itemsSection(order: order)
                     }
+                    if order.paymentMethod != nil {
+                        paymentCard(order: order)
+                    }
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
@@ -180,6 +183,12 @@ struct OrderDetailView: View {
             Text(dateLabel(for: order.date))
                 .font(AppColor.sans(13))
                 .foregroundStyle(AppColor.textSec)
+
+            if let requestID = order.requestID {
+                Text(String(format: "orders.detail.request_number".localized, requestID))
+                    .font(AppColor.sans(13))
+                    .foregroundStyle(AppColor.textSec)
+            }
         }
         .padding(MedsySpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -329,6 +338,64 @@ struct OrderDetailView: View {
         .medsyCardShadow()
     }
 
+    private func paymentCard(order: OrderDetailPresentationModel) -> some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Label("orders.detail.payment".localized, systemImage: "creditcard.fill")
+                .font(AppColor.sans(15, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+
+            if let paymentMethod = order.paymentMethod {
+                detailTextRow(
+                    label: "orders.detail.payment_method".localized,
+                    value: paymentMethod.labelKey.localized
+                )
+            }
+
+            if let paymentStatus = order.paymentStatus {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.payment_status".localized,
+                    value: paymentStatus.labelKey.localized
+                )
+            }
+
+            if let paidAt = order.paidAt {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.paid_at".localized,
+                    value: paidAt.formatted(date: .abbreviated, time: .shortened)
+                )
+            } else if order.paymentStatus == .pending, let expiresAt = order.paymentExpiresAt {
+                Divider().background(AppColor.border)
+                detailTextRow(
+                    label: "orders.detail.payment_expires_at".localized,
+                    value: expiresAt.formatted(date: .abbreviated, time: .shortened)
+                )
+            }
+        }
+        .padding(MedsySpacing.md)
+        .background(AppColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+        .medsyCardShadow()
+    }
+
+    private func detailTextRow(label: String, value: String) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(label)
+                .font(AppColor.sans(14))
+                .foregroundStyle(AppColor.textSec)
+            Spacer(minLength: MedsySpacing.sm)
+            Text(value)
+                .font(AppColor.sans(14, .semibold))
+                .foregroundStyle(AppColor.textPrim)
+                .multilineTextAlignment(.trailing)
+        }
+    }
+
     private func summaryRow(label: String, amount: Double, isTotal: Bool) -> some View {
         HStack {
             Text(label)
@@ -361,6 +428,28 @@ struct OrderDetailView: View {
             return "orders.section.yesterday".localized
         } else {
             return date.formatted(.dateTime.day().month(.wide).year())
+        }
+    }
+}
+
+private extension OrderPaymentMethod {
+    var labelKey: String {
+        switch self {
+        case .cash: "orders.payment_method.cash"
+        case .card: "orders.payment_method.card"
+        }
+    }
+}
+
+private extension OrderPaymentStatus {
+    var labelKey: String {
+        switch self {
+        case .unpaid: "orders.payment_status.unpaid"
+        case .pending: "orders.payment_status.pending"
+        case .paid: "orders.payment_status.paid"
+        case .failed: "orders.payment_status.failed"
+        case .canceled: "orders.payment_status.canceled"
+        case .expired: "orders.payment_status.expired"
         }
     }
 }
