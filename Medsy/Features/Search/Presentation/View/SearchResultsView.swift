@@ -87,6 +87,19 @@ struct SearchResultsView: View {
 		.sheet(isPresented: $showFilterSheet) {
 			FilterSheet(viewModel: viewModel, isPresented: $showFilterSheet)
 		}
+		.alert(
+			"favorites.persistence_error.title".localized,
+			isPresented: Binding(
+				get: { viewModel.favoriteErrorMessage != nil },
+				set: { if !$0 { viewModel.favoriteErrorMessage = nil } }
+			)
+		) {
+			Button("common.ok".localized, role: .cancel) {
+				viewModel.favoriteErrorMessage = nil
+			}
+		} message: {
+			Text(viewModel.favoriteErrorMessage ?? "")
+		}
 	}
 
 	// MARK: – Computed
@@ -126,6 +139,9 @@ struct SearchResultsView: View {
 								onDecrement: {
 									cartViewModel.handle(.decreaseQuantity(itemID: product.id))
 									product.quantity = cartQuantity(for: product)
+								},
+								onToggleFavorite: {
+									viewModel.toggleFavorite(productID: product.id)
 								},
 								isSelectionMode: onSelect != nil,
 								onTap: {
