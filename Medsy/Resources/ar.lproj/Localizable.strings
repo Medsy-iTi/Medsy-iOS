@@ -229,6 +229,19 @@
 "accessibility.back" = "رجوع";
 "accessibility.share" = "مشاركة";
 
+/* Favorites */
+"favorites.title" = "المفضلة";
+"favorites.open.accessibility" = "فتح المفضلة";
+"favorites.empty.title" = "لا توجد أدوية مفضلة بعد";
+"favorites.empty.subtitle" = "احفظ الأدوية باستخدام زر القلب لتجدها هنا بسهولة.";
+"favorites.empty.action" = "تصفح الأدوية";
+"favorites.error.title" = "تعذر تحميل المفضلة";
+"favorites.error.subtitle" = "تعذر قراءة الأدوية المحفوظة. حاول مرة أخرى.";
+"favorites.persistence_error.title" = "تعذر تحديث المفضلة";
+"favorites.persistence_error.subtitle" = "تعذر حفظ التغيير في المفضلة. حاول مرة أخرى.";
+"favorites.offline.title" = "لا يوجد اتصال بالإنترنت";
+"favorites.offline.subtitle" = "اتصل بالإنترنت لفتح تفاصيل الدواء.";
+
 /* Tab bar */
 "tab.home" = "الرئيسية";
 "tab.favorites" = "المفضلة";
