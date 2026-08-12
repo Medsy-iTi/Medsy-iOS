@@ -199,6 +199,61 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertNil(detail.paymentStatus)
     }
 
+    func testPendingCashOrderAcceptsNullFulfillmentAndEmptyItems() throws {
+        let data = Data(
+            """
+            {
+              "success": true,
+              "message": "Master Orders fetched",
+              "data": {
+                "content": [
+                  {
+                    "id": 12,
+                    "requestId": 119,
+                    "orderResponses": [
+                      {
+                        "offerId": 38,
+                        "pharmacyId": 6,
+                        "pharmacyName": "Dawa",
+                        "latitude": 30.306183699115099,
+                        "longitude": 31.059617288410664,
+                        "items": []
+                      }
+                    ],
+                    "paymentMethod": "CASH",
+                    "paymentStatus": null,
+                    "fulfillmentMethod": null,
+                    "deliveryFee": 20,
+                    "totalPrice": 485,
+                    "orderStatus": "PENDING",
+                    "paymentExpiresAt": null,
+                    "paidAt": null
+                  }
+                ],
+                "last": true,
+                "pageNumber": 0,
+                "pageSize": 20,
+                "totalElements": 1,
+                "totalPages": 1
+              }
+            }
+            """.utf8
+        )
+
+        let response = try JSONDecoder().decode(OrdersPageResponseDTO.self, from: data)
+        let page = try XCTUnwrap(response.data)
+        let result = OrderMapper.mapToPagedResult(page)
+        let order = try XCTUnwrap(result.items.first)
+
+        XCTAssertEqual(order.id, 12)
+        XCTAssertEqual(order.status.rawValue, "PENDING")
+        XCTAssertEqual(order.fulfillmentType, .notSelected)
+        XCTAssertEqual(order.itemCount, 0)
+        XCTAssertEqual(order.pharmacyNames, ["Dawa"])
+        XCTAssertEqual(order.paymentMethod, .cash)
+        XCTAssertNil(order.paymentStatus)
+    }
+
     @MainActor
     func testHistoryLoadsMoreThanTwentyOrdersUsingNextPage() async throws {
         let firstPage = (1...20).map(orderEntity)
@@ -329,6 +384,17 @@ final class OrdersFeatureTests: XCTestCase {
         )
 
         try await waitUntil { viewModel.routeState == .permissionDenied }
+    }
+
+    @MainActor
+    func testDetailDistinguishesUnavailableCurrentLocationFromRouteFailure() async throws {
+        let viewModel = OrderDetailViewModel(
+            state: .loaded(.mock),
+            locationProvider: OrderLocationProviderStub(result: .failure(.locationUnavailable)),
+            routeProvider: OrderRouteProviderStub()
+        )
+
+        try await waitUntil { viewModel.routeState == .locationUnavailable }
     }
 
     private func decodeMasterOrder(fulfillmentMethod: String) throws -> MasterOrderDTO {

@@ -125,7 +125,8 @@ enum OrderRoutePresentationState: Equatable {
     case routing
     case ready(points: [OrderCoordinatePresentation])
     case permissionDenied
-    case unavailable
+    case locationUnavailable
+    case routeUnavailable
 }
 
 struct OrderDetailItemModel: Identifiable, Equatable {

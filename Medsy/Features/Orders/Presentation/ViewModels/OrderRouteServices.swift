@@ -9,7 +9,8 @@ import Foundation
 
 enum OrderLocationError: Error, Equatable {
     case permissionDenied
-    case unavailable
+    case locationUnavailable
+    case routeUnavailable
 }
 
 @MainActor

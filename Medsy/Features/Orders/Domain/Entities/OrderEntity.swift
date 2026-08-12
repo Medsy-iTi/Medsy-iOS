@@ -67,12 +67,13 @@ enum OrderPaymentStatus: String, Equatable {
 enum OrderFulfillmentType: String, Equatable {
     case delivery = "DELIVERY"
     case pickup = "PICKUP"
+    case notSelected = "NOT_SELECTED"
 
     init(rawValue: String?, hasDeliveryCoordinates: Bool) {
         switch rawValue?.uppercased() {
         case "PICKUP", "PICK_UP": self = .pickup
         case "DELIVERY": self = .delivery
-        default: self = hasDeliveryCoordinates ? .delivery : .pickup
+        default: self = hasDeliveryCoordinates ? .delivery : .notSelected
         }
     }
 }

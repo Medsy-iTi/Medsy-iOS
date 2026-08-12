@@ -16,7 +16,7 @@ struct MasterOrderDTO: Decodable {
     let orderResponses: [MasterOrderPharmacyDTO]
     let paymentMethod: String?
     let paymentStatus: String?
-    let fulfillmentMethod: String
+    let fulfillmentMethod: String?
     let deliveryFee: Double?
     let totalPrice: Double
     let orderStatus: String

@@ -125,18 +125,45 @@ struct OrderPharmacyMapView: View {
             statusRow("orders.detail.loading_route".localized, showsProgress: true)
         case .permissionDenied:
             statusRow("orders.detail.location_permission_denied".localized, showsProgress: false)
-        case .unavailable:
+            openDirectionsButton
+        case .locationUnavailable:
+            statusRow("orders.detail.location_unavailable".localized, showsProgress: false)
+            routeRecoveryActions
+        case .routeUnavailable:
             statusRow("orders.detail.route_unavailable".localized, showsProgress: false)
+            routeRecoveryActions
         case .idle, .ready:
-            if let selectedPharmacy {
-                Button { onOpenDirections(selectedPharmacy) } label: {
-                    Label("orders.detail.open_directions".localized, systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-                        .font(AppColor.sans(14, .semibold))
-                        .foregroundStyle(AppColor.green)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            openDirectionsButton
+        }
+    }
+
+    @ViewBuilder
+    private var routeRecoveryActions: some View {
+        if let selectedPharmacy {
+            HStack(spacing: MedsySpacing.md) {
+                Button { onSelectPharmacy(selectedPharmacy.id) } label: {
+                    Label("common.retry".localized, systemImage: "arrow.clockwise")
                 }
-                .buttonStyle(.plain)
+                openDirectionsButton
             }
+            .font(AppColor.sans(13, .semibold))
+            .foregroundStyle(AppColor.green)
+        }
+    }
+
+    @ViewBuilder
+    private var openDirectionsButton: some View {
+        if let selectedPharmacy {
+            Button { onOpenDirections(selectedPharmacy) } label: {
+                Label(
+                    "orders.detail.open_directions".localized,
+                    systemImage: "arrow.triangle.turn.up.right.diamond.fill"
+                )
+                .font(AppColor.sans(14, .semibold))
+                .foregroundStyle(AppColor.green)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.plain)
         }
     }
 

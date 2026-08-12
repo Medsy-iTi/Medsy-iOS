@@ -129,7 +129,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         guard let destination = pharmacy.coordinate,
               let locationProvider,
               let routeProvider else {
-            routeState = .unavailable
+            routeState = .routeUnavailable
             return
         }
 
@@ -148,13 +148,19 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
                 routeState = .routing
                 let points = try await routeProvider.route(from: source, to: destination)
                 guard !Task.isCancelled else { return }
-                routeState = points.isEmpty ? .unavailable : .ready(points: points)
+                routeState = points.isEmpty ? .routeUnavailable : .ready(points: points)
             } catch OrderLocationError.permissionDenied {
                 guard !Task.isCancelled else { return }
                 routeState = .permissionDenied
+            } catch OrderLocationError.locationUnavailable {
+                guard !Task.isCancelled else { return }
+                routeState = .locationUnavailable
+            } catch OrderLocationError.routeUnavailable {
+                guard !Task.isCancelled else { return }
+                routeState = .routeUnavailable
             } catch {
                 guard !Task.isCancelled else { return }
-                routeState = .unavailable
+                routeState = .routeUnavailable
             }
         }
     }

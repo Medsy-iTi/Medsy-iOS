@@ -36,7 +36,7 @@ final class OrderCurrentLocationProvider: NSObject, OrderCurrentLocationProvidin
             case .denied, .restricted:
                 finish(throwing: OrderLocationError.permissionDenied)
             @unknown default:
-                finish(throwing: OrderLocationError.unavailable)
+                finish(throwing: OrderLocationError.locationUnavailable)
             }
         }
     }
@@ -66,20 +66,20 @@ extension OrderCurrentLocationProvider: @preconcurrency CLLocationManagerDelegat
         case .notDetermined:
             break
         @unknown default:
-            finish(throwing: OrderLocationError.unavailable)
+            finish(throwing: OrderLocationError.locationUnavailable)
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else {
-            finish(throwing: OrderLocationError.unavailable)
+            finish(throwing: OrderLocationError.locationUnavailable)
             return
         }
         finish(with: location)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        finish(throwing: OrderLocationError.unavailable)
+        finish(throwing: OrderLocationError.locationUnavailable)
     }
 }
 
@@ -96,7 +96,7 @@ final class OrderRouteProvider: OrderRouteProviding {
 
         let response = try await MKDirections(request: request).calculate()
         guard let polyline = response.routes.first?.polyline else {
-            throw OrderLocationError.unavailable
+            throw OrderLocationError.routeUnavailable
         }
 
         var coordinates = [CLLocationCoordinate2D](

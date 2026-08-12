@@ -109,13 +109,30 @@ struct OrderCardView: View {
 
     private var fulfillmentBadge: some View {
         Label(
-            order.fulfillmentType == .delivery
-                ? "orders.fulfillment.delivery".localized
-                : "orders.fulfillment.pickup".localized,
-            systemImage: order.fulfillmentType == .delivery ? "shippingbox.fill" : "bag.fill"
+            fulfillmentLabel,
+            systemImage: fulfillmentIcon
         )
         .font(AppColor.sans(12, .medium))
         .foregroundStyle(AppColor.green)
+    }
+
+    private var fulfillmentLabel: String {
+        switch order.fulfillmentType {
+        case .delivery:
+            return "orders.fulfillment.delivery".localized
+        case .pickup:
+            return "orders.fulfillment.pickup".localized
+        case .notSelected:
+            return "orders.fulfillment.not_selected".localized
+        }
+    }
+
+    private var fulfillmentIcon: String {
+        switch order.fulfillmentType {
+        case .delivery: return "shippingbox.fill"
+        case .pickup: return "bag.fill"
+        case .notSelected: return "clock.fill"
+        }
     }
 
     private func imageURL(at index: Int) -> String? {

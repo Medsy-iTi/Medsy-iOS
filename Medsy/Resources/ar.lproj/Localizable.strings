@@ -500,6 +500,7 @@
 "orders.product_fallback"            = "منتج #%d";
 "orders.fulfillment.delivery"        = "توصيل";
 "orders.fulfillment.pickup"          = "استلام من الصيدلية";
+"orders.fulfillment.not_selected"    = "لم يتم التحديد بعد";
 "orders.items_count"                 = "%d منتجات";
 "orders.item_count"                  = "%d منتج";
 "orders.price_format"                = "%.0f جنيه";
@@ -526,6 +527,7 @@
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
 "orders.detail.status"               = "الحالة";
+"orders.detail.delivery_status"      = "حالة الطلب";
 "orders.detail.items"                = "سعر المنتجات";
 "orders.detail.items_label"          = "المنتجات";
 "orders.detail.item_unit_price"      = "%.0f جنيه للقطعة";
@@ -544,6 +546,7 @@
 "orders.detail.locating"             = "جارٍ تحديد موقعك الحالي…";
 "orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
 "orders.detail.location_permission_denied" = "فعّل إذن الموقع لعرض المسار من موقعك الحالي.";
+"orders.detail.location_unavailable" = "تعذر تحديد موقعك الحالي. تحقق من خدمات الموقع ثم أعد المحاولة.";
 "orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
 "orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
 "orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
