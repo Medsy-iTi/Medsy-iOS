@@ -25,3 +25,9 @@ struct PharmacyInvitationEnvelope: Decodable {
     let message: String
     let data: PharmacyInvitationDTO
 }
+
+struct PharmacyInvitationsEnvelope: Decodable {
+    let success: Bool
+    let message: String
+    let data: [PharmacyInvitationDTO]
+}

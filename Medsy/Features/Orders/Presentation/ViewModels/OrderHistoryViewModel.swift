@@ -13,11 +13,11 @@ import Observation
 final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
 
     private(set) var historyState: OrderHistoryViewState = .idle
+    private(set) var activeFilters: ActiveOrderFilters = .default
     private(set) var isLoadingNextPage = false
 
     private let loadOrdersUseCase: LoadOrdersUseCaseProtocol?
     private var loadTask: Task<Void, Never>?
-    private var currentFilter: OrderFilter = .all
     private var currentPage = 0
     private var isLastPage = false
     private var loadedOrders: [OrderPresentationModel] = []
@@ -36,28 +36,29 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
     func handle(_ event: OrderHistoryEvent) {
         switch event {
         case .load:
-            load(filter: currentFilter, reset: true)
+            load(filters: activeFilters, reset: true)
         case .retry:
-            load(filter: currentFilter, reset: true)
-        case .selectFilter(let filter):
-            currentFilter = filter
-            load(filter: filter, reset: true)
+            load(filters: activeFilters, reset: true)
+        case .applyFilters(let filters):
+            activeFilters = filters
+            load(filters: filters, reset: true)
         case .loadNextPage:
             guard !isLastPage, !isLoadingNextPage else { return }
             loadNextPage()
         }
     }
 
-    private func load(filter: OrderFilter, reset: Bool) {
+    private func load(filters: ActiveOrderFilters, reset: Bool) {
         loadTask?.cancel()
         if reset {
             currentPage = 0
             isLastPage = false
+            isLoadingNextPage = false
             loadedOrders = []
         }
         historyState = .loading
         loadTask = Task {
-            await fetchOrders(filter: filter, page: 0, appending: false)
+            await fetchOrders(filters: filters, page: 0, appending: false)
         }
     }
 
@@ -66,29 +67,46 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         let nextPage = currentPage + 1
         isLoadingNextPage = true
         loadTask = Task {
-            await fetchOrders(filter: currentFilter, page: nextPage, appending: true)
+            await fetchOrders(filters: activeFilters, page: nextPage, appending: true)
             isLoadingNextPage = false
         }
     }
 
-    private func fetchOrders(filter: OrderFilter, page: Int, appending: Bool) async {
+    private func fetchOrders(filters: ActiveOrderFilters, page: Int, appending: Bool) async {
         guard let useCase = loadOrdersUseCase else { return }
         do {
-            let result = try await useCase.execute(
-                statuses: filter.domainStatuses,
-                page: page,
-                size: Self.pageSize
-            )
-            guard !Task.isCancelled else { return }
-            let mapped = result.items.map(OrderEntityMapper.map)
-            if appending {
-                loadedOrders.append(contentsOf: mapped)
-            } else {
-                loadedOrders = mapped
+            var requestedPage = page
+            var shouldReplace = !appending
+
+            while true {
+                let result = try await useCase.execute(
+                    filter: filters.toDomainFilter(),
+                    page: requestedPage,
+                    size: Self.pageSize
+                )
+                guard !Task.isCancelled else { return }
+
+                let mapped = result.items
+                    .map(OrderEntityMapper.map)
+                    .filter { filters.matches($0) }
+
+                if shouldReplace {
+                    loadedOrders = mapped
+                    shouldReplace = false
+                } else {
+                    loadedOrders.append(contentsOf: mapped)
+                }
+
+                currentPage = result.page
+                isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
+
+                if !mapped.isEmpty || isLastPage || filters == .default {
+                    break
+                }
+                requestedPage += 1
             }
-            currentPage = page
-            isLastPage = result.isLast ?? mapped.count < Self.pageSize
-            let sections = buildSections(from: loadedOrders)
+
+            let sections = buildSections(from: loadedOrders, filters: filters)
             historyState = sections.isEmpty ? .loaded([]) : .loaded(sections)
         } catch {
             guard !Task.isCancelled else { return }
@@ -98,7 +116,25 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         }
     }
 
-    private func buildSections(from orders: [OrderPresentationModel]) -> [OrderDateSection] {
+    private func buildSections(from orders: [OrderPresentationModel], filters: ActiveOrderFilters) -> [OrderDateSection] {
+        if filters == .default {
+            let activeOrders = orders.filter(\.status.isActive)
+            let historyOrders = orders.filter { !$0.status.isActive }
+            return [
+                OrderDateSection(
+                    id: "active",
+                    title: "orders.section.active".localized,
+                    orders: activeOrders
+                ),
+                OrderDateSection(
+                    id: "history",
+                    title: "orders.section.history".localized,
+                    orders: historyOrders
+                )
+            ]
+            .filter { !$0.orders.isEmpty }
+        }
+
         let calendar = Calendar.current
         var todayOrders: [OrderPresentationModel] = []
         var yesterdayOrders: [OrderPresentationModel] = []
@@ -145,3 +181,4 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         return sections
     }
 }
+

@@ -19,9 +19,11 @@ struct PharmacyMetricItem: View {
                 .background(metric.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(metric.value)
+                metricValue
                     .font(PharmacyColor.sans(16, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 Text(metric.titleKey.localized)
                     .font(PharmacyColor.sans(10, .medium))
                     .foregroundStyle(PharmacyColor.textSecondary)
@@ -34,5 +36,19 @@ struct PharmacyMetricItem: View {
         .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
         .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
+    }
+
+    @ViewBuilder
+    private var metricValue: some View {
+        switch metric.value {
+        case .count(let value):
+            Text(value, format: .number)
+        case .revenue(let value):
+            Text(
+                value,
+                format: .currency(code: "EGP")
+                    .precision(.fractionLength(0...2))
+            )
+        }
     }
 }

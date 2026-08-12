@@ -1,107 +1,169 @@
-//  PharmacyRequestDetailsView.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 19/07/2026.
-//
+// PharmacyRequestDetailsView.swift
 
 import SwiftUI
 
 struct PharmacyRequestDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State private var requestModel = PharmacyRequestDetailsModel(
-        id: "1258",
-        statusTitle: "جديد",
-        customer: PharmacyCustomerInfo(
-            name: "أحمد محمد",
-            phone: "010 1234 5678",
-            address: "شارع النيل، المعادي، القاهرة"
-        ),
-        items: [
-            PharmacyOrderItem(id: "1", name: "بانادول اكسترا", spec: "500 مجم - 24 قرص", quantity: 1, price: 68.0, imageName: nil),
-            PharmacyOrderItem(id: "2", name: "رينادول سينوس", spec: "20 قرص", quantity: 1, price: 52.0, imageName: nil),
-            PharmacyOrderItem(id: "3", name: "فيتامين سي 1000 مجم", spec: "20 قرص فوار", quantity: 1, price: 45.0, imageName: nil)
-        ],
-        deliveryFee: 15.0,
-        notes: "يرجى الاتصال قبل الوصول"
-    )
+    @State var viewModel: PharmacyRequestDetailsViewModel?
 
-    @State private var selectedItemForAlternative: PharmacyOrderItem? = nil
-    @State private var alternativeText: String = ""
-    @State private var showAlternativeAlert: Bool = false
+    @State private var requestModel: PharmacyRequestDetailsModel?
+
+    @State private var showFullPrescriptionImage: Bool = false
+    @State private var itemToReplace: PharmacyOrderItem? = nil
+
+    init(requestModel: PharmacyRequestDetailsModel? = nil, viewModel: PharmacyRequestDetailsViewModel? = nil) {
+        self._requestModel = State(initialValue: requestModel)
+        self._viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            PharmacyRequestDetailsHeaderView(
-                orderId: requestModel.id,
-                statusTitle: requestModel.statusTitle,
-                onBack: {
-                    dismiss()
+            if let viewModel, viewModel.state == .loading {
+                VStack(spacing: 12) {
+                    Spacer()
+                    ProgressView()
+                    Text("pharmacy.request.loading".localized)
+                        .font(PharmacyColor.sans(14, .medium))
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                    Spacer()
                 }
-            )
-
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: PharmacySpacing.md) {
-                    PharmacyCustomerInfoCard(
-                        customer: requestModel.customer,
-                        onContact: {
-                            if let url = URL(string: "tel://\(requestModel.customer.phone.replacingOccurrences(of: " ", with: ""))") {
-                                UIApplication.shared.open(url)
+            } else if let activeModel = viewModel?.requestModel ?? requestModel {
+                let model = Binding(
+                    get: { viewModel?.requestModel ?? activeModel },
+                    set: {
+                        viewModel?.requestModel = $0
+                        requestModel = $0
+                    }
+                )
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: PharmacySpacing.md) {
+                        PharmacyContactInfoCard(
+                            headerStyle: .orderInfo(orderId: model.wrappedValue.id, date: model.wrappedValue.createdAt),
+                            name: model.wrappedValue.customer.name,
+                            phone: model.wrappedValue.customer.phone,
+                            onContact: {
+                                if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
+                                    UIApplication.shared.open(url)
+                                }
+                            },
+                            address: model.wrappedValue.customer.address,
+                            onLocationTap: {
+                                if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude {
+                                    if let url = URL(string: "maps://?q=\(lat),\(lon)") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
                             }
-                        }
-                    )
+                        )
 
-                    PharmacyOrderItemsCard(
-                        items: $requestModel.items,
-                        deliveryFee: requestModel.deliveryFee,
-                        total: requestModel.total,
-                        onToggleAlternative: { itemId in
-                            if let index = requestModel.items.firstIndex(where: { $0.id == itemId }) {
-                                selectedItemForAlternative = requestModel.items[index]
-                                alternativeText = requestModel.items[index].alternativeMedicine ?? ""
-                                showAlternativeAlert = true
+                        PharmacyOrderItemsCard(
+                            items: model.items,
+                            deliveryFee: model.wrappedValue.deliveryFee,
+                            total: model.wrappedValue.total,
+                            isOfferSubmitted: viewModel?.isOfferSubmitted ?? false,
+                            onSelectAlternative: { item in
+                                itemToReplace = item
                             }
-                        }
-                    )
+                        )
 
-                    PharmacyCustomerNotesCard(
-                        notes: requestModel.notes
-                    )
+                        if model.wrappedValue.prescriptionImageUrl != nil {
+                            PharmacyPrescriptionCard(
+                                uiImage: viewModel?.prescriptionUIImage,
+                                onEnlarge: {
+                                    showFullPrescriptionImage = true
+                                }
+                            )
+                        }
+
+                        PharmacyCustomerNotesCard(
+                            notes: model.wrappedValue.notes
+                        )
+
+
+                        PharmacyOrderTotalCard(
+                            total: model.wrappedValue.total
+                        )
+                    }
+                    .padding(.horizontal, PharmacySpacing.md)
+                    .padding(.vertical, PharmacySpacing.sm)
                 }
-                .padding(.horizontal, PharmacySpacing.md)
-                .padding(.vertical, PharmacySpacing.sm)
+                .background(PharmacyColor.bg)
+            } else {
+                VStack(spacing: 12) {
+                    Spacer()
+                    Image(systemName: "tray")
+                        .font(.system(size: 44))
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                    Text("pharmacy.request.no_data".localized)
+                        .font(PharmacyColor.sans(14, .semibold))
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                    Spacer()
+                }
             }
-            .background(PharmacyColor.bg)
 
-            PharmacyRequestDetailsBottomBar(
-                onAccept: {
-                    dismiss()
-                },
-                onReject: {
-                    dismiss()
-                }
-            )
+            if viewModel?.showBottomBar == true {
+                PharmacyRequestDetailsBottomBar(
+                    isSubmitting: viewModel?.isSubmitting ?? false,
+                    buttonTitle: viewModel?.bottomButtonTitle ?? "",
+                    isButtonDisabled: viewModel?.isBottomButtonDisabled ?? false,
+                    onSendOffer: {
+                        Task {
+                            await viewModel?.sendOffer()
+                        }
+                    }
+                )
+            }
         }
         .background(PharmacyColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
-        .alert("إضافة دواء بديل", isPresented: $showAlternativeAlert) {
-            TextField("اسم الدواء البديل", text: $alternativeText)
-            Button("تأكيد البديـل") {
-                if let selected = selectedItemForAlternative,
-                   let index = requestModel.items.firstIndex(where: { $0.id == selected.id }) {
-                    requestModel.items[index].isAvailable = false
-                    requestModel.items[index].alternativeMedicine = alternativeText.isEmpty ? "بديل متوفر" : alternativeText
+        .navigationTitle("pharmacy.request.details.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("pharmacy.request.alert.title".localized, isPresented: Binding(get: {
+            viewModel?.showSuccessAlert ?? false
+        }, set: { newValue in
+            viewModel?.showSuccessAlert = newValue
+        })) {
+            Button("common.ok".localized, role: .cancel) { }
+        } message: {
+            Text(viewModel?.alertMessage ?? "")
+        }
+        .sheet(isPresented: $showFullPrescriptionImage) {
+            NavigationStack {
+                VStack {
+                    ZStack {
+                        Color.black.ignoresSafeArea()
+                        PharmacyAuthenticatedAsyncImage(uiImage: viewModel?.prescriptionUIImage) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("common.close".localized) {
+                            showFullPrescriptionImage = false
+                        }
+                        .foregroundStyle(.white)
+                    }
                 }
             }
-            Button("إلغاء", role: .cancel) {}
-        } message: {
-            Text("أدخل اسم الدواء البديل المقترح للعميل في حالة عدم توفر المنتج الأصلي.")
+        }
+        .sheet(item: $itemToReplace) { item in
+            PharmacyProductSearchView { selectedProduct in
+                viewModel?.replaceItem(item, with: selectedProduct)
+            }
+        }
+        .task {
+            if let viewModel {
+                await viewModel.loadDetails()
+                if let model = viewModel.requestModel {
+                    self.requestModel = model
+                }
+                await viewModel.loadPrescriptionImage()
+            }
         }
     }
-}
-
-#Preview("Arabic") {
-    PharmacyRequestDetailsView()
-        .environment(LanguageManager.shared)
-        .pharmacyLocalizedEnvironment()
 }

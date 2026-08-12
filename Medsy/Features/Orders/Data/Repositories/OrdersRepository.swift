@@ -14,9 +14,12 @@ final class OrdersRepository: OrdersRepositoryProtocol {
         self.remoteDataSource = remoteDataSource
     }
 
-    func fetchOrders(status: String?, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
-        let page = try await remoteDataSource.fetchOrders(page: page, size: size, status: status)
-        return OrderMapper.mapToPagedResult(page)
+    func fetchOrders(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
+        // The backend currently exposes only Pageable parameters. Filters are
+        // applied to each fetched page by OrderHistoryViewModel.
+        _ = filter
+        let response = try await remoteDataSource.fetchOrders(page: page, size: size)
+        return OrderMapper.mapToPagedResult(response)
     }
 
     func fetchOrderDetail(id: Int) async throws -> OrderDetailEntity {

@@ -15,6 +15,7 @@ enum CartEndpoint: ApiEndpoint {
     case remove(itemID: Int64)
     case clear
     case count
+    case interactions(language: String)
 
     var path: String {
         switch self {
@@ -26,12 +27,14 @@ enum CartEndpoint: ApiEndpoint {
             return "cart/items/\(itemID)"
         case .count:
             return "cart/count"
+        case .interactions:
+            return "cart/interactions"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .fetch, .count:
+        case .fetch, .count, .interactions:
             return .get
         case .add:
             return .post
@@ -48,9 +51,16 @@ enum CartEndpoint: ApiEndpoint {
             return try? JSONEncoder().encode(request)
         case let .update(_, quantity):
             return try? JSONEncoder().encode(quantity)
-        case .fetch, .remove, .clear, .count:
+        case .fetch, .remove, .clear, .count, .interactions:
             return nil
         }
+    }
+
+    var queryParameters: Parameters? {
+        guard case let .interactions(language) = self else {
+            return nil
+        }
+        return ["lang": language]
     }
 
     var requiresAuthentication: Bool {

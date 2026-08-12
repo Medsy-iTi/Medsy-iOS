@@ -41,6 +41,14 @@ final class ProfileViewModel {
         return profile.fullName
     }
 
+    var firstName: String {
+        profile?.firstName ?? ""
+    }
+
+    var lastName: String {
+        profile?.lastName ?? ""
+    }
+
     var phoneNumber: String {
         profile?.phoneNumber ?? ""
     }
@@ -57,6 +65,18 @@ final class ProfileViewModel {
         homeAddress.isEmpty ? "profile.not_set".localized : homeAddress
     }
 
+	var homeLatitude: Double? {
+		profile?.homeLatitude
+	}
+
+	var homeLongitude: Double? {
+		profile?.homeLongitude
+	}
+
+    var hasDeliveryLocation: Bool {
+        homeLatitude != nil && homeLongitude != nil
+    }
+
     var dateOfBirth: Date? {
         profile?.dateOfBirth
     }
@@ -65,7 +85,6 @@ final class ProfileViewModel {
         guard let dateOfBirth else {
             return "profile.not_set".localized
         }
-
         return ProfileViewModel.dateFormatter.string(from: dateOfBirth)
     }
 
@@ -98,19 +117,36 @@ final class ProfileViewModel {
         await loadProfile()
     }
 
-    func updateProfile(homeAddress: String?, dateOfBirth: Date?) async -> Bool {
+    func updateProfile(
+        firstName: String,
+        lastName: String,
+        homeAddress: String?,
+        latitude: Double?,
+        longitude: Double?,
+        dateOfBirth: Date?
+    ) async -> Bool {
         guard canSave else { return false }
         isSaving = true
         saveErrorMessage = nil
 
         let trimmedAddress = homeAddress?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedAddress = trimmedAddress?.isEmpty == true ? nil : trimmedAddress
         let input = UpdateCustomerProfileInput(
-            homeAddress: trimmedAddress?.isEmpty == true ? nil : trimmedAddress,
+            firstName: firstName,
+            lastName: lastName,
+            homeAddress: normalizedAddress,
+            homeLatitude: normalizedAddress == nil ? nil : latitude,
+            homeLongitude: normalizedAddress == nil ? nil : longitude,
             dateOfBirth: dateOfBirth
         )
 
         do {
-            profile = try await updateCustomerProfileUseCase.execute(input: input)
+            let updatedProfile = try await updateCustomerProfileUseCase.execute(input: input)
+            profile = profileAfterApplyingSubmittedLocation(
+                updatedProfile,
+                submittedLatitude: input.homeLatitude,
+                submittedLongitude: input.homeLongitude
+            )
             state = .loaded
             isSaving = false
             return true
@@ -119,5 +155,30 @@ final class ProfileViewModel {
             isSaving = false
             return false
         }
+    }
+
+    private func profileAfterApplyingSubmittedLocation(
+        _ updatedProfile: CustomerProfile,
+        submittedLatitude: Double?,
+        submittedLongitude: Double?
+    ) -> CustomerProfile {
+        guard updatedProfile.homeLatitude == nil,
+              updatedProfile.homeLongitude == nil,
+              let submittedLatitude,
+              let submittedLongitude else {
+            return updatedProfile
+        }
+
+        return CustomerProfile(
+            id: updatedProfile.id,
+            email: updatedProfile.email,
+            firstName: updatedProfile.firstName,
+            lastName: updatedProfile.lastName,
+            homeAddress: updatedProfile.homeAddress,
+            dateOfBirth: updatedProfile.dateOfBirth,
+            homeLatitude: submittedLatitude,
+            homeLongitude: submittedLongitude,
+            phoneNumber: updatedProfile.phoneNumber
+        )
     }
 }
