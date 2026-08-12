@@ -186,6 +186,56 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(requestedPages, [0, 1])
     }
 
+    @MainActor
+    func testHistoryFiltersCachedOrdersWithoutRequestingAgain() async throws {
+        let useCase = OrdersUseCaseStub(
+            pages: [
+                0: PagedResult(
+                    items: [
+                        orderEntity(id: 1, status: .delivered),
+                        orderEntity(id: 2, status: .cancelled)
+                    ],
+                    page: 0,
+                    size: 20,
+                    totalElements: 3,
+                    totalPages: 2,
+                    isLast: false
+                ),
+                1: PagedResult(
+                    items: [orderEntity(id: 3, status: .cancelled)],
+                    page: 1,
+                    size: 20,
+                    totalElements: 3,
+                    totalPages: 2,
+                    isLast: true
+                )
+            ]
+        )
+        let viewModel = OrderHistoryViewModel(loadOrdersUseCase: useCase)
+
+        viewModel.handle(.load)
+        try await waitUntil { self.orderCount(in: viewModel.historyState) == 2 }
+
+        var filters = ActiveOrderFilters.default
+        filters.statusFilter = .cancelled
+        viewModel.handle(.applyFilters(filters))
+
+        XCTAssertEqual(orderIDs(in: viewModel.historyState), [2])
+        var requestedPages = await useCase.requestedPages
+        var requestedFilters = await useCase.requestedFilters
+        XCTAssertEqual(requestedPages, [0])
+        XCTAssertEqual(requestedFilters, [.empty])
+
+        viewModel.handle(.loadNextPage)
+        try await waitUntil { self.orderCount(in: viewModel.historyState) == 2 }
+
+        XCTAssertEqual(orderIDs(in: viewModel.historyState), [2, 3])
+        requestedPages = await useCase.requestedPages
+        requestedFilters = await useCase.requestedFilters
+        XCTAssertEqual(requestedPages, [0, 1])
+        XCTAssertEqual(requestedFilters, [.empty, .empty])
+    }
+
     private func decodeOrder(
         fulfillmentType: String,
         deliveryFee: Double,
@@ -224,12 +274,12 @@ final class OrdersFeatureTests: XCTestCase {
         return try JSONDecoder().decode(OrderDTO.self, from: Data(json.utf8))
     }
 
-    private func orderEntity(id: Int) -> OrderEntity {
+    private func orderEntity(id: Int, status: OrderStatus = .delivered) -> OrderEntity {
         OrderEntity(
             id: id,
             orderNumber: id,
             pharmacyName: "Pharmacy",
-            status: .delivered,
+            status: status,
             fulfillmentType: .pickup,
             date: Date(timeIntervalSince1970: TimeInterval(id)),
             totalPrice: 10,
@@ -242,6 +292,12 @@ final class OrdersFeatureTests: XCTestCase {
     private func orderCount(in state: OrderHistoryViewState) -> Int {
         guard case let .loaded(sections) = state else { return 0 }
         return sections.flatMap(\.orders).count
+    }
+
+    @MainActor
+    private func orderIDs(in state: OrderHistoryViewState) -> [Int] {
+        guard case let .loaded(sections) = state else { return [] }
+        return sections.flatMap(\.orders).map(\.id)
     }
 
     @MainActor
@@ -260,15 +316,16 @@ final class OrdersFeatureTests: XCTestCase {
 private actor OrdersUseCaseStub: LoadOrdersUseCaseProtocol {
     private let pages: [Int: PagedResult<OrderEntity>]
     private(set) var requestedPages: [Int] = []
+    private(set) var requestedFilters: [OrdersFilter] = []
 
     init(pages: [Int: PagedResult<OrderEntity>]) {
         self.pages = pages
     }
 
     func execute(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
-        _ = filter
         _ = size
         requestedPages.append(page)
+        requestedFilters.append(filter)
         guard let result = pages[page] else {
             throw OrdersUseCaseStubError.missingPage(page)
         }
