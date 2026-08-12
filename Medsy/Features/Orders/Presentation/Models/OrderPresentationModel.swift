@@ -17,6 +17,31 @@ struct OrderPresentationModel: Identifiable {
     let totalPrice: Double
     let itemCount: Int
     let itemImageURLs: [String]
+    let pharmacyNames: [String]
+
+    init(
+        id: Int,
+        orderNumber: Int,
+        pharmacyName: String,
+        status: OrderStatusPresentation,
+        fulfillmentType: OrderFulfillmentType,
+        date: Date,
+        totalPrice: Double,
+        itemCount: Int,
+        itemImageURLs: [String],
+        pharmacyNames: [String] = []
+    ) {
+        self.id = id
+        self.orderNumber = orderNumber
+        self.pharmacyName = pharmacyName
+        self.status = status
+        self.fulfillmentType = fulfillmentType
+        self.date = date
+        self.totalPrice = totalPrice
+        self.itemCount = itemCount
+        self.itemImageURLs = itemImageURLs
+        self.pharmacyNames = pharmacyNames
+    }
 }
 
 struct OrderDetailPresentationModel: Identifiable {
@@ -31,9 +56,64 @@ struct OrderDetailPresentationModel: Identifiable {
     let itemsSubtotal: Double
     let deliveryFee: Double?
     let totalPrice: Double
+    let pharmacies: [OrderPharmacyPresentationModel]
+
+    init(
+        id: Int,
+        orderNumber: Int,
+        pharmacyName: String,
+        pharmacyId: Int,
+        status: OrderStatusPresentation,
+        fulfillmentType: OrderFulfillmentType,
+        date: Date,
+        items: [OrderDetailItemModel],
+        itemsSubtotal: Double,
+        deliveryFee: Double?,
+        totalPrice: Double,
+        pharmacies: [OrderPharmacyPresentationModel] = []
+    ) {
+        self.id = id
+        self.orderNumber = orderNumber
+        self.pharmacyName = pharmacyName
+        self.pharmacyId = pharmacyId
+        self.status = status
+        self.fulfillmentType = fulfillmentType
+        self.date = date
+        self.items = items
+        self.itemsSubtotal = itemsSubtotal
+        self.deliveryFee = deliveryFee
+        self.totalPrice = totalPrice
+        self.pharmacies = pharmacies
+    }
 }
 
-struct OrderDetailItemModel: Identifiable {
+struct OrderPharmacyPresentationModel: Identifiable, Equatable {
+    let id: Int
+    let pharmacyId: Int
+    let name: String
+    let coordinate: OrderCoordinatePresentation?
+    let items: [OrderDetailItemModel]
+
+    var subtotal: Double {
+        items.reduce(0) { $0 + ($1.unitPrice * Double($1.quantity)) }
+    }
+}
+
+struct OrderCoordinatePresentation: Equatable, Hashable, Sendable {
+    let latitude: Double
+    let longitude: Double
+}
+
+enum OrderRoutePresentationState: Equatable {
+    case idle
+    case locating
+    case routing
+    case ready(points: [OrderCoordinatePresentation])
+    case permissionDenied
+    case unavailable
+}
+
+struct OrderDetailItemModel: Identifiable, Equatable {
     let id: Int
     let productId: Int
     let productName: String
@@ -45,6 +125,10 @@ struct OrderDetailItemModel: Identifiable {
 
 
 extension OrderPresentationModel {
+    var displayedPharmacyNames: [String] {
+        pharmacyNames.isEmpty ? [pharmacyName].filter { !$0.isEmpty } : pharmacyNames
+    }
+
     static let mockOrders: [OrderPresentationModel] = [
         OrderPresentationModel(
             id: 1258, orderNumber: 1258,
@@ -103,6 +187,26 @@ extension OrderDetailPresentationModel {
         ],
         itemsSubtotal: 180,
         deliveryFee: 25,
-        totalPrice: 180
+        totalPrice: 205,
+        pharmacies: [
+            OrderPharmacyPresentationModel(
+                id: 71,
+                pharmacyId: 1,
+                name: "Al Rahma Pharmacy",
+                coordinate: OrderCoordinatePresentation(latitude: 30.0444, longitude: 31.2357),
+                items: [
+                    OrderDetailItemModel(id: 1, productId: 101, productName: "Panadol 500mg", originalProductName: nil, quantity: 2, unitPrice: 45, imageURL: nil)
+                ]
+            ),
+            OrderPharmacyPresentationModel(
+                id: 72,
+                pharmacyId: 2,
+                name: "Al Shifa Pharmacy",
+                coordinate: OrderCoordinatePresentation(latitude: 30.0520, longitude: 31.2300),
+                items: [
+                    OrderDetailItemModel(id: 2, productId: 102, productName: "Vitamin C 1000mg", originalProductName: "Vitamin C 500mg", quantity: 1, unitPrice: 90, imageURL: nil)
+                ]
+            )
+        ]
     )
 }
