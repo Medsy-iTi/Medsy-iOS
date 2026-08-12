@@ -131,9 +131,16 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
     }
 
     func confirmOffer(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> ConfirmOfferResponseDTO {
-        let body = ConfirmOfferRequestDTO(selectedItems: selectedItems)
+        let selectBody = ConfirmOfferRequestDTO(selectedItems: selectedItems)
+        let selectResponse: APIResponseDTO<SelectPharmacyResponseDTO> = try await networkService.request(
+            endpoint: OffersEndpoint.selectPharmacy(requestId: requestId, body: selectBody)
+        )
+        guard selectResponse.success else {
+            throw NetworkError.validationError(selectResponse.message)
+        }
+
         let response: ConfirmOfferResponseDTOContainer = try await networkService.request(
-            endpoint: OffersEndpoint.confirmOffer(requestId: requestId, body: body)
+            endpoint: OffersEndpoint.confirmOffer(requestId: requestId)
         )
         guard response.success else {
             throw NetworkError.validationError(response.message)
