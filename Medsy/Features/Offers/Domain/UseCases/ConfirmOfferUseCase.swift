@@ -8,7 +8,9 @@
 import Foundation
 
 protocol ConfirmOfferUseCaseProtocol {
-    func execute(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> SelectPharmacyResponseDTO
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResult
 }
 
 final class ConfirmOfferUseCase: ConfirmOfferUseCaseProtocol {
@@ -18,7 +20,15 @@ final class ConfirmOfferUseCase: ConfirmOfferUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(requestId: Int, selectedRequestItemIds: [Int]) async throws -> ConfirmOfferResult {
-        try await repository.confirmOffer(requestId: requestId, selectedRequestItemIds: selectedRequestItemIds)
+    func selectPharmacy(requestId: Int, selectedItems: [ConfirmSelectedItem]) async throws -> SelectPharmacyResponseDTO {
+        try await repository.selectPharmacy(requestId: requestId, selectedItems: selectedItems)
+    }
+
+    func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO {
+        try await repository.selectPharmacy(requestId: requestId, selectedRequestItemIds: selectedRequestItemIds)
+    }
+
+    func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResult {
+        try await repository.confirmOffer(requestId: requestId, fulfillmentMethod: fulfillmentMethod)
     }
 }

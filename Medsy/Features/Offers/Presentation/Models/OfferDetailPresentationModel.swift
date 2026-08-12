@@ -21,6 +21,7 @@ import Foundation
 struct OfferMedicineItem: Identifiable, Hashable {
     let id: String
     let requestItemId: Int
+    let productId: Int?
     let name: String
     let dosage: String
     let price: Double
@@ -33,6 +34,7 @@ struct OfferMedicineItem: Identifiable, Hashable {
     init(
         id: String,
         requestItemId: Int = 0,
+        productId: Int? = nil,
         name: String,
         dosage: String,
         price: Double,
@@ -44,6 +46,7 @@ struct OfferMedicineItem: Identifiable, Hashable {
     ) {
         self.id = id
         self.requestItemId = requestItemId
+        self.productId = productId
         self.name = name
         self.dosage = dosage
         self.price = price

@@ -53,6 +53,91 @@ final class NetworkService: NetworkServiceProtocol {
         return data
     }
 
+    func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    let request = try requestBuilder.makeRequest(
+                        for: endpoint,
+                        accessToken: endpoint.requiresAuthentication ? tokenStore?.accessToken() : nil
+                    )
+                    print("[Network SSE] 🚀 Stream starting for endpoint: \(endpoint.method.rawValue) \(request.url?.absoluteString ?? endpoint.path)")
+
+                    let (bytes, response) = try await URLSession.shared.bytes(for: request)
+                    if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+                        print("[Network SSE] ❌ HTTP Error status code: \(httpResponse.statusCode)")
+                        throw NetworkErrorHandler.map(
+                            error: NetworkError.unacceptableStatusCode(httpResponse.statusCode),
+                            statusCode: httpResponse.statusCode,
+                            data: nil
+                        )
+                    }
+
+                    print("[Network SSE] ✅ Stream HTTP connection established successfully!")
+
+                    var currentEvent = ""
+                    var currentData = ""
+
+                    func flushCurrentEvent() {
+                        let trimmedData = currentData.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if !trimmedData.isEmpty || !currentEvent.isEmpty {
+                            print("[Network SSE Yielding] Event: '\(currentEvent)', Data: '\(trimmedData)'")
+                            continuation.yield(SSEEvent(event: currentEvent, data: trimmedData))
+                            currentEvent = ""
+                            currentData = ""
+                        }
+                    }
+
+                    for try await line in bytes.lines {
+                        if Task.isCancelled {
+                            print("[Network SSE] ⏹️ Task cancelled, stopping stream loop.")
+                            break
+                        }
+                        print("[Network SSE Line] \(line)")
+
+                        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                        if trimmed.hasPrefix(":") {
+                            flushCurrentEvent()
+                            continue
+                        }
+
+                        if trimmed.isEmpty {
+                            flushCurrentEvent()
+                        } else if trimmed.hasPrefix("event:") {
+                            flushCurrentEvent()
+                            currentEvent = trimmed.dropFirst(6).trimmingCharacters(in: .whitespaces)
+                        } else if trimmed.hasPrefix("data:") {
+                            let dataPart = trimmed.dropFirst(5).trimmingCharacters(in: .whitespaces)
+                            if currentData.isEmpty {
+                                currentData = dataPart
+                            } else {
+                                currentData += "\n" + dataPart
+                            }
+
+                            let dataCheck = currentData.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if (dataCheck.hasPrefix("{") && dataCheck.hasSuffix("}")) || (dataCheck.hasPrefix("[") && dataCheck.hasSuffix("]")) {
+                                flushCurrentEvent()
+                            }
+                        }
+                    }
+
+                    flushCurrentEvent()
+                    print("[Network SSE] Stream finished clean.")
+                    continuation.finish()
+                } catch {
+                    print("[Network SSE Error] Stream exception: \(error)")
+                    continuation.finish(throwing: error)
+                }
+            }
+
+            continuation.onTermination = { reason in
+                print("[Network SSE] Stream terminated with reason: \(reason)")
+                task.cancel()
+            }
+        }
+    }
+
     private func execute<T: Decodable>(
         endpoint: ApiEndpoint,
         hasRetriedAfterRefresh: Bool
