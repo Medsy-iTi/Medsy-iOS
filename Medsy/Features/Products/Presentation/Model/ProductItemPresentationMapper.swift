@@ -22,6 +22,21 @@ enum ProductItemPresentationMapper {
         )
     }
 
+    static func favorite(_ item: ProductItem) -> FavoriteMedicine {
+        FavoriteMedicine(
+            id: item.id,
+            name: item.name,
+            arabicName: item.arabicName,
+            scientificName: item.scientificName,
+            price: item.price,
+            imageURL: item.imageUrl,
+            categoryID: item.categoryId,
+            categoryName: item.categoryName,
+            company: item.company,
+            route: item.route
+        )
+    }
+
     private static let dosageStartPatterns: Set<String> = [
         "MG", "MCG", "ML", "IU", "G", "MG/ML", "MCMOL", "MMOL", "MEQ"
     ]

@@ -37,6 +37,19 @@ struct ProductDetailView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .onAppear { viewModel.load() }
+        .alert(
+            "favorites.persistence_error.title".localized,
+            isPresented: Binding(
+                get: { viewModel.favoriteErrorMessage != nil },
+                set: { if !$0 { viewModel.favoriteErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {
+                viewModel.favoriteErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.favoriteErrorMessage ?? "")
+        }
     }
 
     // MARK: - Content switcher
@@ -85,7 +98,8 @@ struct ProductDetailView: View {
                 ImageCarousel(
                     images: product.images,
                     selectedIndex: $viewModel.selectedImageIndex,
-                    isFavorite: $viewModel.isFavorite
+                    isFavorite: viewModel.isFavorite,
+                    onToggleFavorite: viewModel.toggleFavorite
                 )
 
                 ProductHeaderInfo(

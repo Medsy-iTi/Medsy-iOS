@@ -230,6 +230,20 @@
 "accessibility.back" = "Back";
 "accessibility.share" = "Share";
 
+/* Favorites */
+"favorites.title" = "Favorites";
+"favorites.open.accessibility" = "Open favorites";
+"favorites.count.accessibility" = "%d favorite medicines";
+"favorites.empty.title" = "No favorites yet";
+"favorites.empty.subtitle" = "Save medicines with the heart button to find them quickly here.";
+"favorites.empty.action" = "Browse medicines";
+"favorites.error.title" = "Couldn't Load Favorites";
+"favorites.error.subtitle" = "We couldn't read your saved medicines. Please try again.";
+"favorites.persistence_error.title" = "Couldn't Update Favorites";
+"favorites.persistence_error.subtitle" = "Your favorites change couldn't be saved. Please try again.";
+"favorites.offline.title" = "No Internet Connection";
+"favorites.offline.subtitle" = "Connect to the internet to open medicine details.";
+
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
@@ -348,6 +362,8 @@
 "profile.section.about" = "About Medsy";
 "profile.personal_info" = "Personal Information";
 "profile.personal_info.subtitle" = "Edit name and basic details";
+"profile.favorites" = "Favorite Medicines";
+"profile.favorites.subtitle" = "View your saved medicines";
 "profile.notifications" = "Notifications";
 "profile.notifications.subtitle" = "Manage order and offer notifications";
 "profile.order_history" = "Order History";
@@ -478,6 +494,7 @@
 "orders.filter.completed"            = "Completed";
 "orders.filter.cancelled"            = "Cancelled";
 "orders.status.pending"              = "Order Confirmed";
+"orders.status.pending_payment"      = "Awaiting payment";
 "orders.status.confirmed"            = "Order Confirmed";
 "orders.status.processing"           = "Processing";
 "orders.status.shipped"              = "Shipped";
@@ -486,11 +503,28 @@
 "orders.status.rejected"             = "Rejected";
 "orders.status.preparing"            = "Preparing";
 "orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.ready_for_delivery"   = "Ready for delivery";
 "orders.status.out_for_delivery"     = "Out for delivery";
+"orders.product_unavailable"         = "Medicine no longer available";
+"orders.detail.request_number"       = "Request #%d";
+"orders.detail.payment"              = "Payment";
+"orders.detail.payment_method"       = "Method";
+"orders.detail.payment_status"       = "Status";
+"orders.detail.paid_at"              = "Paid at";
+"orders.detail.payment_expires_at"   = "Payment expires";
+"orders.payment_method.cash"         = "Cash";
+"orders.payment_method.card"         = "Card";
+"orders.payment_status.unpaid"       = "Unpaid";
+"orders.payment_status.pending"      = "Pending";
+"orders.payment_status.paid"         = "Paid";
+"orders.payment_status.failed"       = "Failed";
+"orders.payment_status.canceled"     = "Canceled";
+"orders.payment_status.expired"      = "Expired";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";
 "orders.fulfillment.pickup"          = "Pickup";
+"orders.fulfillment.not_selected"    = "Not selected yet";
 "orders.items_count"                 = "%d items";
 "orders.item_count"                  = "%d item";
 "orders.price_format"                = "%.0f EGP";
@@ -517,6 +551,7 @@
 "orders.detail.order_number"         = "Order #%d";
 "orders.detail.date"                 = "Date";
 "orders.detail.status"               = "Status";
+"orders.detail.delivery_status"      = "Order status";
 "orders.detail.items"                = "Items price";
 "orders.detail.items_label"          = "Items";
 "orders.detail.item_unit_price"      = "%.0f EGP each";
@@ -530,6 +565,17 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.detail.pharmacy_locations"   = "Pharmacy locations";
+"orders.detail.delivery_location"    = "Delivery location";
+"orders.detail.location_prompt"      = "View the pharmacy on the map and draw the route to the delivery location saved on this order.";
+"orders.detail.show_location_path"   = "Show location and path";
+"orders.detail.locating"             = "Loading delivery location…";
+"orders.detail.loading_route"        = "Finding the best driving route…";
+"orders.detail.location_permission_denied" = "Location access is unavailable.";
+"orders.detail.location_unavailable" = "The delivery location for this order is unavailable. You can still open the pharmacy in Maps.";
+"orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
+"orders.detail.open_directions"      = "Open turn-by-turn directions";
+"orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
 "orders.reorder.go_to_cart"          = "Go to Cart";
 "orders.reorder.continue_shopping"   = "Continue Shopping";
 "orders.reorder.success.title"       = "Added Successfully";

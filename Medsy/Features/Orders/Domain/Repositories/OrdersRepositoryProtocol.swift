@@ -10,4 +10,5 @@ import Foundation
 protocol OrdersRepositoryProtocol {
     func fetchOrders(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity>
     func fetchOrderDetail(id: Int) async throws -> OrderDetailEntity
+    func fetchOrderDeliveryLocation(requestID: Int) async throws -> OrderCoordinateEntity
 }

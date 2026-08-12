@@ -10,6 +10,7 @@ import SwiftUI
 
 enum HomeRoute: Hashable {
     case search(String)
+    case favorites
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
@@ -26,6 +27,10 @@ final class HomeCoordinator {
 
     func openSearch() {
         path.append(HomeRoute.search(""))
+    }
+
+    func openFavorites() {
+        path.append(HomeRoute.favorites)
     }
 
     func showPrescription() {
@@ -104,6 +109,7 @@ struct HomeCoordinatorView: View {
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
+                onFavoritesTap: coordinator.openFavorites,
                 onCompareOffers: coordinator.openOffersList,
                 onOpenOfferResult: coordinator.openOfferResult,
                 homeAddress: homeAddress,
@@ -115,6 +121,16 @@ struct HomeCoordinatorView: View {
                     SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                         coordinator.path.append(dest)
                     })
+                case .favorites:
+                    FavoriteView(
+                        onBack: coordinator.goBack,
+                        onBrowse: coordinator.openSearch,
+                        onSelectMedicine: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
+                            )
+                        }
+                    )
                 case .prescription:
                     PrescriptionCoordinatorView(
                         onExit: coordinator.goBack,
@@ -202,5 +218,4 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-
 

@@ -21,11 +21,11 @@ protocol CartLocalDataSourceProtocol {
 
 actor CartLocalDataSource: CartLocalDataSourceProtocol {
     private let modelContainer: ModelContainer
-    private let accountScopeProvider: CartAccountScopeProviderProtocol
+    private let accountScopeProvider: AccountScopeProviderProtocol
 
     init(
         modelContainer: ModelContainer,
-        accountScopeProvider: CartAccountScopeProviderProtocol
+        accountScopeProvider: AccountScopeProviderProtocol
     ) {
         self.modelContainer = modelContainer
         self.accountScopeProvider = accountScopeProvider

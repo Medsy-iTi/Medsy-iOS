@@ -45,4 +45,19 @@ enum ProductPresentationMapper {
             categoryName: product.categoryName
         )
     }
+
+    static func favorite(_ product: Product) -> FavoriteMedicine {
+        FavoriteMedicine(
+            id: product.id,
+            name: product.name,
+            arabicName: product.arabicName,
+            scientificName: product.scientificName,
+            price: product.price,
+            imageURL: product.imageUrl,
+            categoryID: product.categoryId,
+            categoryName: product.categoryName,
+            company: product.company,
+            route: product.route
+        )
+    }
 }

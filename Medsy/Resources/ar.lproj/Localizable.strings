@@ -229,6 +229,20 @@
 "accessibility.back" = "رجوع";
 "accessibility.share" = "مشاركة";
 
+/* Favorites */
+"favorites.title" = "المفضلة";
+"favorites.open.accessibility" = "فتح المفضلة";
+"favorites.count.accessibility" = "%d من الأدوية المفضلة";
+"favorites.empty.title" = "لا توجد أدوية مفضلة بعد";
+"favorites.empty.subtitle" = "احفظ الأدوية باستخدام زر القلب لتجدها هنا بسهولة.";
+"favorites.empty.action" = "تصفح الأدوية";
+"favorites.error.title" = "تعذر تحميل المفضلة";
+"favorites.error.subtitle" = "تعذر قراءة الأدوية المحفوظة. حاول مرة أخرى.";
+"favorites.persistence_error.title" = "تعذر تحديث المفضلة";
+"favorites.persistence_error.subtitle" = "تعذر حفظ التغيير في المفضلة. حاول مرة أخرى.";
+"favorites.offline.title" = "لا يوجد اتصال بالإنترنت";
+"favorites.offline.subtitle" = "اتصل بالإنترنت لفتح تفاصيل الدواء.";
+
 /* Tab bar */
 "tab.home" = "الرئيسية";
 "tab.favorites" = "المفضلة";
@@ -347,6 +361,8 @@
 "profile.section.about" = "حول Medsy";
 "profile.personal_info" = "البيانات الشخصية";
 "profile.personal_info.subtitle" = "تعديل الاسم والبيانات الأساسية";
+"profile.favorites" = "الأدوية المفضلة";
+"profile.favorites.subtitle" = "عرض الأدوية المحفوظة";
 "profile.notifications" = "الإشعارات";
 "profile.notifications.subtitle" = "إدارة إشعارات الطلبات والعروض";
 "profile.order_history" = "الطلبات";
@@ -477,6 +493,7 @@
 "orders.filter.completed"            = "المنتهية";
 "orders.filter.cancelled"            = "ملغاة";
 "orders.status.pending"              = "تم تأكيد الطلب";
+"orders.status.pending_payment"      = "في انتظار الدفع";
 "orders.status.confirmed"            = "تم تأكيد الطلب";
 "orders.status.processing"           = "جاري التجهيز";
 "orders.status.shipped"              = "تم الشحن";
@@ -485,11 +502,28 @@
 "orders.status.rejected"             = "مرفوض";
 "orders.status.preparing"            = "جاري التجهيز";
 "orders.status.ready_for_pickup"     = "جاهز للاستلام";
+"orders.status.ready_for_delivery"   = "جاهز للتوصيل";
 "orders.status.out_for_delivery"     = "خرج للتوصيل";
+"orders.product_unavailable"         = "الدواء لم يعد متاحًا";
+"orders.detail.request_number"       = "الطلب رقم %d";
+"orders.detail.payment"              = "الدفع";
+"orders.detail.payment_method"       = "الطريقة";
+"orders.detail.payment_status"       = "الحالة";
+"orders.detail.paid_at"              = "تم الدفع في";
+"orders.detail.payment_expires_at"   = "تنتهي مهلة الدفع";
+"orders.payment_method.cash"         = "نقدًا";
+"orders.payment_method.card"         = "بطاقة";
+"orders.payment_status.unpaid"       = "غير مدفوع";
+"orders.payment_status.pending"      = "قيد الانتظار";
+"orders.payment_status.paid"         = "مدفوع";
+"orders.payment_status.failed"       = "فشل";
+"orders.payment_status.canceled"     = "ملغى";
+"orders.payment_status.expired"      = "منتهي";
 "orders.pharmacy_fallback"           = "صيدلية #%d";
 "orders.product_fallback"            = "منتج #%d";
 "orders.fulfillment.delivery"        = "توصيل";
 "orders.fulfillment.pickup"          = "استلام من الصيدلية";
+"orders.fulfillment.not_selected"    = "لم يتم التحديد بعد";
 "orders.items_count"                 = "%d منتجات";
 "orders.item_count"                  = "%d منتج";
 "orders.price_format"                = "%.0f جنيه";
@@ -516,6 +550,7 @@
 "orders.detail.order_number"         = "طلب #%d";
 "orders.detail.date"                 = "التاريخ";
 "orders.detail.status"               = "الحالة";
+"orders.detail.delivery_status"      = "حالة الطلب";
 "orders.detail.items"                = "سعر المنتجات";
 "orders.detail.items_label"          = "المنتجات";
 "orders.detail.item_unit_price"      = "%.0f جنيه للقطعة";
@@ -529,6 +564,17 @@
 "orders.detail.items_subtotal"       = "إجمالي المنتجات";
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
+"orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
+"orders.detail.delivery_location"    = "موقع التوصيل";
+"orders.detail.location_prompt"      = "اعرض الصيدلية على الخريطة وارسم المسار إلى موقع التوصيل المحفوظ لهذا الطلب.";
+"orders.detail.show_location_path"   = "عرض الموقع والمسار";
+"orders.detail.locating"             = "جارٍ تحميل موقع التوصيل…";
+"orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
+"orders.detail.location_permission_denied" = "إذن الموقع غير متاح.";
+"orders.detail.location_unavailable" = "موقع التوصيل لهذا الطلب غير متاح. لا يزال بإمكانك فتح الصيدلية في الخرائط.";
+"orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
+"orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
+"orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
 "orders.reorder.go_to_cart"          = "الذهاب للسلة";
 "orders.reorder.continue_shopping"   = "متابعة التصفح";
 "orders.reorder.success.title"       = "تمت الإضافة بنجاح";
