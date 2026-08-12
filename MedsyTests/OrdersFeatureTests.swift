@@ -236,6 +236,52 @@ final class OrdersFeatureTests: XCTestCase {
         XCTAssertEqual(requestedFilters, [.empty, .empty])
     }
 
+    @MainActor
+    func testDetailRoutesToSelectedPharmacyAndOpensDirections() async throws {
+        let source = OrderCoordinatePresentation(latitude: 30.0400, longitude: 31.2250)
+        let locationProvider = OrderLocationProviderStub(result: .success(source))
+        let routeProvider = OrderRouteProviderStub()
+        let directionsOpener = OrderDirectionsOpenerSpy()
+        let viewModel = OrderDetailViewModel(
+            state: .loaded(.mock),
+            locationProvider: locationProvider,
+            routeProvider: routeProvider,
+            directionsOpener: directionsOpener
+        )
+
+        try await waitUntil {
+            guard case .ready = viewModel.routeState else { return false }
+            return viewModel.selectedPharmacyID == 71
+        }
+
+        viewModel.handle(.selectPharmacy(72))
+        try await waitUntil {
+            guard case .ready(let points) = viewModel.routeState else { return false }
+            return viewModel.selectedPharmacyID == 72
+                && points.last == OrderCoordinatePresentation(latitude: 30.0520, longitude: 31.2300)
+        }
+
+        viewModel.handle(.openDirections)
+
+        XCTAssertEqual(routeProvider.destinations.count, 2)
+        XCTAssertEqual(directionsOpener.openedName, "Al Shifa Pharmacy")
+        XCTAssertEqual(
+            directionsOpener.openedDestination,
+            OrderCoordinatePresentation(latitude: 30.0520, longitude: 31.2300)
+        )
+    }
+
+    @MainActor
+    func testDetailShowsPermissionDeniedWhenLocationAccessIsDenied() async throws {
+        let viewModel = OrderDetailViewModel(
+            state: .loaded(.mock),
+            locationProvider: OrderLocationProviderStub(result: .failure(.permissionDenied)),
+            routeProvider: OrderRouteProviderStub()
+        )
+
+        try await waitUntil { viewModel.routeState == .permissionDenied }
+    }
+
     private func decodeOrder(
         fulfillmentType: String,
         deliveryFee: Double,
@@ -335,4 +381,41 @@ private actor OrdersUseCaseStub: LoadOrdersUseCaseProtocol {
 
 private enum OrdersUseCaseStubError: Error {
     case missingPage(Int)
+}
+
+@MainActor
+private final class OrderLocationProviderStub: OrderCurrentLocationProviding {
+    let result: Result<OrderCoordinatePresentation, OrderLocationError>
+
+    init(result: Result<OrderCoordinatePresentation, OrderLocationError>) {
+        self.result = result
+    }
+
+    func currentLocation() async throws -> OrderCoordinatePresentation {
+        try result.get()
+    }
+}
+
+@MainActor
+private final class OrderRouteProviderStub: OrderRouteProviding {
+    private(set) var destinations: [OrderCoordinatePresentation] = []
+
+    func route(
+        from source: OrderCoordinatePresentation,
+        to destination: OrderCoordinatePresentation
+    ) async throws -> [OrderCoordinatePresentation] {
+        destinations.append(destination)
+        return [source, destination]
+    }
+}
+
+@MainActor
+private final class OrderDirectionsOpenerSpy: OrderDirectionsOpening {
+    private(set) var openedDestination: OrderCoordinatePresentation?
+    private(set) var openedName: String?
+
+    func openDirections(to destination: OrderCoordinatePresentation, name: String) {
+        openedDestination = destination
+        openedName = name
+    }
 }

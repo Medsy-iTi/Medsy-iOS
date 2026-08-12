@@ -18,6 +18,8 @@ enum OrderDetailEvent {
     case load(orderId: Int)
     case retry(orderId: Int)
     case reorder
+    case selectPharmacy(Int)
+    case openDirections
     case dismissReorderFeedback
 }
 
@@ -54,5 +56,8 @@ protocol OrderHistoryViewModelProtocol: AnyObject {
 protocol OrderDetailViewModelProtocol: AnyObject {
     var detailState: OrderDetailViewState { get }
     var reorderState: ReorderState { get }
+    var selectedPharmacyID: Int? { get }
+    var currentLocation: OrderCoordinatePresentation? { get }
+    var routeState: OrderRoutePresentationState { get }
     func handle(_ event: OrderDetailEvent)
 }
