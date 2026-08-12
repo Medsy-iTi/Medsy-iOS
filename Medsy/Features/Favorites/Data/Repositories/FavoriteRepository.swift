@@ -5,6 +5,12 @@
 //  Created by Ehab Salah on 13/08/2026.
 //
 
+import Foundation
+
+extension Notification.Name {
+    static let favoritesDidChange = Notification.Name("favoritesDidChange")
+}
+
 final class FavoriteRepository: FavoriteRepositoryProtocol {
     private let localDataSource: FavoriteLocalDataSourceProtocol
     private let accountScopeProvider: AccountScopeProviderProtocol
@@ -31,5 +37,6 @@ final class FavoriteRepository: FavoriteRepositoryProtocol {
         } else {
             try await localDataSource.remove(productID: medicine.id, accountID: accountID)
         }
+        NotificationCenter.default.post(name: .favoritesDidChange, object: nil)
     }
 }

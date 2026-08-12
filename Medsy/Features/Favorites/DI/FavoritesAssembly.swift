@@ -30,6 +30,13 @@ struct FavoritesAssembly: ModuleAssembly {
         container.register(SetFavoriteUseCaseProtocol.self) { container in
             SetFavoriteUseCase(repository: container.resolve(FavoriteRepositoryProtocol.self))
         }
+        container.register(FavoriteCountViewModel.self) { container in
+            MainActor.assumeIsolated {
+                FavoriteCountViewModel(
+                    fetchFavoritesUseCase: container.resolve(FetchFavoritesUseCaseProtocol.self)
+                )
+            }
+        }
         container.register(FavoriteViewModel.self) { container in
             MainActor.assumeIsolated {
                 FavoriteViewModel(
