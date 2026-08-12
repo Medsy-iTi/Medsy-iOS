@@ -115,7 +115,7 @@ enum OrderRoutePresentationState: Equatable {
 
 struct OrderDetailItemModel: Identifiable, Equatable {
     let id: Int
-    let productId: Int
+    let productId: Int?
     let productName: String
     let originalProductName: String?
     let quantity: Int

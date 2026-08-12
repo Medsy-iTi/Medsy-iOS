@@ -2,15 +2,15 @@ import Alamofire
 import Foundation
 
 enum OrdersEndpoint: ApiEndpoint {
-    case fetchOrders(page: Int, size: Int)
-    case fetchOrderDetail(id: Int)
+    case fetchOrders(page: Int, size: Int, language: String)
+    case fetchOrderDetail(id: Int, language: String)
 
     var path: String {
         switch self {
         case .fetchOrders:
-            return "orders"
-        case .fetchOrderDetail(let id):
-            return "orders/\(id)"
+            return "masterorders"
+        case .fetchOrderDetail(let id, _):
+            return "masterorders/\(id)"
         }
     }
 
@@ -20,13 +20,14 @@ enum OrdersEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .fetchOrders(page, size):
+        case let .fetchOrders(page, size, language):
             return [
                 "page": page,
-                "size": size
+                "size": size,
+                "lang": language
             ]
-        case .fetchOrderDetail:
-            return nil
+        case .fetchOrderDetail(_, let language):
+            return ["lang": language]
         }
     }
 
