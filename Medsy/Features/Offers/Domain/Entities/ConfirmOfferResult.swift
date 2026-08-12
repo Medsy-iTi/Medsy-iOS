@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct ConfirmSelectedItem: Equatable, Hashable {
+    let requestItemId: Int
+    let productId: Int?
+}
+
 struct ConfirmOfferOrder: Equatable, Hashable {
     let orderId: Int
     let pharmacyId: Int

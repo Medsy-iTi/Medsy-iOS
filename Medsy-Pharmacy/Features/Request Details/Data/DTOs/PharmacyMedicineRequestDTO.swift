@@ -1,11 +1,40 @@
-//
-//  PharmacyMedicineRequestDTO.swift
-//  Medsy-Pharmacy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
+
+enum RequestStatus: String, Decodable, Equatable, Sendable {
+    case open
+    case expired
+    case completed
+}
+
+enum AssignmentStatus: String, Decodable, Equatable, Sendable {
+    case offered
+    case canOffer
+    case cannotOffer
+}
+
+struct PharmacyRequestAssignmentDTO: Decodable, Equatable {
+    let assignmentStatus: String?
+    let distanceKm: Double?
+    let request: PharmacyMedicineRequestDTO
+
+    var resolvedAssignmentStatus: AssignmentStatus {
+        let reqStatus = request.requestStatus
+        if reqStatus == .completed || reqStatus == .expired {
+            return .cannotOffer
+        }
+        guard let statusStr = assignmentStatus else {
+            return .cannotOffer
+        }
+        let rawStatus = statusStr.uppercased()
+        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(request.id) {
+            return .offered
+        }
+        if rawStatus == "PENDING" {
+            return .canOffer
+        }
+        return .cannotOffer
+    }
+}
 
 struct PharmacyMedicineRequestDTO: Decodable, Equatable {
     let id: Int
@@ -20,11 +49,22 @@ struct PharmacyMedicineRequestDTO: Decodable, Equatable {
     let items: [PharmacyMedicineRequestItemDTO]?
     let prescriptionUrl: String?
     let notes: String?
+
+    var requestStatus: RequestStatus {
+        switch status.uppercased() {
+        case "COMPLETED":
+            return .completed
+        case "EXPIRED":
+            return .expired
+        default:
+            return .open
+        }
+    }
 }
 
 struct PharmacyMedicineRequestItemDTO: Decodable, Equatable {
     let id: Int
-    let productId: Int
+    let productId: Int?
     let imageUrl: String?
     let productName: String?
     let quantity: Int
@@ -32,4 +72,5 @@ struct PharmacyMedicineRequestItemDTO: Decodable, Equatable {
     let form: String?
     let strength: String?
     let packSize: String?
+    let product: PharmacyProductDTO?
 }

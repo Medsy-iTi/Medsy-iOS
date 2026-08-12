@@ -38,6 +38,7 @@ final class OfferDetailsViewModel {
                 OfferMedicineItem(
                     id: "\(item.requestItemId)",
                     requestItemId: item.requestItemId,
+                    productId: item.productId,
                     name: item.productName,
                     dosage: "",
                     price: item.unitPrice,
@@ -91,36 +92,36 @@ final class OfferDetailsViewModel {
         )
     }
 
-    func selectOffer() async -> Bool {
+    func selectOffer() async -> SelectPharmacyResponseDTO? {
+        guard !isConfirming && !isConfirmed else { return nil }
         guard let requestId else {
             isConfirmed = true
-            return true
+            return nil
         }
         guard let confirmOfferUseCase else {
             statusStore?.clearPendingRequestId()
             isConfirmed = true
-            return true
+            return nil
         }
 
         isConfirming = true
         confirmErrorMessage = nil
         defer { isConfirming = false }
 
-        // OLD:
-        // let itemIds = offerDetail.medicines.filter(\.isAvailable).map(\.requestItemId)
-
-        let selectedItemIds = offerDetail.medicines
+        let selectedItems = offerDetail.medicines
             .filter { $0.isAvailable && $0.isSelected }
-            .map(\.requestItemId)
+            .map { ConfirmSelectedItem(requestItemId: $0.requestItemId, productId: $0.productId) }
 
         do {
-            _ = try await confirmOfferUseCase.execute(requestId: requestId, selectedRequestItemIds: selectedItemIds)
-            statusStore?.clearPendingRequestId()
+            let result = try await confirmOfferUseCase.selectPharmacy(requestId: requestId, selectedItems: selectedItems)
+            if let data = try? JSONEncoder().encode(result) {
+                UserDefaults.standard.set(data, forKey: "request.selectResult.\(requestId)")
+            }
             isConfirmed = true
-            return true
+            return result
         } catch {
             confirmErrorMessage = error.localizedDescription
-            return false
+            return nil
         }
     }
 }

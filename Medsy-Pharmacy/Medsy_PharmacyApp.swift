@@ -15,6 +15,7 @@ struct Medsy_PharmacyApp: App {
     private let homeFactory: PharmacyHomeFactory
 	private let ordersFactory: PharmacyOrdersFactory
 	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
+    private let chatFactory: PharmacyAiChatViewModelFactory
     private let coordinator: RootCoordinator
     private let heartbeatService: PharmacyHeartbeatService
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
@@ -30,7 +31,8 @@ struct Medsy_PharmacyApp: App {
             PharmacyOrdersAssembly(),
             PharmacyRequestDetailsAssembly(),
 			CompletedOrdersAssembly(),
-            CompletedOrderDetailsAssembly()
+            CompletedOrderDetailsAssembly(),
+            PharmacyChatbotAssembly()
         ])
 
         let container = PharmacyAppAssembler.shared.container
@@ -39,6 +41,7 @@ struct Medsy_PharmacyApp: App {
         homeFactory = container.resolve(PharmacyHomeFactory.self)
         ordersFactory = container.resolve(PharmacyOrdersFactory.self)
 		completedOrdersFactory = container.resolve(PharmacyCompletedOrdersFactory.self)
+        chatFactory = container.resolve(PharmacyAiChatViewModelFactory.self)
         heartbeatService = container.resolve(PharmacyHeartbeatService.self)
 
         onboardingFactory = PharmacyOnboardingFactory(
@@ -55,6 +58,7 @@ struct Medsy_PharmacyApp: App {
                 homeFactory: homeFactory,
                 ordersFactory: ordersFactory,
 				completedOrdersFactory: completedOrdersFactory,
+                chatFactory: chatFactory,
                 coordinator: coordinator
             )
             .task {

@@ -78,64 +78,87 @@ final class HomeViewModel {
             selectedStatus = .searching
         }
 
-        guard pollingTask == nil else { return }
+        stopPolling()
+
+        print("[HomeViewModel] 🟢 Starting SSE stream task group for pending request IDs: \(pendingIds)")
 
         pollingTask = Task {
-            while !Task.isCancelled {
-                let ids = statusStore.pendingRequestIds
-                guard !ids.isEmpty else {
-                    selectedStatus = .home
-                    break
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 5_000_000_000) 
+                        if Task.isCancelled { break }
+                        await MainActor.run {
+                            self.checkRequestExpiration()
+                        }
+                    }
                 }
 
-                await withTaskGroup(of: (Int, OfferResult?, Bool).self) { group in
-                    for reqId in ids {
-                        group.addTask {
-                            do {
-                                let result = try await self.getOfferResultUseCase.execute(requestId: reqId)
-                                return (reqId, result, false)
-                            } catch {
-                                var isExpired = false
-                                if case let NetworkError.validationError(message) = error {
-                                    isExpired = message.localizedCaseInsensitiveContains("EXPIRED")
+                for reqId in pendingIds {
+                    group.addTask {
+                        do {
+                            print("[HomeViewModel] 📡 Listening to SSE stream for requestId: \(reqId)...")
+                            let stream = self.getOfferResultUseCase.stream(requestId: reqId)
+                            for try await result in stream {
+                                if Task.isCancelled { break }
+                                print("[HomeViewModel] 📥 Received updated OfferResult for requestId \(reqId): isAvailable=\(result.isAvailable), itemsCount=\(result.items.count), totalPrice=\(result.totalPrice)")
+                                await MainActor.run {
+                                    self.offerResults[reqId] = result
+                                    if self.offerResults.values.contains(where: { $0.isAvailable }) {
+                                        print("[HomeViewModel] 🌟 Transitioning selectedStatus -> .firstOffer")
+                                        self.selectedStatus = .firstOffer
+                                    } else {
+                                        self.selectedStatus = .searching
+                                    }
                                 }
-                                return (reqId, nil, isExpired)
+                            }
+                        } catch {
+                            print("[HomeViewModel] 🔴 SSE Stream error for requestId \(reqId): \(error)")
+                            if case let NetworkError.validationError(message) = error, message.localizedCaseInsensitiveContains("EXPIRED") {
+                                await MainActor.run {
+                                    self.statusStore.clearPendingRequestId(reqId)
+                                    self.offerResults.removeValue(forKey: reqId)
+                                    self.activeRequestIds.removeAll { $0 == reqId }
+                                    if self.activeRequestIds.isEmpty {
+                                        self.selectedStatus = .home
+                                    }
+                                }
                             }
                         }
                     }
-
-                    for await (reqId, result, isExpired) in group {
-                        if Task.isCancelled { return }
-                        if isExpired {
-                            self.statusStore.clearPendingRequestId(reqId)
-                            self.offerResults.removeValue(forKey: reqId)
-                            self.activeRequestIds.removeAll { $0 == reqId }
-                        } else if let result, result.isAvailable {
-                            self.offerResults[reqId] = result
-                        }
-                    }
-                }
-
-                if !Task.isCancelled {
-                    let currentPendingIds = statusStore.pendingRequestIds
-                    if currentPendingIds.isEmpty {
-                        self.selectedStatus = .home
-                        break
-                    } else if offerResults.values.contains(where: { $0.isAvailable }) {
-                        self.selectedStatus = .firstOffer
-                        break
-                    } else {
-                        self.selectedStatus = .searching
-                    }
-                }
-
-                do {
-                    try await Task.sleep(for: .seconds(30))
-                } catch {
-                    break
                 }
             }
-            pollingTask = nil
+            self.pollingTask = nil
+        }
+    }
+
+    private func checkRequestExpiration() {
+        let allIds = statusStore.pendingRequestIds
+        var changed = false
+        for reqId in allIds {
+            if let age = statusStore.getRequestAgeInSeconds(reqId), age > 900 {
+                print("[HomeViewModel] ⏰ Request \(reqId) has expired (age: \(age)s > 900s). Clearing...")
+                statusStore.clearPendingRequestId(reqId)
+                offerResults.removeValue(forKey: reqId)
+                changed = true
+            }
+        }
+
+        if changed {
+            let pendingIds = statusStore.pendingRequestIds
+            activeRequestIds = pendingIds
+            for reqId in offerResults.keys {
+                if !pendingIds.contains(reqId) {
+                    offerResults.removeValue(forKey: reqId)
+                }
+            }
+            if pendingIds.isEmpty {
+                print("[HomeViewModel] 🛑 All requests expired. Transitioning selectedStatus -> .home")
+                selectedStatus = .home
+                stopPolling()
+            } else if offerResults.values.first(where: { $0.isAvailable }) == nil {
+                selectedStatus = .searching
+            }
         }
     }
 

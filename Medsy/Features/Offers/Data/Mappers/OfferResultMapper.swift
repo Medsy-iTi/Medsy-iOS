@@ -30,17 +30,17 @@ enum OfferResultMapper {
         )
     }
 
-    static func map(_ dto: ConfirmOfferResponseDTO) -> ConfirmOfferResult {
-        let orders = dto.orders.map { orderDTO in
+    static func map(_ dto: ConfirmOfferResponseDTO, requestId: Int) -> ConfirmOfferResult {
+        let orders = [
             ConfirmOfferOrder(
-                orderId: orderDTO.orderId,
-                pharmacyId: orderDTO.pharmacyId,
-                pharmacyName: orderDTO.pharmacyName,
-                itemIds: orderDTO.itemIds
+                orderId: dto.masterOrderId,
+                pharmacyId: 0,
+                pharmacyName: "",
+                itemIds: []
             )
-        }
+        ]
         return ConfirmOfferResult(
-            requestId: dto.requestId,
+            requestId: requestId,
             orders: orders
         )
     }

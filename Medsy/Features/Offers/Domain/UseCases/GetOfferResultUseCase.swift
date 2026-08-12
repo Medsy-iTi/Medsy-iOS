@@ -9,6 +9,7 @@ import Foundation
 
 protocol GetOfferResultUseCaseProtocol {
     func execute(requestId: Int) async throws -> OfferResult
+    func stream(requestId: Int) -> AsyncThrowingStream<OfferResult, Error>
 }
 
 final class GetOfferResultUseCase: GetOfferResultUseCaseProtocol {
@@ -20,5 +21,9 @@ final class GetOfferResultUseCase: GetOfferResultUseCaseProtocol {
 
     func execute(requestId: Int) async throws -> OfferResult {
         try await repository.getOfferResult(requestId: requestId)
+    }
+
+    func stream(requestId: Int) -> AsyncThrowingStream<OfferResult, Error> {
+        repository.streamOfferResult(requestId: requestId)
     }
 }

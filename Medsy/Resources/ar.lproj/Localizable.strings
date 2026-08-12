@@ -796,12 +796,82 @@
 
 "chatbot.demo.alternative.message" = "تم ✓ بالمناسبة، بديل بنفس المادة الفعالة لليبيتور — أتور ٢٠ ملجم — يكلف ٨٨ جنيه بدلاً من ٢١٠. تريده في الطلب بدلاً منه؟";
 
+"tab.medsy_ai"       = "مساعد ميدسي";
 // MARK: - Chatbot – AI Live
 
 "chatbot.ai.thinking"         = "ميدسي AI يفكر…";
 "chatbot.error.generic"        = "حدث خطأ ما. يرجى المحاولة مجدداً.";
 "chatbot.error.dismiss"        = "إغلاق";
+"chatbot.specialization.header" = "الأطباء المقترحون";
 "chatbot.sources.match"        = "✓ %d%% تطابق";
 "chatbot.sources.eyebrow"      = "مقترح بالذكاء الاصطناعي";
 "chatbot.empty.title"          = "اسأل ميدسي AI";
 "chatbot.empty.subtitle"       = "اسألني عن الأدوية أو الأعراض أو وصفتك الطبية.";
+
+// MARK: - Medsy AI — New Chat + History
+"chatbot.new_chat"                    = "محادثة جديدة";
+"chatbot.new_chat.confirm"             = "بدء محادثة جديدة؟ سيتم مسح سجل المحادثة الحالية.";
+"chatbot.history.loading"              = "جارٍ تحميل المحادثة…";
+"chatbot.history.failed"               = "تعذّر تحميل السجل. يمكنك إرسال رسالة.";
+"chatbot.send.wait_for_history"        = "جارٍ تحميل السجل…";
+
+// MARK: - Medsy AI — Mic + Camera
+"chatbot.mic.tap_to_speak"            = "اضغط للتحدث";
+"chatbot.mic.listening"               = "جارٍ الاستماع…";
+"chatbot.mic.error"                   = "تعذّر الوصول للميكروفون. تحقق من الإعدادات.";
+"chatbot.camera.select"               = "إرفاق صورة";
+"chatbot.camera.image_preview"        = "📷 صورة";
+
+// MARK: - Medsy AI — Suggestions (empty-state grid)
+"chatbot.suggestion.symptoms"            = "وصف الأعراض";
+"chatbot.suggestion.symptoms.subtitle"   = "سأقترح الدواء المناسب";
+"chatbot.suggestion.symptoms.prompt"     = "عندي صداع وحرارة، ماذا آخذ؟";
+"chatbot.suggestion.prescription"        = "قراءة الروشتة";
+"chatbot.suggestion.prescription.subtitle" = "ارفع صورة الروشتة";
+"chatbot.suggestion.prescription.prompt" = "هل يمكنك قراءة هذه الروشتة وشرحها لي؟";
+"chatbot.suggestion.order"              = "طلب دواء";
+"chatbot.suggestion.order.subtitle"     = "ابحث وأضف للسلة مباشرة";
+"chatbot.suggestion.order.prompt"       = "أحتاج بنادول إكسترا";
+"chatbot.suggestion.reminder"           = "ضبط تذكير";
+"chatbot.suggestion.reminder.subtitle"  = "سأذكرك بتناول دوائك";
+"chatbot.suggestion.reminder.prompt"    = "ذكرني بتناول دوائي يومياً الساعة ٩ صباحاً";
+"chatbot.suggestion.browse"             = "تصفّح الأقسام";
+"chatbot.suggestion.browse.subtitle"    = "اكتشف جميع أقسام الأدوية";
+"chatbot.suggestion.browse.prompt"      = "أرني جميع أقسام الأدوية";
+"chatbot.suggestion.doctor"             = "إيجاد طبيب";
+"chatbot.suggestion.doctor.subtitle"    = "توصيات أخصائيين";
+"chatbot.suggestion.doctor.prompt"      = "أحتاج طبيب قلب";
+"chatbot.suggestion.emergency"          = "أرقام الطوارئ";
+"chatbot.suggestion.emergency.subtitle" = "إسعاف، شرطة، إطفاء";
+"chatbot.suggestion.emergency.prompt"   = "ما هي أرقام الطوارئ التي يجب أن أعرفها؟";
+
+// MARK: - Medsy AI — Cart success action
+"chatbot.cart_success.title"           = "تمت الإضافة لسلتك";
+"chatbot.cart_success.subtitle"        = "×%d منتج · %d في السلة";
+"chatbot.cart_success.view_cart"       = "عرض السلة";
+
+// MARK: - Medsy AI — Confirm request action
+"chatbot.confirm_request.title"        = "طلبك جاهز";
+"chatbot.confirm_request.subtitle"     = "أكمل تفاصيل التوصيل والدفع";
+"chatbot.confirm_request.action"       = "تأكيد الطلب";
+
+// MARK: - Medsy AI — Reminder bubble
+"chatbot.reminder.bubble_title"        = "تم ضبط التذكير";
+
+// MARK: - Medsy AI — Emergency call button
+"chatbot.emergency.call"              = "اتصال";
+"chatbot.emergency.title"             = "خدمات الطوارئ";
+"chatbot.emergency.ambulance"         = "إسعاف";
+"chatbot.emergency.police"            = "شرطة";
+"chatbot.emergency.fire"              = "إطفاء";
+
+// MARK: - Medsy AI — Disclaimer row
+"chatbot.disclaimer.row"              = "ⓘ للاستخدام المعلوماتي فقط";
+
+// MARK: - Medsy AI — AI offline window
+"chatbot.error.ai_offline"            = "Medsy AI غير متاح من ١١ م حتى ٨ ص. يرجى المحاولة بعد الساعة ٨:٠٠ صباحاً.";
+
+// MARK: - Medsy AI — Product card
+"chatbot.product.add_to_cart"         = "أضف للسلة";
+"chatbot.product.details"             = "تفاصيل";
+"chatbot.product.rx_only"             = "بوصفة طبية فقط";
