@@ -471,6 +471,7 @@
 "orders.filter.completed"            = "Completed";
 "orders.filter.cancelled"            = "Cancelled";
 "orders.status.pending"              = "Order Confirmed";
+"orders.status.pending_payment"      = "Awaiting payment";
 "orders.status.confirmed"            = "Order Confirmed";
 "orders.status.processing"           = "Processing";
 "orders.status.shipped"              = "Shipped";
@@ -479,7 +480,9 @@
 "orders.status.rejected"             = "Rejected";
 "orders.status.preparing"            = "Preparing";
 "orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.ready_for_delivery"   = "Ready for delivery";
 "orders.status.out_for_delivery"     = "Out for delivery";
+"orders.product_unavailable"         = "Medicine no longer available";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";

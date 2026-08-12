@@ -63,7 +63,12 @@ struct OrdersCoordinatorView: View {
                             coordinator.path.append(ProductDetailDestination(productId: String(productId)))
                         },
                         onDismissReorderFeedback: { detailViewModel.handle(.dismissReorderFeedback) },
-                        onGoToCart: onGoToCart
+                        onGoToCart: onGoToCart,
+                        selectedPharmacyID: detailViewModel.selectedPharmacyID,
+                        currentLocation: detailViewModel.currentLocation,
+                        routeState: detailViewModel.routeState,
+                        onSelectPharmacy: { detailViewModel.handle(.selectPharmacy($0)) },
+                        onOpenDirections: { _ in detailViewModel.handle(.openDirections) }
                     )
                     .onChange(of: detailViewModel.reorderState) { _, state in
                         guard state.didAddItemsToCart else { return }
