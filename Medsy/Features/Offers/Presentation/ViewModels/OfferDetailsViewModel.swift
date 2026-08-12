@@ -114,7 +114,9 @@ final class OfferDetailsViewModel {
 
         do {
             let result = try await confirmOfferUseCase.selectPharmacy(requestId: requestId, selectedItems: selectedItems)
-            statusStore?.clearPendingRequestId()
+            if let data = try? JSONEncoder().encode(result) {
+                UserDefaults.standard.set(data, forKey: "request.selectResult.\(requestId)")
+            }
             isConfirmed = true
             return result
         } catch {

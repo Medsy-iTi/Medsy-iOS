@@ -65,6 +65,10 @@ final class HomeCoordinator {
             path.removeLast()
         }
     }
+
+    func goToHome() {
+        path = NavigationPath()
+    }
 }
 
 struct HomeCoordinatorView: View {
@@ -148,7 +152,7 @@ struct HomeCoordinatorView: View {
                         offerDetail: offerDetail,
                         requestId: requestId,
                         selectResult: selectResult,
-                        onBack: coordinator.goBack,
+                        onBack: coordinator.goToHome,
                         onConfirmOrder: { result in
                             coordinator.openOrderComplete(result, offerDetail: offerDetail)
                         }

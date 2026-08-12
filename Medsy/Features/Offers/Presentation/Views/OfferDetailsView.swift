@@ -13,6 +13,7 @@ struct OfferDetailsView: View {
     // OLD:
     // var onSelectOffer: (() -> Void)? = nil
     var onSelectOffer: ((OfferDetailPresentationModel, SelectPharmacyResponseDTO) -> Void)? = nil
+    @State private var hasRedirected = false
 
     init(
         offer: OfferPresentationModel? = nil,
@@ -134,5 +135,14 @@ struct OfferDetailsView: View {
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
+        .onAppear {
+            if !hasRedirected, let reqId = viewModel.requestId {
+                if let savedData = UserDefaults.standard.data(forKey: "request.selectResult.\(reqId)"),
+                   let selectResult = try? JSONDecoder().decode(SelectPharmacyResponseDTO.self, from: savedData) {
+                    hasRedirected = true
+                    onSelectOffer?(viewModel.offerDetail, selectResult)
+                }
+            }
+        }
     }
 }

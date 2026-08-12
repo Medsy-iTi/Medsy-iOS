@@ -158,14 +158,14 @@ struct ConfirmOfferFulfillmentRequestDTO: Encodable, Equatable {
     let fulfillmentMethod: String
 }
 
-struct SelectPharmacyResponseDTO: Decodable, Equatable, Hashable, Sendable {
+struct SelectPharmacyResponseDTO: Codable, Equatable, Hashable, Sendable {
     let requestId: Int
     let offers: [SelectPharmacyOfferDTO]
     let deliveryFees: Double
     let totalPrice: Double
 }
 
-struct SelectPharmacyOfferDTO: Decodable, Equatable, Hashable, Sendable {
+struct SelectPharmacyOfferDTO: Codable, Equatable, Hashable, Sendable {
     let offerId: Int
     let pharmacyId: Int
     let pharmacyName: String
@@ -174,7 +174,7 @@ struct SelectPharmacyOfferDTO: Decodable, Equatable, Hashable, Sendable {
     let items: [SelectPharmacyItemDTO]
 }
 
-struct SelectPharmacyItemDTO: Decodable, Equatable, Hashable, Sendable {
+struct SelectPharmacyItemDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int
     let productId: Int
     let quantity: Int

@@ -101,7 +101,8 @@ final class OrderReviewViewModel {
             let methodStr = selectedReceiveMethod == .delivery ? "DELIVERY" : "PICKUP"
             let result = try await confirmOfferUseCase.confirmOffer(requestId: requestId, fulfillmentMethod: methodStr)
             self.confirmOfferResult = result
-            statusStore?.clearPendingRequestId(requestId) // Cle!
+            UserDefaults.standard.removeObject(forKey: "request.selectResult.\(requestId)")
+            statusStore?.clearPendingRequestId(requestId)
             isConfirmed = true
             return true
         } catch {
