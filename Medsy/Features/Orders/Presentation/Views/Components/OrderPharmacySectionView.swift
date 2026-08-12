@@ -45,7 +45,11 @@ struct OrderPharmacySectionView: View {
     }
 
     private func itemRow(_ item: OrderDetailItemModel) -> some View {
-        Button { onSelectProduct(item.productId) } label: {
+        Button {
+            if let productId = item.productId {
+                onSelectProduct(productId)
+            }
+        } label: {
             HStack(spacing: MedsySpacing.sm) {
                 OrderProductImageView(imageURL: item.imageURL, size: 48)
                 VStack(alignment: .leading, spacing: 3) {
@@ -71,5 +75,6 @@ struct OrderPharmacySectionView: View {
             .padding(.vertical, MedsySpacing.sm)
         }
         .buttonStyle(.plain)
+        .disabled(item.productId == nil)
     }
 }

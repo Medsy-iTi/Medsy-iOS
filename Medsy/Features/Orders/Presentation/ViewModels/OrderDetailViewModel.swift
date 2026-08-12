@@ -175,7 +175,10 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         guard case .loaded(let order) = detailState, !order.items.isEmpty else { return }
         guard reorderState != .loading else { return }
 
-        let items = order.items.map { ReorderItem(productId: $0.productId, quantity: $0.quantity) }
+        let items = order.items.compactMap { item in
+            item.productId.map { ReorderItem(productId: $0, quantity: item.quantity) }
+        }
+        guard !items.isEmpty else { return }
 
         reorderTask?.cancel()
         reorderState = .loading

@@ -238,7 +238,9 @@ struct OrderDetailView: View {
 
     private func itemRow(item: OrderDetailItemModel) -> some View {
         Button {
-            onSelectProduct?(item.productId)
+            if let productId = item.productId {
+                onSelectProduct?(productId)
+            }
         } label: {
             HStack(alignment: .center, spacing: MedsySpacing.sm) {
                 OrderProductImageView(imageURL: item.imageURL, size: 48)
@@ -268,13 +270,16 @@ struct OrderDetailView: View {
                         .font(AppColor.sans(14, .semibold))
                         .foregroundStyle(AppColor.textPrim)
 
-                    Image(systemName: "chevron.forward")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AppColor.textSec)
+                    if item.productId != nil {
+                        Image(systemName: "chevron.forward")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(AppColor.textSec)
+                    }
                 }
             }
         }
         .buttonStyle(.plain)
+        .disabled(item.productId == nil)
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
     }
