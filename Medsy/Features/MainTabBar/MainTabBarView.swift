@@ -14,6 +14,7 @@ struct MainTabBarView: View {
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
     @State private var profileViewModel: ProfileViewModel
+    @State private var chatbotViewModel: AiChatViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var homeRootResetSignal = 0
     @State private var cartFeedbackTask: Task<Void, Never>?
@@ -30,6 +31,9 @@ struct MainTabBarView: View {
         )
         _profileViewModel = State(
             initialValue: DIContainer.shared.resolve(ProfileViewModel.self)
+        )
+        _chatbotViewModel = State(
+            initialValue: DIContainer.shared.resolve(AiChatViewModel.self)
         )
     }
 
@@ -67,6 +71,7 @@ struct MainTabBarView: View {
             .tag(AppTab.cart)
 
             ChatbotRootView(
+                viewModel: chatbotViewModel,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
                 onOpenCompleteRequest: {
@@ -118,6 +123,23 @@ struct MainTabBarView: View {
         }
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .onReceive(NotificationCenter.default.publisher(for: .openChatbotTab)) { notification in
+            isTabBarHidden = false
+            coordinator.select(.chatbot)
+            // After switching tabs, fire the auto-message about the product
+            let productName = notification.userInfo?["productName"] as? String ?? ""
+            let message: String
+            if productName.isEmpty {
+                message = "product.consult_pharmacist.default_message".localized
+            } else {
+                message = String(format: "product.consult_pharmacist.message".localized, productName)
+            }
+            Task {
+                // Small delay so the tab switch animation completes first
+                try? await Task.sleep(for: .milliseconds(400))
+                chatbotViewModel.sendSuggestion(message)
+            }
+        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()

@@ -7,6 +7,10 @@
 import Foundation
 import Combine
 
+extension Notification.Name {
+    static let openChatbotTab = Notification.Name("com.medsy.openChatbotTab")
+}
+
 @MainActor
 final class ProductDetailViewModel: ObservableObject {
 
@@ -41,7 +45,12 @@ final class ProductDetailViewModel: ObservableObject {
     }
 
     func consultPharmacist() {
-
+        let productName = product?.title ?? ""
+        NotificationCenter.default.post(
+            name: .openChatbotTab,
+            object: nil,
+            userInfo: ["productName": productName]
+        )
     }
 
     // MARK: – Private

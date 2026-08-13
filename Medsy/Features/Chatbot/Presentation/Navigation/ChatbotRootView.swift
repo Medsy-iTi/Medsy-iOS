@@ -14,6 +14,7 @@ struct ChatbotRootView: View {
     var onOpenCompleteRequest: (() -> Void)?
 
     init(
+        viewModel: AiChatViewModel? = nil,
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
         onOpenCompleteRequest: (() -> Void)? = nil
@@ -22,7 +23,7 @@ struct ChatbotRootView: View {
         self.onOpenCart = onOpenCart
         self.onOpenCompleteRequest = onOpenCompleteRequest
         self._viewModel = State(
-            wrappedValue: DIContainer.shared.resolve(AiChatViewModel.self)
+            wrappedValue: viewModel ?? DIContainer.shared.resolve(AiChatViewModel.self)
         )
     }
 
