@@ -23,7 +23,7 @@ struct CompletedOrderCard: View {
                 customerName: order.customerName,
                 customerPhone: order.customerPhone,
                 deliveryAddress: order.deliveryAddress,
-				paymentMethodString: "pharmacy.orders.payment.cash".localized,
+				paymentMethodString: order.paymentMethod.localizedTitle,
                 totalAmountString: String(Int(order.total))
             ) {
                 EmptyView()

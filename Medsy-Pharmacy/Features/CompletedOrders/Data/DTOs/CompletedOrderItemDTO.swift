@@ -43,9 +43,9 @@ struct CompletedOrderDTO: Decodable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let createdAt: String
+    let paymentMethod: String?
+    let status: String?
     let items: [CompletedOrderItemDTO]
-    
-    
 }
 
 

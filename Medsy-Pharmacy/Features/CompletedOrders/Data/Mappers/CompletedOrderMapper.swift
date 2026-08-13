@@ -31,7 +31,12 @@ enum CompletedOrderMapper {
     }
 
     static func map(_ dto: CompletedOrderDTO) -> CompletedOrder {
-        CompletedOrder(
+        let paymentMethod: PharmacyOrderPaymentMethod
+        switch dto.paymentMethod?.uppercased() {
+        case "VISA": paymentMethod = .visa(lastFourDigits: "")
+        default: paymentMethod = .cash
+        }
+        return CompletedOrder(
             id: dto.id,
             customerId: dto.customerId,
             customerName: dto.customerName ?? "",
@@ -50,6 +55,7 @@ enum CompletedOrderMapper {
             deliveryLatitude: dto.deliveryLatitude,
             deliveryLongitude: dto.deliveryLongitude,
             createdAt: dateFormatter.date(from: dto.createdAt) ?? Date(),
+            paymentMethod: paymentMethod,
             items: dto.items.map(map)
         )
     }
