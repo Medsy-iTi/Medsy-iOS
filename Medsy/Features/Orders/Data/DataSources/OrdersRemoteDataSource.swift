@@ -6,7 +6,7 @@
 //
 
 protocol OrdersRemoteDataSourceProtocol {
-    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<MasterOrderDTO>
+    func fetchOrders(page: Int, size: Int, status: String?) async throws -> PageDTO<MasterOrderDTO>
     func fetchOrderDetail(id: Int) async throws -> MasterOrderDTO
     func fetchRequestDetail(id: Int) async throws -> OrderRequestDetailDTO
 }
@@ -23,12 +23,13 @@ final class OrdersRemoteDataSource: OrdersRemoteDataSourceProtocol {
         self.languageProvider = languageProvider
     }
 
-    func fetchOrders(page: Int, size: Int) async throws -> PageDTO<MasterOrderDTO> {
+    func fetchOrders(page: Int, size: Int, status: String?) async throws -> PageDTO<MasterOrderDTO> {
         let response: OrdersPageResponseDTO = try await networkService.request(
             endpoint: OrdersEndpoint.fetchOrders(
                 page: page,
                 size: size,
-                language: languageProvider()
+                language: languageProvider(),
+                status: status
             )
         )
         return try unwrapPage(from: response)

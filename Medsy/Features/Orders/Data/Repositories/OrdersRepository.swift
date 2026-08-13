@@ -15,10 +15,11 @@ final class OrdersRepository: OrdersRepositoryProtocol {
     }
 
     func fetchOrders(filter: OrdersFilter, page: Int, size: Int) async throws -> PagedResult<OrderEntity> {
-        // The backend currently exposes only Pageable parameters. Filters are
-        // applied to each fetched page by OrderHistoryViewModel.
-        _ = filter
-        let response = try await remoteDataSource.fetchOrders(page: page, size: size)
+        let response = try await remoteDataSource.fetchOrders(
+            page: page,
+            size: size,
+            status: filter.exactServerStatus
+        )
         return OrderMapper.mapToPagedResult(response)
     }
 
@@ -30,5 +31,12 @@ final class OrdersRepository: OrdersRepositoryProtocol {
     func fetchOrderDeliveryLocation(requestID: Int) async throws -> OrderCoordinateEntity {
         let request = try await remoteDataSource.fetchRequestDetail(id: requestID)
         return try OrderMapper.mapDeliveryLocation(request)
+    }
+}
+
+private extension OrdersFilter {
+    var exactServerStatus: String? {
+        guard let statuses, statuses.count == 1 else { return nil }
+        return statuses[0].rawValue
     }
 }

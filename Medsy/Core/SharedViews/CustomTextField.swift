@@ -59,6 +59,7 @@ struct CustomTextField: View {
             )
                 .textContentType(type.contentType)
                 .foregroundStyle(AppColor.textPrim)
+                .localizedTextInput()
         } else {
             TextField(
                 "",
@@ -70,6 +71,7 @@ struct CustomTextField: View {
                 .textInputAutocapitalization(type.usesWordCapitalization ? .words : .never)
                 .autocorrectionDisabled(type == .email)
                 .foregroundStyle(AppColor.textPrim)
+                .localizedTextInput()
         }
     }
 }

@@ -29,6 +29,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     func dismissError()
     func toggleRecording()
     func prefillPrompt(_ text: String)
+    func clearDraftPrompt()
     var onOpenCategory: ((Int, String) -> Void)? { get set }
     var onOpenCart: (() -> Void)? { get set }
     var onOpenCompleteRequest: (() -> Void)? { get set }
@@ -53,7 +54,6 @@ final class AiChatViewModel: AiChatViewModelProtocol {
 
     var isSendEnabled: Bool {
         !isSending &&
-        session.isHistoryLoaded &&
         (selectedImage != nil || !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
 
@@ -104,6 +104,11 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         inputText = String(text.prefix(500))
     }
 
+    func clearDraftPrompt() {
+        inputText = ""
+        selectedImage = nil
+    }
+
     // MARK: - History
 
     private func loadHistory() {
@@ -129,6 +134,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         let maxLength = 500
         guard !text.isEmpty, isSendEnabled else { return }
+        markHistoryUnavailableIfNeeded()
         let capped = text.count > maxLength
             ? String(text.prefix(maxLength))
             : text
@@ -155,6 +161,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
 
     func sendWithImage() {
         guard let image = selectedImage, isSendEnabled else { return }
+        markHistoryUnavailableIfNeeded()
         let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         inputText = ""
         selectedImage = nil
@@ -182,6 +189,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
             try? await startNewChatUseCase.execute()
         }
         session.reset()
+        clearDraftPrompt()
         syncMessages()
         isSending = false
         errorMessage = nil
@@ -264,6 +272,12 @@ final class AiChatViewModel: AiChatViewModelProtocol {
             }
             isSending = false
         }
+    }
+
+    private func markHistoryUnavailableIfNeeded() {
+        guard !session.isHistoryLoaded else { return }
+        session.markHistoryFailed()
+        isLoadingHistory = false
     }
 
     // MARK: - Action side-effects

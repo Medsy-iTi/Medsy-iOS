@@ -428,7 +428,7 @@ final class CartViewModel: CartViewModelProtocol {
             return .sync
         }
 
-        startCartMutation(previousItems: previousItems) {
+        startCartMutation(previousItems: previousItems, refreshInteractionsAfterSync: false) {
             try await useCase.execute(itemID: cartItemID, quantity: item.quantity + 1)
         }
         return .sync
@@ -448,7 +448,7 @@ final class CartViewModel: CartViewModelProtocol {
             return .sync
         }
 
-        startCartMutation(previousItems: previousItems) {
+        startCartMutation(previousItems: previousItems, refreshInteractionsAfterSync: false) {
             try await useCase.execute(itemID: cartItemID, quantity: item.quantity - 1)
         }
         return .sync
@@ -598,6 +598,7 @@ final class CartViewModel: CartViewModelProtocol {
 
     private func startCartMutation(
         previousItems: [CartDisplayItem],
+        refreshInteractionsAfterSync: Bool = true,
         operation: @escaping () async throws -> Cart
     ) {
         let previousPrescriptions = prescriptions
@@ -607,7 +608,9 @@ final class CartViewModel: CartViewModelProtocol {
                 let cart = try await operation()
                 apply(cart)
                 syncState = .synced
-                await refreshInteractions(language: interactionLanguage)
+                if refreshInteractionsAfterSync {
+                    await refreshInteractions(language: interactionLanguage)
+                }
             } catch {
                 replaceItems(previousItems)
                 prescriptions = previousPrescriptions

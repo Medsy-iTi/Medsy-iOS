@@ -26,6 +26,7 @@ struct CompleteRequestNotesView: View {
             )
             .font(MedsyFont.body())
             .foregroundStyle(AppColor.textPrim)
+            .localizedTextInput()
             .lineLimit(3...6)
             .padding(MedsySpacing.sm)
             .background(AppColor.surface)

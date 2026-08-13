@@ -71,7 +71,7 @@ struct OrdersAssembly: ModuleAssembly {
             MainActor.assumeIsolated {
                 OrderDetailViewModel(
                     getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self),
-                    getOrderDeliveryLocationUseCase: container.resolve(GetOrderDeliveryLocationUseCaseProtocol.self),
+                    currentLocationProvider: container.resolve(OrderCurrentLocationProviding.self),
                     reorderUseCase: container.resolve(ReorderUseCaseProtocol.self),
                     routeProvider: container.resolve(OrderRouteProviding.self),
                     directionsOpener: container.resolve(OrderDirectionsOpening.self)

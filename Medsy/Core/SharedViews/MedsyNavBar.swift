@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MedsyNavBar<Trailing: View>: View {
+    @Environment(LanguageManager.self) private var languageManager
     let title: String?
     let onBack: (() -> Void)?
     @ViewBuilder var trailing: () -> Trailing
@@ -42,5 +43,6 @@ struct MedsyNavBar<Trailing: View>: View {
             }
             .toolbarBackground(AppColor.bg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .id(languageManager.currentLanguage)
     }
 }

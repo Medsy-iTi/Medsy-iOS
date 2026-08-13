@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CompleteRequestView: View {
     @Environment(LanguageManager.self) private var languageManager
-    @ObservedObject private var appSettings = AppSettings.shared
     @State private var viewModel: CompleteRequestViewModel
     let onBack: () -> Void
     let onChangeLocation: () -> Void
@@ -60,6 +59,7 @@ struct CompleteRequestView: View {
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
+        .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(
                 title: "complete_request.submit".localized,
@@ -73,7 +73,7 @@ struct CompleteRequestView: View {
             }
             .padding(.horizontal, MedsySpacing.md)
             .padding(.vertical, MedsySpacing.sm)
-            .background(AppColor.surface)
+            .background(AppColor.bg)
             .overlay(alignment: .top) {
                 Divider().background(AppColor.border)
             }
@@ -96,7 +96,6 @@ struct CompleteRequestView: View {
         }
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 
     private var locationValidationMessage: String? {

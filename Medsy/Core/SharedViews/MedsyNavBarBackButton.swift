@@ -13,7 +13,11 @@ struct MedsyNavBarBackButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "chevron.backward")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppColor.green)
+                .frame(width: 36, height: 36)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel("accessibility.back".localized)
     }
 }

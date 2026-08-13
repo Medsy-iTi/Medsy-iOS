@@ -148,7 +148,7 @@ struct ProductDetailView: View {
                         systemImage: "bubble.left.and.bubble.right",
                         style: .secondary
                     ) {
-                        openChatbotPrompt?("tell me about \(product.title)")
+                        openChatbotPrompt?("chatbot.consult_product_prompt".localized(product.title))
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)

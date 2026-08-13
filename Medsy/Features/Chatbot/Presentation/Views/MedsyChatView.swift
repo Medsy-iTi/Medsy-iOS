@@ -16,6 +16,7 @@ struct MedsyChatView: View {
     @State var scrollProxy: ScrollViewProxy?
     @State var showImagePicker = false
     @State var photosPickerItem: PhotosPickerItem?
+    @State var showNewChatConfirmation = false
     var onBack: (() -> Void)? = nil
 
     var theme: MedsyTheme { .default }
@@ -80,6 +81,14 @@ struct MedsyChatView: View {
         .localizedEnvironment()
         .environment(lang)
         .onAppear { viewModel.onAppear() }
+        .alert("chatbot.new_chat".localized, isPresented: $showNewChatConfirmation) {
+            Button("common.cancel".localized, role: .cancel) {}
+            Button("chatbot.new_chat".localized, role: .destructive) {
+                viewModel.startNewChat()
+            }
+        } message: {
+            Text("chatbot.new_chat.confirm".localized)
+        }
         .photosPicker(isPresented: $showImagePicker, selection: $photosPickerItem, matching: .images)
         .onChange(of: photosPickerItem) { _, newItem in
             Task {
