@@ -25,10 +25,17 @@ struct CompletedOrderDetailsAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(MarkOrderReadyUseCaseProtocol.self) { container in
+            MarkOrderReadyUseCase(
+                repository: container.resolve(CompletedOrderDetailsRepositoryProtocol.self)
+            )
+        }
+
         container.register(CompletedOrderDetailViewModel.self) { container in
             MainActor.assumeIsolated {
                 CompletedOrderDetailViewModel(
-                    getOrderDetailUseCase: container.resolve(GetCompletedOrderDetailUseCaseProtocol.self)
+                    getOrderDetailUseCase: container.resolve(GetCompletedOrderDetailUseCaseProtocol.self),
+                    markOrderReadyUseCase: container.resolve(MarkOrderReadyUseCaseProtocol.self)
                 )
             }
         }

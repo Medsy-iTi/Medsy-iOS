@@ -401,8 +401,14 @@
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
 
 "pharmacy.status.preparing" = "Preparing";
+"pharmacy.status.ready" = "Ready";
 "pharmacy.status.on_the_way" = "On the way";
 "pharmacy.status.delivered" = "Delivered";
+"pharmacy.status.mark_ready" = "Mark as Ready";
+"pharmacy.status.marking_ready" = "Marking as Ready...";
+
+"pharmacy.error.title" = "Error";
+"pharmacy.ok" = "OK";
 
 "orders_title" = "Orders";
 "orders_search_placeholder" = "Search by order # or customer name";

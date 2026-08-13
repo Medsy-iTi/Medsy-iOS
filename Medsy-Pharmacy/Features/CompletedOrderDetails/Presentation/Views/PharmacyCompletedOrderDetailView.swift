@@ -28,8 +28,11 @@ private func dial(_ rawNumber: String) {
 
 struct PharmacyCompletedOrderDetailView: View {
     let state: CompletedOrderDetailViewState
+    let isMarkingReady: Bool
+    let markReadyError: String?
     let onRetry: () -> Void
     let onBack: (() -> Void)?
+    let onMarkReady: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,6 +44,18 @@ struct PharmacyCompletedOrderDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .pharmacyLocalizedEnvironment()
+        .alert(
+            "pharmacy.error.title".localized,
+            isPresented: Binding(
+                get: { markReadyError != nil },
+                set: { if !$0 { } }
+            ),
+            presenting: markReadyError
+        ) { _ in
+            Button("pharmacy.ok".localized, role: .cancel) {}
+        } message: { msg in
+            Text(msg)
+        }
     }
 
     private var navTitle: String {
@@ -69,6 +84,11 @@ struct PharmacyCompletedOrderDetailView: View {
             VStack(alignment: .leading, spacing: PharmacySpacing.md) {
 
                 PharmacyOrderStatusTrackerView(status: order.status)
+
+                // Mark as Ready button — visible only while order is actionable
+                if canMarkReady(status: order.status), let onMarkReady {
+                    PharmacyMarkReadyButton(isLoading: isMarkingReady, action: onMarkReady)
+                }
 
                 PharmacyContactInfoCard(
                     headerStyle: .orderInfo(orderId: String(order.orderNumber), date: order.createdAt),
@@ -152,6 +172,50 @@ struct PharmacyCompletedOrderDetailView: View {
         }
         .background(PharmacyColor.bg)
     }
+
+    /// Returns true if the pharmacist can still mark this order as ready
+    private func canMarkReady(status: PharmacyOrderAPIStatus) -> Bool {
+        switch status {
+        case .pending, .accepted, .preparing: return true
+        default: return false
+        }
+    }
+}
+
+// MARK: - PharmacyMarkReadyButton
+
+private struct PharmacyMarkReadyButton: View {
+    let isLoading: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                        .scaleEffect(0.85)
+                } else {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                }
+                Text(isLoading
+                     ? "pharmacy.status.marking_ready".localized
+                     : "pharmacy.status.mark_ready".localized)
+                    .font(.system(size: 15, weight: .semibold))
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
+                    .fill(isLoading ? PharmacyColor.primary.opacity(0.6) : PharmacyColor.primary)
+            )
+        }
+        .disabled(isLoading)
+        .animation(.easeInOut(duration: 0.2), value: isLoading)
+    }
 }
 
 // MARK: - PharmacyOrderStatusTrackerView
@@ -159,19 +223,23 @@ struct PharmacyCompletedOrderDetailView: View {
 private struct PharmacyOrderStatusTrackerView: View {
     let status: PharmacyOrderAPIStatus
 
+    @State private var pulse = false
+
     private var steps: [String] {
         ["pharmacy.status.preparing".localized,
+         "pharmacy.status.ready".localized,
          "pharmacy.status.on_the_way".localized,
          "pharmacy.status.delivered".localized]
     }
 
-    /// 0 = Preparing, 1 = On the way, 2 = Delivered, -1 = hide (cancelled)
+    /// 0 = Preparing, 1 = Ready, 2 = On the way, 3 = Delivered, -1 = hide
     private var activeStep: Int {
         switch status {
         case .pending, .accepted, .preparing:               return 0
-        case .outForDelivery:                                 return 1
-        case .delivered, .completed:                          return 2
-        case .cancelled, .expired, .unknown:                  return -1
+        case .readyForPickup, .readyForDelivery:            return 1
+        case .outForDelivery:                               return 2
+        case .delivered, .completed:                        return 3
+        case .cancelled, .expired, .unknown:                return -1
         }
     }
 
@@ -192,38 +260,75 @@ private struct PharmacyOrderStatusTrackerView: View {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
                     .stroke(PharmacyColor.border, lineWidth: 1)
             )
+            .onAppear { startPulse() }
+            .onChange(of: activeStep) { _, _ in startPulse() }
+        }
+    }
+
+    private func startPulse() {
+        pulse = false
+        withAnimation(
+            .easeInOut(duration: 0.9)
+            .repeatForever(autoreverses: true)
+        ) {
+            pulse = true
         }
     }
 
     private func stepView(index: Int) -> some View {
-        VStack(spacing: 6) {
+        let isActive  = index == activeStep
+        let isDone    = index < activeStep
+
+        return VStack(spacing: 6) {
             ZStack {
+                // Pulse ring on current step
+                if isActive {
+                    Circle()
+                        .fill(PharmacyColor.primary.opacity(pulse ? 0.25 : 0.0))
+                        .frame(width: 44, height: 44)
+                        .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulse)
+                }
+
                 Circle()
-                    .strokeBorder(index <= activeStep ? PharmacyColor.primary : PharmacyColor.border, lineWidth: 2)
+                    .strokeBorder(
+                        (isActive || isDone) ? PharmacyColor.primary : PharmacyColor.border,
+                        lineWidth: 2
+                    )
                     .frame(width: 32, height: 32)
                     .background(
-                        Circle().fill(index <= activeStep ? PharmacyColor.primary : PharmacyColor.card)
+                        Circle().fill((isActive || isDone) ? PharmacyColor.primary : PharmacyColor.card)
                     )
+                    .animation(.spring(response: 0.4, dampingFraction: 0.65), value: activeStep)
 
-                if index <= activeStep {
+                if isDone {
                     Image(systemName: "checkmark")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
+                        .transition(.scale.combined(with: .opacity))
+                } else if isActive {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.white)
+                        .transition(.scale.combined(with: .opacity))
                 } else {
                     Text("\(index + 1)")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(PharmacyColor.textSecondary)
                 }
             }
+            .animation(.spring(response: 0.4, dampingFraction: 0.65), value: activeStep)
 
             Text(steps[index])
                 .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(index <= activeStep ? PharmacyColor.primary : PharmacyColor.textSecondary)
+                .foregroundStyle(
+                    (isActive || isDone) ? PharmacyColor.primary : PharmacyColor.textSecondary
+                )
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
+                .animation(.easeInOut(duration: 0.3), value: activeStep)
         }
-        .frame(maxWidth: 90)
+        .frame(maxWidth: .infinity)
     }
 
     private func connectorLine(filled: Bool) -> some View {
@@ -232,5 +337,6 @@ private struct PharmacyOrderStatusTrackerView: View {
             .frame(height: 2)
             .frame(maxWidth: .infinity)
             .padding(.bottom, 22)
+            .animation(.easeInOut(duration: 0.4), value: filled)
     }
 }

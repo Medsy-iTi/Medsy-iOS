@@ -68,6 +68,7 @@ enum PharmacyRequestDetailsMapper {
         case .pending: return "pharmacy.home.order_new".localized
         case .accepted: return "pharmacy.home.order_preparing".localized
         case .preparing: return "pharmacy.home.order_preparing".localized
+        case .readyForPickup, .readyForDelivery: return "pharmacy.home.order_preparing".localized
         case .outForDelivery: return "pharmacy.home.order_preparing".localized
         case .delivered: return "pharmacy.home.order_delivered".localized
         case .completed: return "pharmacy.orders.status.completed".localized

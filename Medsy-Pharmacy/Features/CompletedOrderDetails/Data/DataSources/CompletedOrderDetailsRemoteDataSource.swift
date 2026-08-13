@@ -7,6 +7,7 @@ import Foundation
 
 protocol CompletedOrderDetailsRemoteDataSourceProtocol {
     func fetchOrder(id: Int) async throws -> CompletedOrderDetailsDTO
+    func markOrderReady(id: Int) async throws
 }
 
 final class CompletedOrderDetailsRemoteDataSource: CompletedOrderDetailsRemoteDataSourceProtocol {
@@ -21,6 +22,15 @@ final class CompletedOrderDetailsRemoteDataSource: CompletedOrderDetailsRemoteDa
             endpoint: CompletedOrderDetailsEndpoint.fetchOrder(id: id)
         )
         return try unwrap(from: response)
+    }
+
+    func markOrderReady(id: Int) async throws {
+        let response: APIResponseDTO<String> = try await networkService.request(
+            endpoint: CompletedOrderDetailsEndpoint.markReady(orderId: id)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
     }
 
     private func unwrap(from response: CompletedOrderDetailResponseDTO) throws -> CompletedOrderDetailsDTO {

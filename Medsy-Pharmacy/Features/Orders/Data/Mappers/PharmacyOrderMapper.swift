@@ -179,7 +179,7 @@ enum PharmacyOrderMapper {
 
     private static func mapStatus(_ status: PharmacyOrderAPIStatus, assignmentStatus: String?, orderId: Int) -> PharmacyOrderListStatus {
         switch status {
-        case .accepted, .preparing, .outForDelivery:
+        case .accepted, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery:
             return .preparing
         case .delivered:
             return .delivered
@@ -257,7 +257,7 @@ enum PharmacyOrderMapper {
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
         case .pending: return "pharmacy.home.order_new".localized
-        case .accepted, .preparing, .outForDelivery: return "pharmacy.home.order_preparing".localized
+        case .accepted, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery: return "pharmacy.home.order_preparing".localized
         case .delivered: return "pharmacy.home.order_delivered".localized
         case .completed: return "pharmacy.orders.status.completed".localized
         case .expired: return "pharmacy.orders.status.expired".localized

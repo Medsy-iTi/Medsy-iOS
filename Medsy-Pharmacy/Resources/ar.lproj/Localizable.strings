@@ -399,8 +399,14 @@
 "pharmacy.orders.status.offer_sent" = "تم إرسال العرض";
 
 "pharmacy.status.preparing" = "قيد التحضير";
+"pharmacy.status.ready" = "جاهز";
 "pharmacy.status.on_the_way" = "في الطريق";
 "pharmacy.status.delivered" = "تم التسليم";
+"pharmacy.status.mark_ready" = "تحديد كجاهز";
+"pharmacy.status.marking_ready" = "جارٍ التحديث...";
+
+"pharmacy.error.title" = "خطأ";
+"pharmacy.ok" = "حسناً";
 
 "orders_title" = "الطلبات";
 "orders_search_placeholder" = "ابحث برقم الطلب أو اسم العميل";
