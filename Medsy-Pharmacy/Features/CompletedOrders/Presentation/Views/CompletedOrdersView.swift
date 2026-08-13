@@ -9,11 +9,7 @@
 import SwiftUI
 
 struct CompletedOrdersView: View {
-    @State private var viewModel: CompletedOrdersViewModel
-
-    init(viewModel: CompletedOrdersViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
+    @Bindable var viewModel: CompletedOrdersViewModel
 
     var body: some View {
         VStack(spacing: PharmacySpacing.md) {

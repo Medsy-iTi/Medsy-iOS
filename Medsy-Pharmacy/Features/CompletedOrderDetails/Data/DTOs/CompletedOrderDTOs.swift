@@ -20,6 +20,7 @@ struct CompletedOrderDetailsDTO: Decodable {
     let total: Double
     let createdAt: String
     let status: String?
+    let fulfillmentMethod: String?
     let items: [CompletedOrderDetailsItemDTO]
     
     let deliveryAddress: String?

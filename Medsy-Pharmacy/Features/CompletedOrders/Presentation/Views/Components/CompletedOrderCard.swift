@@ -37,10 +37,8 @@ struct CompletedOrderCard: View {
         case .pending, .accepted, .preparing:
             return "pharmacy.status.preparing".localized
         case .readyForPickup:
-            return "pharmacy.status.ready_for_pickup".localized
-        case .readyForDelivery:
             return "pharmacy.status.ready".localized
-        case .outForDelivery:
+        case .readyForDelivery, .outForDelivery:
             return "pharmacy.status.on_the_way".localized
         case .delivered, .completed:
             return "pharmacy.status.delivered".localized

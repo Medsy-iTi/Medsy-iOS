@@ -539,3 +539,5 @@
 "completed_orders.empty.out_for_delivery.message" = "There are no orders currently out for delivery.";
 "completed_orders.empty.delivered.title" = "No Delivered Orders";
 "completed_orders.empty.delivered.message" = "You haven't delivered any orders yet.";
+
+"pharmacy.status.collected" = "Collected";

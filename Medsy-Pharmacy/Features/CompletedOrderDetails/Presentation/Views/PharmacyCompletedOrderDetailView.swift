@@ -97,7 +97,7 @@ struct PharmacyCompletedOrderDetailView: View {
             VStack(alignment: .leading, spacing: PharmacySpacing.md) {
 
                 // 3-step status tracker
-                PharmacyOrderStatusTrackerView(status: order.status)
+                PharmacyOrderStatusTrackerView(status: order.status, hasDelivery: order.hasDelivery)
 
                 // Action buttons — mutually exclusive based on current status
                 if canMarkReady(status: order.status), let onMarkReady {
@@ -382,13 +382,24 @@ private struct PharmacyOrderActionButton: View {
 
 private struct PharmacyOrderStatusTrackerView: View {
     let status: PharmacyOrderAPIStatus
+    let hasDelivery: Bool
 
     @State private var pulse = false
 
     private var steps: [String] {
-        ["pharmacy.status.preparing".localized,
-         "pharmacy.status.on_the_way".localized,
-         "pharmacy.status.delivered".localized]
+        if hasDelivery {
+            return [
+                "pharmacy.status.preparing".localized,
+                "pharmacy.status.on_the_way".localized,
+                "pharmacy.status.delivered".localized
+            ]
+        } else {
+            return [
+                "pharmacy.status.preparing".localized,
+                "pharmacy.status.ready".localized,
+                "pharmacy.status.collected".localized
+            ]
+        }
     }
 
     /// 0 = Preparing, 1 = On the way, 2 = Delivered, -1 = hide tracker

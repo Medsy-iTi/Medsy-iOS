@@ -40,10 +40,7 @@ final class CompletedOrdersViewModel {
         }
     }
 
-    var visibleOrders: [CompletedOrder] {
-        guard !searchText.isEmpty else { return orders }
-        return orders.filter(matchesSearch)
-    }
+    private(set) var visibleOrders: [CompletedOrder] = []
 
     private let pharmacyId: Int
     private let getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol
@@ -124,10 +121,17 @@ final class CompletedOrdersViewModel {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !query.isEmpty else { return true }
         return order.customerName.lowercased().contains(query)
+            || order.customerPhone.contains(query)
             || String(order.id).contains(query)
     }
 
     func recomputeVisibleState() {
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            visibleOrders = orders
+        } else {
+            visibleOrders = orders.filter(matchesSearch)
+        }
+
         if orders.isEmpty {
             state = .empty(.noOrders)
         } else if visibleOrders.isEmpty {

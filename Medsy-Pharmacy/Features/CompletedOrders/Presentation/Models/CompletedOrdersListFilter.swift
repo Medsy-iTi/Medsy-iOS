@@ -9,7 +9,7 @@ enum CompletedOrdersListFilter: String, CaseIterable, Identifiable {
     case all
     case preparing
     case readyForPickup
-    case outForDelivery
+    case readyForDelivery
     case delivered
 
     var id: String { rawValue }
@@ -20,7 +20,7 @@ enum CompletedOrdersListFilter: String, CaseIterable, Identifiable {
         case .all:             return nil
         case .preparing:       return "PREPARING"
         case .readyForPickup:  return "READY_FOR_PICKUP"
-        case .outForDelivery:  return "OUT_FOR_DELIVERY"
+        case .readyForDelivery:return "READY_FOR_DELIVERY"
         case .delivered:       return "DELIVERED"
         }
     }
@@ -29,8 +29,8 @@ enum CompletedOrdersListFilter: String, CaseIterable, Identifiable {
         switch self {
         case .all:             return "completed_orders.filter.all".localized
         case .preparing:       return "completed_orders.filter.preparing".localized
-        case .readyForPickup:  return "pharmacy.status.ready_for_pickup".localized
-        case .outForDelivery:  return "completed_orders.filter.out_for_delivery".localized
+        case .readyForPickup:  return "pharmacy.status.ready".localized
+        case .readyForDelivery:  return "completed_orders.filter.out_for_delivery".localized
         case .delivered:       return "completed_orders.filter.delivered".localized
         }
     }
@@ -40,7 +40,7 @@ enum CompletedOrdersListFilter: String, CaseIterable, Identifiable {
         case .all:             return "completed_orders.empty.all.title".localized
         case .preparing:       return "completed_orders.empty.preparing.title".localized
         case .readyForPickup:  return "completed_orders.empty.ready_for_pickup.title".localized
-        case .outForDelivery:  return "completed_orders.empty.out_for_delivery.title".localized
+        case .readyForDelivery:  return "completed_orders.empty.out_for_delivery.title".localized
         case .delivered:       return "completed_orders.empty.delivered.title".localized
         }
     }
@@ -50,7 +50,7 @@ enum CompletedOrdersListFilter: String, CaseIterable, Identifiable {
         case .all:             return "completed_orders.empty.all.message".localized
         case .preparing:       return "completed_orders.empty.preparing.message".localized
         case .readyForPickup:  return "completed_orders.empty.ready_for_pickup.message".localized
-        case .outForDelivery:  return "completed_orders.empty.out_for_delivery.message".localized
+        case .readyForDelivery:  return "completed_orders.empty.out_for_delivery.message".localized
         case .delivered:       return "completed_orders.empty.delivered.message".localized
         }
     }

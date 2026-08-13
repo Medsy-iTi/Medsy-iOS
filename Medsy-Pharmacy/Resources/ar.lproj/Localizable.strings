@@ -538,3 +538,5 @@
 "completed_orders.empty.out_for_delivery.message" = "لا توجد طلبات خارجة للتوصيل حالياً.";
 "completed_orders.empty.delivered.title" = "لا توجد طلبات تم تسليمها";
 "completed_orders.empty.delivered.message" = "لم تقم بتسليم أي طلبات حتى الآن.";
+
+"pharmacy.status.collected" = "تم الاستلام";
