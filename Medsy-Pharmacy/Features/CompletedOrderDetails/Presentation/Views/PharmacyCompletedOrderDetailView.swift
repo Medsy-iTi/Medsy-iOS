@@ -34,6 +34,8 @@ struct PharmacyCompletedOrderDetailView: View {
     let onBack: (() -> Void)?
     let onMarkReady: (() -> Void)?
 
+    @State private var fullPrescriptionURL: URL? = nil
+
     var body: some View {
         VStack(spacing: 0) {
             PharmacyDivider()
@@ -55,6 +57,9 @@ struct PharmacyCompletedOrderDetailView: View {
             Button("pharmacy.ok".localized, role: .cancel) {}
         } message: { msg in
             Text(msg)
+        }
+        .fullScreenCover(item: $fullPrescriptionURL) { url in
+            PrescriptionFullScreenView(url: url)
         }
     }
 
@@ -137,7 +142,7 @@ struct PharmacyCompletedOrderDetailView: View {
                 
                 if let imageUrlString = order.prescriptionImage, let url = URL(string: imageUrlString) {
                     PharmacyPrescriptionCard(uiImage: nil, imageUrl: url) {
-                        // Action for enlarging image can go here if needed
+                        fullPrescriptionURL = url
                     }
                 }
                 
@@ -180,6 +185,111 @@ struct PharmacyCompletedOrderDetailView: View {
         default: return false
         }
     }
+}
+
+// MARK: - Full-Screen Prescription Viewer
+
+private struct PrescriptionFullScreenView: View {
+    let url: URL
+    @Environment(\.dismiss) private var dismiss
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(scale)
+                        .offset(offset)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    scale = max(1.0, lastScale * value)
+                                }
+                                .onEnded { _ in
+                                    lastScale = scale
+                                    if scale < 1.0 {
+                                        withAnimation(.spring()) {
+                                            scale = 1.0
+                                            offset = .zero
+                                        }
+                                        lastScale = 1.0
+                                        lastOffset = .zero
+                                    }
+                                }
+                                .simultaneously(with:
+                                    DragGesture()
+                                        .onChanged { value in
+                                            if scale > 1.0 {
+                                                offset = CGSize(
+                                                    width: lastOffset.width + value.translation.width,
+                                                    height: lastOffset.height + value.translation.height
+                                                )
+                                            }
+                                        }
+                                        .onEnded { _ in
+                                            lastOffset = offset
+                                        }
+                                )
+                        )
+                        .onTapGesture(count: 2) {
+                            withAnimation(.spring()) {
+                                if scale > 1.0 {
+                                    scale = 1.0
+                                    offset = .zero
+                                    lastScale = 1.0
+                                    lastOffset = .zero
+                                } else {
+                                    scale = 2.5
+                                    lastScale = 2.5
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                case .failure:
+                    VStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 44))
+                            .foregroundStyle(.white.opacity(0.5))
+                        Text("pharmacy.prescription.load_error".localized)
+                            .font(.system(size: 15))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                default:
+                    ProgressView()
+                        .tint(.white)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(10)
+                    .background(Circle().fill(.white.opacity(0.2)))
+            }
+            .padding(.top, 56)
+            .padding(.trailing, 20)
+        }
+    }
+}
+
+// MARK: - URL Identifiable
+
+extension URL: @retroactive Identifiable {
+    public var id: String { absoluteString }
 }
 
 // MARK: - PharmacyMarkReadyButton
