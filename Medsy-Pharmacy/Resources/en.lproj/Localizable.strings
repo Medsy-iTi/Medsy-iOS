@@ -395,9 +395,14 @@
 "pharmacy.orders.action.view" = "View Details";
 "pharmacy.orders.status.completed" = "Completed";
 "pharmacy.orders.status.expired" = "Expired";
+"pharmacy.orders.status.cancelled" = "Cancelled";
 "pharmacy.orders.status.pending" = "Pending Approval";
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
+
+"pharmacy.status.preparing" = "Preparing";
+"pharmacy.status.on_the_way" = "On the way";
+"pharmacy.status.delivered" = "Delivered";
 
 "orders_title" = "Orders";
 "orders_search_placeholder" = "Search by order # or customer name";

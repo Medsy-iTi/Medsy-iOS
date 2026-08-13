@@ -205,6 +205,8 @@
 "product.consumer_category" = "Consumer Category";
 "product.add_to_cart" = "Add to Cart";
 "product.consult_pharmacist" = "Consult a Pharmacist";
+"product.consult_pharmacist.message" = "I would like to ask about this medicine: %@. Can you help me?";
+"product.consult_pharmacist.default_message" = "I would like to consult a pharmacist about a medicine.";
 "product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
 "product.manufacturer" = "Manufacturer";
 "product.type" = "Type";

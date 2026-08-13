@@ -393,9 +393,14 @@
 "pharmacy.orders.action.view" = "عرض الطلب";
 "pharmacy.orders.status.completed" = "مكتمل";
 "pharmacy.orders.status.expired" = "منتهي الصلاحية";
+"pharmacy.orders.status.cancelled" = "ملغي";
 "pharmacy.orders.status.pending" = "بانتظار الموافقة";
 "pharmacy.orders.status.approved" = "تم الموافقة";
 "pharmacy.orders.status.offer_sent" = "تم إرسال العرض";
+
+"pharmacy.status.preparing" = "قيد التحضير";
+"pharmacy.status.on_the_way" = "في الطريق";
+"pharmacy.status.delivered" = "تم التسليم";
 
 "orders_title" = "الطلبات";
 "orders_search_placeholder" = "ابحث برقم الطلب أو اسم العميل";
