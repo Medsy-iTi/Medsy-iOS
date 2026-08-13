@@ -1,31 +1,25 @@
 //
-//  CartAccountScopeProvider.swift
+//  AccountScopeProvider.swift
 //  Medsy
 //
-//  Created by Ahmed Elkady on 19/07/2026.
+//  Created by Ehab Salah on 13/08/2026.
 //
 
 import Foundation
 
-enum CartPersistenceError: LocalizedError {
+enum AccountScopeError: LocalizedError {
     case missingAccount
-    case invalidPrescriptionSource
 
     var errorDescription: String? {
-        switch self {
-        case .missingAccount:
-            return "Unable to identify the current cart account."
-        case .invalidPrescriptionSource:
-            return "Unable to read the saved prescription source."
-        }
+        "Unable to identify the current account."
     }
 }
 
-protocol CartAccountScopeProviderProtocol {
+protocol AccountScopeProviderProtocol {
     func currentIdentifier() throws -> String
 }
 
-final class CartAccountScopeProvider: CartAccountScopeProviderProtocol {
+final class AccountScopeProvider: AccountScopeProviderProtocol {
     private let tokenStore: TokenStoreProtocol
 
     init(tokenStore: TokenStoreProtocol) {
@@ -36,7 +30,7 @@ final class CartAccountScopeProvider: CartAccountScopeProviderProtocol {
         guard let token = tokenStore.accessToken(),
               let subject = subject(from: token),
               !subject.isEmpty else {
-            throw CartPersistenceError.missingAccount
+            throw AccountScopeError.missingAccount
         }
         return subject.lowercased()
     }

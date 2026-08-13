@@ -230,6 +230,20 @@
 "accessibility.back" = "Back";
 "accessibility.share" = "Share";
 
+/* Favorites */
+"favorites.title" = "Favorites";
+"favorites.open.accessibility" = "Open favorites";
+"favorites.count.accessibility" = "%d favorite medicines";
+"favorites.empty.title" = "No favorites yet";
+"favorites.empty.subtitle" = "Save medicines with the heart button to find them quickly here.";
+"favorites.empty.action" = "Browse medicines";
+"favorites.error.title" = "Couldn't Load Favorites";
+"favorites.error.subtitle" = "We couldn't read your saved medicines. Please try again.";
+"favorites.persistence_error.title" = "Couldn't Update Favorites";
+"favorites.persistence_error.subtitle" = "Your favorites change couldn't be saved. Please try again.";
+"favorites.offline.title" = "No Internet Connection";
+"favorites.offline.subtitle" = "Connect to the internet to open medicine details.";
+
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
@@ -341,6 +355,8 @@
 "profile.section.about" = "About Medsy";
 "profile.personal_info" = "Personal Information";
 "profile.personal_info.subtitle" = "Edit name and basic details";
+"profile.favorites" = "Favorite Medicines";
+"profile.favorites.subtitle" = "View your saved medicines";
 "profile.notifications" = "Notifications";
 "profile.notifications.subtitle" = "Manage order and offer notifications";
 "profile.order_history" = "Order History";

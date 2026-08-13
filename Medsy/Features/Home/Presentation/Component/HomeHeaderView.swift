@@ -7,29 +7,43 @@
 import SwiftUI
 
 struct HomeHeaderView: View {
-    @Environment(LanguageManager.self) private var languageManager
     let homeAddress: String
+    let favoriteCount: Int
+    let onFavoritesTap: () -> Void
     let onAddressTap: () -> Void
 
     var body: some View {
         HStack(spacing: MedsySpacing.sm) {
             Button {
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    languageManager.toggle()
+                    onFavoritesTap()
                 }
             } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "globe")
-                    Text(languageManager.currentLanguage.toggled.displayName)
-                        .font(AppColor.sans(13, .bold))
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "heart")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(AppColor.textPrim)
+                        .frame(width: 44, height: 44)
+                        .background(AppColor.card, in: Circle())
+
+                    if favoriteCount > 0 {
+                        Text(badgeText)
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(minWidth: 18, minHeight: 18)
+                            .padding(.horizontal, favoriteCount > 9 ? 3 : 0)
+                            .background(Color.red, in: Capsule())
+                            .overlay {
+                                Capsule().stroke(AppColor.bg, lineWidth: 2)
+                            }
+                            .offset(x: 4, y: -4)
+                            .accessibilityHidden(true)
+                    }
                 }
-                .foregroundStyle(AppColor.textPrim)
-                .padding(.horizontal, 10)
-                .frame(minHeight: 44)
-                .background(AppColor.card, in: Capsule())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("common.language".localized)
+            .accessibilityLabel("favorites.open.accessibility".localized)
+            .accessibilityValue("favorites.count.accessibility".localized(favoriteCount))
             
             Spacer()
             
@@ -61,5 +75,9 @@ struct HomeHeaderView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
+    }
+
+    private var badgeText: String {
+        favoriteCount > 99 ? "99+" : String(favoriteCount)
     }
 }
