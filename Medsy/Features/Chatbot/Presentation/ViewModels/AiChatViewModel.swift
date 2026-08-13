@@ -2,6 +2,8 @@
 //  AiChatViewModel.swift
 //  Medsy
 //
+//  Created by Ahmed Elkady on 12/08/2026.
+//
 
 import Foundation
 import SwiftUI
@@ -26,6 +28,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     func retryMessage(id: Int)
     func dismissError()
     func toggleRecording()
+    func prefillPrompt(_ text: String)
     var onOpenCategory: ((Int, String) -> Void)? { get set }
     var onOpenCart: (() -> Void)? { get set }
     var onOpenCompleteRequest: (() -> Void)? { get set }
@@ -95,6 +98,10 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     func onAppear() {
         guard !session.isHistoryLoaded else { return }
         loadHistory()
+    }
+
+    func prefillPrompt(_ text: String) {
+        inputText = String(text.prefix(500))
     }
 
     // MARK: - History

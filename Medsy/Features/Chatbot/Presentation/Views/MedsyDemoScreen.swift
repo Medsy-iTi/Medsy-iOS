@@ -78,7 +78,7 @@ struct MedsyDemoScreen: View {
             MedsyChatInputBar(text: $draftMessage, placeholder: "Message Medsy AI...")
                 .padding(12)
         }
-        .background(Color(hex: "FFFFFF"))
+        .background(AppColor.bg)
     }
 
     private var header: some View {
@@ -90,8 +90,8 @@ struct MedsyDemoScreen: View {
             .frame(width: 32, height: 32)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text("Medsy AI").font(.system(size: 15, weight: .semibold))
-                Text("Online").font(.system(size: 11)).foregroundColor(.green)
+                Text("Medsy AI").font(.system(size: 15, weight: .semibold)).foregroundColor(AppColor.textPrim)
+                Text("Online").font(.system(size: 11)).foregroundColor(AppColor.successGreen)
             }
             Spacer()
         }

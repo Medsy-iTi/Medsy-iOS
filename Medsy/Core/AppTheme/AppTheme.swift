@@ -27,37 +27,141 @@ class AppSettings: ObservableObject {
 }
 
 enum AppColor {
-    static var bg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#141E18") : Color(hex: "#FAFAF8") }
-    static var surface: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A2920") : Color(hex: "#FFFFFF") }
-    static var card: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A2920") : Color(hex: "#FFFFFF") }
-    static var border: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : Color(white: 0, opacity: 0.08) }
-    
-    static var green: Color { Color(hex: "#0D8653") } // ProfileStyle.green
-    static let darkGreen = Color(hex: "#158F73")
-    static let lightGreen = Color(hex: "#E8F8F4")
+    private static var isDarkMode: Bool { AppSettings.shared.isDarkMode }
+
+    // MARK: - Android Material color scheme
+
+    static let green = Color(hex: "#048C4E")
     static let white = Color(hex: "#FFFFFF")
-  
-    static var textPrim: Color { .primary }
-    static var textSec: Color { .secondary }
-    static var hintPlaceholder: Color {
-        AppSettings.shared.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
+
+    static var primaryContainer: Color {
+        isDarkMode ? Color(hex: "#1D7A4D") : Color(hex: "#D6F5E2")
     }
-    
+    static var onPrimaryContainer: Color {
+        isDarkMode ? Color(hex: "#E6FFEE") : Color(hex: "#00210F")
+    }
+    static var secondary: Color {
+        isDarkMode ? Color(hex: "#B6CCB9") : Color(hex: "#4E6355")
+    }
+    static var secondaryContainer: Color {
+        isDarkMode ? Color(hex: "#384B3C") : Color(hex: "#D2E8D8")
+    }
+    static var onSecondaryContainer: Color {
+        isDarkMode ? Color(hex: "#D2E8D4") : Color(hex: "#0C1F15")
+    }
+    static var tertiary: Color {
+        isDarkMode ? Color(hex: "#A2CEDA") : Color(hex: "#356571")
+    }
+    static var tertiaryContainer: Color {
+        isDarkMode ? Color(hex: "#214C57") : Color(hex: "#BCEAF5")
+    }
+
+    static var background: Color {
+        isDarkMode ? Color(hex: "#0B1014") : Color(hex: "#F7F9F8")
+    }
+    static var onBackground: Color {
+        isDarkMode ? Color(hex: "#E1E6E3") : Color(hex: "#181C19")
+    }
+    static var surface: Color {
+        isDarkMode ? Color(hex: "#0E1418") : Color(hex: "#FFFFFF")
+    }
+    static var onSurface: Color {
+        isDarkMode ? Color(hex: "#E1E6E3") : Color(hex: "#181C19")
+    }
+    static var surfaceVariant: Color {
+        isDarkMode ? Color(hex: "#28332F") : Color(hex: "#E1E9E3")
+    }
+    static var onSurfaceVariant: Color {
+        isDarkMode ? Color(hex: "#BEC9C2") : Color(hex: "#414943")
+    }
+    static var surfaceContainerLowest: Color {
+        isDarkMode ? Color(hex: "#070B0E") : Color(hex: "#FFFFFF")
+    }
+    static var surfaceContainerLow: Color {
+        isDarkMode ? Color(hex: "#10161A") : Color(hex: "#F3F6F4")
+    }
+    static var surfaceContainer: Color {
+        isDarkMode ? Color(hex: "#141B1F") : Color(hex: "#EDF1EE")
+    }
+    static var surfaceContainerHigh: Color {
+        isDarkMode ? Color(hex: "#192126") : Color(hex: "#E7EBE8")
+    }
+    static var surfaceContainerHighest: Color {
+        isDarkMode ? Color(hex: "#202A2F") : Color(hex: "#E1E6E2")
+    }
+    static var outline: Color {
+        isDarkMode ? Color(hex: "#89938D") : Color(hex: "#717A73")
+    }
+    static var outlineVariant: Color {
+        isDarkMode ? Color(hex: "#3C4741") : Color(hex: "#C0C9C2")
+    }
+
+    // MARK: - Android extended colors
+
+    static var success: Color {
+        isDarkMode ? Color(hex: "#78E29A") : Color(hex: "#166534")
+    }
+    static var successContainer: Color {
+        isDarkMode ? Color(hex: "#0F4D2D") : Color(hex: "#DCFCE7")
+    }
+    static var warning: Color {
+        isDarkMode ? Color(hex: "#FFB86C") : Color(hex: "#9A5800")
+    }
+    static var warningContainer: Color {
+        isDarkMode ? Color(hex: "#5D3A0A") : Color(hex: "#FFEDD5")
+    }
+    static var error: Color {
+        isDarkMode ? Color(hex: "#FFB4AB") : Color(hex: "#BA1A1A")
+    }
+    static var errorContainer: Color {
+        isDarkMode ? Color(hex: "#93000A") : Color(hex: "#FFDAD6")
+    }
+    static var info: Color {
+        isDarkMode ? Color(hex: "#AFC6FF") : Color(hex: "#1D4ED8")
+    }
+    static var infoContainer: Color {
+        isDarkMode ? Color(hex: "#163E86") : Color(hex: "#DBEAFE")
+    }
+
+    static var categoryContainer: Color {
+        isDarkMode ? Color(hex: "#1D7A4D") : Color(hex: "#E6FFEE")
+    }
+    static var onCategoryContainer: Color {
+        isDarkMode ? Color(hex: "#E6FFEE") : green
+    }
+    static let blueContainer = Color(hex: "#E0E7FF")
+    static let blueContent = Color(hex: "#3B82F6")
+    static let orangeContainer = Color(hex: "#FFEDD5")
+    static let orangeContent = Color(hex: "#F97316")
+    static let pinkContainer = Color(hex: "#FCE7F3")
+    static let pinkContent = Color(hex: "#EC4899")
+    static let purpleContainer = Color(hex: "#F3E8FF")
+    static let purpleContent = Color(hex: "#8B5CF6")
+    static let neutralContainer = Color(hex: "#F3F4F6")
+    static let neutralContent = Color(hex: "#6B7280")
+
+    // MARK: - Existing semantic aliases
+
+    static var bg: Color { background }
+    static var card: Color { surface }
+    static var border: Color { outlineVariant }
+    static var darkGreen: Color { green }
+    static var lightGreen: Color { primaryContainer }
+    static var textPrim: Color { onSurface }
+    static var textSec: Color { onSurfaceVariant }
+    static var hintPlaceholder: Color { outline }
     static var btnBg: Color { green }
     static var btnText: Color { white }
-
     static var tagNew: Color { green }
-    static let tagSold = Color(hex: "#EF4444")
-    static let successGreen = Color(hex: "#22C55E")
-    static let errorRed = Color(hex: "#EF4444")
-    static let warningYellow = Color(hex: "#F59E0B")
+    static var tagSold: Color { error }
+    static var successGreen: Color { success }
+    static var errorRed: Color { error }
+    static var warningYellow: Color { warning }
     static let badgePurple = Color(hex: "#6366F1")
-    
-    static var pill: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
+    static var pill: Color { primaryContainer }
     static var pillSel: Color { green }
-
-    static var warningBg: Color { AppSettings.shared.isDarkMode ? Color(hex: "#102A1C") : lightGreen }
-    static var warningBorder: Color { AppSettings.shared.isDarkMode ? Color(hex: "#1A4D2E") : green.opacity(0.3) }
+    static var warningBg: Color { warningContainer }
+    static var warningBorder: Color { warning }
 
     static func serif(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
         Font.system(size: size, weight: weight, design: .serif)
@@ -68,11 +172,11 @@ enum AppColor {
     }
 
 
-	static var danger: Color { errorRed }
-    static var dangerLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#451B1B") : Color(hex: "#FDECEB") }
-    static var warningLight: Color { AppSettings.shared.isDarkMode ? Color(hex: "#4D3613") : Color(hex: "#FDF3DF") }
+	static var danger: Color { error }
+    static var dangerLight: Color { errorContainer }
+    static var warningLight: Color { warningContainer }
 
-	static var skeleton: Color { AppSettings.shared.isDarkMode ? Color(hex: "#283D32") : lightGreen }
+	static var skeleton: Color { surfaceContainerHigh }
 
 }
 
@@ -105,17 +209,17 @@ struct MedsyTheme {
     var textSecondary: Color
 
     /// Default Medsy palette — delegates to `AppColor` wherever possible.
-    static let `default` = MedsyTheme(
-        primary:       AppColor.green,               // #0D8653
-        primaryLight:  AppColor.lightGreen,          // #E8F8F4
-        danger:        AppColor.errorRed,            // #EF4444
+    static var `default`: MedsyTheme { MedsyTheme(
+        primary:       AppColor.green,
+        primaryLight:  AppColor.lightGreen,
+        danger:        AppColor.errorRed,
         dangerLight:   AppColor.dangerLight,
         warning:       AppColor.warningYellow,       // #F59E0B
         warningLight:  AppColor.warningLight,
         surface:       AppColor.surface,
         textPrimary:   AppColor.textPrim,
         textSecondary: AppColor.textSec
-    )
+    ) }
 }
 
 

@@ -23,9 +23,9 @@ struct MedsyChatInputBar: View {
             // Camera button
             Button(action: onCamera) {
                 Image(systemName: "camera")
-                    .foregroundColor(.gray)
+                    .foregroundColor(AppColor.textSec)
                     .padding(10)
-                    .background(Color.gray.opacity(0.1))
+                    .background(AppColor.surfaceContainer)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -33,6 +33,7 @@ struct MedsyChatInputBar: View {
             // Text field + mic
             HStack {
                 TextField(placeholder, text: $text)
+                    .foregroundStyle(AppColor.textPrim)
                     .submitLabel(.send)
                     .onSubmit { if !disabled { onSend() } }
 
@@ -62,7 +63,7 @@ struct MedsyChatInputBar: View {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
                     .padding(12)
-                    .background(disabled ? Color.gray.opacity(0.4) : accentColor)
+                    .background(disabled ? AppColor.surfaceContainerHighest : accentColor)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)

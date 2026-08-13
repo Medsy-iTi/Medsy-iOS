@@ -85,6 +85,8 @@ struct HomeView: View {
                 HomeQuickDeliveryBanner()
                 Color.clear.frame(height: 20)
             }
+            .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+            .clipped()
         }
         .background(AppColor.bg)
         .onAppear {

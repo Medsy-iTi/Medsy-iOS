@@ -41,7 +41,7 @@ struct CompleteRequestOptionCard: View {
             }
             .padding(MedsySpacing.sm)
             .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
-            .background(isSelected ? AppColor.pill : AppColor.card)
+            .background(isSelected ? AppColor.primaryContainer : AppColor.surfaceContainerLow)
             .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
             .overlay {
                 RoundedRectangle(cornerRadius: MedsyRadius.lg)

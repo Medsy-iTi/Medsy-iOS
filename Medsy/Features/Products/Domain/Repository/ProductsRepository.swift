@@ -6,5 +6,5 @@
 import Foundation
 
 protocol ProductsRepository {
-    func getProductsByCategory(id: Int, page: Int, size: Int) async throws -> PagedResult<ProductItem>
+    func getProductsByCategory(id: Int, page: Int, size: Int, language: String) async throws -> PagedResult<ProductItem>
 }

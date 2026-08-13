@@ -25,7 +25,7 @@ struct CompleteRequestCoordinatorView: View {
         self.factory = factory
         self.onBack = onBack
         self.onCompleted = onCompleted
-        viewModel = factory.makeViewModel(draft: draft,onSubmit: { _ in await clearCart() })
+        viewModel = factory.makeViewModel(draft: draft, onSubmit: { _ in await clearCart() })
     }
     
     var body: some View {

@@ -21,6 +21,8 @@ struct CartView: View {
     @State private var showsClearConfirmation = false
     @State private var prescriptionBeingReplaced: UUID?
     @State private var operationErrorMessage: String?
+    @State private var showsNoteEditor = false
+    @State private var noteInput = ""
 
     let onSearch: () -> Void
     let onScanPrescription: () -> Void
@@ -128,6 +130,47 @@ struct CartView: View {
         } message: {
             Text(operationErrorMessage ?? "")
         }
+        .sheet(isPresented: $showsNoteEditor) {
+            NavigationStack {
+                VStack(alignment: .leading, spacing: MedsySpacing.md) {
+                    Text("cart.note.hint".localized)
+                        .font(MedsyFont.body(15))
+                        .foregroundStyle(AppColor.textSec)
+
+                    TextEditor(text: $noteInput)
+                        .font(MedsyFont.body(15))
+                        .padding(MedsySpacing.sm)
+                        .frame(minHeight: 140)
+                        .scrollContentBackground(.hidden)
+                        .background(AppColor.card)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: MedsyRadius.md)
+                                .stroke(AppColor.border, lineWidth: 1)
+                        }
+                        .onChange(of: noteInput) { _, value in
+                            if value.count > 500 { noteInput = String(value.prefix(500)) }
+                        }
+
+                    Spacer()
+                }
+                .padding(MedsySpacing.md)
+                .background(AppColor.bg.ignoresSafeArea())
+                .navigationTitle("cart.note.title".localized)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("cart.note.cancel".localized) { showsNoteEditor = false }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("cart.note.save".localized) {
+                            viewModel.handle(.updatePharmacistNote(noteInput))
+                            showsNoteEditor = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+        }
         .onChange(of: viewModel.syncState) { _, state in
             guard case let .failed(message) = state else { return }
             operationErrorMessage = message
@@ -233,6 +276,11 @@ struct CartView: View {
                     state: viewModel.interactionsState,
                     onRetry: retryInteractions
                 )
+
+                CartPharmacistNoteView(note: viewModel.pharmacistNote) {
+                    noteInput = viewModel.pharmacistNote
+                    showsNoteEditor = true
+                }
 
                 CartTotalSummaryView(
                     estimatedTotal: viewModel.estimatedTotal,

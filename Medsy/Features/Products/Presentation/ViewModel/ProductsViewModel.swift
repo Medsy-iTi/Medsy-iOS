@@ -41,7 +41,12 @@ final class ProductsViewModel {
         isLastPage = false
         isFetchingNextPage = false
         do {
-            let data = try await getProductsUseCase.execute(id: category.id, page: currentPage, size: 20)
+            let data = try await getProductsUseCase.execute(
+                id: category.id,
+                page: currentPage,
+                size: 20,
+                language: LanguageManager.shared.languageCode
+            )
             let favoriteIDs = await loadFavoriteIDs()
             favoriteCandidates = [:]
             products = map(data.items, favoriteIDs: favoriteIDs)
@@ -57,7 +62,12 @@ final class ProductsViewModel {
         isFetchingNextPage = true
         do {
             let nextPage = currentPage + 1
-            let data = try await getProductsUseCase.execute(id: category.id, page: nextPage, size: 20)
+            let data = try await getProductsUseCase.execute(
+                id: category.id,
+                page: nextPage,
+                size: 20,
+                language: LanguageManager.shared.languageCode
+            )
             let favoriteIDs = await loadFavoriteIDs()
             let newProducts = map(data.items, favoriteIDs: favoriteIDs)
             products.append(contentsOf: newProducts)

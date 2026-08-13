@@ -24,7 +24,7 @@ struct MedsyOrderTrackingCard: View {
     var timeLeft: String
 
     var accentColor: Color = MedsyTheme.default.primary
-    var cardBackground: Color = .white
+    var cardBackground: Color = AppColor.card
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -44,15 +44,16 @@ struct MedsyOrderTrackingCard: View {
 
             Text(itemsSummary)
                 .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(AppColor.textPrim)
 
             Text(subtotalText)
                 .font(.system(size: 12))
-                .foregroundColor(.gray)
+                .foregroundColor(AppColor.textSec)
 
             VStack(alignment: .leading, spacing: 6) {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(Color.gray.opacity(0.2))
+                        Capsule().fill(AppColor.surfaceContainerHighest)
                         Capsule()
                             .fill(accentColor)
                             .frame(width: geo.size.width * min(max(progress, 0), 1))
@@ -66,12 +67,16 @@ struct MedsyOrderTrackingCard: View {
                     Text(timeLeft)
                 }
                 .font(.system(size: 11))
-                .foregroundColor(.gray)
+                .foregroundColor(AppColor.textSec)
             }
         }
         .padding(16)
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
     }
 }
 
