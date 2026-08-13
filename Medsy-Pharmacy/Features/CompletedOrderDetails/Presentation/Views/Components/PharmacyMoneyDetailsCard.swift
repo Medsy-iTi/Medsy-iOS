@@ -42,7 +42,7 @@ struct PharmacyMoneyDetailsCard: View {
                     .font(PharmacyColor.sans(16, .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
                 Spacer()
-                Text("\(Int(total)) \("pharmacy.request.currency_unit".localized)")
+                Text("pharmacy.orders.currency".localized(String(Int(total))))
                     .font(PharmacyColor.sans(16, .bold))
                     .foregroundStyle(PharmacyColor.primary)
             }
@@ -61,7 +61,7 @@ struct PharmacyMoneyDetailsCard: View {
                 .font(PharmacyColor.sans(isTotal ? 16 : 14, isTotal ? .bold : .medium))
                 .foregroundStyle(isTotal ? PharmacyColor.textPrimary : PharmacyColor.textSecondary)
             Spacer()
-            Text("\(Int(amount)) \("pharmacy.request.currency_unit".localized)")
+            Text("pharmacy.orders.currency".localized(String(Int(amount))))
                 .font(PharmacyColor.sans(isTotal ? 16 : 14, isTotal ? .bold : .medium))
                 .foregroundStyle(isTotal ? PharmacyColor.primary : PharmacyColor.textSecondary)
         }

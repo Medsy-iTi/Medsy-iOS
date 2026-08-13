@@ -21,6 +21,11 @@ struct CompletedOrdersView: View {
                 text: $viewModel.searchText,
                 placeholder: "orders_search_placeholder".localized
             )
+            .onChange(of: viewModel.searchText) { _, _ in
+                viewModel.recomputeVisibleState()
+            }
+
+            CompletedOrdersFilterBar(selection: $viewModel.selectedFilter)
 
             content
         }
@@ -61,7 +66,11 @@ struct CompletedOrdersView: View {
 				Spacer()
 
         case .empty(.noOrders):
-            PharmacyEmptyStateView.noCompletedOrders
+            PharmacyEmptyStateView(
+                lottieName: "no_data_found",
+                title: viewModel.selectedFilter.emptyStateTitleLocalized,
+                message: viewModel.selectedFilter.emptyStateMessageLocalized
+            )
 
         case .empty(.noResults):
             PharmacyEmptyStateView.noSearchResults

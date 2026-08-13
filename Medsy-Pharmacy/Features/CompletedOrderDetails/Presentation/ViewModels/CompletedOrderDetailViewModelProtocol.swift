@@ -19,6 +19,8 @@ enum CompletedOrderDetailEvent {
     case load(orderId: Int)
     case retry(orderId: Int)
     case markReady(orderId: Int)
+    case markOutForDelivery(orderId: Int)
+    case markDelivered(orderId: Int)
 }
 
 
@@ -27,6 +29,10 @@ enum CompletedOrderDetailEvent {
 protocol CompletedOrderDetailViewModelProtocol: AnyObject {
     var viewState: CompletedOrderDetailViewState { get }
     var isMarkingReady: Bool { get }
+    var isMarkingOutForDelivery: Bool { get }
+    var isMarkingDelivered: Bool { get }
     var markReadyError: String? { get }
+    var markOutForDeliveryError: String? { get }
+    var markDeliveredError: String? { get }
     func handle(_ event: CompletedOrderDetailEvent)
 }

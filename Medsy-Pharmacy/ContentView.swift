@@ -189,7 +189,7 @@ private final class PreviewContentLocationProvider: PharmacyLocationProviding {
 
 
 private struct PreviewGetCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol {
-	func execute(pharmacyId: Int, page: Int, size: Int, sort: [String]) async throws -> PaginatedResult<CompletedOrder> {
+	func execute(pharmacyId: Int, status: String?, page: Int, size: Int, sort: [String]) async throws -> PaginatedResult<CompletedOrder> {
 		.empty
 	}
 }

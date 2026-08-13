@@ -33,6 +33,13 @@ final class CompletedOrdersViewModel {
         didSet { recomputeVisibleState() }
     }
 
+    var selectedFilter: CompletedOrdersListFilter = .all {
+        didSet {
+            guard selectedFilter != oldValue else { return }
+            Task { await reload() }
+        }
+    }
+
     var visibleOrders: [CompletedOrder] {
         guard !searchText.isEmpty else { return orders }
         return orders.filter(matchesSearch)
@@ -68,6 +75,7 @@ final class CompletedOrdersViewModel {
         do {
             let result = try await getCompletedOrdersUseCase.execute(
                 pharmacyId: pharmacyId,
+                status: selectedFilter.apiStatusValue,
                 page: currentPage,
                 size: pageSize,
                 sort: ["date,desc"]
@@ -94,6 +102,7 @@ final class CompletedOrdersViewModel {
             let nextPage = currentPage + 1
             let result = try await getCompletedOrdersUseCase.execute(
                 pharmacyId: pharmacyId,
+                status: selectedFilter.apiStatusValue,
                 page: nextPage,
                 size: pageSize,
                 sort: ["date,desc"]
@@ -118,7 +127,7 @@ final class CompletedOrdersViewModel {
             || String(order.id).contains(query)
     }
 
-    private func recomputeVisibleState() {
+    func recomputeVisibleState() {
         if orders.isEmpty {
             state = .empty(.noOrders)
         } else if visibleOrders.isEmpty {

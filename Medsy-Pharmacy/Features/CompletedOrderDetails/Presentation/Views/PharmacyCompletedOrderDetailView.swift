@@ -2,9 +2,6 @@
 //  PharmacyCompletedOrderDetailView.swift
 //  Medsy
 //
-//  Created by Shahudaa on 26/07/2026.
-//
-
 
 import SwiftUI
 import UIKit
@@ -29,12 +26,23 @@ private func dial(_ rawNumber: String) {
 struct PharmacyCompletedOrderDetailView: View {
     let state: CompletedOrderDetailViewState
     let isMarkingReady: Bool
+    let isMarkingOutForDelivery: Bool
+    let isMarkingDelivered: Bool
     let markReadyError: String?
+    let markOutForDeliveryError: String?
+    let markDeliveredError: String?
     let onRetry: () -> Void
     let onBack: (() -> Void)?
     let onMarkReady: (() -> Void)?
+    let onMarkOutForDelivery: (() -> Void)?
+    let onMarkDelivered: (() -> Void)?
 
     @State private var fullPrescriptionURL: URL? = nil
+
+    // Aggregate error for the alert (shows the first active error)
+    private var activeError: String? {
+        markReadyError ?? markOutForDeliveryError ?? markDeliveredError
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,10 +57,10 @@ struct PharmacyCompletedOrderDetailView: View {
         .alert(
             "pharmacy.error.title".localized,
             isPresented: Binding(
-                get: { markReadyError != nil },
+                get: { activeError != nil },
                 set: { if !$0 { } }
             ),
-            presenting: markReadyError
+            presenting: activeError
         ) { _ in
             Button("pharmacy.ok".localized, role: .cancel) {}
         } message: { msg in
@@ -88,11 +96,39 @@ struct PharmacyCompletedOrderDetailView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: PharmacySpacing.md) {
 
+                // 3-step status tracker
                 PharmacyOrderStatusTrackerView(status: order.status)
 
-                // Mark as Ready button — visible only while order is actionable
+                // Action buttons — mutually exclusive based on current status
                 if canMarkReady(status: order.status), let onMarkReady {
-                    PharmacyMarkReadyButton(isLoading: isMarkingReady, action: onMarkReady)
+                    PharmacyOrderActionButton(
+                        labelKey: "pharmacy.status.mark_ready",
+                        loadingLabelKey: "pharmacy.status.marking_ready",
+                        systemImage: "checkmark.circle.fill",
+                        isLoading: isMarkingReady,
+                        action: onMarkReady
+                    )
+                } else if canMarkOutForDelivery(status: order.status), let onMarkOutForDelivery {
+                    PharmacyOrderActionButton(
+                        labelKey: "pharmacy.status.mark_out_for_delivery",
+                        loadingLabelKey: "pharmacy.status.marking_out_for_delivery",
+                        systemImage: "shippingbox.fill",
+                        isLoading: isMarkingOutForDelivery,
+                        action: onMarkOutForDelivery
+                    )
+                } else if canMarkDelivered(status: order.status), let onMarkDelivered {
+                    let isPickup = (order.status == .readyForPickup)
+                    PharmacyOrderActionButton(
+                        labelKey: isPickup
+                            ? "pharmacy.status.mark_collected"
+                            : "pharmacy.status.mark_delivered",
+                        loadingLabelKey: isPickup
+                            ? "pharmacy.status.marking_collected"
+                            : "pharmacy.status.marking_delivered",
+                        systemImage: isPickup ? "bag.fill.badge.plus" : "checkmark.seal.fill",
+                        isLoading: isMarkingDelivered,
+                        action: onMarkDelivered
+                    )
                 }
 
                 PharmacyContactInfoCard(
@@ -178,12 +214,24 @@ struct PharmacyCompletedOrderDetailView: View {
         .background(PharmacyColor.bg)
     }
 
-    /// Returns true if the pharmacist can still mark this order as ready
+    // MARK: - Status action helpers
+
+    /// Preparing / pending orders can be marked as ready
     private func canMarkReady(status: PharmacyOrderAPIStatus) -> Bool {
         switch status {
         case .pending, .accepted, .preparing: return true
         default: return false
         }
+    }
+
+    /// Delivery orders that are ready can be sent out for delivery
+    private func canMarkOutForDelivery(status: PharmacyOrderAPIStatus) -> Bool {
+        status == .readyForDelivery
+    }
+
+    /// Orders that are out for delivery (or ready for pickup) can be marked delivered/collected
+    private func canMarkDelivered(status: PharmacyOrderAPIStatus) -> Bool {
+        status == .outForDelivery || status == .readyForPickup
     }
 }
 
@@ -292,9 +340,13 @@ extension URL: @retroactive Identifiable {
     public var id: String { absoluteString }
 }
 
-// MARK: - PharmacyMarkReadyButton
+// MARK: - PharmacyOrderActionButton
+// Generic reusable action button for all order status transitions
 
-private struct PharmacyMarkReadyButton: View {
+private struct PharmacyOrderActionButton: View {
+    let labelKey: String
+    let loadingLabelKey: String
+    let systemImage: String
     let isLoading: Bool
     let action: () -> Void
 
@@ -307,12 +359,10 @@ private struct PharmacyMarkReadyButton: View {
                         .tint(.white)
                         .scaleEffect(0.85)
                 } else {
-                    Image(systemName: "checkmark.circle.fill")
+                    Image(systemName: systemImage)
                         .font(.system(size: 16, weight: .semibold))
                 }
-                Text(isLoading
-                     ? "pharmacy.status.marking_ready".localized
-                     : "pharmacy.status.mark_ready".localized)
+                Text(isLoading ? loadingLabelKey.localized : labelKey.localized)
                     .font(.system(size: 15, weight: .semibold))
             }
             .foregroundStyle(.white)
@@ -328,7 +378,7 @@ private struct PharmacyMarkReadyButton: View {
     }
 }
 
-// MARK: - PharmacyOrderStatusTrackerView
+// MARK: - PharmacyOrderStatusTrackerView (3-step)
 
 private struct PharmacyOrderStatusTrackerView: View {
     let status: PharmacyOrderAPIStatus
@@ -337,19 +387,21 @@ private struct PharmacyOrderStatusTrackerView: View {
 
     private var steps: [String] {
         ["pharmacy.status.preparing".localized,
-         "pharmacy.status.ready".localized,
          "pharmacy.status.on_the_way".localized,
          "pharmacy.status.delivered".localized]
     }
 
-    /// 0 = Preparing, 1 = Ready, 2 = On the way, 3 = Delivered, -1 = hide
+    /// 0 = Preparing, 1 = On the way, 2 = Delivered, -1 = hide tracker
     private var activeStep: Int {
         switch status {
-        case .pending, .accepted, .preparing:               return 0
-        case .readyForPickup, .readyForDelivery:            return 1
-        case .outForDelivery:                               return 2
-        case .delivered, .completed:                        return 3
-        case .cancelled, .expired, .unknown:                return -1
+        case .pending, .accepted, .preparing:
+            return 0
+        case .readyForPickup, .readyForDelivery, .outForDelivery:
+            return 1
+        case .delivered, .completed:
+            return 2
+        case .cancelled, .expired, .unknown:
+            return -1
         }
     }
 
@@ -386,12 +438,12 @@ private struct PharmacyOrderStatusTrackerView: View {
     }
 
     private func stepView(index: Int) -> some View {
-        let isActive  = index == activeStep
-        let isDone    = index < activeStep
+        let isActive = index == activeStep
+        let isDone   = index < activeStep
 
         return VStack(spacing: 6) {
             ZStack {
-                // Pulse ring on current step
+                // Animated pulse ring on the current active step
                 if isActive {
                     Circle()
                         .fill(PharmacyColor.primary.opacity(pulse ? 0.25 : 0.0))

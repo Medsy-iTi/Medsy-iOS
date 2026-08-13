@@ -31,11 +31,25 @@ struct CompletedOrderDetailsAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(MarkOrderOutForDeliveryUseCaseProtocol.self) { container in
+            MarkOrderOutForDeliveryUseCase(
+                repository: container.resolve(CompletedOrderDetailsRepositoryProtocol.self)
+            )
+        }
+
+        container.register(MarkOrderDeliveredUseCaseProtocol.self) { container in
+            MarkOrderDeliveredUseCase(
+                repository: container.resolve(CompletedOrderDetailsRepositoryProtocol.self)
+            )
+        }
+
         container.register(CompletedOrderDetailViewModel.self) { container in
             MainActor.assumeIsolated {
                 CompletedOrderDetailViewModel(
                     getOrderDetailUseCase: container.resolve(GetCompletedOrderDetailUseCaseProtocol.self),
-                    markOrderReadyUseCase: container.resolve(MarkOrderReadyUseCaseProtocol.self)
+                    markOrderReadyUseCase: container.resolve(MarkOrderReadyUseCaseProtocol.self),
+                    markOrderOutForDeliveryUseCase: container.resolve(MarkOrderOutForDeliveryUseCaseProtocol.self),
+                    markOrderDeliveredUseCase: container.resolve(MarkOrderDeliveredUseCaseProtocol.self)
                 )
             }
         }
