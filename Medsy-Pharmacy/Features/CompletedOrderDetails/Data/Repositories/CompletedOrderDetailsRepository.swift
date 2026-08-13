@@ -20,4 +20,12 @@ final class CompletedOrderDetailsRepository: CompletedOrderDetailsRepositoryProt
     func markOrderReady(id: Int) async throws {
         try await remoteDataSource.markOrderReady(id: id)
     }
+
+    func markOrderOutForDelivery(id: Int) async throws {
+        try await remoteDataSource.markOrderOutForDelivery(id: id)
+    }
+
+    func markOrderDelivered(id: Int) async throws {
+        try await remoteDataSource.markOrderDelivered(id: id)
+    }
 }
