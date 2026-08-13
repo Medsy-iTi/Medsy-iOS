@@ -56,6 +56,7 @@ enum CompletedOrderMapper {
             deliveryLongitude: dto.deliveryLongitude,
             createdAt: dateFormatter.date(from: dto.createdAt) ?? Date(),
             paymentMethod: paymentMethod,
+            status: PharmacyOrderAPIStatus(rawValue: dto.status ?? ""),
             items: dto.items.map(map)
         )
     }

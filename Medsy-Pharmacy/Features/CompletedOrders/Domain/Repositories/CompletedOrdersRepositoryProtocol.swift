@@ -10,6 +10,7 @@ import Foundation
 protocol CompletedOrdersRepositoryProtocol {
     func fetchOrders(
         pharmacyId: Int,
+        status: String?,
         page: Int,
         size: Int,
         sort: [String]
