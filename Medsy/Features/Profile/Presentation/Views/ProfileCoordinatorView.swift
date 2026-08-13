@@ -45,6 +45,9 @@ struct ProfileCoordinatorView: View {
                 onTheme: coordinator.showThemePicker,
                 onOrders: onOrders,
                 onFavorites: coordinator.showFavorites,
+                onHowMedsyWorks: coordinator.showHowMedsyWorks,
+                onHelpCenter: coordinator.showHelpCenter,
+                onReportProblem: coordinator.showReportProblem,
                 onLogout: coordinator.requestLogout
             )
             .navigationDestination(for: ProfileRoute.self) { route in
@@ -65,6 +68,12 @@ struct ProfileCoordinatorView: View {
                             coordinator.path.append(destination)
                         }
                     )
+                case .howMedsyWorks:
+                    HowMedsyWorksView(onBack: coordinator.goBack)
+                case .helpCenter:
+                    ProfileHelpCenterView(onBack: coordinator.goBack)
+                case .reportProblem:
+                    ReportProblemView(onBack: coordinator.goBack)
                 }
             }
             .navigationDestination(for: ProductDetailDestination.self) { destination in

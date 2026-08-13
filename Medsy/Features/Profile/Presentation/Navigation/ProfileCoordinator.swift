@@ -11,6 +11,9 @@ import SwiftUI
 enum ProfileRoute: Hashable {
     case favorites
     case search(String)
+    case howMedsyWorks
+    case helpCenter
+    case reportProblem
 }
 
 enum ProfilePresentation: Identifiable {
@@ -142,6 +145,9 @@ final class ProfileCoordinator {
     }
     func showFavorites() { path.append(ProfileRoute.favorites) }
     func showSearch(query: String = "") { path.append(ProfileRoute.search(query)) }
+    func showHowMedsyWorks() { path.append(ProfileRoute.howMedsyWorks) }
+    func showHelpCenter() { path.append(ProfileRoute.helpCenter) }
+    func showReportProblem() { path.append(ProfileRoute.reportProblem) }
     func goBack() {
         guard !path.isEmpty else { return }
         path.removeLast()
