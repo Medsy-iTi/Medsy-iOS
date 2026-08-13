@@ -21,6 +21,7 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
     private let now: () -> Date
     private let pollingIntervalNanoseconds: UInt64
     private let maxConfirmationAttempts: Int
+    private var flowTask: Task<Void, Never>?
 
     init(
         masterOrderId: Int,
@@ -45,9 +46,28 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
     func handle(_ event: PaymentFlowEvent) async {
         switch event {
         case .start, .retry:
-            await startPayment()
+            await runFlow { [weak self] in
+                await self?.startPayment()
+            }
         case .refreshStatus:
-            await refreshPaymentStatus()
+            await runFlow { [weak self] in
+                await self?.refreshPaymentStatus()
+            }
+        case .stop:
+            flowTask?.cancel()
+            flowTask = nil
+        }
+    }
+
+    private func runFlow(_ operation: @escaping @MainActor () async -> Void) async {
+        flowTask?.cancel()
+        let task = Task { @MainActor in
+            await operation()
+        }
+        flowTask = task
+        await task.value
+        if !task.isCancelled {
+            flowTask = nil
         }
     }
 
@@ -139,7 +159,10 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
                 guard remainsPending else { return }
                 state = .processing
 
-                guard attempt < maxConfirmationAttempts - 1 else { return }
+                guard attempt < maxConfirmationAttempts - 1 else {
+                    state = .processing
+                    return
+                }
                 try await Task.sleep(nanoseconds: pollingIntervalNanoseconds)
             } catch is CancellationError {
                 return

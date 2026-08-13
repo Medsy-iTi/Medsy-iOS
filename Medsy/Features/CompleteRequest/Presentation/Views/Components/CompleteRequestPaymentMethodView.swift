@@ -33,8 +33,8 @@ struct CompleteRequestPaymentMethodView: View {
                     title: "complete_request.payment.online".localized,
                     subtitle: "complete_request.payment.online.subtitle".localized,
                     systemImage: "creditcard.and.123",
-                    isSelected: selectedMethod == .online,
-                    action: { onSelect(.online) }
+                    isSelected: selectedMethod == .visa,
+                    action: { onSelect(.visa) }
                 )
             }
         }

@@ -81,7 +81,7 @@ enum PaymentStatusPresentation: Equatable {
     var primaryActionTitle: String {
         switch self {
         case .processing:
-            "payment.action.view_order".localized
+            "payment.action.refresh_status".localized
         case .success:
             "payment.action.done".localized
         case .failure, .cancelled:

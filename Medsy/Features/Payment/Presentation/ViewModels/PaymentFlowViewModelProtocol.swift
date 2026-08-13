@@ -78,6 +78,7 @@ enum PaymentFlowEvent {
     case start
     case retry
     case refreshStatus
+    case stop
 }
 
 @MainActor

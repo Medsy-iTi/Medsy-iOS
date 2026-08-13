@@ -44,7 +44,9 @@ enum PaymentMapper {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.timeZone = .current
+        // Backend LocalDateTime values do not contain an offset, but the
+        // backend clock and expiry scheduler operate in UTC.
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
 
         for format in [
             "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS",

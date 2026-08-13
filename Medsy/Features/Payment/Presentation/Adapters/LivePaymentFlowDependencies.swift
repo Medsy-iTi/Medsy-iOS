@@ -42,6 +42,12 @@ struct LivePaymentOrderRefresher: PaymentOrderRefreshingProtocol {
         if order.paymentMethod == .cash {
             return .cash
         }
+        switch order.orderStatus {
+        case .preparing, .readyForPickup, .readyForDelivery, .outForDelivery, .delivered, .completed:
+            return .paid
+        case .pending, .pendingPayment, .cancelled, .unknown:
+            break
+        }
         if order.paymentStatus == .expired {
             return .expired
         }
