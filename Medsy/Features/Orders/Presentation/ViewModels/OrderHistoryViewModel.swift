@@ -41,7 +41,7 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
             load(reset: true)
         case .applyFilters(let filters):
             activeFilters = filters
-            renderLoadedOrders()
+            load(reset: true)
         case .loadNextPage:
             guard !isLastPage, !isLoadingNextPage else { return }
             loadNextPage()
@@ -76,7 +76,7 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         guard let useCase = loadOrdersUseCase else { return }
         do {
             let result = try await useCase.execute(
-                filter: .empty,
+                filter: activeFilters.toDomainFilter(),
                 page: page,
                 size: Self.pageSize
             )
@@ -84,17 +84,25 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
 
             let mapped = result.items.map(OrderEntityMapper.map)
             if appending {
-                loadedOrders.append(contentsOf: mapped)
+                let existingIDs = Set(loadedOrders.map(\.id))
+                loadedOrders.append(contentsOf: mapped.filter { !existingIDs.contains($0.id) })
             } else {
                 loadedOrders = mapped
             }
 
             currentPage = result.page
             isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
+            if activeFilters.requiresCompleteDataset, !isLastPage {
+                await fetchOrders(page: currentPage + 1, appending: true)
+                return
+            }
             renderLoadedOrders()
         } catch {
             guard !Task.isCancelled else { return }
-            if !appending {
+            if appending, !loadedOrders.isEmpty {
+                isLastPage = true
+                renderLoadedOrders()
+            } else {
                 historyState = .error(error.localizedDescription)
             }
         }
@@ -169,5 +177,11 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
             ))
         }
         return sections
+    }
+}
+
+private extension ActiveOrderFilters {
+    var requiresCompleteDataset: Bool {
+        statusFilter == .active || dateRangeFilter != .anytime || fulfillmentType != nil
     }
 }

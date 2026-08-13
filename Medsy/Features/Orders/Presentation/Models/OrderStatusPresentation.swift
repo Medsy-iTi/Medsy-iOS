@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-enum OrderStatusPresentation {
+enum OrderStatusPresentation: Equatable {
     case pending
     case pendingPayment
     case confirmed

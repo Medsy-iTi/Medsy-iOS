@@ -10,72 +10,85 @@ import SwiftUI
 struct OrderCardView: View {
     let order: OrderPresentationModel
     let onTap: () -> Void
+    var onPaymentTap: (() -> Void)? = nil
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: MedsySpacing.xs) {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
+            Button(action: onTap) {
+                content
+            }
+            .buttonStyle(.plain)
 
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("#\(order.orderNumber)")
-                            .font(AppColor.sans(16, .bold))
-                            .foregroundStyle(AppColor.textPrim)
+            if let paymentAction = order.paymentAction {
+                PaymentOrderActionView(
+                    action: paymentAction,
+                    onTap: { onPaymentTap?() }
+                )
+            }
+        }
+        .padding(MedsySpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.border, lineWidth: 1)
+        )
+        .medsyCardShadow()
+    }
 
-                        Text(dateLabel)
-                            .font(AppColor.sans(12))
-                            .foregroundStyle(AppColor.textSec)
-                    }
+    private var content: some View {
+        VStack(alignment: .leading, spacing: MedsySpacing.xs) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("#\(order.orderNumber)")
+                        .font(AppColor.sans(16, .bold))
+                        .foregroundStyle(AppColor.textPrim)
 
-                    Spacer(minLength: 0)
-
-                    Image(systemName: "chevron.forward")
-                        .font(.system(size: 13, weight: .semibold))
+                    Text(dateLabel)
+                        .font(AppColor.sans(12))
                         .foregroundStyle(AppColor.textSec)
                 }
 
-                Text(order.status.labelKey.localized)
-                    .font(AppColor.sans(14, .semibold))
-                    .foregroundStyle(order.status.color)
+                Spacer(minLength: 0)
 
-                pharmacyNames
+                Image(systemName: "chevron.forward")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppColor.textSec)
+            }
 
-                fulfillmentBadge
+            Text(order.status.labelKey.localized)
+                .font(AppColor.sans(14, .semibold))
+                .foregroundStyle(order.status.color)
 
-                HStack(alignment: .bottom) {
-                    HStack(spacing: -MedsySpacing.xxs) {
-                        ForEach(0..<min(order.itemCount, 3), id: \.self) { index in
-                            OrderProductImageView(imageURL: imageURL(at: index), size: 40)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
-                                        .stroke(AppColor.card, lineWidth: 2)
-                                )
-                        }
-                    }
+            pharmacyNames
 
-                    Spacer(minLength: 0)
+            fulfillmentBadge
 
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(String(format: "orders.price_format".localized, order.totalPrice))
-                            .font(MedsyFont.price(15))
-                            .foregroundStyle(AppColor.textPrim)
-
-                        Text(itemCountText)
-                            .font(AppColor.sans(12))
-                            .foregroundStyle(AppColor.textSec)
+            HStack(alignment: .bottom) {
+                HStack(spacing: -MedsySpacing.xxs) {
+                    ForEach(0..<min(order.itemCount, 3), id: \.self) { index in
+                        OrderProductImageView(imageURL: imageURL(at: index), size: 40)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
+                                    .stroke(AppColor.card, lineWidth: 2)
+                            )
                     }
                 }
+
+                Spacer(minLength: 0)
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(String(format: "orders.price_format".localized, order.totalPrice))
+                        .font(MedsyFont.price(15))
+                        .foregroundStyle(AppColor.textPrim)
+
+                    Text(itemCountText)
+                        .font(AppColor.sans(12))
+                        .foregroundStyle(AppColor.textSec)
+                }
             }
-            .padding(MedsySpacing.md)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                    .stroke(AppColor.border, lineWidth: 1)
-            )
-            .medsyCardShadow()
         }
-        .buttonStyle(.plain)
     }
 
     private var pharmacyNames: some View {

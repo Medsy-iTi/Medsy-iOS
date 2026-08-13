@@ -18,6 +18,9 @@ struct OrderPresentationModel: Identifiable {
     let itemCount: Int
     let itemImageURLs: [String]
     let pharmacyNames: [String]
+    let paymentMethod: OrderPaymentMethod?
+    let paymentStatus: OrderPaymentStatus?
+    let paymentExpiresAt: Date?
 
     init(
         id: Int,
@@ -29,7 +32,10 @@ struct OrderPresentationModel: Identifiable {
         totalPrice: Double,
         itemCount: Int,
         itemImageURLs: [String],
-        pharmacyNames: [String] = []
+        pharmacyNames: [String] = [],
+        paymentMethod: OrderPaymentMethod? = nil,
+        paymentStatus: OrderPaymentStatus? = nil,
+        paymentExpiresAt: Date? = nil
     ) {
         self.id = id
         self.orderNumber = orderNumber
@@ -41,6 +47,9 @@ struct OrderPresentationModel: Identifiable {
         self.itemCount = itemCount
         self.itemImageURLs = itemImageURLs
         self.pharmacyNames = pharmacyNames
+        self.paymentMethod = paymentMethod
+        self.paymentStatus = paymentStatus
+        self.paymentExpiresAt = paymentExpiresAt
     }
 }
 
@@ -141,6 +150,22 @@ struct OrderDetailItemModel: Identifiable, Equatable {
 
 
 extension OrderPresentationModel {
+    var paymentAction: PaymentOrderActionPresentation? {
+        guard paymentMethod == .card, status == .pendingPayment else { return nil }
+        if paymentStatus == .expired || paymentExpiresAt.map({ $0 <= Date() }) == true {
+            return .expired
+        }
+
+        switch paymentStatus {
+        case .unpaid, .pending:
+            return .payNow
+        case .failed, .canceled:
+            return .retry
+        case .paid, .expired, .none:
+            return nil
+        }
+    }
+
     var displayedPharmacyNames: [String] {
         pharmacyNames.isEmpty ? [pharmacyName].filter { !$0.isEmpty } : pharmacyNames
     }

@@ -16,6 +16,7 @@ enum OrderHistoryEvent {
 
 enum OrderDetailEvent {
     case load(orderId: Int)
+    case refresh
     case retry(orderId: Int)
     case reorder
     case selectPharmacy(Int)

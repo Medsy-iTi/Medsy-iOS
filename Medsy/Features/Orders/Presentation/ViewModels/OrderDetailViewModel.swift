@@ -28,6 +28,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
     private var loadTask: Task<Void, Never>?
     private var reorderTask: Task<Void, Never>?
     private var routeTask: Task<Void, Never>?
+    private var currentOrderID: Int?
 
     init(
         getOrderDetailUseCase: GetOrderDetailUseCaseProtocol? = nil,
@@ -72,6 +73,9 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         switch event {
         case .load(let orderId):
             loadDetail(orderId: orderId)
+        case .refresh:
+            guard let currentOrderID else { return }
+            loadDetail(orderId: currentOrderID)
         case .retry(let orderId):
             loadDetail(orderId: orderId)
         case .reorder:
@@ -88,6 +92,7 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
     }
 
     private func loadDetail(orderId: Int) {
+        currentOrderID = orderId
         loadTask?.cancel()
         routeTask?.cancel()
         detailState = .loading

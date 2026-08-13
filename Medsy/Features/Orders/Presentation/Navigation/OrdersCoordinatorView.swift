@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OrdersCoordinatorView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var coordinator = OrdersCoordinator()
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
@@ -45,7 +46,8 @@ struct OrdersCoordinatorView: View {
                 onSelectOrder: { order in coordinator.showDetail(orderId: order.id) },
                 onRetry: { historyViewModel.handle(.retry) },
                 onLoadNextPage: { historyViewModel.handle(.loadNextPage) },
-                onSearch: { coordinator.showSearch() }
+                onSearch: { coordinator.showSearch() },
+                onPaymentAction: { coordinator.showPayment(orderId: $0) }
             )
             .task {
                 historyViewModel.handle(.load)
@@ -87,10 +89,12 @@ struct OrdersCoordinatorView: View {
                         ),
                         onCompleted: {
                             detailViewModel.handle(.load(orderId: orderId))
+                            historyViewModel.handle(.load)
                             coordinator.pop()
                         },
                         onViewOrder: {
                             detailViewModel.handle(.load(orderId: orderId))
+                            historyViewModel.handle(.load)
                             coordinator.pop()
                         }
                     )
@@ -105,6 +109,11 @@ struct OrdersCoordinatorView: View {
             .navigationDestination(for: ProductDetailDestination.self) { destination in
                 ProductDetailView(productId: destination.productId)
             }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            historyViewModel.handle(.load)
+            detailViewModel.handle(.refresh)
         }
     }
 }
