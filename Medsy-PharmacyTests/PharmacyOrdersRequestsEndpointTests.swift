@@ -111,4 +111,72 @@ final class PharmacyOrdersRequestsEndpointTests: XCTestCase {
         XCTAssertEqual(endpoint.queryParameters?["page"] as? Int, 0)
         XCTAssertEqual(endpoint.queryParameters?["size"] as? Int, 20)
     }
+
+    func test_decodingPharmacyRequests_withSearchingStatusAndAssignmentStatus() throws {
+        let jsonString = """
+        {
+          "success": true,
+          "message": "Pharmacy requests fetched successfully",
+          "data": {
+            "content": [
+              {
+                "assignmentStatus": "PENDING",
+                "distanceKm": 0.15,
+                "request": {
+                  "id": 6,
+                  "customerId": 6,
+                  "customerName": "Antoneos Philip",
+                  "status": "SEARCHING",
+                  "createdAt": "2026-08-13T14:11:37.222479",
+                  "items": []
+                }
+              },
+              {
+                "assignmentStatus": "OFFER_CREATED",
+                "distanceKm": 0.20,
+                "request": {
+                  "id": 7,
+                  "customerId": 4,
+                  "customerName": "Shahd Ashraf",
+                  "status": "SEARCHING",
+                  "createdAt": "2026-08-13T14:12:26.714619",
+                  "items": []
+                }
+              }
+            ],
+            "pageNumber": 0,
+            "pageSize": 20,
+            "totalElements": 2,
+            "totalPages": 1,
+            "last": true
+          }
+        }
+        """
+
+        let jsonData = try XCTUnwrap(jsonString.data(using: .utf8))
+        let envelope = try JSONDecoder().decode(APIEnvelope<PageResponseDTO<PharmacyRequestAssignmentDTO>>.self, from: jsonData)
+
+        XCTAssertTrue(envelope.success)
+        let page = try XCTUnwrap(envelope.data)
+        XCTAssertEqual(page.content.count, 2)
+
+        let pendingAssignment = page.content[0]
+        XCTAssertEqual(pendingAssignment.assignmentStatus, "PENDING")
+        XCTAssertEqual(pendingAssignment.request.status, "SEARCHING")
+        XCTAssertEqual(pendingAssignment.request.requestStatus, .open)
+
+        let offeredAssignment = page.content[1]
+        XCTAssertEqual(offeredAssignment.assignmentStatus, "OFFER_CREATED")
+        XCTAssertEqual(offeredAssignment.request.status, "SEARCHING")
+
+        let mappedOrder0 = PharmacyOrderMapper.map(pendingAssignment)
+        XCTAssertEqual(mappedOrder0.status, .searching)
+        let listStatus0 = PharmacyOrderMapper.mapToListItem(mappedOrder0).status
+        XCTAssertEqual(listStatus0, .new)
+
+        let mappedOrder1 = PharmacyOrderMapper.map(offeredAssignment)
+        XCTAssertEqual(mappedOrder1.status, .searching)
+        let listStatus1 = PharmacyOrderMapper.mapToListItem(mappedOrder1).status
+        XCTAssertEqual(listStatus1, .pendingApproval)
+    }
 }

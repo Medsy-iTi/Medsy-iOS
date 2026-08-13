@@ -169,7 +169,7 @@ enum PharmacyMedicineRequestMapper {
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
-        case .pending: return "pharmacy.home.order_new".localized
+        case .pending, .searching: return "pharmacy.home.order_new".localized
         case .accepted: return "pharmacy.home.order_preparing".localized
         case .preparing: return "pharmacy.home.order_preparing".localized
         case .outForDelivery: return "pharmacy.home.order_preparing".localized

@@ -22,6 +22,8 @@ struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
             return .completed
         case .expired:
             return .expired
+        case .searching, .pending:
+            return .open
         default:
             return .open
         }
@@ -32,9 +34,14 @@ struct PharmacyMedicineRequestEntity: Identifiable, Equatable, Sendable {
         if reqStatus == .completed || reqStatus == .expired {
             return .cannotOffer
         }
-        guard let assignmentStatus = assignmentStatus else { return .cannotOffer }
+        guard let assignmentStatus = assignmentStatus else {
+            if PharmacySubmittedOffersStore.shared.contains(id) {
+                return .offered
+            }
+            return .cannotOffer
+        }
         let rawStatus = assignmentStatus.uppercased()
-        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(id) {
+        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" {
             return .offered
         }
         if rawStatus == "PENDING" {

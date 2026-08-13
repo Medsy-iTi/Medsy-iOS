@@ -163,6 +163,15 @@ enum PharmacyOrderMapper {
         )
     }
 
+    static func map(_ dto: PageResponseDTO<PharmacyMedicineRequestDTO>) -> PharmacyOrdersPage {
+        PharmacyOrdersPage(
+            orders: dto.content.map { map($0) }.reversed(),
+            pageNumber: dto.pageNumber,
+            totalPages: dto.totalPages,
+            isLastPage: dto.last
+        )
+    }
+
 
     static func mapToListItem(_ order: PharmacyOrder) -> PharmacyOrderListItem {
         PharmacyOrderListItem(
@@ -189,20 +198,20 @@ enum PharmacyOrderMapper {
             return .expired
         case .cancelled:
             return .expired
-        case .pending, .unknown:
-            let rawAssignment = assignmentStatus?.uppercased() ?? "PENDING"
-            let isOffered = rawAssignment == "OFFER_CREATED" ||
-                            rawAssignment == "OFFER_MADE" ||
-                            rawAssignment == "SUBMITTED" ||
-                            rawAssignment == "OFFERED" ||
-                            PharmacySubmittedOffersStore.shared.contains(orderId)
-            
-            if isOffered {
-                return .pendingApproval
-            } else if rawAssignment == "PENDING" {
-                return .new
+        case .pending, .searching, .unknown:
+            if let rawAssignment = assignmentStatus?.uppercased() {
+                if rawAssignment == "OFFER_CREATED" || rawAssignment == "OFFER_MADE" || rawAssignment == "SUBMITTED" || rawAssignment == "OFFERED" {
+                    return .pendingApproval
+                } else if rawAssignment == "PENDING" {
+                    return .new
+                } else {
+                    return .expired
+                }
             } else {
-                return .expired
+                if PharmacySubmittedOffersStore.shared.contains(orderId) {
+                    return .pendingApproval
+                }
+                return .new
             }
         }
     }
@@ -256,7 +265,7 @@ enum PharmacyOrderMapper {
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
-        case .pending: return "pharmacy.home.order_new".localized
+        case .pending, .searching: return "pharmacy.home.order_new".localized
         case .accepted, .preparing, .outForDelivery: return "pharmacy.home.order_preparing".localized
         case .delivered: return "pharmacy.home.order_delivered".localized
         case .completed: return "pharmacy.orders.status.completed".localized
