@@ -31,7 +31,7 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
         onCashPayment: @escaping () -> Void = {},
         now: @escaping () -> Date = Date.init,
         pollingIntervalNanoseconds: UInt64 = 2_000_000_000,
-        maxConfirmationAttempts: Int = 16
+        maxConfirmationAttempts: Int = 60
     ) {
         self.masterOrderId = masterOrderId
         self.paymentPreparer = paymentPreparer
@@ -45,9 +45,20 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
 
     func handle(_ event: PaymentFlowEvent) async {
         switch event {
-        case .start, .retry:
+        case .start:
+            guard state == .idle else { return }
             await runFlow { [weak self] in
-                await self?.startPayment()
+                await self?.startPayment(isRetry: false)
+            }
+        case .retry:
+            switch state {
+            case .failure, .cancelled:
+                break
+            case .idle, .loading, .presenting, .processing, .success, .expired:
+                return
+            }
+            await runFlow { [weak self] in
+                await self?.startPayment(isRetry: true)
             }
         case .refreshStatus:
             await runFlow { [weak self] in
@@ -71,8 +82,17 @@ final class PaymentFlowViewModel: PaymentFlowViewModelProtocol {
         }
     }
 
-    private func startPayment() async {
-        guard !state.isBusy else { return }
+    private func startPayment(isRetry: Bool) async {
+        if isRetry {
+            switch state {
+            case .failure, .cancelled:
+                break
+            case .idle, .loading, .presenting, .processing, .success, .expired:
+                return
+            }
+        } else {
+            guard state == .idle else { return }
+        }
         state = .loading
 
         do {

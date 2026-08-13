@@ -34,13 +34,14 @@ struct PaymentFlowView: View {
         .task {
             await viewModel.handle(.start)
         }
+        .onChange(of: viewModel.state) { _, state in
+            guard state == .success else { return }
+            onCompleted()
+        }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
-            guard viewModel.state == .processing || viewModel.state == .cancelled else { return }
+            guard viewModel.state == .cancelled else { return }
             Task { await viewModel.handle(.refreshStatus) }
-        }
-        .onDisappear {
-            Task { await viewModel.handle(.stop) }
         }
     }
 

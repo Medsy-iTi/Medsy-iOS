@@ -63,11 +63,7 @@ struct OrderDetailView: View {
                 .frame(maxWidth: .infinity)
 
             HStack {
-                Button(action: onBack) {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AppColor.textPrim)
-                }
+                MedsyNavBarBackButton(action: onBack)
                 .padding(.leading, MedsySpacing.md)
                 Spacer()
             }
@@ -213,7 +209,7 @@ struct OrderDetailView: View {
             Text(fulfillmentLabel(for: type))
             .font(AppColor.sans(13, .medium))
         }
-        .foregroundStyle(AppColor.green)
+        .foregroundStyle(AppColor.onPrimaryContainer)
         .padding(.horizontal, MedsySpacing.sm)
         .padding(.vertical, MedsySpacing.xxs + 2)
         .background(AppColor.lightGreen)
