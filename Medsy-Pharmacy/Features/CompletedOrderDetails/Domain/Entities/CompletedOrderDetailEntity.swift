@@ -23,6 +23,7 @@ struct CompletedOrderDetailsEntity: Identifiable {
     let deliveryLatitude: Double?
     let deliveryLongitude: Double?
     let createdAt: Date
+    let status: PharmacyOrderAPIStatus
     let items: [CompletedOrderDetailsItemEntity]
 }
 

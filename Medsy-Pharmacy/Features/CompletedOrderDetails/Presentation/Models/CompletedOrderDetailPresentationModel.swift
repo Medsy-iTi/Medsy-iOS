@@ -24,6 +24,7 @@ struct CompletedOrderDetailPresentationModel: Identifiable {
     let hasDelivery: Bool
     let deliveryLatitude: Double?
     let deliveryLongitude: Double?
+    let status: PharmacyOrderAPIStatus
 }
 
 struct CompletedOrderItemPresentationModel: Identifiable {

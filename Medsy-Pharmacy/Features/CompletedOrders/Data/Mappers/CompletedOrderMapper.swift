@@ -22,8 +22,8 @@ enum CompletedOrderMapper {
         CompletedOrderItem(
             id: dto.id,
             productId: dto.productId,
-            productName: dto.productName,
-            imageUrl: dto.imageUrl,
+            productName: dto.product?.name ?? "",
+            imageUrl: dto.product?.imageUrl,
             quantity: dto.quantity,
             unitPrice: dto.unitPrice,
             totalPrice: dto.totalPrice
@@ -45,7 +45,7 @@ enum CompletedOrderMapper {
             pharmacistName: dto.pharmacistName,
             offerId: dto.offerId,
             subTotal: dto.subTotal,
-            deliveryFee: dto.deliveryFee,
+            deliveryFee: dto.deliveryFee ?? 0,
             total: dto.total,
             deliveryLatitude: dto.deliveryLatitude,
             deliveryLongitude: dto.deliveryLongitude,

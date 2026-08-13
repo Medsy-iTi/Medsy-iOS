@@ -25,7 +25,8 @@ enum CompletedOrderDetailsEntityMapper {
             total: entity.total,
             hasDelivery: true,
             deliveryLatitude: entity.deliveryLatitude,
-            deliveryLongitude: entity.deliveryLongitude
+            deliveryLongitude: entity.deliveryLongitude,
+            status: entity.status
         )
     }
 
