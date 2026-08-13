@@ -10,9 +10,11 @@ import SwiftUI
 
 enum OrderStatusPresentation {
     case pending
+    case pendingPayment
     case confirmed
     case preparing
     case readyForPickup
+    case readyForDelivery
     case outForDelivery
     case delivered
     case cancelled
@@ -21,9 +23,11 @@ enum OrderStatusPresentation {
     init(rawValue: String) {
         switch rawValue.uppercased() {
         case "PENDING":    self = .pending
+        case "PENDING_PAYMENT": self = .pendingPayment
         case "CONFIRMED":  self = .confirmed
         case "PREPARING":        self = .preparing
         case "READY_FOR_PICKUP": self = .readyForPickup
+        case "READY_FOR_DELIVERY": self = .readyForDelivery
         case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED":  self = .delivered
         case "CANCELLED":  self = .cancelled
@@ -34,9 +38,11 @@ enum OrderStatusPresentation {
     var labelKey: String {
         switch self {
         case .pending:             "orders.status.pending"
+        case .pendingPayment:      "orders.status.pending_payment"
         case .confirmed:           "orders.status.confirmed"
         case .preparing:           "orders.status.preparing"
         case .readyForPickup:      "orders.status.ready_for_pickup"
+        case .readyForDelivery:    "orders.status.ready_for_delivery"
         case .outForDelivery:      "orders.status.out_for_delivery"
         case .delivered:           "orders.status.delivered"
         case .cancelled:           "orders.status.cancelled"
@@ -46,7 +52,7 @@ enum OrderStatusPresentation {
 
     var color: Color {
         switch self {
-        case .pending, .confirmed, .preparing, .readyForPickup, .outForDelivery:
+        case .pending, .pendingPayment, .confirmed, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery:
             return AppColor.green
         case .delivered:
             return AppColor.green
@@ -59,7 +65,7 @@ enum OrderStatusPresentation {
 
     var isActive: Bool {
         switch self {
-        case .pending, .confirmed, .preparing, .readyForPickup, .outForDelivery: return true
+        case .pending, .pendingPayment, .confirmed, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery: return true
         default: return false
         }
     }

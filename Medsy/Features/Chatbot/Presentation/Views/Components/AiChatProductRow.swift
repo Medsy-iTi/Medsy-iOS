@@ -86,6 +86,10 @@ struct AiChatProductRow: View {
         .padding(.bottom, 12)
         .background(AppColor.card)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
     }
 }
 

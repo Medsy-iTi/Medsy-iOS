@@ -8,9 +8,11 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
+    @State private var favoriteCountViewModel = DIContainer.shared.resolve(FavoriteCountViewModel.self)
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
+    let onFavoritesTap: () -> Void
     var onCompareOffers: (() -> Void)? = nil
     var onOpenOfferResult: ((OfferResult, Int) -> Void)? = nil
     let homeAddress: String
@@ -24,6 +26,8 @@ struct HomeView: View {
             VStack(spacing: 20) {
                 HomeHeaderView(
                     homeAddress: homeAddress,
+                    favoriteCount: favoriteCountViewModel.count,
+                    onFavoritesTap: onFavoritesTap,
                     onAddressTap: onAddressTap
                 )
                 HomeSearchBar(onTap: onSearchTap)
@@ -81,11 +85,20 @@ struct HomeView: View {
                 HomeQuickDeliveryBanner()
                 Color.clear.frame(height: 20)
             }
+            .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+            .clipped()
         }
         .background(AppColor.bg)
         .onAppear {
             viewModel.checkAndStartPolling()
         }
+        .task {
+            await favoriteCountViewModel.refresh()
+
+            for await _ in NotificationCenter.default.notifications(named: .favoritesDidChange) {
+                guard !Task.isCancelled else { return }
+                await favoriteCountViewModel.refresh()
+            }
+        }
     }
 }
-

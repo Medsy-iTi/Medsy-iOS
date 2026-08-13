@@ -2,12 +2,25 @@
 //  MedsyChatView+NavigationBar.swift
 //  Medsy
 //
+//  Created by Ahmed Elkady on 12/08/2026.
+//
 
 import SwiftUI
 
 extension MedsyChatView {
     var navigationBar: some View {
         HStack(spacing: MedsySpacing.xs) {
+            if let onBack {
+                Button(action: onBack) {
+                    Image(systemName: "chevron.backward")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppColor.green)
+                        .frame(width: 36, height: 36)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("common.back".localized)
+            }
+
             // AI avatar
             ZStack {
                 RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
@@ -78,6 +91,8 @@ extension MedsyChatView {
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
         .background(AppColor.surface)
-        .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+        .overlay(alignment: .bottom) {
+            Divider().background(AppColor.border)
+        }
     }
 }

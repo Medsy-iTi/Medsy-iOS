@@ -2,6 +2,8 @@
 //  ChatbotRootView.swift
 //  Medsy
 //
+//  Created by Ahmed Elkady on 12/08/2026.
+//
 
 import SwiftUI
 
@@ -12,16 +14,25 @@ struct ChatbotRootView: View {
     var onTabBarHiddenChange: (Bool) -> Void
     var onOpenCart: (() -> Void)?
     var onOpenCompleteRequest: (() -> Void)?
+    @Binding private var pendingPrompt: String?
+    private let promptSequence: Int
+    private let onBackToProduct: (() -> Void)?
 
     init(
         viewModel: AiChatViewModel? = nil,
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
-        onOpenCompleteRequest: (() -> Void)? = nil
+        onOpenCompleteRequest: (() -> Void)? = nil,
+        pendingPrompt: Binding<String?> = .constant(nil),
+        promptSequence: Int = 0,
+        onBackToProduct: (() -> Void)? = nil
     ) {
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onOpenCart = onOpenCart
         self.onOpenCompleteRequest = onOpenCompleteRequest
+        self._pendingPrompt = pendingPrompt
+        self.promptSequence = promptSequence
+        self.onBackToProduct = onBackToProduct
         self._viewModel = State(
             wrappedValue: viewModel ?? DIContainer.shared.resolve(AiChatViewModel.self)
         )
@@ -29,7 +40,7 @@ struct ChatbotRootView: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            MedsyChatView(viewModel: viewModel)
+            MedsyChatView(viewModel: viewModel, onBack: onBackToProduct)
                 .navigationBarHidden(true)
                 .navigationDestination(for: ChatbotRoute.self) { route in
                     destination(for: route)
@@ -49,6 +60,14 @@ struct ChatbotRootView: View {
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
         }
+        .onAppear { consumePendingPrompt() }
+        .onChange(of: promptSequence) { _, _ in consumePendingPrompt() }
+    }
+
+    private func consumePendingPrompt() {
+        guard let prompt = pendingPrompt else { return }
+        viewModel.prefillPrompt(prompt)
+        pendingPrompt = nil
     }
 
     @ViewBuilder

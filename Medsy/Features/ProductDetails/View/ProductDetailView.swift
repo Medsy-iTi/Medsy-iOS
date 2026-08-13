@@ -12,6 +12,7 @@ struct ProductDetailView: View {
     @Environment(CartViewModel.self) private var cartViewModel
     @ObservedObject private var appSettings = AppSettings.shared
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openChatbotPrompt) private var openChatbotPrompt
 
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(productId: productId))
@@ -36,6 +37,19 @@ struct ProductDetailView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .onAppear { viewModel.load() }
+        .alert(
+            "favorites.persistence_error.title".localized,
+            isPresented: Binding(
+                get: { viewModel.favoriteErrorMessage != nil },
+                set: { if !$0 { viewModel.favoriteErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {
+                viewModel.favoriteErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.favoriteErrorMessage ?? "")
+        }
     }
 
     // MARK: - Content switcher
@@ -84,7 +98,8 @@ struct ProductDetailView: View {
                 ImageCarousel(
                     images: product.images,
                     selectedIndex: $viewModel.selectedImageIndex,
-                    isFavorite: $viewModel.isFavorite
+                    isFavorite: viewModel.isFavorite,
+                    onToggleFavorite: viewModel.toggleFavorite
                 )
 
                 ProductHeaderInfo(
@@ -133,7 +148,7 @@ struct ProductDetailView: View {
                         systemImage: "bubble.left.and.bubble.right",
                         style: .secondary
                     ) {
-                        viewModel.consultPharmacist()
+                        openChatbotPrompt?("tell me about \(product.title)")
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)

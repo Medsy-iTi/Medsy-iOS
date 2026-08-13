@@ -26,4 +26,9 @@ final class OrdersRepository: OrdersRepositoryProtocol {
         let order = try await remoteDataSource.fetchOrderDetail(id: id)
         return OrderMapper.mapToDetailEntity(order)
     }
+
+    func fetchOrderDeliveryLocation(requestID: Int) async throws -> OrderCoordinateEntity {
+        let request = try await remoteDataSource.fetchRequestDetail(id: requestID)
+        return try OrderMapper.mapDeliveryLocation(request)
+    }
 }

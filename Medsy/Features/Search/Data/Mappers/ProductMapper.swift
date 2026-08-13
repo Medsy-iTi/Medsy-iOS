@@ -18,7 +18,7 @@ enum ProductMapper {
             price: dto.price,
             imageUrl: dto.imageUrl,
             categoryId: dto.categoryId ?? 0,
-            categoryName: dto.categoryName ?? "",
+            categoryName: dto.categoryName ?? dto.consumerCategory ?? "",
             company: dto.company ?? "",
             route: dto.route ?? ""
         )

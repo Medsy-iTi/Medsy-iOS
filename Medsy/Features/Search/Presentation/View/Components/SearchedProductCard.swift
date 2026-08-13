@@ -63,7 +63,6 @@ struct SearchedProductCard: View {
 	private var actionColumn: some View {
 		VStack(spacing: MedsySpacing.sm) {
 			Button {
-				product.isFavorite.toggle()
 				onToggleFavorite?()
 			} label: {
 				Image(systemName: product.isFavorite ? "heart.fill" : "heart")

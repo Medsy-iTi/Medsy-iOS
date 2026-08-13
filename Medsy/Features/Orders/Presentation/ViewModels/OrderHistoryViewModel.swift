@@ -36,19 +36,19 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
     func handle(_ event: OrderHistoryEvent) {
         switch event {
         case .load:
-            load(filters: activeFilters, reset: true)
+            load(reset: true)
         case .retry:
-            load(filters: activeFilters, reset: true)
+            load(reset: true)
         case .applyFilters(let filters):
             activeFilters = filters
-            load(filters: filters, reset: true)
+            renderLoadedOrders()
         case .loadNextPage:
             guard !isLastPage, !isLoadingNextPage else { return }
             loadNextPage()
         }
     }
 
-    private func load(filters: ActiveOrderFilters, reset: Bool) {
+    private func load(reset: Bool) {
         loadTask?.cancel()
         if reset {
             currentPage = 0
@@ -58,7 +58,7 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         }
         historyState = .loading
         loadTask = Task {
-            await fetchOrders(filters: filters, page: 0, appending: false)
+            await fetchOrders(page: 0, appending: false)
         }
     }
 
@@ -67,53 +67,43 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         let nextPage = currentPage + 1
         isLoadingNextPage = true
         loadTask = Task {
-            await fetchOrders(filters: activeFilters, page: nextPage, appending: true)
+            await fetchOrders(page: nextPage, appending: true)
             isLoadingNextPage = false
         }
     }
 
-    private func fetchOrders(filters: ActiveOrderFilters, page: Int, appending: Bool) async {
+    private func fetchOrders(page: Int, appending: Bool) async {
         guard let useCase = loadOrdersUseCase else { return }
         do {
-            var requestedPage = page
-            var shouldReplace = !appending
+            let result = try await useCase.execute(
+                filter: .empty,
+                page: page,
+                size: Self.pageSize
+            )
+            guard !Task.isCancelled else { return }
 
-            while true {
-                let result = try await useCase.execute(
-                    filter: filters.toDomainFilter(),
-                    page: requestedPage,
-                    size: Self.pageSize
-                )
-                guard !Task.isCancelled else { return }
-
-                let mapped = result.items
-                    .map(OrderEntityMapper.map)
-                    .filter { filters.matches($0) }
-
-                if shouldReplace {
-                    loadedOrders = mapped
-                    shouldReplace = false
-                } else {
-                    loadedOrders.append(contentsOf: mapped)
-                }
-
-                currentPage = result.page
-                isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
-
-                if !mapped.isEmpty || isLastPage || filters == .default {
-                    break
-                }
-                requestedPage += 1
+            let mapped = result.items.map(OrderEntityMapper.map)
+            if appending {
+                loadedOrders.append(contentsOf: mapped)
+            } else {
+                loadedOrders = mapped
             }
 
-            let sections = buildSections(from: loadedOrders, filters: filters)
-            historyState = sections.isEmpty ? .loaded([]) : .loaded(sections)
+            currentPage = result.page
+            isLastPage = result.isLast ?? (result.items.count < Self.pageSize)
+            renderLoadedOrders()
         } catch {
             guard !Task.isCancelled else { return }
             if !appending {
                 historyState = .error(error.localizedDescription)
             }
         }
+    }
+
+    private func renderLoadedOrders() {
+        let filteredOrders = loadedOrders.filter(activeFilters.matches)
+        let sections = buildSections(from: filteredOrders, filters: activeFilters)
+        historyState = .loaded(sections)
     }
 
     private func buildSections(from orders: [OrderPresentationModel], filters: ActiveOrderFilters) -> [OrderDateSection] {
@@ -181,4 +171,3 @@ final class OrderHistoryViewModel: OrderHistoryViewModelProtocol {
         return sections
     }
 }
-

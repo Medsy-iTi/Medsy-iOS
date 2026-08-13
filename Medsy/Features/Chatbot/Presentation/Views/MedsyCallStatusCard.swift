@@ -37,11 +37,12 @@ struct MedsyCallStatusCard: View {
                     HStack(spacing: 6) {
                         Text(title)
                             .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(AppColor.textPrim)
                         Circle().fill(liveDotColor).frame(width: 6, height: 6)
                     }
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(AppColor.textSec)
                 }
             }
 
@@ -59,17 +60,21 @@ struct MedsyCallStatusCard: View {
                 Button(action: onSecondaryTap) {
                     Text(secondaryButtonTitle)
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.black)
+                        .foregroundColor(AppColor.textPrim)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .overlay(Capsule().stroke(Color.gray.opacity(0.3)))
+                        .overlay(Capsule().stroke(AppColor.border))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(16)
-        .background(Color.white)
+        .background(AppColor.card)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
     }
 }
 

@@ -22,7 +22,7 @@ struct MedsyProductCard: View {
     var footnote: String? = nil
 
     var accentColor: Color = MedsyTheme.default.primary
-    var cardBackground: Color = .white
+    var cardBackground: Color = AppColor.card
 
     var onPrimaryTap: () -> Void = {}
     var onSecondaryTap: () -> Void = {}
@@ -44,12 +44,12 @@ struct MedsyProductCard: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(name)
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppColor.textPrim)
                         .lineLimit(2)
                         .minimumScaleFactor(0.85)
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(AppColor.textSec)
                     Text(price)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(accentColor)
@@ -96,13 +96,17 @@ struct MedsyProductCard: View {
             if let footnote {
                 Text(footnote)
                     .font(.system(size: 11))
-                    .foregroundColor(.gray)
+                    .foregroundColor(AppColor.textSec)
             }
         }
         .padding(16)
         .padding(.bottom, 12)    // ← extra bottom padding per requirement
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
     }
 
     @ViewBuilder

@@ -42,40 +42,18 @@ struct CompleteRequestView: View {
                         isExpanded: $viewModel.isSummaryExpanded
                     )
 
-                    CompleteRequestReceiveMethodView(
-                        selectedMethod: viewModel.receiveMethod,
-                        onSelect: viewModel.selectReceiveMethod
+                    CompleteRequestDeliveryAddressView(
+                        savedAddress: viewModel.savedAddress,
+                        location: viewModel.deliveryLocation,
+                        isLoading: viewModel.isLoadingAddress,
+                        validationMessage: locationValidationMessage,
+                        onChangeLocation: onChangeLocation
                     )
 
-                    if viewModel.showsDeliveryDetails {
-                        CompleteRequestDeliveryAddressView(
-                            savedAddress: viewModel.savedAddress,
-                            location: viewModel.deliveryLocation,
-                            isLoading: viewModel.isLoadingAddress,
-                            validationMessage: locationValidationMessage,
-                            onChangeLocation: onChangeLocation
-                        )
-
-                        CompleteRequestPaymentMethodView(
-                            selectedMethod: viewModel.paymentMethod,
-                            onSelect: viewModel.selectPaymentMethod
-                        )
-
-                        if viewModel.showsVisaForm {
-                            CompleteRequestVisaFormView(
-                                cardholderName: $viewModel.cardholderName,
-                                cardNumber: $viewModel.cardNumber,
-                                expiry: $viewModel.expiry,
-                                cvv: $viewModel.cvv,
-                                errorMessage: viewModel.validationMessage,
-                                onCardNumberChange: viewModel.formatCardNumber,
-                                onExpiryChange: viewModel.formatExpiry,
-                                onCVVChange: viewModel.formatCVV
-                            )
-                        }
-
-                        CompleteRequestNotesView(notes: $viewModel.notes)
-                    }
+                    CompleteRequestPaymentMethodView(
+                        selectedMethod: viewModel.paymentMethod,
+                        onSelect: viewModel.selectPaymentMethod
+                    )
                 }
                 .padding(.horizontal, MedsySpacing.md)
                 .padding(.vertical, MedsySpacing.md)
@@ -95,7 +73,10 @@ struct CompleteRequestView: View {
             }
             .padding(.horizontal, MedsySpacing.md)
             .padding(.vertical, MedsySpacing.sm)
-            .background(.ultraThinMaterial)
+            .background(AppColor.surface)
+            .overlay(alignment: .top) {
+                Divider().background(AppColor.border)
+            }
         }
         .task {
             await viewModel.loadSavedAddress()

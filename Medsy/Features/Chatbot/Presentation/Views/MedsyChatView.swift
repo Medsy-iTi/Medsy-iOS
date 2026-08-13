@@ -2,6 +2,8 @@
 //  MedsyChatView.swift
 //  Medsy
 //
+//  Created by Ahmed Elkady on 12/08/2026.
+//
 
 import SwiftUI
 import PhotosUI
@@ -14,7 +16,9 @@ struct MedsyChatView: View {
     @State var scrollProxy: ScrollViewProxy?
     @State var showImagePicker = false
     @State var photosPickerItem: PhotosPickerItem?
-    let theme = MedsyTheme.default
+    var onBack: (() -> Void)? = nil
+
+    var theme: MedsyTheme { .default }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -90,5 +94,5 @@ struct MedsyChatView: View {
 }
 
 extension AppColor {
-    static var primaryLight: Color { Color(hex: "E7F5EE") }
+    static var primaryLight: Color { primaryContainer }
 }
