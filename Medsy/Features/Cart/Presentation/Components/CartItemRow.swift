@@ -114,22 +114,24 @@ struct CartItemRow: View {
             } label: {
                 Image(systemName: "minus")
                     .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(AppColor.white)
                     .frame(width: 32, height: 32)
             }
 
             Text("\(item.quantity)")
                 .font(MedsyFont.button(15))
-                .foregroundStyle(AppColor.textPrim)
+                .foregroundStyle(AppColor.white)
                 .frame(minWidth: 26)
 
             Button(action: onIncrease) {
                 Image(systemName: "plus")
                     .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(AppColor.white)
                     .frame(width: 32, height: 32)
             }
         }
-        .foregroundStyle(AppColor.green)
-        .background(AppColor.pill)
+        .foregroundStyle(AppColor.white)
+        .background(AppColor.green)
         .clipShape(Capsule())
         .accessibilityElement(children: .combine)
         .accessibilityLabel("cart.quantity".localized)

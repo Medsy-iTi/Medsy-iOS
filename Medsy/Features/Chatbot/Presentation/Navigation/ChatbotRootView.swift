@@ -19,6 +19,7 @@ struct ChatbotRootView: View {
     private let onBackToProduct: (() -> Void)?
 
     init(
+        viewModel: AiChatViewModel = DIContainer.shared.resolve(AiChatViewModel.self),
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
         onOpenCompleteRequest: (() -> Void)? = nil,
@@ -32,14 +33,17 @@ struct ChatbotRootView: View {
         self._pendingPrompt = pendingPrompt
         self.promptSequence = promptSequence
         self.onBackToProduct = onBackToProduct
-        self._viewModel = State(
-            wrappedValue: DIContainer.shared.resolve(AiChatViewModel.self)
-        )
+        self._viewModel = State(wrappedValue: viewModel)
     }
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            MedsyChatView(viewModel: viewModel, onBack: onBackToProduct)
+            MedsyChatView(viewModel: viewModel, onBack: onBackToProduct.map { action in
+                {
+                    viewModel.clearDraftPrompt()
+                    action()
+                }
+            })
                 .navigationBarHidden(true)
                 .navigationDestination(for: ChatbotRoute.self) { route in
                     destination(for: route)

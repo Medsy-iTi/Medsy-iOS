@@ -114,12 +114,8 @@ struct ProductsView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button {
+                MedsyNavBarBackButton {
                     dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(AppColor.textPrim)
                 }
             }
         }

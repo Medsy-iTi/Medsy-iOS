@@ -99,6 +99,7 @@ struct HomeCoordinatorView: View {
     private let onOpenCart: () -> Void
     private let homeAddress: String
     private let onOpenProfile: () -> Void
+    private let onPaymentCompleted: (Int) -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
@@ -106,7 +107,8 @@ struct HomeCoordinatorView: View {
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
         onOpenCart: @escaping () -> Void = {},
         homeAddress: String,
-        onOpenProfile: @escaping () -> Void
+        onOpenProfile: @escaping () -> Void,
+        onPaymentCompleted: @escaping (Int) -> Void = { _ in }
     ) {
         _requestedRoute = requestedRoute
         _rootResetSignal = rootResetSignal
@@ -114,6 +116,7 @@ struct HomeCoordinatorView: View {
         self.onOpenCart = onOpenCart
         self.homeAddress = homeAddress
         self.onOpenProfile = onOpenProfile
+        self.onPaymentCompleted = onPaymentCompleted
     }
 
     var body: some View {
@@ -121,6 +124,7 @@ struct HomeCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             HomeView(
+                refreshSignal: rootResetSignal,
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
@@ -188,21 +192,18 @@ struct HomeCoordinatorView: View {
                             coordinator.openPayment(result, offerDetail: offerDetail)
                         }
                     )
-                case let .payment(result, offerDetail):
-                    let showCompletedOrder = {
-                        coordinator.replacePaymentWithOrderComplete(
-                            result,
-                            offerDetail: offerDetail
-                        )
-                    }
+                case let .payment(result, _):
                     if let masterOrderId = result.masterOrderId {
                         PaymentFlowView(
                             viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
-                                masterOrderId: masterOrderId,
-                                onCashPayment: showCompletedOrder
+                                masterOrderId: masterOrderId
                             ),
-                            onCompleted: showCompletedOrder,
-                            onViewOrder: showCompletedOrder
+                            onCompleted: {
+                                onPaymentCompleted(masterOrderId)
+                            },
+                            onViewOrder: {
+                                onPaymentCompleted(masterOrderId)
+                            }
                         )
                     } else {
                         PaymentStatusView(

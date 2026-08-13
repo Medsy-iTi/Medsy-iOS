@@ -15,9 +15,11 @@
 
 /* Splash */
 "splash.brand" = "Medsy";
+"splash.brand_prefix" = "Med";
+"splash.brand_suffix" = "sy";
 "splash.tagline" = "Your health, our priority";
 "splash.subtitle" = "Medicines and care, made simple.";
-"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority.";
 
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
@@ -566,13 +568,13 @@
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
 "orders.detail.pharmacy_locations"   = "Pharmacy locations";
-"orders.detail.delivery_location"    = "Delivery location";
-"orders.detail.location_prompt"      = "View the pharmacy on the map and draw the route to the delivery location saved on this order.";
+"orders.detail.delivery_location"    = "Current location";
+"orders.detail.location_prompt"      = "View the pharmacy on the map and draw the route from your current location.";
 "orders.detail.show_location_path"   = "Show location and path";
-"orders.detail.locating"             = "Loading delivery location…";
+"orders.detail.locating"             = "Loading your current location…";
 "orders.detail.loading_route"        = "Finding the best driving route…";
 "orders.detail.location_permission_denied" = "Location access is unavailable.";
-"orders.detail.location_unavailable" = "The delivery location for this order is unavailable. You can still open the pharmacy in Maps.";
+"orders.detail.location_unavailable" = "Your current location is unavailable. You can still open the pharmacy in Maps.";
 "orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
 "orders.detail.open_directions"      = "Open turn-by-turn directions";
 "orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
@@ -670,7 +672,7 @@
 "payment.error.master_order_unavailable" = "Unable to load the master order.";
 "payment.card.navigation_title" = "Secure card payment";
 "payment.card.title" = "Enter your card details";
-"payment.card.subtitle" = "Your card information is encrypted and sent securely to Stripe. Medsy does not store it.";
+"payment.card.subtitle" = "Your payment data is secure.";
 "payment.card.details" = "Card details";
 "payment.card.pay" = "Pay securely";
 "payment.card.cancel" = "Cancel";
@@ -949,3 +951,4 @@
 "chatbot.product.add_to_cart"        = "Add to Cart";
 "chatbot.product.details"            = "Details";
 "chatbot.product.rx_only"            = "Rx Only";
+"chatbot.consult_product_prompt"     = "Tell me about %@";

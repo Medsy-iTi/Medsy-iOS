@@ -15,9 +15,11 @@
 
 /* Splash */
 "splash.brand" = "ميدسي";
+"splash.brand_prefix" = "ميد";
+"splash.brand_suffix" = "سي";
 "splash.tagline" = "صحتك، أولويتنا";
 "splash.subtitle" = "الدواء والرعاية الصحية بكل سهولة.";
-"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا. الدواء والرعاية الصحية بكل سهولة.";
+"splash.accessibility_label" = "ميدسي. صحتك، أولويتنا.";
 
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "الملف الشخصي للصيدلية";
@@ -565,13 +567,13 @@
 "orders.detail.reorder"              = "إعادة الطلب";
 "orders.detail.alternative_to"       = "بديل لـ %@";
 "orders.detail.pharmacy_locations"   = "مواقع الصيدليات";
-"orders.detail.delivery_location"    = "موقع التوصيل";
-"orders.detail.location_prompt"      = "اعرض الصيدلية على الخريطة وارسم المسار إلى موقع التوصيل المحفوظ لهذا الطلب.";
+"orders.detail.delivery_location"    = "موقعك الحالي";
+"orders.detail.location_prompt"      = "اعرض الصيدلية على الخريطة وارسم المسار من موقعك الحالي.";
 "orders.detail.show_location_path"   = "عرض الموقع والمسار";
-"orders.detail.locating"             = "جارٍ تحميل موقع التوصيل…";
+"orders.detail.locating"             = "جارٍ تحميل موقعك الحالي…";
 "orders.detail.loading_route"        = "جارٍ البحث عن أفضل مسار بالسيارة…";
 "orders.detail.location_permission_denied" = "إذن الموقع غير متاح.";
-"orders.detail.location_unavailable" = "موقع التوصيل لهذا الطلب غير متاح. لا يزال بإمكانك فتح الصيدلية في الخرائط.";
+"orders.detail.location_unavailable" = "موقعك الحالي غير متاح. لا يزال بإمكانك فتح الصيدلية في الخرائط.";
 "orders.detail.route_unavailable"    = "المسار غير متاح حاليًا. لا يزال بإمكانك فتح موقع الصيدلية في الخرائط.";
 "orders.detail.open_directions"      = "فتح الاتجاهات خطوة بخطوة";
 "orders.detail.pharmacy_items_empty" = "لا تتوفر تفاصيل الأدوية لهذه الصيدلية.";
@@ -668,7 +670,7 @@
 "payment.error.master_order_unavailable" = "تعذر تحميل الطلب الرئيسي.";
 "payment.card.navigation_title" = "دفع آمن بالبطاقة";
 "payment.card.title" = "أدخل بيانات بطاقتك";
-"payment.card.subtitle" = "تُشفّر بيانات بطاقتك وتُرسل بأمان إلى Stripe، ولا يقوم Medsy بتخزينها.";
+"payment.card.subtitle" = "بيانات الدفع الخاصة بك آمنة.";
 "payment.card.details" = "بيانات البطاقة";
 "payment.card.pay" = "ادفع بأمان";
 "payment.card.cancel" = "إلغاء";
@@ -943,3 +945,4 @@
 "chatbot.product.add_to_cart"         = "أضف للسلة";
 "chatbot.product.details"             = "تفاصيل";
 "chatbot.product.rx_only"             = "بوصفة طبية فقط";
+"chatbot.consult_product_prompt"      = "أخبرني عن %@";

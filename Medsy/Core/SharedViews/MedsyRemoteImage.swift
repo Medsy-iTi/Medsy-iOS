@@ -69,8 +69,16 @@ private final class MedsyRemoteImageLoader {
             return
         }
 
+        if currentURL == url, case .success = phase {
+            return
+        }
+
         currentURL = url
-        phase = .loading
+        if case .success = phase {
+            phase = .loading
+        } else if case .idle = phase {
+            phase = .loading
+        }
 
         do {
             let data = try await MedsyImagePipeline.shared.data(for: url)
@@ -96,8 +104,21 @@ private enum MedsyImageURL {
     static func normalized(_ rawValue: String?) -> URL? {
         guard let value = rawValue?
             .trimmingCharacters(in: .whitespacesAndNewlines),
-              !value.isEmpty,
-              let components = URLComponents(string: value),
+              !value.isEmpty else {
+            return nil
+        }
+
+        if let components = URLComponents(string: value),
+           let scheme = components.scheme?.lowercased(),
+           (scheme == "https" || scheme == "http"),
+           components.host != nil {
+            return components.url
+        }
+
+        guard let encodedValue = value.addingPercentEncoding(
+            withAllowedCharacters: .urlFragmentAllowed
+        ),
+              let components = URLComponents(string: encodedValue),
               let scheme = components.scheme?.lowercased(),
               scheme == "https" || scheme == "http",
               components.host != nil else {
@@ -128,7 +149,7 @@ private actor MedsyImagePipeline {
         }
 
         let task = Task.detached(priority: .utility) {
-            try await Self.download(from: url)
+            try await Self.downloadWithRetries(from: url)
         }
         inFlight[url] = task
 
@@ -147,6 +168,24 @@ private actor MedsyImagePipeline {
         cache.removeObject(forKey: url as NSURL)
     }
 
+    private nonisolated static func downloadWithRetries(from url: URL) async throws -> Data {
+        var lastError: Error = URLError(.cannotLoadFromNetwork)
+
+        for attempt in 0..<3 {
+            do {
+                return try await download(from: url)
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                lastError = error
+                guard attempt < 2 else { break }
+                try await Task.sleep(nanoseconds: UInt64(250_000_000 * (attempt + 1)))
+            }
+        }
+
+        throw lastError
+    }
+
     private nonisolated static func download(from url: URL) async throws -> Data {
         var lastError: Error = URLError(.cannotLoadFromNetwork)
 
@@ -159,7 +198,7 @@ private actor MedsyImagePipeline {
             do {
                 var request = URLRequest(
                     url: url,
-                    cachePolicy: .reloadRevalidatingCacheData,
+                    cachePolicy: .returnCacheDataElseLoad,
                     timeoutInterval: 20
                 )
                 request.setValue(accept, forHTTPHeaderField: "Accept")

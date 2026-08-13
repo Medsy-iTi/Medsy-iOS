@@ -83,6 +83,7 @@ struct CompleteRequestLocationPickerView: View {
 
             TextField("address.search_placeholder".localized, text: $viewModel.searchText)
                 .textInputAutocapitalization(.words)
+                .localizedTextInput()
                 .submitLabel(.search)
                 .onChange(of: viewModel.searchText) {
                     viewModel.scheduleSearch()

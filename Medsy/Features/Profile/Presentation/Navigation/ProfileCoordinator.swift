@@ -8,6 +8,11 @@
 import Observation
 import SwiftUI
 
+enum ProfileRoute: Hashable {
+    case favorites
+    case search(String)
+}
+
 enum ProfilePresentation: Identifiable {
     case editProfile(openAddressPicker: Bool = false)
     case language
@@ -32,6 +37,7 @@ enum ProfilePresentation: Identifiable {
 @MainActor
 @Observable
 final class ProfileCoordinator {
+    var path = NavigationPath()
     var activePresentation: ProfilePresentation?
     var showsLogoutConfirmation = false
     let viewModel: ProfileViewModel
@@ -133,6 +139,12 @@ final class ProfileCoordinator {
 
     func showEditProfile(openAddressPicker: Bool = false) {
         activePresentation = .editProfile(openAddressPicker: openAddressPicker)
+    }
+    func showFavorites() { path.append(ProfileRoute.favorites) }
+    func showSearch(query: String = "") { path.append(ProfileRoute.search(query)) }
+    func goBack() {
+        guard !path.isEmpty else { return }
+        path.removeLast()
     }
     func showLanguagePicker() { activePresentation = .language }
     func showThemePicker() { activePresentation = .theme }

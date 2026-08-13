@@ -137,7 +137,7 @@ struct SearchResultsView: View {
 									product.quantity = cartQuantity(for: product)
 								},
 								onDecrement: {
-									cartViewModel.handle(.decreaseQuantity(itemID: product.id))
+									decreaseOneFromCart(product)
 									product.quantity = cartQuantity(for: product)
 								},
 								onToggleFavorite: {
@@ -186,5 +186,14 @@ struct SearchResultsView: View {
 
 	private func cartQuantity(for product: MedsyProduct) -> Int {
 		cartViewModel.quantity(forProductID: Int64(product.id))
+	}
+
+	private func decreaseOneFromCart(_ product: MedsyProduct) {
+		guard let productID = Int64(product.id),
+			  let cartItemID = cartViewModel.itemID(forProductID: productID) else {
+			return
+		}
+
+		cartViewModel.handle(.decreaseQuantity(itemID: cartItemID))
 	}
 }
