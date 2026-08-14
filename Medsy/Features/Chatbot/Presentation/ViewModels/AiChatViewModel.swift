@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UserNotifications
 
 // MARK: - Protocol
 
@@ -35,6 +36,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     var onOpenCart: (() -> Void)? { get set }
     var onOpenCompleteRequest: (() -> Void)? { get set }
     var onOpenProductDetails: ((Int) -> Void)? { get set }
+    var onOpenReminders: (() -> Void)? { get set }
 }
 
 // MARK: - Implementation
@@ -63,6 +65,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     var onOpenCart: (() -> Void)?
     var onOpenCompleteRequest: (() -> Void)?
     var onOpenProductDetails: ((Int) -> Void)?
+    var onOpenReminders: (() -> Void)?
 
     // MARK: - Dependencies
     private let sendTextUseCase: SendAiChatTextMessageUseCaseProtocol
@@ -71,6 +74,8 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     private let startNewChatUseCase: StartNewAiChatUseCaseProtocol
     private let session: AIChatSessionDataSource
     private let speechRecognizer: AiChatSpeechRecognizer
+    private let reminderStore: ReminderStore?
+    private let reminderScheduler: ReminderScheduler
 
     // MARK: - Internal tracking
     private var activeTask: Task<Void, Never>?
@@ -84,7 +89,9 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         loadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol,
         startNewChatUseCase: StartNewAiChatUseCaseProtocol,
         session: AIChatSessionDataSource,
-        speechRecognizer: AiChatSpeechRecognizer
+        speechRecognizer: AiChatSpeechRecognizer,
+        reminderStore: ReminderStore? = nil,
+        reminderScheduler: ReminderScheduler = .shared
     ) {
         self.sendTextUseCase = sendTextUseCase
         self.sendImageUseCase = sendImageUseCase
@@ -92,6 +99,8 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         self.startNewChatUseCase = startNewChatUseCase
         self.session = session
         self.speechRecognizer = speechRecognizer
+        self.reminderStore = reminderStore
+        self.reminderScheduler = reminderScheduler
     }
 
     // MARK: - Lifecycle
@@ -169,7 +178,6 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
         performSend(text: text.isEmpty ? nil : text, image: imageData, existingUserID: nil)
     }
-
     // MARK: - Retry
 
     func retryMessage(id: Int) {
@@ -248,8 +256,10 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         if let existingID = existingUserID {
             userID = existingID
         } else {
+            // For image messages, use a placeholder label and store the image data
+            // so the bubble can render a real thumbnail instead of an icon string.
             let label = text ?? "chatbot.camera.image_preview".localized
-            userID = session.appendOptimisticUserMessage(text: label)
+            userID = session.appendOptimisticUserMessage(text: label, imageData: image)
         }
         let typingID = session.appendTypingIndicator()
         syncMessages()
@@ -273,6 +283,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
                 session.resolveResponse(response, typingID: typingID, sentGeneration: capturedGeneration)
                 syncMessages()
                 handleAction(response.action)
+                handleReminder(response.reminder)
             } catch {
                 guard !Task.isCancelled else { return }
                 session.removeTypingIndicator(id: typingID)
@@ -296,11 +307,38 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         guard let action else { return }
         switch action.type {
         case .addedToCart:
-            // Backend already added — just open cart; do NOT call cart API
-            onOpenCart?()
+            // Backend already added the product to the cart.
+            // Do NOT auto-navigate — the success card has a "View Cart" button
+            // so the user controls when to open the cart, ensuring the CartViewModel
+            // has time to reload before they see it.
+            break
         case .createRequest:
             // Do NOT auto-navigate — just signal availability via the card
             break
+        }
+    }
+
+    // MARK: - Reminder side-effects
+
+    private func handleReminder(_ reminder: AIChatReminder?) {
+        guard let reminder else { return }
+        // Persist the reminder locally and schedule system notifications.
+        // This is a fire-and-forget Task — if scheduling fails the chat response
+        // is still shown (the answer text always describes what was set).
+        Task {
+            if let store = reminderStore {
+                let saved = await MainActor.run {
+                    store.insert(
+                        medicineName: reminder.medicineName,
+                        times: reminder.times,
+                        durationDays: reminder.durationDays
+                    )
+                }
+                await reminderScheduler.schedule(reminder: saved)
+            } else {
+                // No store injected (e.g. preview) — still request permission for UX.
+                await reminderScheduler.requestAuthorization()
+            }
         }
     }
 

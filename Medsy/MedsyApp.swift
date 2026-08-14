@@ -7,6 +7,8 @@
 
 import StripePaymentSheet
 import SwiftUI
+import SwiftData
+import UserNotifications
 
 @main
 struct MedsyApp: App {
@@ -16,8 +18,19 @@ struct MedsyApp: App {
     private let authenticationFactory: AuthenticationFactory
     private let logoutUseCase: LogoutUseCaseProtocol
     private let appCoordinator: AppCoordinator
+    private let reminderContainer: ModelContainer
+    private let reminderStore: ReminderStore
 
     init() {
+        // Build the SwiftData container for medication reminders
+        let schema = Schema([MedReminder.self])
+        let container = (try? SwiftDataFactory.shared.makeContainer(
+            for: schema,
+            configuration: .persistent(name: "MedsyReminders")
+        )) ?? (try! ModelContainer(for: schema))
+        reminderContainer = container
+        reminderStore = ReminderStore(context: container.mainContext)
+
         AppAssembler.shared.assemble(modules: [
             CoreAssembly(),
             OnboardingAssembly(),
@@ -34,7 +47,7 @@ struct MedsyApp: App {
             PharmacyProfileAssembly(),
             OrdersAssembly(),
             PresenceAssembly(),
-            ChatbotAssembly(),
+            ChatbotAssembly(reminderStore: reminderStore),
             PrescriptionAssembly(),
             MedicineAnalyzeAssembly(),
             OffersAssembly(),
@@ -67,8 +80,14 @@ struct MedsyApp: App {
 //            }
                      .localizedEnvironment()
             .environment(languageManager)
+            .modelContainer(reminderContainer)
             .onOpenURL { url in
                 _ = StripeAPI.handleURLCallback(with: url)
+            }
+            .task {
+                // Reboot recovery: reschedule any active reminders whose
+                // UNNotification requests were cleared by a device restart.
+                await ReminderScheduler.shared.rescheduleActive(from: reminderStore)
             }
         }
     }

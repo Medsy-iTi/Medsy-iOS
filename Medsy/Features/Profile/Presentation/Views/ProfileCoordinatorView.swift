@@ -48,6 +48,7 @@ struct ProfileCoordinatorView: View {
                 onHowMedsyWorks: coordinator.showHowMedsyWorks,
                 onHelpCenter: coordinator.showHelpCenter,
                 onReportProblem: coordinator.showReportProblem,
+                onReminders: coordinator.showMyReminders,
                 onLogout: coordinator.requestLogout
             )
             .navigationDestination(for: ProfileRoute.self) { route in
@@ -74,6 +75,8 @@ struct ProfileCoordinatorView: View {
                     ProfileHelpCenterView(onBack: coordinator.goBack)
                 case .reportProblem:
                     ReportProblemView(onBack: coordinator.goBack)
+                case .myReminders:
+                    MyRemindersView(onBack: coordinator.goBack)
                 }
             }
             .navigationDestination(for: ProductDetailDestination.self) { destination in

@@ -14,6 +14,7 @@ struct ChatbotRootView: View {
     var onTabBarHiddenChange: (Bool) -> Void
     var onOpenCart: (() -> Void)?
     var onOpenCompleteRequest: (() -> Void)?
+    var onOpenReminders: (() -> Void)?
     @Binding private var pendingPrompt: String?
     private let promptSequence: Int
     private let onBackToProduct: (() -> Void)?
@@ -23,6 +24,7 @@ struct ChatbotRootView: View {
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
         onOpenCompleteRequest: (() -> Void)? = nil,
+        onOpenReminders: (() -> Void)? = nil,
         pendingPrompt: Binding<String?> = .constant(nil),
         promptSequence: Int = 0,
         onBackToProduct: (() -> Void)? = nil
@@ -30,6 +32,7 @@ struct ChatbotRootView: View {
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onOpenCart = onOpenCart
         self.onOpenCompleteRequest = onOpenCompleteRequest
+        self.onOpenReminders = onOpenReminders
         self._pendingPrompt = pendingPrompt
         self.promptSequence = promptSequence
         self.onBackToProduct = onBackToProduct
@@ -61,6 +64,7 @@ struct ChatbotRootView: View {
             }
             viewModel.onOpenCart = onOpenCart
             viewModel.onOpenCompleteRequest = onOpenCompleteRequest
+            viewModel.onOpenReminders = onOpenReminders
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)

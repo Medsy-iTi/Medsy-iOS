@@ -9,16 +9,21 @@ struct AiChatProductRow: View {
         VStack(alignment: .leading, spacing: MedsySpacing.md) {
             HStack(spacing: MedsySpacing.md) {
                 // Product Image
-                AsyncImage(url: product.imageURL.flatMap(URL.init(string:))) { phase in
+                AsyncImage(url: resolvedImageURL(product.imageURL)) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
-                            .frame(width: 60, height: 60)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: MedsyRadius.md)
+                                .fill(AppColor.green.opacity(0.08))
+                            ProgressView()
+                                .scaleEffect(0.7)
+                        }
+                        .frame(width: 64, height: 64)
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 60, height: 60)
+                            .scaledToFill()
+                            .frame(width: 64, height: 64)
                             .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
                     case .failure:
                         ZStack {
@@ -27,12 +32,12 @@ struct AiChatProductRow: View {
                             Image(systemName: "cross.case.fill")
                                 .foregroundColor(AppColor.green)
                         }
-                        .frame(width: 60, height: 60)
+                        .frame(width: 64, height: 64)
                     @unknown default:
-                        EmptyView()
+                        Color.clear.frame(width: 64, height: 64)
                     }
                 }
-                
+                .frame(width: 64, height: 64)                
                 // Product Info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(product.productName ?? product.name)
@@ -90,6 +95,23 @@ struct AiChatProductRow: View {
             RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
                 .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
         }
+    }
+}
+
+// MARK: - URL helpers
+
+private extension AiChatProductRow {
+    /// Converts a raw image URL string to a `URL`, percent-encoding any
+    /// characters that would cause `URL(string:)` to return nil (spaces, etc.).
+    func resolvedImageURL(_ raw: String?) -> URL? {
+        guard let raw, !raw.isEmpty else { return nil }
+        // Fast path: if the string is already a valid URL, use it directly
+        if let url = URL(string: raw) { return url }
+        // Slow path: percent-encode characters that the backend may not have escaped
+        let encoded = raw.addingPercentEncoding(
+            withAllowedCharacters: .urlQueryAllowed
+        ) ?? raw
+        return URL(string: encoded)
     }
 }
 
