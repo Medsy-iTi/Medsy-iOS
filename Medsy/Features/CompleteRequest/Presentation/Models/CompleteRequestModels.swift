@@ -7,14 +7,14 @@
 
 import Foundation
 
-enum CompleteRequestReceiveMethod: String, CaseIterable, Equatable {
-    case delivery
-    case pickup
-}
-
 enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
     case cash = "CASH"
-    case visa = "VISA"
+    case visa = "CARD"
+}
+
+enum CompleteRequestAddressOption: Equatable {
+    case saved
+    case custom
 }
 
 struct CompleteRequestLocation: Equatable {
@@ -62,15 +62,18 @@ struct CompleteRequestDraft: Equatable {
     let items: [CompleteRequestItem]
     let prescriptionCount: Int
     let prescriptionData: Data?
+    let pharmacistNote: String
 
     init(
         items: [CompleteRequestItem],
         prescriptionCount: Int,
-        prescriptionData: Data? = nil
+        prescriptionData: Data? = nil,
+        pharmacistNote: String = ""
     ) {
         self.items = items
         self.prescriptionCount = prescriptionCount
         self.prescriptionData = prescriptionData
+        self.pharmacistNote = pharmacistNote
     }
 
     var itemCount: Int {
@@ -87,43 +90,20 @@ struct CompleteRequestDraft: Equatable {
 }
 
 struct CompleteRequestSubmission: Equatable {
-    let receiveMethod: CompleteRequestReceiveMethod
     let deliveryLocation: CompleteRequestLocation?
-    let paymentMethod: CompleteRequestPaymentMethod?
+    let paymentMethod: CompleteRequestPaymentMethod
     let itemCount: Int
     let prescriptionCount: Int
     let estimatedTotal: Double
 }
 
-enum CompleteRequestCardField: Hashable {
-    case cardholderName
-    case cardNumber
-    case expiry
-    case cvv
-}
-
 enum CompleteRequestValidationError: Hashable {
     case locationRequired
-    case pickupUnsupported
-    case cardholderNameRequired
-    case invalidCardNumber
-    case invalidExpiry
-    case invalidCVV
 
     var localizedMessage: String {
         switch self {
         case .locationRequired:
             "complete_request.validation.location".localized
-        case .pickupUnsupported:
-            "complete_request.validation.pickup_unsupported".localized
-        case .cardholderNameRequired:
-            "complete_request.validation.cardholder_name".localized
-        case .invalidCardNumber:
-            "complete_request.validation.card_number".localized
-        case .invalidExpiry:
-            "complete_request.validation.expiry".localized
-        case .invalidCVV:
-            "complete_request.validation.cvv".localized
         }
     }
 }

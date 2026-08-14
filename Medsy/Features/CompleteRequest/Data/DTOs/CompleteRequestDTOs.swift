@@ -26,7 +26,7 @@ struct CompleteRequestDTO: Encodable, Equatable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let deliveryAddress: String
-    let notes: String
+    let notes: String?
     let paymentMethod: String
 
     let prescriptionData: Data?
@@ -43,9 +43,15 @@ struct CompleteRequestDTO: Encodable, Equatable {
         deliveryLatitude = input.deliveryLatitude
         deliveryLongitude = input.deliveryLongitude
         deliveryAddress = input.deliveryAddress
-        notes = input.notes
+        notes = input.notes?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
         paymentMethod = input.paymentMethod
         prescriptionData = input.prescriptionData
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
     }
 }
 

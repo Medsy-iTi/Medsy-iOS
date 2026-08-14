@@ -11,6 +11,7 @@ import Foundation
 protocol GetCompletedOrdersUseCaseProtocol {
     func execute(
         pharmacyId: Int,
+        status: String?,
         page: Int,
         size: Int,
         sort: [String]
@@ -26,10 +27,11 @@ struct GetCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol {
 
     func execute(
         pharmacyId: Int,
+        status: String? = nil,
         page: Int = 0,
         size: Int = 20,
         sort: [String] = []
     ) async throws -> PaginatedResult<CompletedOrder> {
-        try await repository.fetchOrders(pharmacyId: pharmacyId, page: page, size: size, sort: sort)
+        try await repository.fetchOrders(pharmacyId: pharmacyId, status: status, page: page, size: size, sort: sort)
     }
 }

@@ -5,6 +5,7 @@ struct CategoryProductCard: View {
     let onAdd: () -> Void
     let onIncrement: () -> Void
     let onDecrement: () -> Void
+    let onToggleFavorite: () -> Void
     let onTap: () -> Void
 
     @State private var showsRemovalConfirmation = false
@@ -100,6 +101,14 @@ struct CategoryProductCard: View {
                     .background(AppColor.green, in: Capsule())
                     .padding(MedsySpacing.xxs)
             }
+
+            FavoriteButton(
+                isFavorite: product.isFavorite,
+                size: 34,
+                action: onToggleFavorite
+            )
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(MedsySpacing.xxs)
         }
     }
 

@@ -17,6 +17,7 @@ enum ProductDetailMapper {
             scientificName: dto.scientificName ?? "",
             price: dto.price,
             imageUrl: dto.imageUrl,
+            categoryId: dto.categoryId ?? 0,
             categoryName: dto.categoryName ?? "",
             company: dto.company ?? "",
             route: dto.route ?? "",

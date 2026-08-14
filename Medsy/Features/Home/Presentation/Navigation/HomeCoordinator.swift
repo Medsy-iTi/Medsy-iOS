@@ -10,11 +10,13 @@ import SwiftUI
 
 enum HomeRoute: Hashable {
     case search(String)
+    case favorites
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
     case offerResult(OfferResult, Int)
     case orderReview(OfferDetailPresentationModel, Int? = nil, SelectPharmacyResponseDTO? = nil)
+    case payment(ConfirmOfferResult, OfferDetailPresentationModel)
     case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
     case medicineAnalyze
 }
@@ -26,6 +28,10 @@ final class HomeCoordinator {
 
     func openSearch() {
         path.append(HomeRoute.search(""))
+    }
+
+    func openFavorites() {
+        path.append(HomeRoute.favorites)
     }
 
     func showPrescription() {
@@ -49,6 +55,20 @@ final class HomeCoordinator {
     }
 
     func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.orderComplete(result, offerDetail))
+    }
+
+    func openPayment(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.payment(result, offerDetail))
+    }
+
+    func replacePaymentWithOrderComplete(
+        _ result: ConfirmOfferResult,
+        offerDetail: OfferDetailPresentationModel
+    ) {
+        if !path.isEmpty {
+            path.removeLast()
+        }
         path.append(HomeRoute.orderComplete(result, offerDetail))
     }
 
@@ -79,6 +99,7 @@ struct HomeCoordinatorView: View {
     private let onOpenCart: () -> Void
     private let homeAddress: String
     private let onOpenProfile: () -> Void
+    private let onPaymentCompleted: (Int) -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
@@ -86,7 +107,8 @@ struct HomeCoordinatorView: View {
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
         onOpenCart: @escaping () -> Void = {},
         homeAddress: String,
-        onOpenProfile: @escaping () -> Void
+        onOpenProfile: @escaping () -> Void,
+        onPaymentCompleted: @escaping (Int) -> Void = { _ in }
     ) {
         _requestedRoute = requestedRoute
         _rootResetSignal = rootResetSignal
@@ -94,6 +116,7 @@ struct HomeCoordinatorView: View {
         self.onOpenCart = onOpenCart
         self.homeAddress = homeAddress
         self.onOpenProfile = onOpenProfile
+        self.onPaymentCompleted = onPaymentCompleted
     }
 
     var body: some View {
@@ -101,9 +124,11 @@ struct HomeCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             HomeView(
+                refreshSignal: rootResetSignal,
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
+                onFavoritesTap: coordinator.openFavorites,
                 onCompareOffers: coordinator.openOffersList,
                 onOpenOfferResult: coordinator.openOfferResult,
                 homeAddress: homeAddress,
@@ -115,6 +140,16 @@ struct HomeCoordinatorView: View {
                     SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                         coordinator.path.append(dest)
                     })
+                case .favorites:
+                    FavoriteView(
+                        onBack: coordinator.goBack,
+                        onBrowse: coordinator.openSearch,
+                        onSelectMedicine: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
+                            )
+                        }
+                    )
                 case .prescription:
                     PrescriptionCoordinatorView(
                         onExit: coordinator.goBack,
@@ -154,9 +189,29 @@ struct HomeCoordinatorView: View {
                         selectResult: selectResult,
                         onBack: coordinator.goToHome,
                         onConfirmOrder: { result in
-                            coordinator.openOrderComplete(result, offerDetail: offerDetail)
+                            coordinator.openPayment(result, offerDetail: offerDetail)
                         }
                     )
+                case let .payment(result, _):
+                    if let masterOrderId = result.masterOrderId {
+                        PaymentFlowView(
+                            viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                                masterOrderId: masterOrderId
+                            ),
+                            onCompleted: {
+                                onPaymentCompleted(masterOrderId)
+                            },
+                            onViewOrder: {
+                                onPaymentCompleted(masterOrderId)
+                            }
+                        )
+                    } else {
+                        PaymentStatusView(
+                            status: .failure(message: "payment.error.master_order_unavailable".localized),
+                            onPrimaryAction: coordinator.goBack,
+                            onSecondaryAction: coordinator.goBack
+                        )
+                    }
                 case let .orderComplete(result, offerDetail):
                     OrderCompleteView(
                         result: result,
@@ -202,5 +257,3 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-
-

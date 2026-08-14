@@ -18,7 +18,11 @@ enum OrderEntityMapper {
             date: entity.date,
             totalPrice: entity.totalPrice,
             itemCount: entity.itemCount,
-            itemImageURLs: entity.itemImageURLs
+            itemImageURLs: entity.itemImageURLs,
+            pharmacyNames: entity.pharmacyNames,
+            paymentMethod: entity.paymentMethod,
+            paymentStatus: entity.paymentStatus,
+            paymentExpiresAt: entity.paymentExpiresAt
         )
     }
 
@@ -34,7 +38,25 @@ enum OrderEntityMapper {
             items: entity.items.map(mapItem),
             itemsSubtotal: entity.itemsSubtotal,
             deliveryFee: entity.deliveryFee,
-            totalPrice: entity.totalPrice
+            totalPrice: entity.totalPrice,
+            pharmacies: entity.pharmacies.map(mapPharmacy),
+            requestID: entity.requestID,
+            paymentMethod: entity.paymentMethod,
+            paymentStatus: entity.paymentStatus,
+            paymentExpiresAt: entity.paymentExpiresAt,
+            paidAt: entity.paidAt
+        )
+    }
+
+    private static func mapPharmacy(_ entity: OrderPharmacyEntity) -> OrderPharmacyPresentationModel {
+        OrderPharmacyPresentationModel(
+            id: entity.id,
+            pharmacyId: entity.pharmacyId,
+            name: entity.pharmacyName,
+            coordinate: entity.coordinate.map {
+                OrderCoordinatePresentation(latitude: $0.latitude, longitude: $0.longitude)
+            },
+            items: entity.items.map(mapItem)
         )
     }
 
@@ -77,7 +99,7 @@ private extension OrderFilter {
     var domainStatuses: [OrderStatus]? {
         switch self {
         case .all:       return nil
-        case .active:    return [.pending, .confirmed, .preparing, .readyForPickup, .outForDelivery]
+        case .active:    return [.pending, .pendingPayment, .confirmed, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery]
         case .completed: return [.delivered]
         case .cancelled: return [.cancelled]
         }
@@ -94,9 +116,11 @@ private extension OrderStatusPresentation {
     var rawValue: String {
         switch self {
         case .pending:         return "PENDING"
+        case .pendingPayment:  return "PENDING_PAYMENT"
         case .confirmed:       return "CONFIRMED"
         case .preparing:       return "PREPARING"
         case .readyForPickup:  return "READY_FOR_PICKUP"
+        case .readyForDelivery: return "READY_FOR_DELIVERY"
         case .outForDelivery:  return "OUT_FOR_DELIVERY"
         case .delivered:       return "DELIVERED"
         case .cancelled:       return "CANCELLED"

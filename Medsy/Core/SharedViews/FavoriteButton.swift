@@ -9,14 +9,15 @@
 import SwiftUI
 
 struct FavoriteButton: View {
-    @Binding var isFavorite: Bool
+    let isFavorite: Bool
     var size: CGFloat = 44
+    let action: () -> Void
     @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                isFavorite.toggle()
+                action()
             }
         } label: {
             Image(systemName: isFavorite ? "heart.fill" : "heart")

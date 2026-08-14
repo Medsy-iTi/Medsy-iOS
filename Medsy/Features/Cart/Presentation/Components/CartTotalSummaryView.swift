@@ -16,7 +16,7 @@ struct CartTotalSummaryView: View {
         VStack(spacing: MedsySpacing.md) {
             VStack(spacing: MedsySpacing.sm) {
                 HStack {
-                    Text("cart.estimated_total".localized)
+                    Text("cart.total_price".localized)
                         .font(MedsyFont.bodyMedium(15))
                         .foregroundStyle(AppColor.textSec)
 
@@ -27,16 +27,6 @@ struct CartTotalSummaryView: View {
                         .foregroundStyle(AppColor.textPrim)
                 }
 
-                HStack(alignment: .top, spacing: MedsySpacing.xs) {
-                    Image(systemName: "info.circle")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppColor.warningYellow)
-
-                    Text("cart.estimated_total_disclaimer".localized)
-                        .font(MedsyFont.caption(12))
-                        .foregroundStyle(AppColor.textSec)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
             }
             .padding(MedsySpacing.md)
             .background(AppColor.card)

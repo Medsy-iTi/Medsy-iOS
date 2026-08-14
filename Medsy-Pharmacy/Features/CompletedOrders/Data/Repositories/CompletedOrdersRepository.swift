@@ -18,12 +18,14 @@ struct CompletedOrdersRepository: CompletedOrdersRepositoryProtocol {
 
     func fetchOrders(
         pharmacyId: Int,
+        status: String?,
         page: Int,
         size: Int,
         sort: [String]
     ) async throws -> PaginatedResult<CompletedOrder> {
         let dto = try await remoteDataSource.fetchOrders(
             pharmacyId: pharmacyId,
+            status: status,
             page: page,
             size: size,
             sort: sort

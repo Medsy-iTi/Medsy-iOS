@@ -25,12 +25,7 @@ struct OfferDetailsHeaderView: View {
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
-            Button(action: onBack) {
-                Image(systemName: languageManager.isRTL ? "arrow.right" : "arrow.left")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(AppColor.textPrim)
-                    .frame(width: 36, height: 36)
-            }
+            MedsyNavBarBackButton(action: onBack)
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)

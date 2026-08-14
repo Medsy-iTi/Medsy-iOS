@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct MedsyNavBar<Trailing: View>: View {
+    @Environment(LanguageManager.self) private var languageManager
     let title: String?
     let onBack: (() -> Void)?
+    let isBackEnabled: Bool
     @ViewBuilder var trailing: () -> Trailing
 
     init(
         title: String? = nil,
         onBack: (() -> Void)? = nil,
+        isBackEnabled: Bool = true,
         @ViewBuilder trailing: @escaping () -> Trailing = { EmptyView() }
     ) {
         self.title = title
         self.onBack = onBack
+        self.isBackEnabled = isBackEnabled
         self.trailing = trailing
     }
 
@@ -32,7 +36,10 @@ struct MedsyNavBar<Trailing: View>: View {
             .toolbar {
                 if let onBack {
                     ToolbarItem(placement: .topBarLeading) {
-                        MedsyNavBarBackButton(action: onBack)
+                        MedsyNavBarBackButton(
+                            action: onBack,
+                            isEnabled: isBackEnabled
+                        )
                     }
                 }
 
@@ -42,5 +49,6 @@ struct MedsyNavBar<Trailing: View>: View {
             }
             .toolbarBackground(AppColor.bg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .id(languageManager.currentLanguage)
     }
 }

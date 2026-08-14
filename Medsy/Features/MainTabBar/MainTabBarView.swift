@@ -7,18 +7,26 @@
 
 import Observation
 import SwiftUI
+import UIKit
 
 @MainActor
 struct MainTabBarView: View {
+    @Environment(LanguageManager.self) private var languageManager
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
     @State private var profileViewModel: ProfileViewModel
+    @State private var chatbotViewModel: AiChatViewModel
     @State private var requestedHomeRoute: HomeRoute?
+    @State private var requestedOrderID: Int?
     @State private var homeRootResetSignal = 0
     @State private var cartFeedbackTask: Task<Void, Never>?
     @State private var requestSuccessTask: Task<Void, Never>?
     @State private var isShowingRequestSuccess = false
+    @State private var pendingChatbotPrompt: String?
+    @State private var chatbotPromptSequence = 0
+    @State private var tabBeforeChatbot: AppTab = .home
+    @State private var showsProductChatbotBackButton = false
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -28,6 +36,9 @@ struct MainTabBarView: View {
         )
         _profileViewModel = State(
             initialValue: DIContainer.shared.resolve(ProfileViewModel.self)
+        )
+        _chatbotViewModel = State(
+            initialValue: DIContainer.shared.resolve(AiChatViewModel.self)
         )
     }
 
@@ -39,7 +50,8 @@ struct MainTabBarView: View {
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
                 homeAddress: profileViewModel.displayHomeAddress,
-                onOpenProfile: { coordinator.select(.profile) }
+                onOpenProfile: { coordinator.select(.profile) },
+                onPaymentCompleted: showPaidOrder
             )
             .tabItem {
                 Label("tab.home".localized, systemImage: "house")
@@ -64,15 +76,25 @@ struct MainTabBarView: View {
             .badge(cartViewModel.distinctProductCount)
             .tag(AppTab.cart)
 
-            ChatbotRootView { hidden in
-                isTabBarHidden = hidden
-            }
+            ChatbotRootView(
+                viewModel: chatbotViewModel,
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
+                onOpenCart: { coordinator.select(.cart) },
+                onOpenCompleteRequest: {
+                    isTabBarHidden = false
+                    coordinator.select(.cart)
+                },
+                pendingPrompt: $pendingChatbotPrompt,
+                promptSequence: chatbotPromptSequence,
+                onBackToProduct: chatbotBackAction
+            )
             .tabItem {
-                Label("tab.medsy_chatbot".localized, systemImage: "sparkles")
+                Label("tab.medsy_ai".localized, systemImage: "sparkles")
             }
             .tag(AppTab.chatbot)
 
             OrdersCoordinatorView(
+                requestedOrderID: $requestedOrderID,
                 onReorderCompleted: {
                     cartViewModel.handle(.load)
                 },
@@ -90,6 +112,7 @@ struct MainTabBarView: View {
             ProfileCoordinatorView(
                 onOrders: { coordinator.select(.orders) },
                 onLogout: coordinator.logout,
+                onTabBarHiddenChange: { isTabBarHidden = $0 },
                 viewModel: profileViewModel
             )
             .onAppear { isTabBarHidden = false }
@@ -98,13 +121,44 @@ struct MainTabBarView: View {
             }
             .tag(AppTab.profile)
         }
+        .environment(\.openChatbotPrompt, { prompt in
+            openChatbot(prompt: prompt)
+        })
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
-        .toolbarBackground(AppColor.card, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .onAppear(perform: configureTabBarAppearance)
+        .onChange(of: appSettings.isDarkMode) { _, _ in
+            configureTabBarAppearance()
+        }
+        .onChange(of: languageManager.currentLanguage) { _, _ in
+            configureTabBarAppearance()
+        }
+        .task(id: coordinator.selectedTab) {
+            await refreshTabBarAppearanceAfterTransition()
+        }
+        .task(id: isTabBarHidden) {
+            await refreshTabBarAppearanceAfterTransition()
+        }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .onReceive(NotificationCenter.default.publisher(for: .openChatbotTab)) { notification in
+            isTabBarHidden = false
+            coordinator.select(.chatbot)
+            // After switching tabs, fire the auto-message about the product
+            let productName = notification.userInfo?["productName"] as? String ?? ""
+            let message: String
+            if productName.isEmpty {
+                message = "product.consult_pharmacist.default_message".localized
+            } else {
+                message = String(format: "product.consult_pharmacist.message".localized, productName)
+            }
+            Task {
+                // Small delay so the tab switch animation completes first
+                try? await Task.sleep(for: .milliseconds(400))
+                chatbotViewModel.sendSuggestion(message)
+            }
+        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()
@@ -130,6 +184,12 @@ struct MainTabBarView: View {
             await profileViewModel.loadProfile()
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
+        .background(
+            TabBarAppearanceUpdater(
+                palette: tabBarPalette
+            )
+            .frame(width: 0, height: 0)
+        )
     }
 
     private var selectedTabBinding: Binding<AppTab> {
@@ -137,6 +197,7 @@ struct MainTabBarView: View {
             get: { coordinator.selectedTab },
             set: {
                 isTabBarHidden = false
+                showsProductChatbotBackButton = false
                 coordinator.select($0)
             }
         )
@@ -145,6 +206,35 @@ struct MainTabBarView: View {
     private var addedProductName: String? {
         guard case let .itemAdded(productName) = cartViewModel.feedback else { return nil }
         return productName
+    }
+
+    private var chatbotBackAction: (() -> Void)? {
+        guard showsProductChatbotBackButton else { return nil }
+        return { returnFromChatbot() }
+    }
+
+    private func openChatbot(prompt: String) {
+        if coordinator.selectedTab != .chatbot {
+            tabBeforeChatbot = coordinator.selectedTab
+        }
+        pendingChatbotPrompt = prompt
+        chatbotPromptSequence += 1
+        showsProductChatbotBackButton = true
+        isTabBarHidden = false
+        coordinator.select(.chatbot)
+    }
+
+    private func returnFromChatbot() {
+        isTabBarHidden = false
+        showsProductChatbotBackButton = false
+        coordinator.select(tabBeforeChatbot)
+    }
+
+    private func showPaidOrder(masterOrderID: Int) {
+        isTabBarHidden = false
+        homeRootResetSignal += 1
+        requestedOrderID = masterOrderID
+        coordinator.select(.orders)
     }
 
     private func scheduleFeedbackDismissal() {
@@ -171,6 +261,116 @@ struct MainTabBarView: View {
                 isShowingRequestSuccess = false
             }
         }
+    }
+
+    private func configureTabBarAppearance() {
+        TabBarAppearanceUpdater.apply(palette: tabBarPalette)
+    }
+
+    private func refreshTabBarAppearanceAfterTransition() async {
+        await Task.yield()
+        configureTabBarAppearance()
+    }
+
+    private var tabBarPalette: TabBarPalette {
+        TabBarPalette(
+            isDarkMode: appSettings.isDarkMode,
+            isRTL: languageManager.isRTL
+        )
+    }
+}
+
+private struct TabBarPalette {
+    let backgroundColor: UIColor
+    let borderColor: UIColor
+    let selectedColor: UIColor
+    let normalColor: UIColor
+    let semanticContentAttribute: UISemanticContentAttribute
+
+    init(isDarkMode: Bool, isRTL: Bool) {
+        backgroundColor = UIColor(isDarkMode ? AppColor.background : AppColor.surface)
+        borderColor = UIColor(AppColor.border)
+        selectedColor = UIColor(AppColor.green)
+        normalColor = UIColor(AppColor.textSec)
+        semanticContentAttribute = isRTL ? .forceRightToLeft : .forceLeftToRight
+    }
+}
+
+private struct TabBarAppearanceUpdater: UIViewControllerRepresentable {
+    let palette: TabBarPalette
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        UIViewController()
+    }
+
+    func updateUIViewController(_ viewController: UIViewController, context: Context) {
+        Self.apply(palette: palette)
+    }
+
+    static func apply(palette: TabBarPalette) {
+        let appearance = UITabBarAppearance.medsyAppearance(palette: palette)
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().backgroundColor = palette.backgroundColor
+        UITabBar.appearance().barTintColor = palette.backgroundColor
+        UITabBar.appearance().tintColor = palette.selectedColor
+        UITabBar.appearance().unselectedItemTintColor = palette.normalColor
+        UITabBar.appearance().semanticContentAttribute = palette.semanticContentAttribute
+
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .forEach { window in
+                apply(appearance: appearance, palette: palette, to: window.rootViewController)
+            }
+    }
+
+    private static func apply(
+        appearance: UITabBarAppearance,
+        palette: TabBarPalette,
+        to viewController: UIViewController?
+    ) {
+        guard let viewController else { return }
+
+        if let tabBarController = viewController as? UITabBarController {
+            tabBarController.tabBar.standardAppearance = appearance
+            tabBarController.tabBar.scrollEdgeAppearance = appearance
+            tabBarController.tabBar.backgroundColor = palette.backgroundColor
+            tabBarController.tabBar.barTintColor = palette.backgroundColor
+            tabBarController.tabBar.tintColor = palette.selectedColor
+            tabBarController.tabBar.unselectedItemTintColor = palette.normalColor
+            tabBarController.tabBar.semanticContentAttribute = palette.semanticContentAttribute
+            tabBarController.tabBar.setNeedsLayout()
+            tabBarController.tabBar.layoutIfNeeded()
+        }
+
+        viewController.children.forEach {
+            apply(appearance: appearance, palette: palette, to: $0)
+        }
+
+        if let presentedViewController = viewController.presentedViewController {
+            apply(appearance: appearance, palette: palette, to: presentedViewController)
+        }
+    }
+}
+
+private extension UITabBarAppearance {
+    static func medsyAppearance(palette: TabBarPalette) -> UITabBarAppearance {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = palette.backgroundColor
+        appearance.shadowColor = palette.borderColor
+
+        [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance]
+            .forEach { itemAppearance in
+                itemAppearance.selected.iconColor = palette.selectedColor
+                itemAppearance.selected.titleTextAttributes = [.foregroundColor: palette.selectedColor]
+                itemAppearance.normal.iconColor = palette.normalColor
+                itemAppearance.normal.titleTextAttributes = [.foregroundColor: palette.normalColor]
+            }
+
+        return appearance
     }
 }
 

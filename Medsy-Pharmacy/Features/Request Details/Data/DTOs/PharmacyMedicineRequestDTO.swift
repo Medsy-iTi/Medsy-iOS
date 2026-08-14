@@ -52,6 +52,7 @@ struct PharmacyMedicineRequestDTO: Decodable, Equatable {
     let items: [PharmacyMedicineRequestItemDTO]?
     let prescriptionUrl: String?
     let notes: String?
+    let paymentMethod: String?
 
     var requestStatus: RequestStatus {
         switch status.uppercased() {

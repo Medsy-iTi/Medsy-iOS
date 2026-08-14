@@ -12,9 +12,14 @@ final class ProductsRepositoryImpl: ProductsRepository {
         self.networkService = networkService
     }
 
-    func getProductsByCategory(id: Int, page: Int, size: Int) async throws -> PagedResult<ProductItem> {
+    func getProductsByCategory(id: Int, page: Int, size: Int, language: String) async throws -> PagedResult<ProductItem> {
         let response: APIResponseDTO<PageDTO<ProductDTO>> = try await networkService.request(
-            endpoint: ProductsEndpoint.fetchByCategory(id: id, page: page, size: size)
+            endpoint: ProductsEndpoint.fetchByCategory(
+                id: id,
+                page: page,
+                size: size,
+                language: language
+            )
         )
         guard response.success, let data = response.data else {
             throw NetworkError.validationError(response.message)

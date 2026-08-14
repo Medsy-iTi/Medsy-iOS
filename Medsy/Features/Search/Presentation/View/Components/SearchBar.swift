@@ -13,9 +13,7 @@ struct SearchBar: View {
     var onSubmit: (() -> Void)? = nil
 
     @FocusState private var isFocused: Bool
-    @Environment(\.layoutDirection) private var layoutDirection
     @ObservedObject private var appSettings = AppSettings.shared
-    private var isRTL: Bool { layoutDirection == .rightToLeft }
 
     var body: some View {
         HStack(spacing: MedsySpacing.xs) {
@@ -26,7 +24,7 @@ struct SearchBar: View {
             )
                 .font(MedsyFont.body())
                 .foregroundStyle(AppColor.textPrim)
-				.multilineTextAlignment(.leading)
+                .localizedTextInput()
                 .focused($isFocused)
                 .submitLabel(.search)
                 .onSubmit { onSubmit?() }

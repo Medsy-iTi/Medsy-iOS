@@ -15,16 +15,10 @@ struct CartAssembly: ModuleAssembly {
             modelContainer
         }
 
-        container.register(CartAccountScopeProviderProtocol.self) { container in
-            CartAccountScopeProvider(
-                tokenStore: container.resolve(TokenStoreProtocol.self)
-            )
-        }
-
         container.register(CartLocalDataSourceProtocol.self) { container in
             CartLocalDataSource(
                 modelContainer: container.resolve(ModelContainer.self),
-                accountScopeProvider: container.resolve(CartAccountScopeProviderProtocol.self)
+                accountScopeProvider: container.resolve(AccountScopeProviderProtocol.self)
             )
         }
 

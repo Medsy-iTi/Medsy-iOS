@@ -13,6 +13,7 @@ struct ContentView: View {
     let homeFactory: PharmacyHomeFactory
     let ordersFactory: PharmacyOrdersFactory
 	let completedOrdersFactory: PharmacyCompletedOrdersFactory
+    let chatFactory: PharmacyAiChatViewModelFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     @Bindable var coordinator: RootCoordinator
 
@@ -22,6 +23,7 @@ struct ContentView: View {
         homeFactory: PharmacyHomeFactory,
         ordersFactory: PharmacyOrdersFactory,
 	    completedOrdersFactory: PharmacyCompletedOrdersFactory,
+        chatFactory: PharmacyAiChatViewModelFactory,
         coordinator: RootCoordinator
     ) {
         self.onboardingFactory = onboardingFactory
@@ -29,6 +31,7 @@ struct ContentView: View {
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
 		self.completedOrdersFactory = completedOrdersFactory
+        self.chatFactory = chatFactory
         self.coordinator = coordinator
     }
 
@@ -64,6 +67,7 @@ struct ContentView: View {
                     homeFactory: homeFactory,
                     ordersFactory: ordersFactory,
 					completedOrdersFactory: completedOrdersFactory,
+                    chatFactory: chatFactory,
                     onLoggedOut: coordinator.logout
                 )
                 .transition(.opacity.combined(with: .move(edge: .trailing)))
@@ -126,8 +130,10 @@ private struct PharmacyAuthenticationRootView: View {
 		),
 		completedOrdersFactory: PharmacyCompletedOrdersFactory(
 			getCompletedOrdersUseCase: PreviewGetCompletedOrdersUseCase(),
+			getProfileUseCase: PreviewGetProfileUseCase(),
 			identityProvider: PreviewIdentityProvider()
-															  ),
+														  ),
+        chatFactory: PreviewChatFactory(),
 		coordinator: RootCoordinator(container: PharmacyDIContainer())
 	)
 	.environment(LanguageManager.shared)
@@ -184,7 +190,13 @@ private final class PreviewContentLocationProvider: PharmacyLocationProviding {
 
 
 private struct PreviewGetCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol {
-	func execute(pharmacyId: Int, page: Int, size: Int, sort: [String]) async throws -> PaginatedResult<CompletedOrder> {
+	func execute(pharmacyId: Int, status: String?, page: Int, size: Int, sort: [String]) async throws -> PaginatedResult<CompletedOrder> {
 		.empty
 	}
+}
+
+private struct PreviewChatFactory: PharmacyAiChatViewModelFactory {
+    func makeViewModel() -> PharmacyAiChatViewModel {
+        fatalError("PreviewChatFactory.makeViewModel() not implemented")
+    }
 }

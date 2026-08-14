@@ -10,8 +10,10 @@ import Foundation
 struct OrdersAssembly: ModuleAssembly {
     func register(in container: DIContainer) {
         container.register(OrdersRemoteDataSourceProtocol.self) { container in
-            OrdersRemoteDataSource(
-                networkService: container.resolve(NetworkServiceProtocol.self)
+            let languageManager = container.resolve(LanguageManager.self)
+            return OrdersRemoteDataSource(
+                networkService: container.resolve(NetworkServiceProtocol.self),
+                languageProvider: { languageManager.languageCode }
             )
         }
 
@@ -33,10 +35,28 @@ struct OrdersAssembly: ModuleAssembly {
             )
         }
 
+        container.register(GetOrderDeliveryLocationUseCaseProtocol.self) { container in
+            GetOrderDeliveryLocationUseCase(
+                repository: container.resolve(OrdersRepositoryProtocol.self)
+            )
+        }
+
         container.register(ReorderUseCaseProtocol.self) { container in
             ReorderUseCase(
                 addCartItemUseCase: container.resolve(AddCartItemUseCaseProtocol.self)
             )
+        }
+
+        container.register(OrderCurrentLocationProviding.self) { _ in
+            MainActor.assumeIsolated { OrderCurrentLocationProvider() }
+        }
+
+        container.register(OrderRouteProviding.self) { _ in
+            MainActor.assumeIsolated { OrderRouteProvider() }
+        }
+
+        container.register(OrderDirectionsOpening.self) { _ in
+            MainActor.assumeIsolated { OrderDirectionsOpener() }
         }
 
         container.register(OrderHistoryViewModel.self) { container in
@@ -51,10 +71,12 @@ struct OrdersAssembly: ModuleAssembly {
             MainActor.assumeIsolated {
                 OrderDetailViewModel(
                     getOrderDetailUseCase: container.resolve(GetOrderDetailUseCaseProtocol.self),
-                    reorderUseCase: container.resolve(ReorderUseCaseProtocol.self)
+                    currentLocationProvider: container.resolve(OrderCurrentLocationProviding.self),
+                    reorderUseCase: container.resolve(ReorderUseCaseProtocol.self),
+                    routeProvider: container.resolve(OrderRouteProviding.self),
+                    directionsOpener: container.resolve(OrderDirectionsOpening.self)
                 )
             }
         }
     }
 }
-

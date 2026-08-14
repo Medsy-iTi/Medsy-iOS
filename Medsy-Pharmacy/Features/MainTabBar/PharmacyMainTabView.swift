@@ -12,9 +12,10 @@ struct PharmacyMainTabView: View {
     var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
-    @State private var homeViewModel: PharmacyHomeViewModel
+    @State private var homeViewModel: PharmacyHomeViewModel?
     @State private var selectedCompletedOrder: SelectedCompletedOrder?
 	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
+    private let chatFactory: PharmacyAiChatViewModelFactory
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     private let onLoggedOut: () -> Void
 
@@ -23,26 +24,33 @@ struct PharmacyMainTabView: View {
         homeFactory: PharmacyHomeFactory,
         ordersFactory: PharmacyOrdersFactory,
 		completedOrdersFactory: PharmacyCompletedOrdersFactory,
+        chatFactory: PharmacyAiChatViewModelFactory,
         onLoggedOut: @escaping () -> Void
     ) {
         self.coordinator = coordinator
         self.homeFactory = homeFactory
         self.ordersFactory = ordersFactory
-        _homeViewModel = State(initialValue: homeFactory.makeViewModel())
         self.onLoggedOut = onLoggedOut
 		self.completedOrdersFactory = completedOrdersFactory
+        self.chatFactory = chatFactory
     }
 
     var body: some View {
         TabView(selection: selectedTabBinding) {
-            homeFactory.makeView(
-                viewModel: homeViewModel,
-                onSelectRecentOrder: { orderId in
-                    selectedCompletedOrder = SelectedCompletedOrder(id: orderId)
-                },
-                onViewAllCompletedOrders: coordinator.showCompletedOrders
-            )
-                .tabItem {
+            Group {
+                if let homeViewModel = homeViewModel {
+                    homeFactory.makeView(
+                        viewModel: homeViewModel,
+                        onSelectRecentOrder: { orderId in
+                            selectedCompletedOrder = SelectedCompletedOrder(id: orderId)
+                        },
+                        onViewAllCompletedOrders: coordinator.showCompletedOrders
+                    )
+                } else {
+                    ProgressView()
+                }
+            }
+            .tabItem {
                     tabLabel(for: .home)
                 }
                 .tag(PharmacyTab.home)
@@ -53,11 +61,11 @@ struct PharmacyMainTabView: View {
                 }
                 .tag(PharmacyTab.orders)
 
-            PharmacySetupPlaceholderView(tab: .products)
+            PharmacyChatRootView(factory: chatFactory)
                 .tabItem {
-                    tabLabel(for: .products)
+                    tabLabel(for: .chatBot)
                 }
-                .tag(PharmacyTab.products)
+                .tag(PharmacyTab.chatBot)
 
 			completedOrdersFactory.makeView()
 				.tabItem {
@@ -85,7 +93,12 @@ struct PharmacyMainTabView: View {
         }
         .onChange(of: coordinator.selectedTab) { _, selectedTab in
             guard selectedTab == .home else { return }
-            Task { await homeViewModel.refresh() }
+            Task { await homeViewModel?.refresh() }
+        }
+        .task {
+            if homeViewModel == nil {
+                homeViewModel = homeFactory.makeViewModel()
+            }
         }
     }
 

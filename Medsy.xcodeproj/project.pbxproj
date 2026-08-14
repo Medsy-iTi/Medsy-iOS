@@ -12,6 +12,8 @@
 		6D8B29BA3006F319001616C8 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B29B93006F319001616C8 /* Swinject */; };
 		780F75C03017A8A80005EA77 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 780F75BF3017A8A80005EA77 /* Lottie */; };
 		9A000001300A000100000001 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D8B26563006BA48001616C8 /* Alamofire */; };
+		AA1100013110800000000001 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = AA1100033110800000000001 /* StripePaymentSheet */; };
+		AA1100043110800000000001 /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA1100053110800000000001 /* StripePaymentsUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +113,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA1100013110800000000001 /* StripePaymentSheet in Frameworks */,
+				AA1100043110800000000001 /* StripePaymentsUI in Frameworks */,
 				6D8B26573006BA48001616C8 /* Alamofire in Frameworks */,
 				6D8B29BA3006F319001616C8 /* Swinject in Frameworks */,
 				780F75C03017A8A80005EA77 /* Lottie in Frameworks */,
@@ -205,6 +209,8 @@
 			);
 			name = Medsy;
 			packageProductDependencies = (
+				AA1100033110800000000001 /* StripePaymentSheet */,
+				AA1100053110800000000001 /* StripePaymentsUI */,
 				6D8B26563006BA48001616C8 /* Alamofire */,
 				6D8B29B93006F319001616C8 /* Swinject */,
 				780F75BF3017A8A80005EA77 /* Lottie */,
@@ -375,6 +381,7 @@
 			mainGroup = 7834991030055416001D87B6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 				6D8B26553006BA48001616C8 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				6D8B29B83006F319001616C8 /* XCRemoteSwiftPackageReference "Swinject" */,
 				6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */,
@@ -767,6 +774,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Medsy uses your location to set your pharmacy location.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Medsy Pharmacy needs access to your microphone so you can speak to the AI assistant.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Medsy Pharmacy uses speech recognition to transcribe your voice messages to the AI assistant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -795,6 +804,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Medsy uses your location to set your pharmacy location.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Medsy Pharmacy needs access to your microphone so you can speak to the AI assistant.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Medsy Pharmacy uses speech recognition to transcribe your voice messages to the AI assistant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -974,6 +985,14 @@
 				minimumVersion = 2.10.0;
 			};
 		};
+		AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stripe/stripe-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 25.13.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -996,6 +1015,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D5530B4301700FB0018B619 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		AA1100033110800000000001 /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripePaymentSheet;
+		};
+		AA1100053110800000000001 /* StripePaymentsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA1100023110800000000001 /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripePaymentsUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

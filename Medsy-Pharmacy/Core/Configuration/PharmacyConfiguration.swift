@@ -39,4 +39,15 @@ enum PharmacyConfiguration {
 
         return bundleIdentifier + ".authentication"
     }()
+
+    static let aiKey: String = {
+        guard let fileURL = Bundle.main.url(forResource: "PharmacySecrets", withExtension: "plist"),
+              let data = try? Data(contentsOf: fileURL),
+              let values = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              let key = values["GEMINI_API_KEY"] as? String else {
+            fatalError("Missing GEMINI_API_KEY in PharmacySecrets.plist")
+        }
+        return key
+    }()
 }
+

@@ -15,9 +15,11 @@
 
 /* Splash */
 "splash.brand" = "Medsy";
+"splash.brand_prefix" = "Med";
+"splash.brand_suffix" = "sy";
 "splash.tagline" = "Your health, our priority";
 "splash.subtitle" = "Medicines and care, made simple.";
-"splash.accessibility_label" = "Medsy. Your health, our priority. Medicines and care, made simple.";
+"splash.accessibility_label" = "Medsy. Your health, our priority.";
 
 /* Pharmacy Profile */
 "pharmacyProfile.title" = "Pharmacy Profile";
@@ -34,24 +36,24 @@
 "language.arabic"  = "Arabic";
 
 /* Home */
-"home.deliveryTo" = "Deliver to";
+"home.deliveryTo" = "Delivery to";
 "home.searchPlaceholder" = "Search by medicine name";
-"home.promoTitle" = "Your Health Matters";
-"home.promoDiscount" = "Discount up to 30%";
-"home.promoTarget" = "on selected group";
+"home.promoTitle" = "Find any medicine";
+"home.promoDiscount" = "Fast search with smart results";
+"home.promoTarget" = "See alternatives if unavailable";
 "home.shopNow" = "Shop Now";
-"home.promo2.title" = "Vitamin Offers";
-"home.promo2.discount" = "Buy 1 Get 1 Free";
-"home.promo2.target" = "For a limited time";
+"home.promo2.title" = "Upload your prescription";
+"home.promo2.discount" = "We'll handle the rest";
+"home.promo2.target" = "No more confusion with doctor handwriting";
 "home.promo2.button" = "Discover Now";
-"home.promo3.title" = "Free Fast Delivery";
-"home.promo3.discount" = "For orders above 200 EGP";
-"home.promo3.target" = "T&C Apply";
+"home.promo3.title" = "Consult a doctor";
+"home.promo3.discount" = "Get advice anytime";
+"home.promo3.target" = "Talk to certified doctors instantly";
 "home.promo3.button" = "Order Now";
-"home.weMadeOrderEasy" = "We made ordering easy for you";
-"home.orderByPrescription" = "Order by Prescription";
-"home.uploadPrescriptionDesc" = "Upload prescription photo and we will review it";
-"home.searchForMedicine" = "Search for Medicine";
+"home.weMadeOrderEasy" = "Order made easy";
+"home.orderByPrescription" = "Upload prescription";
+"home.uploadPrescriptionDesc" = "Upload prescription image and we will review it";
+"home.searchForMedicine" = "Search medicine";
 "home.searchForMedicineDesc" = "Search for any medicine you need easily";
 "medicineAnalyze.title" = "Analyze Medicine";
 "medicineAnalyze.heading" = "Identify your medicine";
@@ -83,8 +85,8 @@
 "medicineAnalyze.empty.title" = "No medicine found";
 "medicineAnalyze.empty.message" = "We could not identify a product from this image. Try a clearer photo with the package name visible.";
 "medicineAnalyze.failure.title" = "Analysis failed";
-"home.shopByCategories" = "Shop by Categories";
-"home.viewAll" = "View All";
+"home.shopByCategories" = "Shop by category";
+"home.viewAll" = "View all";
 "home.category.medicines" = "Medicines";
 "home.category.vitamins" = "Vitamins";
 "home.category.personalCare" = "Personal Care";
@@ -205,6 +207,8 @@
 "product.consumer_category" = "Consumer Category";
 "product.add_to_cart" = "Add to Cart";
 "product.consult_pharmacist" = "Consult a Pharmacist";
+"product.consult_pharmacist.message" = "I would like to ask about this medicine: %@. Can you help me?";
+"product.consult_pharmacist.default_message" = "I would like to consult a pharmacist about a medicine.";
 "product.pharmacist_review_notice" = "This medicine is only dispensed after pharmacist review, to determine the appropriate dose for your condition.";
 "product.manufacturer" = "Manufacturer";
 "product.type" = "Type";
@@ -230,6 +234,20 @@
 "accessibility.back" = "Back";
 "accessibility.share" = "Share";
 
+/* Favorites */
+"favorites.title" = "Favorites";
+"favorites.open.accessibility" = "Open favorites";
+"favorites.count.accessibility" = "%d favorite medicines";
+"favorites.empty.title" = "No favorites yet";
+"favorites.empty.subtitle" = "Save medicines with the heart button to find them quickly here.";
+"favorites.empty.action" = "Browse medicines";
+"favorites.error.title" = "Couldn't Load Favorites";
+"favorites.error.subtitle" = "We couldn't read your saved medicines. Please try again.";
+"favorites.persistence_error.title" = "Couldn't Update Favorites";
+"favorites.persistence_error.subtitle" = "Your favorites change couldn't be saved. Please try again.";
+"favorites.offline.title" = "No Internet Connection";
+"favorites.offline.subtitle" = "Connect to the internet to open medicine details.";
+
 /* Tab bar */
 "tab.home" = "Home";
 "tab.favorites" = "Favorites";
@@ -248,10 +266,17 @@
 "cart.remove" = "Remove item";
 "cart.estimated_total" = "Estimated total";
 "cart.estimated_total_disclaimer" = "Prices are approximate. Final prices are confirmed by the pharmacy.";
+"cart.total_price" = "Total price";
+"cart.note.add" = "Add a note for the pharmacist";
+"cart.note.edit" = "Edit pharmacist note";
+"cart.note.title" = "Note for the pharmacist";
+"cart.note.hint" = "Add any details the pharmacist should review";
+"cart.note.save" = "Save";
+"cart.note.cancel" = "Cancel";
 "cart.continue" = "Continue";
-"cart.empty.title" = "Your cart is empty";
-"cart.empty.message" = "Search for medicines or scan a prescription to add medicines first.";
-"cart.empty.search" = "Search medicines";
+"cart.empty.title" = "Your medicine cart is empty";
+"cart.empty.message" = "Add at least one medicine to continue. Prescriptions and notes are supporting details.";
+"cart.empty.search" = "Search medicine";
 "cart.empty.scan_prescription" = "Scan prescription";
 "cart.error.title" = "Couldn't Load Cart";
 "cart.removed_message" = "%@ removed";
@@ -263,6 +288,7 @@
 "cart.prescription.change" = "Change prescription";
 "cart.prescription.remove" = "Remove prescription";
 "cart.prescription.source_title" = "Add a prescription";
+"cart.prescription.local_only" = "Saved privately on this device. It is not sent yet.";
 "cart.added_message" = "%@ added to cart";
 "cart.remove_confirmation.title" = "Remove from cart?";
 "cart.remove_confirmation.message" = "Remove %@ from your cart?";
@@ -341,6 +367,8 @@
 "profile.section.about" = "About Medsy";
 "profile.personal_info" = "Personal Information";
 "profile.personal_info.subtitle" = "Edit name and basic details";
+"profile.favorites" = "Favorite Medicines";
+"profile.favorites.subtitle" = "View your saved medicines";
 "profile.notifications" = "Notifications";
 "profile.notifications.subtitle" = "Manage order and offer notifications";
 "profile.order_history" = "Order History";
@@ -364,6 +392,52 @@
 "profile.help_center.subtitle" = "FAQs and assistance";
 "profile.report_issue" = "Report an issue";
 "profile.report_issue.subtitle" = "Tell us about any problem";
+"profile.guide.title" = "Medicine ordering, made simple";
+"profile.guide.subtitle" = "Follow the full Medsy journey from finding a medicine to receiving your order.";
+"profile.guide.step" = "STEP %d";
+"profile.guide.search.title" = "Find your medicines";
+"profile.guide.search.body" = "Search the catalog or upload a clear prescription when you need a pharmacist to review it.";
+"profile.guide.request.title" = "Submit one medicine request";
+"profile.guide.request.body" = "Review quantities, add a note for the pharmacist, confirm your location, and send the request.";
+"profile.guide.offer.title" = "Review pharmacy offers";
+"profile.guide.offer.body" = "Nearby pharmacies can respond with availability and prices. Choose the offer that works for you.";
+"profile.guide.payment.title" = "Choose fulfillment and payment";
+"profile.guide.payment.body" = "Confirm delivery or pickup, then pay by the methods available for the selected offer.";
+"profile.guide.track.title" = "Follow your order";
+"profile.guide.track.body" = "Open Orders to see the latest preparation and fulfillment status until completion.";
+"profile.help.title" = "How can we help?";
+"profile.help.subtitle" = "Browse answers to common questions about medicine requests, payments, and fulfillment.";
+"profile.help.search" = "Search help topics";
+"profile.help.no_results" = "No help topic matches your search.";
+"profile.faq.request.question" = "How do I request medicines?";
+"profile.faq.request.answer" = "Add medicines to the cart or upload a prescription, review quantities and notes, confirm the delivery location, then submit the request.";
+"profile.faq.offer.question" = "What happens after I submit a request?";
+"profile.faq.offer.answer" = "Your request enters the searching-for-offers state. When pharmacies respond, you can compare availability and price before selecting one offer.";
+"profile.faq.payment.question" = "When do I pay?";
+"profile.faq.payment.answer" = "Cash is paid when you receive the order. Card payment becomes available after accepting an offer that supports online payment.";
+"profile.faq.prescription.question" = "Can I order using a prescription?";
+"profile.faq.prescription.answer" = "Yes. Upload a clear image with all medicine names visible. A pharmacist reviews the request before providing an offer.";
+"profile.faq.delivery.question" = "Can I choose delivery or pickup?";
+"profile.faq.delivery.answer" = "Available fulfillment methods come from the accepted pharmacy offer. Choose one before completing payment.";
+"profile.faq.cancel.question" = "Can I cancel or change an order?";
+"profile.faq.cancel.answer" = "Availability depends on the current order status. Review the order details and contact the pharmacy or support before preparation is completed.";
+"profile.report.title" = "Tell us what went wrong";
+"profile.report.subtitle" = "Choose the affected area and describe the problem so the support team has the context it needs.";
+"profile.report.category" = "Problem category";
+"profile.report.category.order" = "Order";
+"profile.report.category.payment" = "Payment";
+"profile.report.category.account" = "Account";
+"profile.report.category.technical" = "Technical problem";
+"profile.report.category.other" = "Other";
+"profile.report.details" = "Problem details";
+"profile.report.details.placeholder" = "Describe what happened and what you expected to happen...";
+"profile.report.mock_notice" = "Support submission is currently simulated on this device until the support endpoint is available.";
+"profile.report.submit" = "Send report";
+"profile.report.submitting" = "Sending...";
+"profile.report.success.title" = "Report received";
+"profile.report.success.message" = "Your reference is %@. This is a local mock submission until backend support is connected.";
+"common.clear" = "Clear";
+"common.done" = "Done";
 "profile.about_medsy" = "About Medsy";
 "profile.terms" = "Terms and Conditions";
 "profile.privacy" = "Privacy Policy";
@@ -405,6 +479,9 @@
 "prescription.upload.title" = "Upload Prescription";
 "prescription.upload.heading" = "Upload your prescription";
 "prescription.upload.message" = "Upload a clear photo and we'll extract the medicines for you.";
+"prescription.attachment.heading" = "Add a prescription to your cart";
+"prescription.attachment.message" = "Take or select a clear image to save privately with this cart.";
+"prescription.attach_to_cart" = "Attach to cart";
 "prescription.camera.title" = "Take a photo";
 "prescription.camera.message" = "Photograph the prescription with your camera";
 "prescription.gallery.title" = "Choose from gallery";
@@ -471,6 +548,7 @@
 "orders.filter.completed"            = "Completed";
 "orders.filter.cancelled"            = "Cancelled";
 "orders.status.pending"              = "Order Confirmed";
+"orders.status.pending_payment"      = "Awaiting payment";
 "orders.status.confirmed"            = "Order Confirmed";
 "orders.status.processing"           = "Processing";
 "orders.status.shipped"              = "Shipped";
@@ -479,11 +557,28 @@
 "orders.status.rejected"             = "Rejected";
 "orders.status.preparing"            = "Preparing";
 "orders.status.ready_for_pickup"     = "Ready for pickup";
+"orders.status.ready_for_delivery"   = "Ready for delivery";
 "orders.status.out_for_delivery"     = "Out for delivery";
+"orders.product_unavailable"         = "Medicine no longer available";
+"orders.detail.request_number"       = "Request #%d";
+"orders.detail.payment"              = "Payment";
+"orders.detail.payment_method"       = "Method";
+"orders.detail.payment_status"       = "Status";
+"orders.detail.paid_at"              = "Paid at";
+"orders.detail.payment_expires_at"   = "Payment expires";
+"orders.payment_method.cash"         = "Cash";
+"orders.payment_method.card"         = "Card";
+"orders.payment_status.unpaid"       = "Unpaid";
+"orders.payment_status.pending"      = "Pending";
+"orders.payment_status.paid"         = "Paid";
+"orders.payment_status.failed"       = "Failed";
+"orders.payment_status.canceled"     = "Canceled";
+"orders.payment_status.expired"      = "Expired";
 "orders.pharmacy_fallback"           = "Pharmacy #%d";
 "orders.product_fallback"            = "Product #%d";
 "orders.fulfillment.delivery"        = "Delivery";
 "orders.fulfillment.pickup"          = "Pickup";
+"orders.fulfillment.not_selected"    = "Not selected yet";
 "orders.items_count"                 = "%d items";
 "orders.item_count"                  = "%d item";
 "orders.price_format"                = "%.0f EGP";
@@ -510,10 +605,11 @@
 "orders.detail.order_number"         = "Order #%d";
 "orders.detail.date"                 = "Date";
 "orders.detail.status"               = "Status";
+"orders.detail.delivery_status"      = "Order status";
 "orders.detail.items"                = "Items price";
 "orders.detail.items_label"          = "Items";
 "orders.detail.item_unit_price"      = "%.0f EGP each";
-"orders.detail.delivery_fee"         = "Delivery Fee";
+"orders.detail.delivery_fee"         = "Delivery fee";
 "orders.detail.total"                = "Total";
 "orders.detail.not_found"            = "Order not found";
 "orders.detail.error"                = "Couldn't load order details";
@@ -523,6 +619,26 @@
 "orders.detail.items_subtotal"       = "Items subtotal";
 "orders.detail.reorder"              = "Reorder";
 "orders.detail.alternative_to"       = "Alternative to %@";
+"orders.detail.pharmacy_locations"   = "Pharmacy locations";
+"orders.detail.delivery_location"    = "Current location";
+"orders.detail.location_prompt"      = "View the pharmacy on the map and draw the route from your current location.";
+"orders.detail.show_location_path"   = "Show location and path";
+"orders.detail.locating"             = "Loading your current location…";
+"orders.detail.loading_route"        = "Finding the best driving route…";
+"orders.detail.location_permission_denied" = "Location access is unavailable.";
+"orders.detail.location_unavailable" = "Your current location is unavailable. You can still open the pharmacy in Maps.";
+"orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
+"orders.detail.open_directions"      = "Open turn-by-turn directions";
+"orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
+"orders.detail.pharmacy"             = "Pharmacy";
+"orders.detail.pharmacies"           = "Fulfilling pharmacies";
+"orders.detail.supplied_by"          = "Supplied by %@";
+"orders.detail.items_unavailable"    = "Order item details are currently unavailable.";
+"orders.from_pharmacy"               = "From %@";
+"orders.timeline.preparing"          = "Preparing";
+"orders.timeline.ready"              = "Ready";
+"orders.timeline.on_the_way"         = "On the way";
+"orders.timeline.delivered"          = "Delivered";
 "orders.reorder.go_to_cart"          = "Go to Cart";
 "orders.reorder.continue_shopping"   = "Continue Shopping";
 "orders.reorder.success.title"       = "Added Successfully";
@@ -562,46 +678,84 @@
 
 /* Complete Request */
 "complete_request.title" = "Complete request";
+"complete_request.subtitle" = "A few final details before pharmacies receive your request";
 "complete_request.summary.title" = "Request summary";
 "complete_request.summary.items_count" = "%d medicines";
 "complete_request.summary.prescriptions_count" = "%d prescriptions";
 "complete_request.summary.show_items" = "Show selected medicines";
 "complete_request.summary.hide_items" = "Hide selected medicines";
+"complete_request.summary.prescription_title" = "Prescription";
+"complete_request.summary.prescription_attached" = "Prescription attached";
+"complete_request.summary.preview_prescription" = "Preview prescription image";
+"complete_request.summary.prescription_unavailable" = "Prescription image is unavailable";
 "complete_request.receive.title" = "How would you like to receive it?";
 "complete_request.receive.subtitle" = "Choose delivery to your address or pickup from the selected pharmacy later.";
 "complete_request.receive.delivery" = "Delivery";
 "complete_request.receive.delivery.subtitle" = "Delivered to your selected location";
 "complete_request.receive.pickup" = "Pickup";
 "complete_request.receive.pickup.subtitle" = "Collect it from the pharmacy";
-"complete_request.address.title" = "Delivery address";
+"complete_request.address.title" = "Your current address";
 "complete_request.address.loading" = "Loading your saved address…";
 "complete_request.address.empty" = "No saved address was found. Choose an address and confirm its map location for this request.";
 "complete_request.address.saved_unconfirmed" = "This is your saved profile address. Confirm its location on the map before submitting the request.";
+"complete_request.address.default" = "Default address";
+"complete_request.address.default_badge" = "Saved in your profile";
+"complete_request.address.other" = "Other address";
+"complete_request.address.other.subtitle" = "Choose a different map location";
 "complete_request.address.confirm_on_map" = "Confirm address on map";
 "complete_request.address.choose" = "Choose map location";
 "complete_request.address.change" = "Change map location";
 "complete_request.address.confirmed" = "Map location confirmed";
+"complete_request.address.location_required" = "Map location required";
 "complete_request.payment.title" = "How would you like to pay?";
 "complete_request.payment.subtitle" = "Select one payment option for this request.";
 "complete_request.payment.cash" = "Cash";
 "complete_request.payment.cash.subtitle" = "Pay when you receive the request";
-"complete_request.payment.visa" = "Visa";
-"complete_request.payment.visa.subtitle" = "Enter your card details";
+"complete_request.payment.online" = "Card";
+"complete_request.payment.online.subtitle" = "Pay securely after accepting an offer";
+"complete_request.online_payment.title" = "Secure online payment";
+"complete_request.online_payment.description" = "After you accept a pharmacy offer, you will complete payment using Stripe's secure payment screen.";
+"complete_request.online_payment.cards" = "Cards";
+"complete_request.online_payment.security" = "Medsy does not collect or store your card details.";
+
+"payment.status.processing.title" = "Confirming your payment";
+"payment.status.processing.message" = "Your payment was submitted. We are waiting for final confirmation from the payment provider.";
+"payment.status.processing.notice" = "You can safely leave this screen. Your order will update automatically when confirmation arrives.";
+"payment.status.success.title" = "Payment successful";
+"payment.status.success.message" = "Your payment is confirmed and the pharmacy can continue preparing your order.";
+"payment.status.failure.title" = "Payment unsuccessful";
+"payment.status.failure.message" = "We could not complete this payment. No additional payment was confirmed.";
+"payment.status.cancelled.title" = "Payment cancelled";
+"payment.status.cancelled.message" = "Your order is still available. You can retry payment whenever you are ready.";
+"payment.status.expired.title" = "Payment time expired";
+"payment.status.expired.message" = "This order can no longer be paid. Open the order to view its latest status.";
+"payment.action.pay_now" = "Pay now";
+"payment.action.retry" = "Retry payment";
+"payment.action.processing" = "Confirming payment";
+"payment.action.expired" = "Payment expired";
+"payment.action.view_order" = "View order";
+"payment.action.refresh_status" = "Refresh payment status";
+"payment.action.done" = "Done";
+"payment.error.unsupported_method" = "This payment method is not supported for this order.";
+"payment.error.unknown_status" = "The latest payment status could not be verified.";
+"payment.error.missing_publishable_key" = "Card payment is not configured. Please try again later.";
+"payment.error.screen_unavailable" = "The secure payment screen is unavailable. Please try again.";
+"payment.error.master_order_unavailable" = "Unable to load the master order.";
+"payment.card.navigation_title" = "Secure card payment";
+"payment.card.title" = "Enter your card details";
+"payment.card.subtitle" = "Your payment data is secure.";
+"payment.card.details" = "Card details";
+"payment.card.pay" = "Pay securely";
+"payment.card.cancel" = "Cancel";
+"payment.card.incomplete" = "Enter complete and valid card details to continue.";
+"payment.card.authentication_cancelled" = "Card authentication was cancelled. You can try again.";
+"payment.card.failed" = "The card payment could not be completed. Please try again.";
+"offers.error.missing_selected_product" = "Unable to identify one of the selected medicines.";
 "complete_request.notes.title" = "Request notes";
 "complete_request.notes.subtitle" = "Add any instructions that may help the pharmacy. This is optional.";
 "complete_request.notes.placeholder" = "Add notes for the pharmacy";
-"complete_request.card.title" = "Visa card details";
-"complete_request.card.cardholder" = "Cardholder name";
-"complete_request.card.number" = "Card number";
-"complete_request.card.expiry" = "Expiry (MM/YY)";
-"complete_request.card.cvv" = "CVV";
-"complete_request.card.security" = "Card details are validated on this device and are not saved.";
 "complete_request.validation.location" = "Confirm a delivery location to continue.";
 "complete_request.validation.pickup_unsupported" = "Pickup requests are not supported by the current request service yet. Choose delivery to continue.";
-"complete_request.validation.cardholder_name" = "Enter the name shown on the card.";
-"complete_request.validation.card_number" = "Enter a valid 16-digit Visa card number.";
-"complete_request.validation.expiry" = "Enter a valid, non-expired date in MM/YY format.";
-"complete_request.validation.cvv" = "Enter the three-digit security code.";
 "complete_request.submit" = "Submit medicine request";
 "complete_request.success.title" = "Request sent successfully";
 "complete_request.success.subtitle" = "We returned you home so you can view current offers.";
@@ -683,7 +837,7 @@
 "orderReview.confirmOrder" = "Confirm Order";
 
 
-"tab.medsy_chatbot" = "Chatbot";
+"tab.medsy_ai"       = "Medsy AI";
 
 /* ─────────────────────────────────────────────────────────── */
 /* Chatbot – MedsyChatView                                     */
@@ -795,7 +949,77 @@
 "chatbot.ai.thinking"         = "Medsy AI is thinking…";
 "chatbot.error.generic"        = "Something went wrong. Please try again.";
 "chatbot.error.dismiss"        = "Dismiss";
+"chatbot.specialization.header" = "Recommended Specialists";
 "chatbot.sources.match"        = "✓ %d%% match";
 "chatbot.sources.eyebrow"      = "AI SUGGESTED";
 "chatbot.empty.title"          = "Ask Medsy AI";
 "chatbot.empty.subtitle"       = "Ask me about medications, symptoms, or your prescription.";
+
+// MARK: - Medsy AI — New Chat + History
+"chatbot.new_chat"                   = "New Chat";
+"chatbot.new_chat.confirm"            = "Start a new conversation? Your current chat history will be cleared.";
+"chatbot.history.loading"             = "Loading conversation…";
+"chatbot.history.failed"              = "Couldn't load history. You can still send a message.";
+"chatbot.send.wait_for_history"       = "Loading history…";
+
+// MARK: - Medsy AI — Mic + Camera
+"chatbot.mic.tap_to_speak"           = "Tap to speak";
+"chatbot.mic.listening"              = "Listening…";
+"chatbot.mic.error"                  = "Couldn't access microphone. Check Settings.";
+"chatbot.camera.select"              = "Attach image";
+"chatbot.camera.image_preview"       = "📷 Image";
+
+// MARK: - Medsy AI — Suggestions (empty-state grid)
+"chatbot.suggestion.symptoms"           = "Describe Symptoms";
+"chatbot.suggestion.symptoms.subtitle"  = "I'll suggest the right medicine";
+"chatbot.suggestion.symptoms.prompt"    = "I have a headache and fever, what should I take?";
+"chatbot.suggestion.prescription"       = "Read My Prescription";
+"chatbot.suggestion.prescription.subtitle" = "Upload a photo of your prescription";
+"chatbot.suggestion.prescription.prompt" = "Can you read this prescription and explain it to me?";
+"chatbot.suggestion.order"             = "Order Medicine";
+"chatbot.suggestion.order.subtitle"    = "Find and add to cart directly";
+"chatbot.suggestion.order.prompt"      = "I need Panadol Extra";
+"chatbot.suggestion.reminder"          = "Set a Reminder";
+"chatbot.suggestion.reminder.subtitle" = "I'll remind you to take your medicine";
+"chatbot.suggestion.reminder.prompt"   = "Remind me to take my medicine daily at 9 AM";
+"chatbot.suggestion.browse"            = "Browse Categories";
+"chatbot.suggestion.browse.subtitle"   = "Explore all medicine categories";
+"chatbot.suggestion.browse.prompt"     = "Show me all medicine categories";
+"chatbot.suggestion.doctor"            = "Find a Doctor";
+"chatbot.suggestion.doctor.subtitle"   = "Get specialist recommendations";
+"chatbot.suggestion.doctor.prompt"     = "I need a cardiologist";
+"chatbot.suggestion.emergency"         = "Emergency Numbers";
+"chatbot.suggestion.emergency.subtitle"= "Ambulance, police, fire hotlines";
+"chatbot.suggestion.emergency.prompt"  = "What are the emergency numbers I should know?";
+
+// MARK: - Medsy AI — Cart success action
+"chatbot.cart_success.title"          = "Added to your cart";
+"chatbot.cart_success.subtitle"       = "×%d item(s) · %d in cart";
+"chatbot.cart_success.view_cart"      = "View Cart";
+
+// MARK: - Medsy AI — Confirm request action
+"chatbot.confirm_request.title"       = "Your request is ready";
+"chatbot.confirm_request.subtitle"    = "Complete your delivery and payment details";
+"chatbot.confirm_request.action"      = "Confirm Request";
+
+// MARK: - Medsy AI — Reminder bubble
+"chatbot.reminder.bubble_title"       = "Reminder set";
+
+// MARK: - Medsy AI — Emergency call button
+"chatbot.emergency.call"             = "Call";
+"chatbot.emergency.title"            = "Emergency Services";
+"chatbot.emergency.ambulance"        = "Ambulance";
+"chatbot.emergency.police"           = "Police";
+"chatbot.emergency.fire"             = "Fire";
+
+// MARK: - Medsy AI — Disclaimer row
+"chatbot.disclaimer.row"             = "ⓘ For informational use only";
+
+// MARK: - Medsy AI — AI offline window
+"chatbot.error.ai_offline"           = "Medsy AI is offline between 11 PM and 8 AM. Please try again after 8:00 AM.";
+
+// MARK: - Medsy AI — Product card
+"chatbot.product.add_to_cart"        = "Add to Cart";
+"chatbot.product.details"            = "Details";
+"chatbot.product.rx_only"            = "Rx Only";
+"chatbot.consult_product_prompt"     = "Tell me about %@";

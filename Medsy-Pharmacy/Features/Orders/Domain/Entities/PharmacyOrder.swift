@@ -52,6 +52,7 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
     let customerPhone: String?
     let notes: String?
     let assignmentStatus: String?
+    let paymentMethod: String?
 
     init(
         id: Int,
@@ -67,7 +68,8 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
         customerName: String? = nil,
         customerPhone: String? = nil,
         notes: String? = nil,
-        assignmentStatus: String? = nil
+        assignmentStatus: String? = nil,
+        paymentMethod: String? = nil
     ) {
         self.id = id
         self.userId = userId
@@ -83,6 +85,7 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
         self.customerPhone = customerPhone
         self.notes = notes
         self.assignmentStatus = assignmentStatus
+        self.paymentMethod = paymentMethod
     }
 
     static func == (lhs: PharmacyOrder, rhs: PharmacyOrder) -> Bool {
@@ -119,6 +122,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
     case pending
     case accepted
     case preparing
+    case readyForPickup
+    case readyForDelivery
     case outForDelivery
     case delivered
     case cancelled
@@ -132,6 +137,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
         case "PENDING": self = .pending
         case "ACCEPTED": self = .accepted
         case "PREPARING": self = .preparing
+        case "READY_FOR_PICKUP": self = .readyForPickup
+        case "READY_FOR_DELIVERY": self = .readyForDelivery
         case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED": self = .delivered
         case "CANCELLED", "CANCELED": self = .cancelled

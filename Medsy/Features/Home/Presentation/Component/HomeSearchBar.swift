@@ -7,20 +7,19 @@
 import SwiftUI
 
 struct HomeSearchBar: View {
-    @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
     let onTap: () -> Void
 
     private var searchBackground: Color {
-        appSettings.isDarkMode ? Color(hex: "#1A2920") : Color(hex: "#FFFFFF")
+        AppColor.surface
     }
 
     private var searchBorder: Color {
-        appSettings.isDarkMode ? Color(hex: "#283D32") : Color(white: 0, opacity: 0.08)
+        AppColor.outlineVariant
     }
 
     private var searchContentColor: Color {
-        appSettings.isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
+        AppColor.outline
     }
     
     var body: some View {
@@ -29,7 +28,7 @@ struct HomeSearchBar: View {
                 Text("home.searchPlaceholder".localized)
                     .font(AppColor.sans(14))
                     .foregroundStyle(searchContentColor)
-                    .multilineTextAlignment(languageManager.isRTL ? .trailing : .leading)
+                    .multilineTextAlignment(.leading)
 
                 Spacer()
 
@@ -37,7 +36,6 @@ struct HomeSearchBar: View {
                     .foregroundStyle(searchContentColor)
             }
         }
-        .environment(\.layoutDirection, .leftToRight)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
