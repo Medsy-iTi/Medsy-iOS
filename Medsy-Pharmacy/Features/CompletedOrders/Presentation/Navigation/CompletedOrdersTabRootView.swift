@@ -33,5 +33,12 @@ struct CompletedOrdersTabRootView: View {
                     }
                 }
         }
+        .onChange(of: coordinator.path) { oldPath, newPath in
+            if oldPath.count > newPath.count && newPath.isEmpty {
+                Task {
+                    await viewModel.reload()
+                }
+            }
+        }
     }
 }
