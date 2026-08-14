@@ -34,6 +34,7 @@ struct MedsyChatInputBar: View {
             HStack {
                 TextField(placeholder, text: $text)
                     .foregroundStyle(AppColor.textPrim)
+                    .localizedTextInput()
                     .submitLabel(.send)
                     .onSubmit { if !disabled { onSend() } }
 
@@ -61,7 +62,7 @@ struct MedsyChatInputBar: View {
             // Send button
             Button(action: { if !disabled { onSend() } }) {
                 Image(systemName: "paperplane.fill")
-                    .foregroundColor(.white)
+                    .foregroundColor(disabled ? AppColor.textSec : AppColor.white)
                     .padding(12)
                     .background(disabled ? AppColor.surfaceContainerHighest : accentColor)
                     .clipShape(Circle())

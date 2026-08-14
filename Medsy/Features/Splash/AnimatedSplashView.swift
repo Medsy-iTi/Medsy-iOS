@@ -11,155 +11,208 @@ struct AnimatedSplashView: View {
     let onFinished: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.displayScale) private var displayScale
     @ObservedObject private var appSettings = AppSettings.shared
 
-    @State private var logoScale: CGFloat = 0.72
-    @State private var logoRotation: Double = -7
+    @State private var logoScale: CGFloat = 0.55
     @State private var logoOpacity: Double = 0
-    @State private var textOffset: CGFloat = 20
     @State private var textOpacity: Double = 0
-    @State private var ringProgress: CGFloat = 0
-    @State private var ringRotation: Double = -35
-    @State private var isBreathing = false
+    @State private var textOffset: CGFloat = 40
     @State private var hasStarted = false
     @State private var hasFinished = false
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [AppColor.bg, AppColor.surface],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            splashBackground
 
-            ambientBackground
-
-            VStack(spacing: MedsySpacing.lg) {
-                Spacer()
-
-                ZStack {
-                    Circle()
-                        .fill(AppColor.pill)
-                        .frame(width: 250, height: 250)
-                        .scaleEffect(isBreathing ? 1.07 : 0.94)
-                        .opacity(isBreathing ? 0.58 : 0.9)
-
-                    Circle()
-                        .trim(from: 0, to: ringProgress * 0.82)
-                        .stroke(
-                            AngularGradient(
-                                colors: [
-                                    AppColor.green.opacity(0.08),
-                                    AppColor.green,
-                                    AppColor.green.opacity(0.08)
-                                ],
-                                center: .center
-                            ),
-                            style: StrokeStyle(lineWidth: 3, lineCap: .round)
-                        )
-                        .frame(width: 236, height: 236)
-                        .rotationEffect(.degrees(ringRotation))
-
-                    Image("SplashLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 205, height: 205)
-                }
-                .scaleEffect(logoScale * (isBreathing ? 1.015 : 1))
-                .rotationEffect(.degrees(logoRotation))
-                .opacity(logoOpacity)
-                .shadow(
-                    color: AppColor.green.opacity(appSettings.isDarkMode ? 0.3 : 0.17),
-                    radius: 26,
-                    y: 12
-                )
+            AndroidSplashWaves()
+                .frame(height: 260)
+                .frame(maxHeight: .infinity, alignment: .bottom)
                 .accessibilityHidden(true)
 
-                VStack(spacing: MedsySpacing.xs) {
-                    Text("splash.brand".localized)
-                        .font(AppColor.sans(36, .bold))
-                        .foregroundStyle(AppColor.green)
+            VStack(spacing: 0) {
+                splashLogo
+
+                VStack(spacing: 6) {
+                    brandText
 
                     Text("splash.tagline".localized)
-                        .font(AppColor.sans(17, .semibold))
-                        .foregroundStyle(AppColor.textPrim)
-
-                    Text("splash.subtitle".localized)
-                        .font(AppColor.sans(14))
-                        .foregroundStyle(AppColor.hintPlaceholder)
+                        .font(.system(size: 14, weight: .regular))
+                        .tracking(0.3)
+                        .foregroundStyle(
+                            appSettings.isDarkMode
+                                ? AppColor.green
+                                : AppColor.green.opacity(0.7)
+                        )
                         .multilineTextAlignment(.center)
-                        .lineSpacing(3)
-                        .padding(.horizontal, MedsySpacing.xl)
+                        .padding(.horizontal, 40)
                 }
                 .offset(y: textOffset)
                 .opacity(textOpacity)
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("splash.accessibility_label".localized)
-
-                Spacer()
-                Spacer()
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("splash.accessibility_label".localized)
         }
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .onAppear(perform: startAnimations)
         .task {
-            try? await Task.sleep(for: .seconds(reduceMotion ? 1.5 : 2.7))
+            try? await Task.sleep(for: .seconds(2.8))
             guard !Task.isCancelled, !hasFinished else { return }
             hasFinished = true
-
-            withAnimation(.easeOut(duration: reduceMotion ? 0.01 : 0.25)) {
-                onFinished()
-            }
+            onFinished()
         }
     }
 
-    private var ambientBackground: some View {
-        ZStack {
-            Circle()
-                .fill(AppColor.green.opacity(appSettings.isDarkMode ? 0.15 : 0.08))
-                .frame(width: 340, height: 340)
-                .blur(radius: 30)
-                .scaleEffect(isBreathing ? 1.12 : 0.9)
-                .offset(x: -150, y: -260)
+    private var splashLogo: some View {
+        Image("AndroidSplashLogo")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 160, height: 160)
+            .modifier(AndroidSplashShimmer(isEnabled: !reduceMotion))
+            .scaleEffect(logoScale)
+            .opacity(logoOpacity)
+            .accessibilityHidden(true)
+    }
 
-            Circle()
-                .fill(AppColor.green.opacity(appSettings.isDarkMode ? 0.1 : 0.05))
-                .frame(width: 270, height: 270)
-                .blur(radius: 26)
-                .scaleEffect(isBreathing ? 0.92 : 1.08)
-                .offset(x: 170, y: 290)
+    private var brandText: some View {
+        (
+            Text("splash.brand_prefix".localized)
+                .foregroundStyle(AppColor.green)
+            + Text("splash.brand_suffix".localized)
+                .foregroundStyle(AppColor.textPrim)
+        )
+        .font(.system(size: 45, weight: .heavy))
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
+        .padding(.horizontal, 16)
+    }
+
+    @ViewBuilder
+    private var splashBackground: some View {
+        GeometryReader { proxy in
+            if appSettings.isDarkMode {
+                RadialGradient(
+                    colors: [
+                        Color(hex: "#1D7A4D"),
+                        Color(hex: "#0B1014")
+                    ],
+                    center: UnitPoint(
+                        x: (0.5 / displayScale) / max(proxy.size.width, 1),
+                        y: (0.35 / displayScale) / max(proxy.size.height, 1)
+                    ),
+                    startRadius: 0,
+                    endRadius: 1200 / displayScale
+                )
+            } else {
+                LinearGradient(
+                    colors: [
+                        Color(hex: "#E1E9E3"),
+                        Color(hex: "#FFFFFF")
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
         }
-        .accessibilityHidden(true)
+        .ignoresSafeArea()
     }
 
     private func startAnimations() {
         guard !hasStarted else { return }
         hasStarted = true
 
-        withAnimation(.spring(response: reduceMotion ? 0.01 : 0.72, dampingFraction: 0.74)) {
+        let logoDuration = reduceMotion ? 0.01 : 0.9
+        let textDuration = reduceMotion ? 0.01 : 0.7
+        let textDelay = reduceMotion ? 0 : 0.3
+        let fastOutSlowIn = Animation.timingCurve(
+            0.4,
+            0,
+            0.2,
+            1,
+            duration: logoDuration
+        )
+
+        withAnimation(fastOutSlowIn) {
             logoScale = 1
-            logoRotation = 0
+        }
+        withAnimation(.linear(duration: logoDuration)) {
             logoOpacity = 1
         }
-
-        withAnimation(.easeOut(duration: reduceMotion ? 0.01 : 0.65).delay(reduceMotion ? 0 : 0.2)) {
-            textOffset = 0
+        withAnimation(.linear(duration: textDuration).delay(textDelay)) {
             textOpacity = 1
         }
-
-        withAnimation(.easeOut(duration: reduceMotion ? 0.01 : 1)) {
-            ringProgress = 1
+        withAnimation(
+            .timingCurve(0.4, 0, 0.2, 1, duration: textDuration)
+                .delay(textDelay)
+        ) {
+            textOffset = 0
         }
+    }
+}
 
-        guard !reduceMotion else { return }
+private struct AndroidSplashWaves: View {
+    var body: some View {
+        Canvas { context, size in
+            var upperWave = Path()
+            upperWave.move(to: CGPoint(x: 0, y: size.height * 0.4))
+            upperWave.addQuadCurve(
+                to: CGPoint(x: size.width * 0.5, y: size.height * 0.4),
+                control: CGPoint(x: size.width * 0.2, y: size.height * 0.2)
+            )
+            upperWave.addQuadCurve(
+                to: CGPoint(x: size.width, y: size.height * 0.4),
+                control: CGPoint(x: size.width * 0.8, y: size.height * 0.6)
+            )
+            upperWave.addLine(to: CGPoint(x: size.width, y: size.height))
+            upperWave.addLine(to: CGPoint(x: 0, y: size.height))
+            upperWave.closeSubpath()
+            context.fill(upperWave, with: .color(AppColor.green.opacity(0.04)))
 
-        withAnimation(.linear(duration: 4).repeatForever(autoreverses: false)) {
-            ringRotation = 325
+            var lowerWave = Path()
+            lowerWave.move(to: CGPoint(x: 0, y: size.height * 0.6))
+            lowerWave.addQuadCurve(
+                to: CGPoint(x: size.width * 0.6, y: size.height * 0.5),
+                control: CGPoint(x: size.width * 0.3, y: size.height * 0.7)
+            )
+            lowerWave.addQuadCurve(
+                to: CGPoint(x: size.width, y: size.height * 0.6),
+                control: CGPoint(x: size.width * 0.85, y: size.height * 0.35)
+            )
+            lowerWave.addLine(to: CGPoint(x: size.width, y: size.height))
+            lowerWave.addLine(to: CGPoint(x: 0, y: size.height))
+            lowerWave.closeSubpath()
+            context.fill(lowerWave, with: .color(AppColor.green.opacity(0.08)))
         }
+    }
+}
 
-        withAnimation(.easeInOut(duration: 1.45).repeatForever(autoreverses: true)) {
-            isBreathing = true
+private struct AndroidSplashShimmer: ViewModifier {
+    let isEnabled: Bool
+    @State private var phase: CGFloat = -1.5
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content
+                .overlay {
+                    GeometryReader { proxy in
+                        LinearGradient(
+                            colors: [.clear, .white.opacity(0.42), .clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: proxy.size.width * 0.65)
+                        .rotationEffect(.degrees(18))
+                        .offset(x: phase * proxy.size.width)
+                    }
+                    .mask(content)
+                }
+                .onAppear {
+                    withAnimation(.linear(duration: 0.9).repeatForever(autoreverses: false)) {
+                        phase = 1.5
+                    }
+                }
+        } else {
+            content
         }
     }
 }

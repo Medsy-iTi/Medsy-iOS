@@ -56,13 +56,6 @@ struct LoginView: View {
                 }
             }
 
-            AuthDivider()
-
-            VStack(spacing: 12) {
-                AuthSecondaryButton(title: "auth.continue_google".localized, imageName: "google") {}
-                AuthSecondaryButton(title: "auth.continue_apple".localized, imageName: "apple") {}
-            }
-
             AuthPrompt(
                 leadingText: "auth.no_account".localized,
                 actionTitle: "auth.signup.link".localized,

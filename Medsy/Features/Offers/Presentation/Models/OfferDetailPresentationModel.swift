@@ -67,4 +67,3 @@ struct OfferDetailPresentationModel: Identifiable, Hashable {
     let totalPrice: Double
     let prescriptionUrl: String?
 }
-

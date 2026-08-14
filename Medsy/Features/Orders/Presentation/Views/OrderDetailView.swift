@@ -22,6 +22,8 @@ struct OrderDetailView: View {
     var onSelectPharmacy: ((Int) -> Void)? = nil
     var onShowPharmacyLocation: ((Int) -> Void)? = nil
     var onOpenDirections: ((OrderPharmacyPresentationModel) -> Void)? = nil
+    var paymentAction: PaymentOrderActionPresentation? = nil
+    var onPaymentAction: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,11 +63,7 @@ struct OrderDetailView: View {
                 .frame(maxWidth: .infinity)
 
             HStack {
-                Button(action: onBack) {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AppColor.textPrim)
-                }
+                MedsyNavBarBackButton(action: onBack)
                 .padding(.leading, MedsySpacing.md)
                 Spacer()
             }
@@ -138,16 +136,16 @@ struct OrderDetailView: View {
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
-                .padding(.bottom, 96)
+                .padding(.bottom, paymentAction == nil ? 96 : 162)
             }
 
-            reorderButton
+            bottomActions
                 .padding(.horizontal, MedsySpacing.md)
                 .padding(.bottom, MedsySpacing.lg)
                 .background(
                     AppColor.bg
                         .ignoresSafeArea()
-                        .frame(height: 96)
+                        .frame(height: paymentAction == nil ? 96 : 162)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                 )
         }
@@ -211,7 +209,7 @@ struct OrderDetailView: View {
             Text(fulfillmentLabel(for: type))
             .font(AppColor.sans(13, .medium))
         }
-        .foregroundStyle(AppColor.green)
+        .foregroundStyle(AppColor.onPrimaryContainer)
         .padding(.horizontal, MedsySpacing.sm)
         .padding(.vertical, MedsySpacing.xxs + 2)
         .background(AppColor.lightGreen)
@@ -434,6 +432,19 @@ struct OrderDetailView: View {
             isDisabled: reorderState == .loading
         ) {
             onReorder?()
+        }
+    }
+
+    private var bottomActions: some View {
+        VStack(spacing: MedsySpacing.sm) {
+            if let paymentAction {
+                PaymentOrderActionView(
+                    action: paymentAction,
+                    onTap: { onPaymentAction?() }
+                )
+            }
+
+            reorderButton
         }
     }
 

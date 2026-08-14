@@ -18,21 +18,27 @@ struct SearchedProductCard: View {
 	var isSelectionMode = false
 	var onTap: (() -> Void)?
 
-	@Environment(\.layoutDirection) private var layoutDirection
-	@ObservedObject private var appSettings = AppSettings.shared
-
-	private var isRTL: Bool { layoutDirection == .rightToLeft }
-
 	var body: some View {
 		HStack(alignment: .top, spacing: MedsySpacing.sm) {
-			productImage
-			textContent
-			if isSelectionMode {
-				Image(systemName: "chevron.forward")
-					.font(.footnote.weight(.semibold))
-					.foregroundStyle(AppColor.textSec)
-					.frame(maxHeight: .infinity)
-			} else {
+			Button {
+				onTap?()
+			} label: {
+				HStack(alignment: .top, spacing: MedsySpacing.sm) {
+					productImage
+					textContent
+
+					if isSelectionMode {
+						Image(systemName: "chevron.forward")
+							.font(.footnote.weight(.semibold))
+							.foregroundStyle(AppColor.textSec)
+							.frame(maxHeight: .infinity)
+					}
+				}
+				.contentShape(Rectangle())
+			}
+			.buttonStyle(.plain)
+
+			if !isSelectionMode {
 				actionColumn
 			}
 		}
@@ -45,10 +51,6 @@ struct SearchedProductCard: View {
 						.stroke(AppColor.border, lineWidth: 1)
 				)
 		)
-		.contentShape(Rectangle())
-		.onTapGesture {
-			onTap?()
-		}
 		.alert("cart.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
 			Button("common.cancel".localized, role: .cancel) {}
 			Button("cart.remove_confirmation.action".localized, role: .destructive) {

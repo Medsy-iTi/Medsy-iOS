@@ -139,6 +139,7 @@ struct CartView: View {
 
                     TextEditor(text: $noteInput)
                         .font(MedsyFont.body(15))
+                        .localizedTextInput()
                         .padding(MedsySpacing.sm)
                         .frame(minHeight: 140)
                         .scrollContentBackground(.hidden)

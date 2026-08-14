@@ -2,7 +2,7 @@ import Alamofire
 import Foundation
 
 enum OrdersEndpoint: ApiEndpoint {
-    case fetchOrders(page: Int, size: Int, language: String)
+    case fetchOrders(page: Int, size: Int, language: String, status: String? = nil)
     case fetchOrderDetail(id: Int, language: String)
     case fetchRequestDetail(id: Int, language: String)
 
@@ -23,12 +23,16 @@ enum OrdersEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .fetchOrders(page, size, language):
-            return [
+        case let .fetchOrders(page, size, language, status):
+            var parameters: Parameters = [
                 "page": page,
                 "size": size,
                 "lang": language
             ]
+            if let status {
+                parameters["status"] = status
+            }
+            return parameters
         case .fetchOrderDetail(_, let language):
             return ["lang": language]
         case .fetchRequestDetail(_, let language):

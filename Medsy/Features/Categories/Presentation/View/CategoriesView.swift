@@ -44,7 +44,7 @@ struct CategoriesView: View {
                 )
                 .font(AppColor.sans(14))
                 .foregroundStyle(AppColor.textPrim)
-                .multilineTextAlignment(.leading)
+                .localizedTextInput()
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

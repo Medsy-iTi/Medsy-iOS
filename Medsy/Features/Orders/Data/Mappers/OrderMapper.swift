@@ -179,7 +179,8 @@ enum OrderMapper {
             let formatter = DateFormatter()
             formatter.dateFormat = format
             formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = .current
+            // Backend LocalDateTime values are offset-less UTC timestamps.
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             if let date = formatter.date(from: normalized) {
                 return date
             }

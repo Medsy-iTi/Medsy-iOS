@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct OrdersCoordinatorView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var coordinator = OrdersCoordinator()
     @State private var historyViewModel: OrderHistoryViewModel
     @State private var detailViewModel: OrderDetailViewModel
+    @Binding private var requestedOrderID: Int?
     private let onReorderCompleted: () -> Void
     private let onGoToCart: () -> Void
 
     init(
+        requestedOrderID: Binding<Int?> = .constant(nil),
         onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
+        _requestedOrderID = requestedOrderID
         _historyViewModel = State(initialValue: DIContainer.shared.resolve(OrderHistoryViewModel.self))
         _detailViewModel = State(initialValue: DIContainer.shared.resolve(OrderDetailViewModel.self))
         self.onReorderCompleted = onReorderCompleted
@@ -27,9 +31,11 @@ struct OrdersCoordinatorView: View {
     init(
         historyViewModel: OrderHistoryViewModel,
         detailViewModel: OrderDetailViewModel,
+        requestedOrderID: Binding<Int?> = .constant(nil),
         onReorderCompleted: @escaping () -> Void = {},
         onGoToCart: @escaping () -> Void = {}
     ) {
+        _requestedOrderID = requestedOrderID
         _historyViewModel = State(initialValue: historyViewModel)
         _detailViewModel = State(initialValue: detailViewModel)
         self.onReorderCompleted = onReorderCompleted
@@ -45,7 +51,8 @@ struct OrdersCoordinatorView: View {
                 onSelectOrder: { order in coordinator.showDetail(orderId: order.id) },
                 onRetry: { historyViewModel.handle(.retry) },
                 onLoadNextPage: { historyViewModel.handle(.loadNextPage) },
-                onSearch: { coordinator.showSearch() }
+                onSearch: { coordinator.showSearch() },
+                onPaymentAction: { coordinator.showPayment(orderId: $0) }
             )
             .task {
                 historyViewModel.handle(.load)
@@ -69,7 +76,9 @@ struct OrdersCoordinatorView: View {
                         routeState: detailViewModel.routeState,
                         onSelectPharmacy: { detailViewModel.handle(.selectPharmacy($0)) },
                         onShowPharmacyLocation: { detailViewModel.handle(.showPharmacyLocation($0)) },
-                        onOpenDirections: { _ in detailViewModel.handle(.openDirections) }
+                        onOpenDirections: { _ in detailViewModel.handle(.openDirections) },
+                        paymentAction: detailViewModel.paymentAction,
+                        onPaymentAction: { coordinator.showPayment(orderId: orderId) }
                     )
                     .onChange(of: detailViewModel.reorderState) { _, state in
                         guard state.didAddItemsToCart else { return }
@@ -78,6 +87,22 @@ struct OrdersCoordinatorView: View {
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))
                     }
+                case .payment(let orderId):
+                    PaymentFlowView(
+                        viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                            masterOrderId: orderId
+                        ),
+                        onCompleted: {
+                            detailViewModel.handle(.load(orderId: orderId))
+                            historyViewModel.handle(.load)
+                            coordinator.pop()
+                        },
+                        onViewOrder: {
+                            detailViewModel.handle(.load(orderId: orderId))
+                            historyViewModel.handle(.load)
+                            coordinator.pop()
+                        }
+                    )
                 case let .search(query):
                     SearchCoordinatorView(
                         query: query,
@@ -90,6 +115,24 @@ struct OrdersCoordinatorView: View {
                 ProductDetailView(productId: destination.productId)
             }
         }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            historyViewModel.handle(.load)
+            detailViewModel.handle(.refresh)
+        }
+        .onAppear(perform: openRequestedOrderIfNeeded)
+        .onChange(of: requestedOrderID) { _, _ in
+            openRequestedOrderIfNeeded()
+        }
+    }
+
+    private func openRequestedOrderIfNeeded() {
+        guard let orderID = requestedOrderID else { return }
+
+        coordinator.popToRoot()
+        coordinator.showDetail(orderId: orderID)
+        historyViewModel.handle(.load)
+        requestedOrderID = nil
     }
 }
 

@@ -8,25 +8,32 @@
 import SwiftUI
 
 struct CompleteRequestSummaryView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let draft: CompleteRequestDraft
     @Binding var isExpanded: Bool
 
     var body: some View {
         CompleteRequestSectionCard(
             title: "complete_request.summary.title".localized,
-            systemImage: "list.clipboard"
+            systemImage: "list.clipboard",
+            backgroundColor: sectionBackgroundColor,
+            titleColor: primaryTextColor,
+            iconColor: accentColor,
+            iconBackgroundColor: iconBackgroundColor,
+            borderColor: borderColor,
+            shadowColor: colorScheme == .dark ? .clear : AppColor.green.opacity(0.06)
         ) {
             VStack(spacing: MedsySpacing.sm) {
                 HStack {
                     Text(summaryCountText)
                         .font(MedsyFont.body())
-                        .foregroundStyle(AppColor.textSec)
+                        .foregroundStyle(secondaryTextColor)
 
                     Spacer()
 
                     Text(formattedPrice(draft.estimatedTotal))
                         .font(MedsyFont.price(18))
-                        .foregroundStyle(AppColor.textPrim)
+                        .foregroundStyle(primaryTextColor)
                 }
 
                 if !draft.items.isEmpty {
@@ -45,13 +52,13 @@ struct CompleteRequestSummaryView: View {
                             Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         }
                         .font(MedsyFont.bodyMedium(14))
-                        .foregroundStyle(AppColor.green)
+                        .foregroundStyle(accentColor)
                     }
                     .buttonStyle(.plain)
                 }
 
                 if isExpanded {
-                    Divider().background(AppColor.border)
+                    Divider().background(borderColor)
 
                     ForEach(draft.items) { item in
                         HStack(alignment: .center, spacing: MedsySpacing.sm) {
@@ -61,22 +68,22 @@ struct CompleteRequestSummaryView: View {
                                 MedsyBrandImageFallback()
                             }
                             .frame(width: 44, height: 44)
-                            .background(AppColor.surface)
+                            .background(itemImageBackgroundColor)
                             .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
 
                             Text("\(item.quantity)×")
                                 .font(MedsyFont.bodyMedium(14))
-                                .foregroundStyle(AppColor.green)
+                                .foregroundStyle(accentColor)
 
                             VStack(alignment: .leading, spacing: MedsySpacing.xxs) {
                                 Text(item.name)
                                     .font(MedsyFont.bodyMedium(14))
-                                    .foregroundStyle(AppColor.textPrim)
+                                    .foregroundStyle(primaryTextColor)
 
                                 if !item.dosageInfo.isEmpty {
                                     Text(item.dosageInfo)
                                         .font(MedsyFont.caption(12))
-                                        .foregroundStyle(AppColor.textSec)
+                                        .foregroundStyle(secondaryTextColor)
                                 }
                             }
 
@@ -84,12 +91,40 @@ struct CompleteRequestSummaryView: View {
 
                             Text(formattedPrice(item.lineTotal))
                                 .font(MedsyFont.price(14))
-                                .foregroundStyle(AppColor.textPrim)
+                                .foregroundStyle(primaryTextColor)
                         }
                     }
                 }
             }
         }
+    }
+
+    private var sectionBackgroundColor: Color {
+        colorScheme == .dark ? Color(hex: "#0E1418") : Color(hex: "#FFFFFF")
+    }
+
+    private var itemImageBackgroundColor: Color {
+        colorScheme == .dark ? Color(hex: "#10161A") : Color(hex: "#FFFFFF")
+    }
+
+    private var primaryTextColor: Color {
+        colorScheme == .dark ? Color(hex: "#E1E6E3") : Color(hex: "#181C19")
+    }
+
+    private var secondaryTextColor: Color {
+        colorScheme == .dark ? Color(hex: "#BEC9C2") : Color(hex: "#414943")
+    }
+
+    private var accentColor: Color {
+        colorScheme == .dark ? Color(hex: "#27C779") : Color(hex: "#048C4E")
+    }
+
+    private var iconBackgroundColor: Color {
+        colorScheme == .dark ? Color(hex: "#123D2B") : Color(hex: "#D6F5E2")
+    }
+
+    private var borderColor: Color {
+        colorScheme == .dark ? Color(hex: "#3C4741") : Color(hex: "#C0C9C2")
     }
 
     private var summaryCountText: String {

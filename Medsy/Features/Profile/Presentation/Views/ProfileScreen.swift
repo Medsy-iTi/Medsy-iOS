@@ -26,6 +26,9 @@ struct ProfileScreen: View {
     let onTheme: () -> Void
     let onOrders: () -> Void
     let onFavorites: () -> Void
+    let onHowMedsyWorks: () -> Void
+    let onHelpCenter: () -> Void
+    let onReportProblem: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -258,6 +261,12 @@ struct ProfileScreen: View {
             onOrders()
         case "favorites":
             onFavorites()
+        case "how":
+            onHowMedsyWorks()
+        case "help":
+            onHelpCenter()
+        case "report":
+            onReportProblem()
         default:
             break
         }
@@ -274,7 +283,8 @@ struct ProfileScreen: View {
         hasDeliveryLocation: true,
         state: .loaded,
         onRetry: {},
-        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onFavorites: {}, onLogout: {}
+        onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onFavorites: {},
+        onHowMedsyWorks: {}, onHelpCenter: {}, onReportProblem: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }

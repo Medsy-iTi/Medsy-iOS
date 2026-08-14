@@ -40,7 +40,12 @@ struct ChatbotRootView: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            MedsyChatView(viewModel: viewModel, onBack: onBackToProduct)
+            MedsyChatView(viewModel: viewModel, onBack: onBackToProduct.map { action in
+                {
+                    viewModel.clearDraftPrompt()
+                    action()
+                }
+            })
                 .navigationBarHidden(true)
                 .navigationDestination(for: ChatbotRoute.self) { route in
                     destination(for: route)

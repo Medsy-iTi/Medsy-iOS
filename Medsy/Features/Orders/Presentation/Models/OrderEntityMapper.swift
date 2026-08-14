@@ -19,7 +19,10 @@ enum OrderEntityMapper {
             totalPrice: entity.totalPrice,
             itemCount: entity.itemCount,
             itemImageURLs: entity.itemImageURLs,
-            pharmacyNames: entity.pharmacyNames
+            pharmacyNames: entity.pharmacyNames,
+            paymentMethod: entity.paymentMethod,
+            paymentStatus: entity.paymentStatus,
+            paymentExpiresAt: entity.paymentExpiresAt
         )
     }
 

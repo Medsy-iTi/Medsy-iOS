@@ -11,14 +11,7 @@ extension MedsyChatView {
     var navigationBar: some View {
         HStack(spacing: MedsySpacing.xs) {
             if let onBack {
-                Button(action: onBack) {
-                    Image(systemName: "chevron.backward")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(AppColor.green)
-                        .frame(width: 36, height: 36)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("common.back".localized)
+                MedsyNavBarBackButton(action: onBack)
             }
 
             // AI avatar
@@ -49,7 +42,7 @@ extension MedsyChatView {
 
             // New chat button
             Button {
-                viewModel.startNewChat()
+                showNewChatConfirmation = true
             } label: {
                 Image(systemName: "square.and.pencil")
                     .foregroundColor(AppColor.textSec)
@@ -81,7 +74,7 @@ extension MedsyChatView {
             } label: {
                 Text(lang.isRTL ? "EN" : "ع")
                     .font(MedsyFont.bodyMedium(13))
-                    .foregroundColor(AppColor.green)
+                    .foregroundColor(AppColor.onPrimaryContainer)
                     .frame(width: 36, height: 36)
                     .background(AppColor.primaryLight)
                     .clipShape(Circle())
