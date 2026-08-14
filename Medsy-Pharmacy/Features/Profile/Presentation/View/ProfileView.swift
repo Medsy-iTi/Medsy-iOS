@@ -98,7 +98,7 @@ struct ProfileView: View {
 
 			ProfilePreferencesSection(
 				currentLanguage: languageManager.currentLanguage,
-				isDarkMode: appSettings.isDarkMode,
+				themePreference: appSettings.themePreference,
 				onLanguageChange: viewModel.setLanguage,
 				onThemeChange: viewModel.setTheme
 			)
