@@ -242,6 +242,9 @@
 "favorites.persistence_error.subtitle" = "تعذر حفظ التغيير في المفضلة. حاول مرة أخرى.";
 "favorites.offline.title" = "لا يوجد اتصال بالإنترنت";
 "favorites.offline.subtitle" = "اتصل بالإنترنت لفتح تفاصيل الدواء.";
+"favorites.remove_confirmation.title" = "إزالة من المفضلة؟";
+"favorites.remove_confirmation.message" = "هل أنت متأكد من إزالة %@ من المفضلة؟";
+"favorites.remove_confirmation.action" = "إزالة";
 
 /* Tab bar */
 "tab.home" = "الرئيسية";
