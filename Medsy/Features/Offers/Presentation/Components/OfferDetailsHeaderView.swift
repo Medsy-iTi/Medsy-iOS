@@ -19,10 +19,12 @@ struct OfferDetailsHeaderView: View {
                     .foregroundStyle(AppColor.textPrim)
                     .frame(maxWidth: .infinity, alignment: .trailing)
 
-                Text(managerName)
-                    .font(AppColor.sans(13))
-                    .foregroundStyle(AppColor.textSec)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                if !managerName.isEmpty {
+                    Text(managerName)
+                        .font(AppColor.sans(13))
+                        .foregroundStyle(AppColor.textSec)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
             }
 
             Button(action: onBack) {

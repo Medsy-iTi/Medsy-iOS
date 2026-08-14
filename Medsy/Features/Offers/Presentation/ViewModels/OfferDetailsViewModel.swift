@@ -1,8 +1,3 @@
-//  OfferDetailsViewModel.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 22/07/2026.
-
 import Foundation
 import Observation
 
@@ -26,10 +21,6 @@ final class OfferDetailsViewModel {
         statusStore: UserDefaultsStatusStoreProtocol? = nil
     ) {
         self.requestId = requestId
-        // OLD:
-        // self.confirmOfferUseCase = confirmOfferUseCase
-        // self.statusStore = statusStore
-
         self.confirmOfferUseCase = confirmOfferUseCase ?? DIContainer.shared.resolve(ConfirmOfferUseCaseProtocol.self)
         self.statusStore = statusStore ?? DIContainer.shared.resolve(UserDefaultsStatusStoreProtocol.self)
 
@@ -39,7 +30,7 @@ final class OfferDetailsViewModel {
                     id: "\(item.requestItemId)",
                     requestItemId: item.requestItemId,
                     productId: item.productId,
-                    name: item.productName,
+                    name: item.productName.isEmpty ? "offers.details.unavailableItem".localized : item.productName,
                     dosage: "",
                     price: item.unitPrice,
                     isAvailable: item.isAvailable,
@@ -48,26 +39,33 @@ final class OfferDetailsViewModel {
                     imageUrl: item.imageUrl
                 )
             }
+            let allAvailable = !items.isEmpty && items.allSatisfy(\.isAvailable)
+            let comment = allAvailable ? "offers.details.defaultComment".localized : "offers.details.partialComment".localized
             self.offerDetail = OfferDetailPresentationModel(
                 id: "\(requestId ?? 1)",
-                pharmacyName: "offers.list.pharmacy.nahda".localized,
-                managerName: "محمد أحمد " + "offers.details.managerSuffix".localized,
+                pharmacyName: "offers.details.title".localized,
+                managerName: "",
                 medicines: items,
-                pharmacistComment: "offers.details.defaultComment".localized,
+                pharmacistComment: comment,
                 totalPrice: offerResult.totalPrice,
-                prescriptionUrl: offerResult.prescriptionUrl
+                prescriptionUrl: offerResult.prescriptionUrl,
+                paymentMethod: offerResult.paymentMethod
             )
         } else {
             self.offerDetail = OfferDetailPresentationModel(
                 id: offer?.id ?? "1",
                 pharmacyName: offer?.pharmacyName ?? "offers.list.pharmacy.nahda".localized,
-                managerName: "محمد أحمد " + "offers.details.managerSuffix".localized,
+                managerName: "",
                 medicines: [],
                 pharmacistComment: "offers.details.defaultComment".localized,
                 totalPrice: Double(offer?.price ?? 0),
                 prescriptionUrl: nil
             )
         }
+    }
+
+    var hasSelectedMedicines: Bool {
+        offerDetail.medicines.contains(where: { $0.isAvailable && $0.isSelected })
     }
 
     func toggleItemSelection(id: String) {
@@ -117,6 +115,8 @@ final class OfferDetailsViewModel {
             if let data = try? JSONEncoder().encode(result) {
                 UserDefaults.standard.set(data, forKey: "request.selectResult.\(requestId)")
             }
+            UserDefaults.standard.set(true, forKey: "request.isSelected.\(requestId)")
+            UserDefaults.standard.set(false, forKey: "request.isConfirmed.\(requestId)")
             isConfirmed = true
             return result
         } catch {

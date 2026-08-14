@@ -1,10 +1,3 @@
-//
-//  OfferResultDTOs.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
 
 typealias GetOfferResultResponseDTO = APIResponseDTO<OfferResultResponseDTO>
@@ -14,12 +7,14 @@ struct OfferResultResponseDTO: Decodable, Equatable {
     let items: [OfferResultItemDTO]
     let totalPrice: Double
     let prescriptionUrl: String?
+    let paymentMethod: String?
 
     private enum CodingKeys: String, CodingKey {
         case items = "medicineRequestResultItemList"
         case fallbackItems = "items"
         case totalPrice
         case prescriptionUrl
+        case paymentMethod
     }
 
     init(from decoder: Decoder) throws {
@@ -33,21 +28,27 @@ struct OfferResultResponseDTO: Decodable, Equatable {
         }
         totalPrice = try container.decodeIfPresent(Double.self, forKey: .totalPrice) ?? 0.0
         prescriptionUrl = try container.decodeIfPresent(String.self, forKey: .prescriptionUrl)
+        paymentMethod = try container.decodeIfPresent(String.self, forKey: .paymentMethod)
     }
 
-    init(items: [OfferResultItemDTO], totalPrice: Double, prescriptionUrl: String? = nil) {
+    init(items: [OfferResultItemDTO], totalPrice: Double, prescriptionUrl: String? = nil, paymentMethod: String? = nil) {
         self.items = items
         self.totalPrice = totalPrice
         self.prescriptionUrl = prescriptionUrl
+        self.paymentMethod = paymentMethod
     }
 }
 
-struct ProductNestedDTO: Decodable, Equatable {
+struct ProductNestedDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int?
     let name: String?
     let productName: String?
     let price: Double?
     let imageUrl: String?
+    let form: String?
+    let strength: String?
+    let company: String?
+    let description: String?
 
     private enum CodingKeys: String, CodingKey {
         case id
@@ -55,6 +56,46 @@ struct ProductNestedDTO: Decodable, Equatable {
         case productName
         case price
         case imageUrl
+        case imageURL
+        case image
+        case form
+        case strength
+        case company
+        case description
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(Int.self, forKey: .id)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        productName = try container.decodeIfPresent(String.self, forKey: .productName)
+        price = try container.decodeIfPresent(Double.self, forKey: .price)
+        form = try container.decodeIfPresent(String.self, forKey: .form)
+        strength = try container.decodeIfPresent(String.self, forKey: .strength)
+        company = try container.decodeIfPresent(String.self, forKey: .company)
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+
+        var img = try? container.decodeIfPresent(String.self, forKey: .imageUrl)
+        if img == nil || img?.isEmpty == true {
+            img = try? container.decodeIfPresent(String.self, forKey: .imageURL)
+        }
+        if img == nil || img?.isEmpty == true {
+            img = try? container.decodeIfPresent(String.self, forKey: .image)
+        }
+        imageUrl = img
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(productName, forKey: .productName)
+        try container.encodeIfPresent(price, forKey: .price)
+        try container.encodeIfPresent(imageUrl, forKey: .imageUrl)
+        try container.encodeIfPresent(form, forKey: .form)
+        try container.encodeIfPresent(strength, forKey: .strength)
+        try container.encodeIfPresent(company, forKey: .company)
+        try container.encodeIfPresent(description, forKey: .description)
     }
 }
 
@@ -72,12 +113,17 @@ struct OfferResultItemDTO: Decodable, Equatable {
         case productId
         case productName
         case imageUrl
+        case imageURL
+        case image
         case unitPrice
         case isAlternative
         case alternative
         case isAvailable
         case available
         case product
+        case name
+        case requestedProductName
+        case requestedItemName
     }
 
     init(from decoder: Decoder) throws {
@@ -87,11 +133,43 @@ struct OfferResultItemDTO: Decodable, Equatable {
         requestItemId = try container.decode(Int.self, forKey: .requestItemId)
         productId = try container.decodeIfPresent(Int.self, forKey: .productId) ?? nestedProduct?.id
 
-        let nameAtTop = try container.decodeIfPresent(String.self, forKey: .productName)
-        let nameCandidate = (nameAtTop?.isEmpty == false ? nameAtTop : nil) ?? nestedProduct?.name ?? nestedProduct?.productName ?? ""
-        productName = nameCandidate
+        var nameAtTop = try? container.decodeIfPresent(String.self, forKey: .productName)
+        if nameAtTop == nil || nameAtTop?.isEmpty == true {
+            nameAtTop = try? container.decodeIfPresent(String.self, forKey: .name)
+        }
+        if nameAtTop == nil || nameAtTop?.isEmpty == true {
+            nameAtTop = try? container.decodeIfPresent(String.self, forKey: .requestedProductName)
+        }
+        if nameAtTop == nil || nameAtTop?.isEmpty == true {
+            nameAtTop = try? container.decodeIfPresent(String.self, forKey: .requestedItemName)
+        }
 
-        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl) ?? nestedProduct?.imageUrl
+        var candidate: String? = nil
+        if let top = nameAtTop, !top.isEmpty {
+            candidate = top
+        } else if let pName = nestedProduct?.name, !pName.isEmpty {
+            candidate = pName
+        } else if let pName = nestedProduct?.productName, !pName.isEmpty {
+            candidate = pName
+        }
+
+        if let validName = candidate, !validName.isEmpty {
+            productName = validName
+        } else {
+            productName = "offers.details.unavailableItem".localized
+        }
+
+        var imgUrl = try? container.decodeIfPresent(String.self, forKey: .imageUrl)
+        if imgUrl == nil || imgUrl?.isEmpty == true {
+            imgUrl = try? container.decodeIfPresent(String.self, forKey: .imageURL)
+        }
+        if imgUrl == nil || imgUrl?.isEmpty == true {
+            imgUrl = try? container.decodeIfPresent(String.self, forKey: .image)
+        }
+        if imgUrl == nil || imgUrl?.isEmpty == true {
+            imgUrl = nestedProduct?.imageUrl
+        }
+        imageUrl = imgUrl
 
         if let price = try container.decodeIfPresent(Double.self, forKey: .unitPrice), price > 0 {
             unitPrice = price
@@ -176,7 +254,8 @@ struct SelectPharmacyOfferDTO: Codable, Equatable, Hashable, Sendable {
 
 struct SelectPharmacyItemDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int
-    let productId: Int
+    let productId: Int?
+    let product: ProductNestedDTO?
     let quantity: Int
     let unitPrice: Double
     let totalPrice: Double
@@ -187,4 +266,43 @@ struct ConfirmOfferOrderDTO: Decodable, Equatable {
     let pharmacyId: Int
     let pharmacyName: String
     let itemIds: [Int]
+}
+
+struct MasterOrderDTO: Codable, Equatable, Hashable, Sendable {
+    let id: Int
+    let requestId: Int
+    let paymentMethod: String?
+    let paymentStatus: String?
+    let fulfillmentMethod: String?
+    let deliveryFee: Double?
+    let totalPrice: Double?
+    let orderStatus: String?
+    let orderResponses: [SelectPharmacyOfferDTO]?
+}
+
+struct MasterOrdersListResponseDTO: Decodable {
+    let content: [MasterOrderDTO]?
+
+    private enum CodingKeys: String, CodingKey {
+        case content
+        case data
+    }
+
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.container(keyedBy: CodingKeys.self) {
+            if let items = try? container.decodeIfPresent([MasterOrderDTO].self, forKey: .content) {
+                content = items
+                return
+            }
+            if let items = try? container.decodeIfPresent([MasterOrderDTO].self, forKey: .data) {
+                content = items
+                return
+            }
+        }
+        if let singleContainer = try? decoder.singleValueContainer(), let items = try? singleContainer.decode([MasterOrderDTO].self) {
+            content = items
+            return
+        }
+        content = []
+    }
 }

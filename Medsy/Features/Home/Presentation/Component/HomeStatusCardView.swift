@@ -1,10 +1,3 @@
-//
-//  HomeStatusCardView.swift
-//  Medsy
-//
-//  Created by Ehab Salah on 16/07/2026.
-//
-
 import SwiftUI
 
 enum HomeSearchStatus: String, CaseIterable, Identifiable {
@@ -13,6 +6,7 @@ enum HomeSearchStatus: String, CaseIterable, Identifiable {
     case firstOffer
     case multipleOffers
     case expired
+    case continueOrder
     
     var id: String { rawValue }
     
@@ -28,6 +22,8 @@ enum HomeSearchStatus: String, CaseIterable, Identifiable {
             return "home.status.multipleOffers".localized
         case .expired:
             return "home.status.expired".localized
+        case .continueOrder:
+            return "home.status.continueOrder".localized
         }
     }
 }
@@ -726,6 +722,50 @@ struct HomeExpiredStatusView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.gray.opacity(0.12), lineWidth: 1)
+                )
+        )
+        .padding(.horizontal)
+    }
+}
+
+struct HomeContinueOrderStatusView: View {
+    @Environment(LanguageManager.self) private var languageManager
+    var onContinue: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("home.status.continueOrder.title".localized)
+                .font(AppColor.sans(18, .bold))
+                .foregroundStyle(AppColor.textPrim)
+
+            Text("home.status.continueOrder.description".localized)
+                .font(AppColor.sans(14))
+                .foregroundStyle(AppColor.textSec)
+                .lineSpacing(3)
+
+            Button {
+                onContinue?()
+            } label: {
+                Text("home.status.continueOrder.button".localized)
+                    .font(AppColor.sans(16, .bold))
+                    .foregroundStyle(AppColor.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(AppColor.green)
+                    )
+            }
+            .padding(.top, 4)
+        }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(AppColor.card)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(AppColor.green.opacity(0.4), lineWidth: 1.5)
                 )
         )
         .padding(.horizontal)

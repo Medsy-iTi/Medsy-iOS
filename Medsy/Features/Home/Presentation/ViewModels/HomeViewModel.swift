@@ -1,10 +1,3 @@
-//
-//  HomeViewModel.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
 import Observation
 
@@ -14,16 +7,20 @@ final class HomeViewModel {
     var selectedStatus: HomeSearchStatus = .home
     private(set) var offerResults: [Int: OfferResult] = [:]
     private(set) var activeRequestIds: [Int] = []
+    private(set) var activeContinueMasterOrder: MasterOrderDTO?
 
     private let getOfferResultUseCase: GetOfferResultUseCaseProtocol
+    private let offersRemoteDataSource: OffersRemoteDataSourceProtocol
     private let statusStore: UserDefaultsStatusStoreProtocol
     private var pollingTask: Task<Void, Never>?
 
     init(
         getOfferResultUseCase: GetOfferResultUseCaseProtocol = DIContainer.shared.resolve(GetOfferResultUseCaseProtocol.self),
+        offersRemoteDataSource: OffersRemoteDataSourceProtocol = DIContainer.shared.resolve(OffersRemoteDataSourceProtocol.self),
         statusStore: UserDefaultsStatusStoreProtocol = DIContainer.shared.resolve(UserDefaultsStatusStoreProtocol.self)
     ) {
         self.getOfferResultUseCase = getOfferResultUseCase
+        self.offersRemoteDataSource = offersRemoteDataSource
         self.statusStore = statusStore
     }
 
@@ -47,9 +44,35 @@ final class HomeViewModel {
         firstAvailableOfferResult?.items.count ?? 0
     }
 
-    // MARK: - Polling
-
     func checkAndStartPolling() {
+        Task {
+            let pendingIds = self.statusStore.pendingRequestIds
+            let selectedPendingIds = pendingIds.filter { id in
+                UserDefaults.standard.bool(forKey: "request.isSelected.\(id)") == true &&
+                UserDefaults.standard.bool(forKey: "request.isConfirmed.\(id)") == false
+            }
+
+            if !selectedPendingIds.isEmpty, let masterOrders = try? await self.offersRemoteDataSource.fetchMasterOrders(page: 0, size: 10) {
+                if let resumable = masterOrders.first(where: { order in
+                    selectedPendingIds.contains(order.requestId) &&
+                    order.fulfillmentMethod == nil &&
+                    order.orderStatus != "CONFIRMED" &&
+                    order.orderStatus != "COMPLETED" &&
+                    order.orderStatus != "CANCELLED" &&
+                    order.orderStatus != "DELIVERED"
+                }) {
+                    self.activeContinueMasterOrder = resumable
+                    self.selectedStatus = .continueOrder
+                    return
+                }
+            }
+
+            self.activeContinueMasterOrder = nil
+            self.startRequestPolling()
+        }
+    }
+
+    private func startRequestPolling() {
         let allIds = statusStore.pendingRequestIds
         for reqId in allIds {
             if let age = statusStore.getRequestAgeInSeconds(reqId), age > 900 {
@@ -96,6 +119,18 @@ final class HomeViewModel {
 
                 for reqId in pendingIds {
                     group.addTask {
+                        if let initialResult = try? await self.getOfferResultUseCase.execute(requestId: reqId) {
+                            if Task.isCancelled { return }
+                            await MainActor.run {
+                                print("[HomeViewModel] 📥 Initial REST fetch for requestId \(reqId): isAvailable=\(initialResult.isAvailable), itemsCount=\(initialResult.items.count), totalPrice=\(initialResult.totalPrice)")
+                                self.offerResults[reqId] = initialResult
+                                if self.offerResults.values.contains(where: { $0.isAvailable }) {
+                                    print("[HomeViewModel] 🌟 Initial fetch -> Transitioning selectedStatus -> .firstOffer")
+                                    self.selectedStatus = .firstOffer
+                                }
+                            }
+                        }
+
                         do {
                             print("[HomeViewModel] 📡 Listening to SSE stream for requestId: \(reqId)...")
                             let stream = self.getOfferResultUseCase.stream(requestId: reqId)
@@ -169,16 +204,27 @@ final class HomeViewModel {
 
     func clearActiveRequest() {
         stopPolling()
+        for id in statusStore.pendingRequestIds {
+            UserDefaults.standard.removeObject(forKey: "request.isSelected.\(id)")
+            UserDefaults.standard.removeObject(forKey: "request.selectResult.\(id)")
+        }
         statusStore.clearPendingRequestId()
         activeRequestIds = []
         offerResults = [:]
+        activeContinueMasterOrder = nil
         selectedStatus = .home
     }
 
     func clearCompletedRequest(requestId: Int) {
+        UserDefaults.standard.removeObject(forKey: "request.isSelected.\(requestId)")
+        UserDefaults.standard.removeObject(forKey: "request.selectResult.\(requestId)")
+        UserDefaults.standard.set(true, forKey: "request.isConfirmed.\(requestId)")
         statusStore.clearPendingRequestId(requestId)
         offerResults.removeValue(forKey: requestId)
         activeRequestIds.removeAll { $0 == requestId }
+        if activeContinueMasterOrder?.requestId == requestId {
+            activeContinueMasterOrder = nil
+        }
         if activeRequestIds.isEmpty {
             selectedStatus = .home
             stopPolling()

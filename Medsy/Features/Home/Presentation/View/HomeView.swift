@@ -1,9 +1,3 @@
-//  HomeView.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 14/07/2026.
-//
-
 import SwiftUI
 
 struct HomeView: View {
@@ -13,9 +7,12 @@ struct HomeView: View {
     let onPrescription: () -> Void
     var onCompareOffers: (() -> Void)? = nil
     var onOpenOfferResult: ((OfferResult, Int) -> Void)? = nil
+    var onContinueOrder: ((MasterOrderDTO) -> Void)? = nil
     let homeAddress: String
     let onAddressTap: () -> Void
 
+
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         @Bindable var vm = viewModel
@@ -27,7 +24,6 @@ struct HomeView: View {
                     onAddressTap: onAddressTap
                 )
                 HomeSearchBar(onTap: onSearchTap)
-                //HomeStatusSelectorView(selectedStatus: $vm.selectedStatus)
                 HomePromoBanner()
 
                 switch viewModel.selectedStatus {
@@ -75,6 +71,14 @@ struct HomeView: View {
                     )
                 case .expired:
                     HomeExpiredStatusView(selectedStatus: $vm.selectedStatus)
+                case .continueOrder:
+                    HomeContinueOrderStatusView(
+                        onContinue: {
+                            if let order = viewModel.activeContinueMasterOrder {
+                                onContinueOrder?(order)
+                            }
+                        }
+                    )
                 }
 
                 HomeCategoriesView()
@@ -84,6 +88,14 @@ struct HomeView: View {
         }
         .background(AppColor.bg)
         .onAppear {
+            viewModel.checkAndStartPolling()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                viewModel.checkAndStartPolling()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             viewModel.checkAndStartPolling()
         }
     }

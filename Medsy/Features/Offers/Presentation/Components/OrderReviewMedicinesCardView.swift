@@ -22,15 +22,29 @@ struct OrderReviewMedicineRow: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text(item.name)
+                Text(item.name.isEmpty ? "offers.details.unavailableItem".localized : item.name)
                     .font(AppColor.sans(15, .bold))
                     .foregroundStyle(AppColor.textPrim)
                     .multilineTextAlignment(.trailing)
 
-                Text(item.dosage)
+                if !item.dosage.isEmpty {
+                    Text(item.dosage)
+                        .font(AppColor.sans(12))
+                        .foregroundStyle(AppColor.textSec)
+                        .multilineTextAlignment(.trailing)
+                }
+
+                Text(String(format: "orderReview.medicine.quantity".localized, item.quantity))
                     .font(AppColor.sans(12))
                     .foregroundStyle(AppColor.textSec)
                     .multilineTextAlignment(.trailing)
+
+                if let supplier = item.supplierName, !supplier.isEmpty {
+                    Text(String(format: "orderReview.medicine.suppliedBy".localized, supplier))
+                        .font(AppColor.sans(12, .medium))
+                        .foregroundStyle(AppColor.green)
+                        .multilineTextAlignment(.trailing)
+                }
             }
 
             ZStack {
@@ -41,9 +55,16 @@ struct OrderReviewMedicineRow: View {
                             .stroke(AppColor.border, lineWidth: 1)
                     )
 
-                Image(systemName: item.imageName)
-                    .font(.system(size: 22))
-                    .foregroundStyle(AppColor.green)
+                MedsyRemoteImage(urlString: item.imageUrl, contentMode: .fit) {
+                    Image(systemName: item.imageName)
+                        .font(.system(size: 22))
+                        .foregroundStyle(AppColor.green)
+                } failure: {
+                    Image(systemName: item.imageName)
+                        .font(.system(size: 22))
+                        .foregroundStyle(AppColor.green)
+                }
+                .padding(6)
             }
             .frame(width: 52, height: 52)
         }

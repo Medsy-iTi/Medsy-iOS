@@ -1,26 +1,6 @@
-//
-//  CompleteRequestDTOs.swift
-//  Medsy
-//
-//  Created by Ehab Salah on 24/07/2026.
-//
-
 import Foundation
 
 typealias SubmitCompleteRequestResponseDTO = APIResponseDTO<CompleteRequestResponseDTO>
-
-// OLD:
-// struct CompleteRequestDTO: Encodable, Equatable {
-//     let deliveryLatitude: Double
-//     let deliveryLongitude: Double
-//     let deliveryAddress: String
-// 
-//     init(input: SubmitCompleteRequestInput) {
-//         deliveryLatitude = input.deliveryLatitude
-//         deliveryLongitude = input.deliveryLongitude
-//         deliveryAddress = input.deliveryAddress
-//     }
-// }
 
 struct CompleteRequestDTO: Encodable, Equatable {
     let deliveryLatitude: Double
@@ -62,6 +42,7 @@ struct CompleteRequestResponseDTO: Decodable, Equatable {
     let items: [CompleteRequestResponseItemDTO]
     let prescriptionUrl: String?
     let notes: String?
+    let paymentMethod: String?
 }
 
 struct CompleteRequestResponseItemDTO: Decodable, Equatable {

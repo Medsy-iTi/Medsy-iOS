@@ -10,74 +10,72 @@ import SwiftUI
 struct PharmacyProfileView: View {
     @State private var viewModel: PharmacyProfileViewModel
 
-    init(viewModel: PharmacyProfileViewModel = DIContainer.shared.resolve(PharmacyProfileViewModel.self)) {
-        _viewModel = State(initialValue: viewModel)
+    init(pharmacyId: Int = 2, viewModel: PharmacyProfileViewModel? = nil) {
+        _viewModel = State(initialValue: viewModel ?? PharmacyProfileViewModel(pharmacyId: pharmacyId))
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppColor.bg
-                    .ignoresSafeArea()
+        ZStack {
+            AppColor.bg
+                .ignoresSafeArea()
 
-                switch viewModel.state {
-                case .idle, .loading:
-                    ProgressView()
-                        .tint(AppColor.green)
-                        .scaleEffect(1.2)
+            switch viewModel.state {
+            case .idle, .loading:
+                ProgressView()
+                    .tint(AppColor.green)
+                    .scaleEffect(1.2)
 
-                case .loaded(let pharmacy):
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: MedsySpacing.lg) {
-                            PharmacyHeaderView(name: pharmacy.name)
+            case .loaded(let pharmacy):
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: MedsySpacing.lg) {
+                        PharmacyHeaderView(name: pharmacy.name)
 
-                            PharmacyQuickActionsView(
-                                onCall: { viewModel.callPharmacy(phoneNumber: pharmacy.phoneNumber) },
-                                onDirections: { viewModel.openDirections(latitude: pharmacy.latitude, longitude: pharmacy.longitude, name: pharmacy.name) },
-                                onShare: { viewModel.sharePharmacy(name: pharmacy.name, address: pharmacy.address) }
-                            )
+                        PharmacyQuickActionsView(
+                            onCall: { viewModel.callPharmacy(phoneNumber: pharmacy.phoneNumber) },
+                            onDirections: { viewModel.openDirections(latitude: pharmacy.latitude, longitude: pharmacy.longitude, name: pharmacy.name) },
+                            onShare: { viewModel.sharePharmacy(name: pharmacy.name, address: pharmacy.address) }
+                        )
 
-                            PharmacyLocationCardView(
-                                address: pharmacy.address,
-                                latitude: pharmacy.latitude,
-                                longitude: pharmacy.longitude,
-                                onOpenDirections: { viewModel.openDirections(latitude: pharmacy.latitude, longitude: pharmacy.longitude, name: pharmacy.name) }
-                            )
+                        PharmacyLocationCardView(
+                            address: pharmacy.address,
+                            latitude: pharmacy.latitude,
+                            longitude: pharmacy.longitude,
+                            onOpenDirections: { viewModel.openDirections(latitude: pharmacy.latitude, longitude: pharmacy.longitude, name: pharmacy.name) }
+                        )
 
-                            PharmacyContactCardView(
-                                phoneNumber: pharmacy.phoneNumber,
-                                onCall: { viewModel.callPharmacy(phoneNumber: pharmacy.phoneNumber) }
-                            )
-                        }
-                        .padding(.horizontal, MedsySpacing.md)
-                        .padding(.vertical, MedsySpacing.md)
-                        .padding(.bottom, 40)
+                        PharmacyContactCardView(
+                            phoneNumber: pharmacy.phoneNumber,
+                            onCall: { viewModel.callPharmacy(phoneNumber: pharmacy.phoneNumber) }
+                        )
                     }
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.vertical, MedsySpacing.md)
+                    .padding(.bottom, 40)
+                }
 
-                case .error(let message):
-                    VStack(spacing: MedsySpacing.sm) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 44))
-                            .foregroundStyle(AppColor.errorRed)
+            case .error(let message):
+                VStack(spacing: MedsySpacing.sm) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(AppColor.errorRed)
 
-                        Text(message)
-                            .font(MedsyFont.body(15))
-                            .foregroundStyle(AppColor.textSec)
+                    Text(message)
+                        .font(MedsyFont.body(15))
+                        .foregroundStyle(AppColor.textSec)
 
-                        Button(action: { viewModel.loadPharmacy() }) {
-                            Text("common.retry".localized)
-                                .font(MedsyFont.button(14))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, MedsySpacing.lg)
-                                .padding(.vertical, MedsySpacing.xs)
-                                .background(AppColor.green)
-                                .clipShape(Capsule())
-                        }
+                    Button(action: { viewModel.loadPharmacy() }) {
+                        Text("common.retry".localized)
+                            .font(MedsyFont.button(14))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, MedsySpacing.lg)
+                            .padding(.vertical, MedsySpacing.xs)
+                            .background(AppColor.green)
+                            .clipShape(Capsule())
                     }
                 }
             }
-            .navigationTitle("pharmacyProfile.title".localized)
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationTitle("pharmacyProfile.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

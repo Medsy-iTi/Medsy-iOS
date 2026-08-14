@@ -1,10 +1,3 @@
-//
-//  OffersRemoteDataSource.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
 
 protocol OffersRemoteDataSourceProtocol {
@@ -13,6 +6,8 @@ protocol OffersRemoteDataSourceProtocol {
     func selectPharmacy(requestId: Int, selectedItems: [ConfirmOfferItemDTO]) async throws -> SelectPharmacyResponseDTO
     func selectPharmacy(requestId: Int, selectedRequestItemIds: [Int]) async throws -> SelectPharmacyResponseDTO
     func confirmOffer(requestId: Int, fulfillmentMethod: String) async throws -> ConfirmOfferResponseDTO
+    func fetchMasterOrders(page: Int, size: Int) async throws -> [MasterOrderDTO]
+    func fetchRequest(requestId: Int) async throws -> CompleteRequestResponseDTO
 }
 
 final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
@@ -29,9 +24,32 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
         guard response.success else {
             throw NetworkError.validationError(response.message)
         }
-        guard let data = response.data else {
+        guard var data = response.data else {
             throw NetworkError.decodingFailed
         }
+
+        if let origReq: APIResponseDTO<CompleteRequestResponseDTO> = try? await networkService.request(endpoint: OffersEndpoint.getRequest(requestId: requestId)), let reqData = origReq.data {
+            let enrichedItems = data.items.map { item -> OfferResultItemDTO in
+                if let origItem = reqData.items.first(where: { $0.id == item.requestItemId }) {
+                    let fallbackName = !origItem.productName.isEmpty ? origItem.productName : "offers.details.unavailableItem".localized
+                    let resolvedName = (!item.productName.isEmpty && item.productName != "offers.details.unavailableItem".localized) ? item.productName : fallbackName
+                    let resolvedImg = item.imageUrl ?? origItem.imageUrl
+                    let resolvedPrice = item.unitPrice > 0 ? item.unitPrice : origItem.unitPrice
+                    return OfferResultItemDTO(
+                        requestItemId: item.requestItemId,
+                        productId: item.productId ?? origItem.productId,
+                        productName: resolvedName,
+                        imageUrl: resolvedImg,
+                        unitPrice: resolvedPrice,
+                        isAlternative: item.isAlternative,
+                        isAvailable: item.isAvailable
+                    )
+                }
+                return item
+            }
+            data = OfferResultResponseDTO(items: enrichedItems, totalPrice: data.totalPrice, prescriptionUrl: data.prescriptionUrl ?? reqData.prescriptionUrl)
+        }
+
         return data
     }
 
@@ -41,6 +59,11 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
                 var currentResult: OfferResultResponseDTO?
 
                 do {
+                    if let restResult = try? await getOfferResult(requestId: requestId) {
+                        currentResult = restResult
+                        continuation.yield(restResult)
+                    }
+
                     let sseStream = networkService.streamSSE(endpoint: OffersEndpoint.getStream(requestId: requestId))
                     for try await sseEvent in sseStream {
                         if Task.isCancelled { break }
@@ -50,16 +73,67 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
 
                         print("[Offers Remote Data Source] 📩 Received SSE Event: '\(eventName)', Raw Data: \(sseEvent.data)")
 
+                        if eventName == "stream-closed" {
+                            continuation.finish()
+                            break
+                        }
+
                         var processed = false
 
                         if eventName == "snapshot" || eventName.isEmpty || eventName == "message" {
-                            if let snapshotDTO = try? JSONDecoder().decode(OfferResultResponseDTO.self, from: rawData) {
+                            if var snapshotDTO = try? JSONDecoder().decode(OfferResultResponseDTO.self, from: rawData) {
                                 print("[Offers Remote Data Source] ✅ Successfully decoded snapshot DTO with \(snapshotDTO.items.count) items!")
+                                let enrichedItems = snapshotDTO.items.map { item -> OfferResultItemDTO in
+                                    if item.productName.isEmpty || item.productName == "offers.details.unavailableItem".localized || item.imageUrl == nil {
+                                        if let existing = currentResult?.items.first(where: { $0.requestItemId == item.requestItemId }) {
+                                            let name = (!item.productName.isEmpty && item.productName != "offers.details.unavailableItem".localized) ? item.productName : existing.productName
+                                            let img = item.imageUrl ?? existing.imageUrl
+                                            return OfferResultItemDTO(
+                                                requestItemId: item.requestItemId,
+                                                productId: item.productId ?? existing.productId,
+                                                productName: name,
+                                                imageUrl: img,
+                                                unitPrice: item.unitPrice > 0 ? item.unitPrice : existing.unitPrice,
+                                                isAlternative: item.isAlternative,
+                                                isAvailable: item.isAvailable
+                                            )
+                                        }
+                                    }
+                                    return item
+                                }
+                                snapshotDTO = OfferResultResponseDTO(
+                                    items: enrichedItems,
+                                    totalPrice: snapshotDTO.totalPrice,
+                                    prescriptionUrl: snapshotDTO.prescriptionUrl ?? currentResult?.prescriptionUrl
+                                )
                                 currentResult = snapshotDTO
                                 continuation.yield(snapshotDTO)
                                 processed = true
-                            } else if let env = try? JSONDecoder().decode(GetOfferResultResponseDTO.self, from: rawData), let snapshotDTO = env.data {
+                            } else if let env = try? JSONDecoder().decode(GetOfferResultResponseDTO.self, from: rawData), var snapshotDTO = env.data {
                                 print("[Offers Remote Data Source] ✅ Successfully decoded snapshot DTO envelope with \(snapshotDTO.items.count) items!")
+                                let enrichedItems = snapshotDTO.items.map { item -> OfferResultItemDTO in
+                                    if item.productName.isEmpty || item.productName == "offers.details.unavailableItem".localized || item.imageUrl == nil {
+                                        if let existing = currentResult?.items.first(where: { $0.requestItemId == item.requestItemId }) {
+                                            let name = (!item.productName.isEmpty && item.productName != "offers.details.unavailableItem".localized) ? item.productName : existing.productName
+                                            let img = item.imageUrl ?? existing.imageUrl
+                                            return OfferResultItemDTO(
+                                                requestItemId: item.requestItemId,
+                                                productId: item.productId ?? existing.productId,
+                                                productName: name,
+                                                imageUrl: img,
+                                                unitPrice: item.unitPrice > 0 ? item.unitPrice : existing.unitPrice,
+                                                isAlternative: item.isAlternative,
+                                                isAvailable: item.isAvailable
+                                            )
+                                        }
+                                    }
+                                    return item
+                                }
+                                snapshotDTO = OfferResultResponseDTO(
+                                    items: enrichedItems,
+                                    totalPrice: snapshotDTO.totalPrice,
+                                    prescriptionUrl: snapshotDTO.prescriptionUrl ?? currentResult?.prescriptionUrl
+                                )
                                 currentResult = snapshotDTO
                                 continuation.yield(snapshotDTO)
                                 processed = true
@@ -78,11 +152,14 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
                                     let prodPrice = updatedItem.product?.price ?? 0.0
 
                                     if let idx = existingItems.firstIndex(where: { $0.requestItemId == updatedItem.requestItemId }) {
+                                        let fallbackName = existingItems[idx].productName.isEmpty ? "offers.details.unavailableItem".localized : existingItems[idx].productName
+                                        let finalName = !prodName.isEmpty ? prodName : fallbackName
+                                        let finalImg = updatedItem.product?.imageUrl ?? existingItems[idx].imageUrl
                                         let updatedDTO = OfferResultItemDTO(
                                             requestItemId: updatedItem.requestItemId,
                                             productId: updatedItem.product?.id ?? existingItems[idx].productId,
-                                            productName: !prodName.isEmpty ? prodName : existingItems[idx].productName,
-                                            imageUrl: updatedItem.product?.imageUrl ?? existingItems[idx].imageUrl,
+                                            productName: finalName,
+                                            imageUrl: finalImg,
                                             unitPrice: prodPrice > 0 ? prodPrice : existingItems[idx].unitPrice,
                                             isAlternative: isAlt,
                                             isAvailable: isAvail
@@ -92,7 +169,7 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
                                         let newDTO = OfferResultItemDTO(
                                             requestItemId: updatedItem.requestItemId,
                                             productId: updatedItem.product?.id,
-                                            productName: prodName,
+                                            productName: !prodName.isEmpty ? prodName : "offers.details.unavailableItem".localized,
                                             imageUrl: updatedItem.product?.imageUrl,
                                             unitPrice: prodPrice,
                                             isAlternative: isAlt,
@@ -159,6 +236,30 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
             throw NetworkError.validationError(response.message)
         }
         guard let data = response.data else {
+            throw NetworkError.decodingFailed
+        }
+        return data
+    }
+
+    func fetchMasterOrders(page: Int = 0, size: Int = 10) async throws -> [MasterOrderDTO] {
+        if let response: APIResponseDTO<MasterOrdersListResponseDTO> = try? await networkService.request(
+            endpoint: OffersEndpoint.getMasterOrders(page: page, size: size)
+        ), let content = response.data?.content {
+            return content
+        }
+        if let direct: APIResponseDTO<[MasterOrderDTO]> = try? await networkService.request(
+            endpoint: OffersEndpoint.getMasterOrders(page: page, size: size)
+        ), let data = direct.data {
+            return data
+        }
+        return []
+    }
+
+    func fetchRequest(requestId: Int) async throws -> CompleteRequestResponseDTO {
+        let response: APIResponseDTO<CompleteRequestResponseDTO> = try await networkService.request(
+            endpoint: OffersEndpoint.getRequest(requestId: requestId)
+        )
+        guard response.success, let data = response.data else {
             throw NetworkError.decodingFailed
         }
         return data
