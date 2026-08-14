@@ -10,6 +10,7 @@ import SwiftUI
 struct OrderProductImageView: View {
     let imageURL: String?
     var size: CGFloat = 48
+    var containerColor: Color = AppColor.card
 
     var body: some View {
         MedsyRemoteImage(
@@ -25,7 +26,7 @@ struct OrderProductImageView: View {
         )
         .frame(width: size, height: size)
         .padding(4)
-        .background(AppColor.card)
+        .background(containerColor)
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
     }
 

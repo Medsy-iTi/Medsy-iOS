@@ -74,7 +74,7 @@ struct OrdersCoordinatorView: View {
                         selectedPharmacyID: detailViewModel.selectedPharmacyID,
                         deliveryLocation: detailViewModel.deliveryLocation,
                         routeState: detailViewModel.routeState,
-                        onSelectPharmacy: { detailViewModel.handle(.selectPharmacy($0)) },
+                        onSelectPharmacy: { coordinator.showPharmacyProfile(id: $0) },
                         onShowPharmacyLocation: { detailViewModel.handle(.showPharmacyLocation($0)) },
                         onOpenDirections: { _ in detailViewModel.handle(.openDirections) },
                         paymentAction: detailViewModel.paymentAction,
@@ -83,6 +83,7 @@ struct OrdersCoordinatorView: View {
                     .onChange(of: detailViewModel.reorderState) { _, state in
                         guard state.didAddItemsToCart else { return }
                         onReorderCompleted()
+                        onGoToCart()
                     }
                     .task {
                         detailViewModel.handle(.load(orderId: orderId))
@@ -102,6 +103,11 @@ struct OrdersCoordinatorView: View {
                             historyViewModel.handle(.load)
                             coordinator.pop()
                         }
+                    )
+                case .pharmacyProfile(let id):
+                    PharmacyProfileView(
+                        pharmacyID: id,
+                        onBack: { coordinator.pop() }
                     )
                 case let .search(query):
                     SearchCoordinatorView(

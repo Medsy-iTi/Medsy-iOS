@@ -605,7 +605,7 @@
 "orders.detail.items"                = "Items price";
 "orders.detail.items_label"          = "Items";
 "orders.detail.item_unit_price"      = "%.0f EGP each";
-"orders.detail.delivery_fee"         = "Delivery Fee";
+"orders.detail.delivery_fee"         = "Delivery fee";
 "orders.detail.total"                = "Total";
 "orders.detail.not_found"            = "Order not found";
 "orders.detail.error"                = "Couldn't load order details";
@@ -626,6 +626,15 @@
 "orders.detail.route_unavailable"    = "A route is unavailable right now. You can still open the pharmacy in Maps.";
 "orders.detail.open_directions"      = "Open turn-by-turn directions";
 "orders.detail.pharmacy_items_empty" = "No medicine details are available for this pharmacy.";
+"orders.detail.pharmacy"             = "Pharmacy";
+"orders.detail.pharmacies"           = "Fulfilling pharmacies";
+"orders.detail.supplied_by"          = "Supplied by %@";
+"orders.detail.items_unavailable"    = "Order item details are currently unavailable.";
+"orders.from_pharmacy"               = "From %@";
+"orders.timeline.preparing"          = "Preparing";
+"orders.timeline.ready"              = "Ready";
+"orders.timeline.on_the_way"         = "On the way";
+"orders.timeline.delivered"          = "Delivered";
 "orders.reorder.go_to_cart"          = "Go to Cart";
 "orders.reorder.continue_shopping"   = "Continue Shopping";
 "orders.reorder.success.title"       = "Added Successfully";

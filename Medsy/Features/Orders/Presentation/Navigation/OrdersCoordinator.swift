@@ -12,6 +12,7 @@ import Observation
 enum OrdersRoute: Hashable {
     case detail(orderId: Int)
     case payment(orderId: Int)
+    case pharmacyProfile(id: Int)
     case search(String)
 }
 
@@ -31,6 +32,10 @@ final class OrdersCoordinator {
 
     func showPayment(orderId: Int) {
         path.append(OrdersRoute.payment(orderId: orderId))
+    }
+
+    func showPharmacyProfile(id: Int) {
+        path.append(OrdersRoute.pharmacyProfile(id: id))
     }
 
     func pop() {
