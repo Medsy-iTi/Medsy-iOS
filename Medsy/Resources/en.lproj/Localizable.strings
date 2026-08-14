@@ -1023,3 +1023,23 @@
 "chatbot.product.details"            = "Details";
 "chatbot.product.rx_only"            = "Rx Only";
 "chatbot.consult_product_prompt"     = "Tell me about %@";
+
+// MARK: - My Reminders
+"reminders.title"                    = "My Reminders";
+"reminders.section.active"           = "Active";
+"reminders.section.past"             = "Completed";
+"reminders.row.days"                 = "%d-day course";
+"reminders.row.completed"            = "Done";
+"reminders.empty.title"              = "No reminders yet";
+"reminders.empty.subtitle"           = "Ask Medsy AI to remind you to take a medicine and it will appear here.";
+"reminders.card.title"               = "Reminder set ✓";
+"reminders.card.duration"            = "%d-day course scheduled";
+"reminders.card.view_all"            = "View My Reminders";
+
+// MARK: - Reminder notification
+"reminder.notification.title"        = "Time to take your medicine 💊";
+"reminder.notification.body"         = "Take your %@ now (%@)";
+
+// MARK: - Profile — Reminders row
+"profile.reminders"                  = "My Reminders";
+"profile.reminders.subtitle"         = "Manage your medication schedules";

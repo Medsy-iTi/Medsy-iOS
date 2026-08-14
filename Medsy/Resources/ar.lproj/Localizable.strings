@@ -1017,3 +1017,23 @@
 "chatbot.product.details"             = "تفاصيل";
 "chatbot.product.rx_only"             = "بوصفة طبية فقط";
 "chatbot.consult_product_prompt"      = "أخبرني عن %@";
+
+// MARK: - My Reminders
+"reminders.title"                     = "تذكيراتي";
+"reminders.section.active"            = "نشطة";
+"reminders.section.past"              = "منتهية";
+"reminders.row.days"                  = "دورة %d يوم";
+"reminders.row.completed"             = "تمّت";
+"reminders.empty.title"               = "لا توجد تذكيرات بعد";
+"reminders.empty.subtitle"            = "اطلب من Medsy AI تذكيرك بتناول دواء وسيظهر هنا.";
+"reminders.card.title"                = "تم ضبط التذكير ✓";
+"reminders.card.duration"             = "دورة %d يوم مجدولة";
+"reminders.card.view_all"             = "عرض تذكيراتي";
+
+// MARK: - Reminder notification
+"reminder.notification.title"         = "حان وقت الدواء 💊";
+"reminder.notification.body"          = "تناول %@ الآن (%@)";
+
+// MARK: - Profile — Reminders row
+"profile.reminders"                   = "تذكيراتي";
+"profile.reminders.subtitle"          = "إدارة جداول دوائك";
