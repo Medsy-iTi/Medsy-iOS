@@ -71,9 +71,12 @@ struct MedsyChatView: View {
             }
             // Image preview above input bar
             if let img = viewModel.selectedImage {
-                AiChatImagePreview(image: img, onDismiss: { viewModel.selectedImage = nil })
-                    .padding(.horizontal, MedsySpacing.md)
-                    .padding(.top, MedsySpacing.xs)
+                HStack {
+                    Spacer()
+                    AiChatImagePreview(image: img, onDismiss: { viewModel.selectedImage = nil })
+                }
+                .padding(.horizontal, MedsySpacing.md)
+                .padding(.top, MedsySpacing.xs)
             }
             inputBar
         }

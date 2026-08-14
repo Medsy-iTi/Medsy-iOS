@@ -21,6 +21,7 @@ extension MedsyChatView {
                     .foregroundColor(theme.danger)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
 
         case .assistant:
             if message.isTyping { EmptyView() } // shown via typingIndicator state
@@ -204,7 +205,7 @@ extension MedsyChatView {
             }
             // Show text caption only when there's actual text (not the placeholder label)
             let caption = message.text
-            let isPlaceholder = caption == "chatbot.camera.image_preview".localized
+            let isPlaceholder = caption == "📷 Image" || caption == "📷 صورة"
             if !caption.isEmpty && !(message.attachedImageData != nil && isPlaceholder) {
                 MedsyChatBubble(
                     text: caption,

@@ -62,6 +62,7 @@ struct MedsyChatInputBar: View {
             // Send button
             Button(action: { if !disabled { onSend() } }) {
                 Image(systemName: "paperplane.fill")
+                    .flipsForRightToLeftLayoutDirection(true)
                     .foregroundColor(disabled ? AppColor.textSec : AppColor.white)
                     .padding(12)
                     .background(disabled ? AppColor.surfaceContainerHighest : accentColor)
