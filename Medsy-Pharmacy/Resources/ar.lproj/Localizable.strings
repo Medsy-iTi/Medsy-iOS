@@ -548,3 +548,7 @@
 "completed_orders.empty.delivered.message" = "لم تقم بتسليم أي طلبات حتى الآن.";
 
 "pharmacy.status.collected" = "تم الاستلام";
+"pharmacy.payment.cash" = "كاش";
+"pharmacy.payment.card" = "بطاقة";
+"pharmacy.request.payment_method_label" = "طريقة الدفع";
+

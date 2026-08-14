@@ -44,7 +44,7 @@ struct CompletedOrderCard: View {
             return "pharmacy.status.delivered".localized
         case .cancelled, .expired:
             return "pharmacy.orders.status.expired".localized
-        case .unknown:
+        case .searching, .unknown:
             return "pharmacy.status.preparing".localized
         }
     }
@@ -57,7 +57,7 @@ struct CompletedOrderCard: View {
             return PharmacyColor.success
         case .cancelled, .expired:
             return PharmacyColor.danger
-        case .unknown:
+        case .searching, .unknown:
             return PharmacyColor.secondary
         }
     }
@@ -70,7 +70,7 @@ struct CompletedOrderCard: View {
             return PharmacyColor.successSoft
         case .cancelled, .expired:
             return PharmacyColor.danger.opacity(0.15)
-        case .unknown:
+        case .searching, .unknown:
             return PharmacyColor.secondarySoft
         }
     }

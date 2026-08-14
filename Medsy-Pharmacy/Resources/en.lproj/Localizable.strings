@@ -549,3 +549,7 @@
 "completed_orders.empty.delivered.message" = "You haven't delivered any orders yet.";
 
 "pharmacy.status.collected" = "Collected";
+"pharmacy.payment.cash" = "Cash";
+"pharmacy.payment.card" = "Card";
+"pharmacy.request.payment_method_label" = "Payment method";
+
