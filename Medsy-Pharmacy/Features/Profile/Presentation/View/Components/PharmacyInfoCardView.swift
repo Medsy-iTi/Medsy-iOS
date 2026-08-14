@@ -52,13 +52,7 @@ struct PharmacyInfoCardView: View {
                     .accessibilityLabel("profile.edit.title".localized)
                 }
             }
-            .padding(PharmacySpacing.md)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(elevation: .subtle)
             .accessibilityElement(children: .combine)
     }
 }
