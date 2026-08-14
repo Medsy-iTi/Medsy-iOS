@@ -41,9 +41,7 @@ struct PharmacyLicenseSelectionView: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: PharmacySpacing.md) {
-                Image(systemName: "doc.fill")
-                    .font(.title3)
-                    .foregroundStyle(PharmacyColor.primary)
+                PharmacyIconTile(systemImage: "doc.fill", size: 42, iconSize: 18)
 
                 VStack(alignment: .leading, spacing: PharmacySpacing.xxs) {
                     Text(fileName ?? "pharmacy.setup.license.select".localized)
@@ -65,14 +63,9 @@ struct PharmacyLicenseSelectionView: View {
                         .foregroundStyle(fileName == nil ? PharmacyColor.primary : PharmacyColor.success)
                 }
             }
-            .padding(PharmacySpacing.md)
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            }
+            .pharmacyCard(elevation: .subtle)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .disabled(isLoading)
     }
 }
