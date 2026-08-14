@@ -67,8 +67,8 @@ struct PharmacyHomeView: View {
                     .foregroundStyle(PharmacyColor.textSecondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, PharmacySpacing.xl)
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
+            .padding(.vertical, PharmacySpacing.lg)
+            .pharmacyCard(cornerRadius: PharmacyRadius.md, elevation: .subtle)
 
         case .restricted:
             PharmacyHomeSectionMessage(
@@ -76,11 +76,7 @@ struct PharmacyHomeView: View {
                 title: "pharmacy.home.admin_only_title".localized,
                 message: "pharmacy.home.admin_only_message".localized
             )
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.md)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(cornerRadius: PharmacyRadius.md, padding: nil, elevation: .subtle)
 
         case .failed(let message):
             ErrorStateView(
@@ -88,11 +84,6 @@ struct PharmacyHomeView: View {
                 message: message,
                 retryTitle: "common.retry".localized,
                 onRetry: { Task { await viewModel.retryDashboard() } }
-            )
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.md)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
             )
 
         case .loaded:
