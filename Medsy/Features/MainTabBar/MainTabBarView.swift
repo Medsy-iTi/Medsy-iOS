@@ -11,6 +11,7 @@ import UIKit
 
 @MainActor
 struct MainTabBarView: View {
+    @Environment(LanguageManager.self) private var languageManager
     @State private var coordinator: MainTabCoordinator
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
@@ -129,6 +130,9 @@ struct MainTabBarView: View {
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
         .onAppear(perform: configureTabBarAppearance)
         .onChange(of: appSettings.isDarkMode) { _, _ in
+            configureTabBarAppearance()
+        }
+        .onChange(of: languageManager.currentLanguage) { _, _ in
             configureTabBarAppearance()
         }
         .task(id: coordinator.selectedTab) {
@@ -269,7 +273,10 @@ struct MainTabBarView: View {
     }
 
     private var tabBarPalette: TabBarPalette {
-        TabBarPalette(isDarkMode: appSettings.isDarkMode)
+        TabBarPalette(
+            isDarkMode: appSettings.isDarkMode,
+            isRTL: languageManager.isRTL
+        )
     }
 }
 
@@ -278,12 +285,14 @@ private struct TabBarPalette {
     let borderColor: UIColor
     let selectedColor: UIColor
     let normalColor: UIColor
+    let semanticContentAttribute: UISemanticContentAttribute
 
-    init(isDarkMode: Bool) {
+    init(isDarkMode: Bool, isRTL: Bool) {
         backgroundColor = UIColor(isDarkMode ? AppColor.background : AppColor.surface)
         borderColor = UIColor(AppColor.border)
         selectedColor = UIColor(AppColor.green)
         normalColor = UIColor(AppColor.textSec)
+        semanticContentAttribute = isRTL ? .forceRightToLeft : .forceLeftToRight
     }
 }
 
@@ -307,6 +316,7 @@ private struct TabBarAppearanceUpdater: UIViewControllerRepresentable {
         UITabBar.appearance().barTintColor = palette.backgroundColor
         UITabBar.appearance().tintColor = palette.selectedColor
         UITabBar.appearance().unselectedItemTintColor = palette.normalColor
+        UITabBar.appearance().semanticContentAttribute = palette.semanticContentAttribute
 
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -330,7 +340,9 @@ private struct TabBarAppearanceUpdater: UIViewControllerRepresentable {
             tabBarController.tabBar.barTintColor = palette.backgroundColor
             tabBarController.tabBar.tintColor = palette.selectedColor
             tabBarController.tabBar.unselectedItemTintColor = palette.normalColor
+            tabBarController.tabBar.semanticContentAttribute = palette.semanticContentAttribute
             tabBarController.tabBar.setNeedsLayout()
+            tabBarController.tabBar.layoutIfNeeded()
         }
 
         viewController.children.forEach {
