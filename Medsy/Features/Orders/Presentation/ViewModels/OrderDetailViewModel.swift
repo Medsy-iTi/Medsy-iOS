@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 import Observation
 
 @MainActor
@@ -14,28 +15,57 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     private(set) var detailState: OrderDetailViewState = .loading
     private(set) var reorderState: ReorderState = .idle
+    private(set) var paymentAction: PaymentOrderActionPresentation?
+    private(set) var selectedPharmacyID: Int?
+    private(set) var deliveryLocation: OrderCoordinatePresentation?
+    private(set) var routeState: OrderRoutePresentationState = .idle
 
     private let getOrderDetailUseCase: GetOrderDetailUseCaseProtocol?
+    private let currentLocationProvider: OrderCurrentLocationProviding?
     private let reorderUseCase: ReorderUseCaseProtocol?
+    private let routeProvider: OrderRouteProviding?
+    private let directionsOpener: OrderDirectionsOpening?
+    private let now: () -> Date
     private var loadTask: Task<Void, Never>?
     private var reorderTask: Task<Void, Never>?
+    private var routeTask: Task<Void, Never>?
+    private var currentOrderID: Int?
 
     init(
         getOrderDetailUseCase: GetOrderDetailUseCaseProtocol? = nil,
-        reorderUseCase: ReorderUseCaseProtocol? = nil
+        currentLocationProvider: OrderCurrentLocationProviding? = nil,
+        reorderUseCase: ReorderUseCaseProtocol? = nil,
+        routeProvider: OrderRouteProviding? = nil,
+        directionsOpener: OrderDirectionsOpening? = nil,
+        paymentAction: PaymentOrderActionPresentation? = nil,
+        now: @escaping () -> Date = Date.init
     ) {
         self.getOrderDetailUseCase = getOrderDetailUseCase
+        self.currentLocationProvider = currentLocationProvider
         self.reorderUseCase = reorderUseCase
+        self.routeProvider = routeProvider
+        self.directionsOpener = directionsOpener
+        self.paymentAction = paymentAction
+        self.now = now
     }
 
     init(
         state: OrderDetailViewState,
-        reorderState: ReorderState = .idle
+        reorderState: ReorderState = .idle,
+        currentLocationProvider: OrderCurrentLocationProviding? = nil,
+        routeProvider: OrderRouteProviding? = nil,
+        directionsOpener: OrderDirectionsOpening? = nil,
+        paymentAction: PaymentOrderActionPresentation? = nil
     ) {
         detailState = state
         self.reorderState = reorderState
         getOrderDetailUseCase = nil
+        self.currentLocationProvider = currentLocationProvider
         reorderUseCase = nil
+        self.routeProvider = routeProvider
+        self.directionsOpener = directionsOpener
+        self.paymentAction = paymentAction
+        now = Date.init
     }
 
 
@@ -44,25 +74,42 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         switch event {
         case .load(let orderId):
             loadDetail(orderId: orderId)
+        case .refresh:
+            guard let currentOrderID else { return }
+            loadDetail(orderId: currentOrderID)
         case .retry(let orderId):
             loadDetail(orderId: orderId)
         case .reorder:
             handleReorder()
+        case .selectPharmacy(let pharmacyID):
+            selectPharmacy(id: pharmacyID)
+        case .showPharmacyLocation(let pharmacyID):
+            showPharmacyLocation(id: pharmacyID)
+        case .openDirections:
+            openDirections()
         case .dismissReorderFeedback:
             reorderState = .idle
         }
     }
 
     private func loadDetail(orderId: Int) {
+        currentOrderID = orderId
         loadTask?.cancel()
+        routeTask?.cancel()
         detailState = .loading
         reorderState = .idle
+        paymentAction = nil
+        selectedPharmacyID = nil
+        deliveryLocation = nil
+        routeState = .idle
         loadTask = Task {
             guard let useCase = getOrderDetailUseCase else { return }
             do {
                 let entity = try await useCase.execute(id: orderId)
                 guard !Task.isCancelled else { return }
-                detailState = .loaded(OrderEntityMapper.mapDetail(entity))
+                let order = OrderEntityMapper.mapDetail(entity)
+                detailState = .loaded(order)
+                paymentAction = paymentAction(for: entity)
             } catch {
                 guard !Task.isCancelled else { return }
                 detailState = .error(error.localizedDescription)
@@ -70,12 +117,126 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
         }
     }
 
+    private func paymentAction(for order: OrderDetailEntity) -> PaymentOrderActionPresentation? {
+        guard order.paymentMethod == .card else { return nil }
+        if case .cancelled = order.status { return nil }
+        guard order.paymentStatus != .paid else { return nil }
+
+        if order.paymentStatus == .expired || order.paymentExpiresAt.map({ $0 <= now() }) == true {
+            return .expired
+        }
+
+        guard case .pendingPayment = order.status,
+              let paymentStatus = order.paymentStatus else {
+            return nil
+        }
+
+        switch paymentStatus {
+        case .unpaid, .pending:
+            return .payNow
+        case .failed, .canceled:
+            return .retry
+        case .paid, .expired:
+            return nil
+        }
+    }
+
+    private func selectPharmacy(id: Int) {
+        guard case .loaded(let order) = detailState,
+              let pharmacy = order.pharmacies.first(where: { $0.id == id && $0.coordinate != nil }) else {
+            return
+        }
+
+        selectedPharmacyID = id
+        if routeState != .idle || deliveryLocation != nil {
+            requestRoute(to: pharmacy)
+        }
+    }
+
+    private func showPharmacyLocation(id: Int) {
+        guard case .loaded(let order) = detailState,
+              let pharmacy = order.pharmacies.first(where: { $0.id == id && $0.coordinate != nil }) else {
+            return
+        }
+
+        selectedPharmacyID = id
+        requestRoute(to: pharmacy)
+    }
+
+    private func requestRoute(to pharmacy: OrderPharmacyPresentationModel) {
+        routeTask?.cancel()
+        guard let destination = pharmacy.coordinate,
+              let currentLocationProvider,
+              let routeProvider else {
+            routeState = .routeUnavailable
+            return
+        }
+
+        routeTask = Task {
+            do {
+                var lastRoutedSource: OrderCoordinatePresentation?
+
+                while !Task.isCancelled {
+                    routeState = .locating
+                    let source = try await currentLocationProvider.currentLocation()
+                    guard !Task.isCancelled else { return }
+                    deliveryLocation = source
+
+                    if shouldRefreshRoute(from: lastRoutedSource, to: source) {
+                        routeState = .routing
+                        let points = try await routeProvider.route(from: source, to: destination)
+                        guard !Task.isCancelled else { return }
+                        lastRoutedSource = source
+                        routeState = points.isEmpty ? .routeUnavailable : .ready(points: points)
+                    }
+
+                    try await Task.sleep(for: .seconds(10))
+                }
+            } catch OrderLocationError.permissionDenied {
+                guard !Task.isCancelled else { return }
+                routeState = .permissionDenied
+            } catch OrderLocationError.locationUnavailable {
+                guard !Task.isCancelled else { return }
+                routeState = .locationUnavailable
+            } catch OrderLocationError.routeUnavailable {
+                guard !Task.isCancelled else { return }
+                routeState = .routeUnavailable
+            } catch {
+                guard !Task.isCancelled else { return }
+                routeState = .routeUnavailable
+            }
+        }
+    }
+
+    private func shouldRefreshRoute(
+        from previous: OrderCoordinatePresentation?,
+        to current: OrderCoordinatePresentation
+    ) -> Bool {
+        guard let previous else { return true }
+        let previousLocation = CLLocation(latitude: previous.latitude, longitude: previous.longitude)
+        let currentLocation = CLLocation(latitude: current.latitude, longitude: current.longitude)
+        return currentLocation.distance(from: previousLocation) >= 25
+    }
+
+    private func openDirections() {
+        guard case .loaded(let order) = detailState,
+              let selectedPharmacyID,
+              let pharmacy = order.pharmacies.first(where: { $0.id == selectedPharmacyID }),
+              let coordinate = pharmacy.coordinate else {
+            return
+        }
+
+        directionsOpener?.openDirections(to: coordinate, name: pharmacy.name)
+    }
+
     private func handleReorder() {
 
-        guard case .loaded(let order) = detailState, !order.items.isEmpty else { return }
+        guard case .loaded(let order) = detailState,
+              order.status == .delivered else { return }
         guard reorderState != .loading else { return }
 
-        let items = order.items.map { ReorderItem(productId: $0.productId, quantity: $0.quantity) }
+        let items = reorderableItems(for: order)
+        guard !items.isEmpty else { return }
 
         reorderTask?.cancel()
         reorderState = .loading
@@ -94,6 +255,15 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
             case .failure:
                 reorderState = .failed
             }
+        }
+    }
+
+    private func reorderableItems(for order: OrderDetailPresentationModel) -> [ReorderItem] {
+        let allocatedItems = order.pharmacies.flatMap(\.items)
+        let sourceItems = allocatedItems.isEmpty ? order.items : allocatedItems
+
+        return sourceItems.compactMap { item in
+            item.productId.map { ReorderItem(productId: $0, quantity: item.quantity) }
         }
     }
 }

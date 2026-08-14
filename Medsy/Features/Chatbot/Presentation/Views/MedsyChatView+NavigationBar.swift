@@ -2,16 +2,23 @@
 //  MedsyChatView+NavigationBar.swift
 //  Medsy
 //
+//  Created by Ahmed Elkady on 12/08/2026.
+//
 
 import SwiftUI
 
 extension MedsyChatView {
     var navigationBar: some View {
         HStack(spacing: MedsySpacing.xs) {
+            if let onBack {
+                MedsyNavBarBackButton(action: onBack)
+            }
+
+            // AI avatar
             ZStack {
                 RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
                     .fill(theme.primary)
-                Image(systemName: "plus")
+                Image(systemName: "sparkles")
                     .foregroundColor(.white)
                     .font(.system(size: 14, weight: .bold))
             }
@@ -21,7 +28,6 @@ extension MedsyChatView {
                 Text("chatbot.ai.name".localized)
                     .font(MedsyFont.bodyMedium(15))
                     .foregroundColor(AppColor.textPrim)
-
                 HStack(spacing: 4) {
                     Circle()
                         .fill(AppColor.successGreen)
@@ -34,6 +40,19 @@ extension MedsyChatView {
 
             Spacer()
 
+            // New chat button
+            Button {
+                showNewChatConfirmation = true
+            } label: {
+                Image(systemName: "square.and.pencil")
+                    .foregroundColor(AppColor.textSec)
+                    .frame(width: 36, height: 36)
+                    .background(AppColor.surface)
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+
+            // Dark mode toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                     appSettings.isDarkMode.toggle()
@@ -47,6 +66,7 @@ extension MedsyChatView {
             }
             .buttonStyle(.plain)
 
+            // Language toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
                     lang.toggle()
@@ -54,7 +74,7 @@ extension MedsyChatView {
             } label: {
                 Text(lang.isRTL ? "EN" : "ع")
                     .font(MedsyFont.bodyMedium(13))
-                    .foregroundColor(AppColor.green)
+                    .foregroundColor(AppColor.onPrimaryContainer)
                     .frame(width: 36, height: 36)
                     .background(AppColor.primaryLight)
                     .clipShape(Circle())
@@ -64,6 +84,8 @@ extension MedsyChatView {
         .padding(.horizontal, MedsySpacing.md)
         .padding(.vertical, MedsySpacing.sm)
         .background(AppColor.surface)
-        .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+        .overlay(alignment: .bottom) {
+            Divider().background(AppColor.border)
+        }
     }
 }

@@ -9,13 +9,13 @@ import Alamofire
 import Foundation
 
 enum CompletedOrdersEndpoint {
-    case getCompletedOrders(pharmacyId: Int, page: Int, size: Int, sort: [String])
+    case getCompletedOrders(pharmacyId: Int, status: String?, page: Int, size: Int, sort: [String])
 }
 
 extension CompletedOrdersEndpoint: ApiEndpoint {
     var path: String {
         switch self {
-        case .getCompletedOrders(let pharmacyId, _, _, _):
+        case .getCompletedOrders(let pharmacyId, _, _, _, _):
             return "orders/pharmacy/\(pharmacyId)"
         }
     }
@@ -26,15 +26,21 @@ extension CompletedOrdersEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case .getCompletedOrders(_, let page, let size, let sort):
+        case .getCompletedOrders(_, let status, let page, let size, let sort):
             var parameters: Parameters = [
                 "page": page,
-                "size": size
+                "size": size,
+                "lang": LanguageManager.shared.languageCode
             ]
 
             if let firstSort = sort.first {
                 parameters["sort"] = firstSort
             }
+
+            if let status = status {
+                parameters["status"] = status
+            }
+
             return parameters
         }
     }

@@ -10,17 +10,12 @@ import SwiftUI
 struct ImageCarousel: View {
     let images: [String]
     @Binding var selectedIndex: Int
-    @Binding var isFavorite: Bool
-    var showFavorite: Bool = true
     var height: CGFloat = 240
 
-    @Environment(\.layoutDirection) private var layoutDirection
     @ObservedObject private var appSettings = AppSettings.shared
 
-    private var isRTL: Bool { layoutDirection == .rightToLeft }
-
     var body: some View {
-        ZStack(alignment: isRTL ? .topLeading : .topTrailing) {
+        ZStack {
             Group {
                 if images.isEmpty {
                     MedsyBrandImageFallback(logoScale: 0.5)
@@ -44,11 +39,6 @@ struct ImageCarousel: View {
 			.frame(width: 340 ,height: height)
 			.background(AppColor.surface)
 			.clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
-
-            if showFavorite {
-                FavoriteButton(isFavorite: $isFavorite, size: 40)
-                    .padding(MedsySpacing.sm)
-            }
         }
         .overlay(alignment: .bottom) {
             if images.count > 1 {

@@ -79,4 +79,3 @@ struct OfferDetailPresentationModel: Identifiable, Hashable {
         self.deliveryAddress = deliveryAddress
     }
 }
-

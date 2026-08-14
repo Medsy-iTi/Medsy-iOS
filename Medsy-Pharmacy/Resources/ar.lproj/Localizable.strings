@@ -1,6 +1,7 @@
 "pharmacy.tab.home" = "الرئيسية";
 "pharmacy.tab.orders" = "العروض";
 "pharmacy.tab.products" = "المنتجات";
+"pharmacy.tab.chatBot" =  "مساعد ميدسي";
 "pharmacy.tab.completedOrders" = "الطلبات";
 "pharmacy.tab.more" = "المزيد";
 "pharmacy.setup.placeholder" = "تم تجهيز تطبيق الصيدلية للبدء في تطوير الميزات.";
@@ -392,9 +393,31 @@
 "pharmacy.orders.action.view" = "عرض الطلب";
 "pharmacy.orders.status.completed" = "مكتمل";
 "pharmacy.orders.status.expired" = "منتهي الصلاحية";
+"pharmacy.orders.status.cancelled" = "ملغي";
 "pharmacy.orders.status.pending" = "بانتظار الموافقة";
 "pharmacy.orders.status.approved" = "تم الموافقة";
 "pharmacy.orders.status.offer_sent" = "تم إرسال العرض";
+
+"pharmacy.status.preparing" = "قيد التحضير";
+"pharmacy.status.ready" = "جاهز";
+"pharmacy.status.on_the_way" = "في الطريق";
+"pharmacy.status.delivered" = "تم التسليم";
+"pharmacy.status.mark_ready" = "تحديد كجاهز";
+"pharmacy.status.marking_ready" = "جارٍ التحديث...";
+"pharmacy.status.mark_out_for_delivery" = "تحديد كخارج للتوصيل";
+"pharmacy.status.marking_out_for_delivery" = "جارٍ التحديث...";
+"pharmacy.status.mark_delivered" = "تحديد كمُسلَّم";
+"pharmacy.status.marking_delivered" = "جارٍ التحديث...";
+"pharmacy.status.mark_collected" = "تحديد كمستلَم";
+"pharmacy.status.marking_collected" = "جارٍ التحديث...";
+
+"completed_orders.filter.all" = "الكل";
+"completed_orders.filter.preparing" = "قيد التحضير";
+"completed_orders.filter.out_for_delivery" = "خارج للتوصيل";
+"completed_orders.filter.delivered" = "تم التسليم";
+
+"pharmacy.error.title" = "خطأ";
+"pharmacy.ok" = "حسناً";
 
 "orders_title" = "الطلبات";
 "orders_search_placeholder" = "ابحث برقم الطلب أو اسم العميل";
@@ -445,3 +468,75 @@
 "pharmacy_pending_invitations.pharmacist_id" = "معرّف الصيدلي";
 "pharmacy_pending_invitations.invitation_id" = "معرّف الدعوة";
 "pharmacy_pending_invitations.created_at" = "تاريخ الإنشاء";
+
+/* AI ChatBot */
+"pharmacy.chatbot.title" = "المساعد الذكي Medsy";
+"pharmacy.chatbot.status.online" = "متصل";
+"pharmacy.chatbot.menu.new_chat" = "محادثة جديدة";
+"pharmacy.chatbot.input.placeholder" = "اسأل عن عمليات الصيدلية...";
+"pharmacy.chatbot.state.loading_history" = "جاري تحميل المحادثة...";
+"pharmacy.chatbot.state.error_loading" = "فشل في تحميل سجل المحادثة.";
+"pharmacy.chatbot.state.retry" = "إعادة المحاولة";
+"pharmacy.chatbot.empty.title" = "كيف يمكنني مساعدتك اليوم؟";
+"pharmacy.chatbot.empty.subtitle" = "يمكنني مساعدتك في مراجعة أداء صيدليتك، الإجابة عن التفاعلات الدوائية، والمزيد.";
+"pharmacy.chatbot.error.generic" = "حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى.";
+"pharmacy.chatbot.camera.image_preview" = "تم إرفاق صورة";
+
+"pharmacy.chatbot.product.add_to_cart" = "أضف إلى السلة";
+"pharmacy.chatbot.product.details" = "عرض التفاصيل";
+
+"pharmacy.chatbot.alternatives" = "البدائل المقترحة";
+"pharmacy.chatbot.specialization.header" = "التخصصات ذات الصلة";
+
+"pharmacy.chatbot.emergency.title" = "خدمات الطوارئ";
+"pharmacy.chatbot.emergency.call" = "اتصال";
+"pharmacy.chatbot.emergency.ambulance" = "الإسعاف";
+"pharmacy.chatbot.emergency.police" = "الشرطة";
+"pharmacy.chatbot.emergency.fire" = "الدفاع المدني";
+
+"pharmacy.chatbot.suggestion.performance" = "اعرض تقييم أدائي لهذا الشهر";
+"pharmacy.chatbot.suggestion.drug_info" = "تحقق من التفاعلات الدوائية بين البنادول والأسبرين";
+"pharmacy.chatbot.suggestion.interactions" = "ما هي الآثار الجانبية للأموكسيسيلين؟";
+
+"pharmacy.chatbot.ranking.empty" = "لا توجد بيانات أداء متاحة.";
+"pharmacy.chatbot.ranking.metric.offers" = "العروض المنشأة";
+"pharmacy.chatbot.ranking.metric.orders" = "الطلبات الناجحة";
+"pharmacy.chatbot.ranking.period.day" = "اليوم";
+"pharmacy.chatbot.ranking.period.week" = "هذا الأسبوع";
+"pharmacy.chatbot.ranking.period.month" = "هذا الشهر";
+"pharmacy.chatbot.ranking.period.year" = "هذا العام";
+"pharmacy.chatbot.ranking.direction.top" = "الأفضل أداءً";
+"pharmacy.chatbot.ranking.direction.bottom" = "يحتاج إلى تحسين";
+
+/* AI ChatBot — mic, disclaimer, suggestion grid */
+"pharmacy.chatbot.disclaimer" = "يقدم مساعد ميدسي معلومات عامة فقط ولا يُغني عن المشورة الطبية المتخصصة.";
+"pharmacy.chatbot.mic.error" = "تعذّر الوصول إلى الميكروفون. يرجى التحقق من الصلاحيات في الإعدادات.";
+"pharmacy.chatbot.suggestion.alternative" = "ما هو البديل للبنادول؟";
+"pharmacy.chatbot.suggestion.performance.title" = "الأداء";
+"pharmacy.chatbot.suggestion.performance.subtitle" = "عرض ترتيبي الشهري";
+"pharmacy.chatbot.suggestion.drug_info.title" = "معلومات الدواء";
+"pharmacy.chatbot.suggestion.drug_info.subtitle" = "التحقق من التفاعلات الدوائية";
+"pharmacy.chatbot.suggestion.interactions.title" = "الآثار الجانبية";
+"pharmacy.chatbot.suggestion.interactions.subtitle" = "معرفة الآثار الجانبية";
+"pharmacy.chatbot.suggestion.alternative.title" = "البدائل";
+"pharmacy.chatbot.suggestion.alternative.subtitle" = "إيجاد دواء بديل";
+"pharmacy.chatbot.product.hide_details" = "إخفاء التفاصيل";
+"pharmacy.chatbot.product.scientific_name" = "الاسم العلمي: ";
+"pharmacy.chatbot.product.company" = "الشركة: ";
+"pharmacy.chatbot.product.category" = "الفئة: ";
+"pharmacy.chatbot.product.route" = "طريقة التعاطي: ";
+
+"pharmacy.status.ready_for_pickup" = "جاهز للاستلام";
+
+"completed_orders.empty.all.title" = "لا توجد طلبات مكتملة";
+"completed_orders.empty.all.message" = "ليس لديك أي طلبات مكتملة في الوقت الحالي.";
+"completed_orders.empty.preparing.title" = "لا توجد طلبات قيد التجهيز";
+"completed_orders.empty.preparing.message" = "لا توجد طلبات قيد التجهيز حالياً.";
+"completed_orders.empty.ready_for_pickup.title" = "لا توجد طلبات جاهزة للاستلام";
+"completed_orders.empty.ready_for_pickup.message" = "لا توجد طلبات تنتظر الاستلام.";
+"completed_orders.empty.out_for_delivery.title" = "لا توجد طلبات في الطريق";
+"completed_orders.empty.out_for_delivery.message" = "لا توجد طلبات خارجة للتوصيل حالياً.";
+"completed_orders.empty.delivered.title" = "لا توجد طلبات تم تسليمها";
+"completed_orders.empty.delivered.message" = "لم تقم بتسليم أي طلبات حتى الآن.";
+
+"pharmacy.status.collected" = "تم الاستلام";

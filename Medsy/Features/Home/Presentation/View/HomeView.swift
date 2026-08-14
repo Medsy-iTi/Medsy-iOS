@@ -2,111 +2,120 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
+    @State private var favoriteCountViewModel = DIContainer.shared.resolve(FavoriteCountViewModel.self)
+    var refreshSignal: Int = 0
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
     let onPrescription: () -> Void
+    var onFavoritesTap: (() -> Void)? = nil
     var onCompareOffers: (() -> Void)? = nil
     var onOpenOfferResult: ((OfferResult, Int) -> Void)? = nil
     var onContinueOrder: ((MasterOrderDTO) -> Void)? = nil
     let homeAddress: String
     let onAddressTap: () -> Void
 
-
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         @Bindable var vm = viewModel
 
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                HomeHeaderView(
-                    homeAddress: homeAddress,
-                    onAddressTap: onAddressTap
-                )
-                HomeSearchBar(onTap: onSearchTap)
-                HomePromoBanner()
+        GeometryReader { geometry in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 20) {
+                    HomeHeaderView(
+                        homeAddress: homeAddress,
+                        favoriteCount: favoriteCountViewModel.count,
+                        onFavoritesTap: { onFavoritesTap?() },
+                        onAddressTap: onAddressTap
+                    )
+                    HomeSearchBar(onTap: onSearchTap)
+                    HomePromoBanner()
 
-                switch viewModel.selectedStatus {
-                case .home:
-                    HomeOrderOptionsView(
-                        onMedicineAnalyze: onMedicineAnalyze,
-                        onPrescription: onPrescription
-                    )
-                case .searching:
-                    HomeSearchingStatusView(
-                        selectedStatus: $vm.selectedStatus,
-                        requestId: viewModel.activeRequestIds.first ?? 0,
-                        createdAt: viewModel.activeRequestCreatedAt,
-                        onTimerExpired: {
-                            viewModel.checkAndStartPolling()
-                        }
-                    )
-                case .firstOffer:
-                    HomeFirstOfferStatusView(
-                        selectedStatus: $vm.selectedStatus,
-                        offerTotalPrice: viewModel.offerTotalPrice,
-                        offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
-                        offerTotalMedsCount: viewModel.offerTotalMedsCount,
-                        requestId: viewModel.firstAvailableRequestId ?? 0,
-                        createdAt: viewModel.activeRequestCreatedAt,
-                        onTimerExpired: {
-                            viewModel.checkAndStartPolling()
-                        },
-                        onCompareOffers: {
-                            if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
-                                onOpenOfferResult?(result, reqId)
-                            } else {
+                    switch viewModel.selectedStatus {
+                    case .home:
+                        HomeOrderOptionsView(
+                            onMedicineAnalyze: onMedicineAnalyze,
+                            onPrescription: onPrescription
+                        )
+                    case .searching:
+                        HomeSearchingStatusView(
+                            selectedStatus: $vm.selectedStatus,
+                            requestId: viewModel.activeRequestIds.first ?? 0,
+                            createdAt: viewModel.activeRequestCreatedAt,
+                            onTimerExpired: {
+                                viewModel.checkAndStartPolling()
+                            }
+                        )
+                    case .firstOffer:
+                        HomeFirstOfferStatusView(
+                            selectedStatus: $vm.selectedStatus,
+                            offerTotalPrice: viewModel.offerTotalPrice,
+                            offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
+                            offerTotalMedsCount: viewModel.offerTotalMedsCount,
+                            requestId: viewModel.firstAvailableRequestId ?? 0,
+                            createdAt: viewModel.activeRequestCreatedAt,
+                            onTimerExpired: {
+                                viewModel.checkAndStartPolling()
+                            },
+                            onCompareOffers: {
+                                if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
+                                    onOpenOfferResult?(result, reqId)
+                                } else {
+                                    onCompareOffers?()
+                                }
+                            },
+                            onDelete: {
+                                if let reqId = viewModel.firstAvailableRequestId {
+                                    viewModel.clearCompletedRequest(requestId: reqId)
+                                }
+                            }
+                        )
+                    case .multipleOffers:
+                        HomeMultipleOffersStatusView(
+                            selectedStatus: $vm.selectedStatus,
+                            offersAvailableCount: viewModel.availableOffersCount,
+                            offerTotalPrice: viewModel.offerTotalPrice,
+                            offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
+                            offerTotalMedsCount: viewModel.offerTotalMedsCount,
+                            requestId: viewModel.firstAvailableRequestId ?? 0,
+                            createdAt: viewModel.activeRequestCreatedAt,
+                            onTimerExpired: {
+                                viewModel.checkAndStartPolling()
+                            },
+                            onShowOffer: {
+                                if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
+                                    onOpenOfferResult?(result, reqId)
+                                }
+                            },
+                            onCompareOffers: {
                                 onCompareOffers?()
+                            },
+                            onDelete: {
+                                if let reqId = viewModel.firstAvailableRequestId {
+                                    viewModel.clearCompletedRequest(requestId: reqId)
+                                }
                             }
-                        },
-                        onDelete: {
-                            if let reqId = viewModel.firstAvailableRequestId {
-                                viewModel.clearCompletedRequest(requestId: reqId)
+                        )
+                    case .expired:
+                        HomeExpiredStatusView(selectedStatus: $vm.selectedStatus)
+                    case .continueOrder:
+                        HomeContinueOrderStatusView(
+                            onContinue: {
+                                if let order = viewModel.activeContinueMasterOrder {
+                                    onContinueOrder?(order)
+                                }
                             }
-                        }
-                    )
-                case .multipleOffers:
-                    HomeMultipleOffersStatusView(
-                        selectedStatus: $vm.selectedStatus,
-                        offersAvailableCount: viewModel.availableOffersCount,
-                        offerTotalPrice: viewModel.offerTotalPrice,
-                        offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
-                        offerTotalMedsCount: viewModel.offerTotalMedsCount,
-                        requestId: viewModel.firstAvailableRequestId ?? 0,
-                        createdAt: viewModel.activeRequestCreatedAt,
-                        onTimerExpired: {
-                            viewModel.checkAndStartPolling()
-                        },
-                        onShowOffer: {
-                            if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
-                                onOpenOfferResult?(result, reqId)
-                            }
-                        },
-                        onCompareOffers: {
-                            onCompareOffers?()
-                        },
-                        onDelete: {
-                            if let reqId = viewModel.firstAvailableRequestId {
-                                viewModel.clearCompletedRequest(requestId: reqId)
-                            }
-                        }
-                    )
-                case .expired:
-                    HomeExpiredStatusView(selectedStatus: $vm.selectedStatus)
-                case .continueOrder:
-                    HomeContinueOrderStatusView(
-                        onContinue: {
-                            if let order = viewModel.activeContinueMasterOrder {
-                                onContinueOrder?(order)
-                            }
-                        }
-                    )
-                }
+                        )
+                    }
 
-                HomeCategoriesView()
-                HomeQuickDeliveryBanner()
-                Color.clear.frame(height: 20)
+                    HomeCategoriesView()
+                    HomeQuickDeliveryBanner()
+                    Color.clear.frame(height: 20)
+                }
+                .frame(width: geometry.size.width)
             }
+            .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+            .clipped()
         }
         .background(AppColor.bg)
         .onAppear {
@@ -120,6 +129,16 @@ struct HomeView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             viewModel.checkAndStartPolling()
         }
+        .onChange(of: refreshSignal) { _, _ in
+            viewModel.checkAndStartPolling()
+        }
+        .task {
+            await favoriteCountViewModel.refresh()
+
+            for await _ in NotificationCenter.default.notifications(named: .favoritesDidChange) {
+                guard !Task.isCancelled else { return }
+                await favoriteCountViewModel.refresh()
+            }
+        }
     }
 }
-

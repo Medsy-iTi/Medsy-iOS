@@ -16,7 +16,7 @@ struct MedsyChatBubble: View {
     var userBubbleColor: Color = MedsyTheme.default.primary
     var userTextColor: Color = .white
     var assistantBubbleColor: Color = MedsyTheme.default.surface
-    var assistantTextColor: Color = .black
+    var assistantTextColor: Color = AppColor.textPrim
 
     var body: some View {
         HStack {
@@ -29,6 +29,10 @@ struct MedsyChatBubble: View {
                 .padding(.vertical, 12)
                 .background(isUser ? userBubbleColor : assistantBubbleColor)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(isUser ? .clear : AppColor.border.opacity(0.7), lineWidth: 1)
+                }
 
             if !isUser { Spacer(minLength: 40) }
         }

@@ -13,6 +13,7 @@ final class SearchResultsViewModel: ObservableObject {
 	@Published var state: SearchResultsState = .loading
 	@Published var products: [MedsyProduct] = []
 	@Published var errorMessage: String?
+	@Published var favoriteErrorMessage: String?
 	@Published private(set) var isLoadingNextPage = false
 
 
@@ -45,6 +46,8 @@ final class SearchResultsViewModel: ObservableObject {
 	private let useCase: SearchProductsUseCaseProtocol
     private let getCategoriesUseCase: GetCategoriesUseCase
 	private let languageManager: LanguageManager
+	private let fetchFavoritesUseCase: FetchFavoritesUseCaseProtocol
+	private let setFavoriteUseCase: SetFavoriteUseCaseProtocol
 
 	private let pageSize = 20
 	private var currentPage = 0
@@ -52,16 +55,21 @@ final class SearchResultsViewModel: ObservableObject {
 	private var isLoadingPage = false
 	private var loadTask: Task<Void, Never>?
 	private var cancellables = Set<AnyCancellable>()
+	private var favoriteCandidates: [String: FavoriteMedicine] = [:]
 
 	init(
 		query: String,
 		useCase: SearchProductsUseCaseProtocol = DIContainer.shared.resolve(SearchProductsUseCaseProtocol.self),
         getCategoriesUseCase: GetCategoriesUseCase = DIContainer.shared.resolve(GetCategoriesUseCase.self),
+		fetchFavoritesUseCase: FetchFavoritesUseCaseProtocol = DIContainer.shared.resolve(FetchFavoritesUseCaseProtocol.self),
+		setFavoriteUseCase: SetFavoriteUseCaseProtocol = DIContainer.shared.resolve(SetFavoriteUseCaseProtocol.self),
 		languageManager: LanguageManager = .shared
 	) {
 		self.query = query
 		self.useCase = useCase
         self.getCategoriesUseCase = getCategoriesUseCase
+		self.fetchFavoritesUseCase = fetchFavoritesUseCase
+		self.setFavoriteUseCase = setFavoriteUseCase
 		self.languageManager = languageManager
 
         Task {
@@ -124,6 +132,28 @@ final class SearchResultsViewModel: ObservableObject {
 		selectedSort = (selectedSort == sort) ? nil : sort
 	}
 
+	func toggleFavorite(productID: String) {
+		guard let index = products.firstIndex(where: { $0.id == productID }),
+		      let medicine = favoriteCandidates[productID] else { return }
+
+		let targetValue = !products[index].isFavorite
+		products[index].isFavorite = targetValue
+
+		Task { [weak self] in
+			guard let self else { return }
+			do {
+				try await setFavoriteUseCase.execute(medicine, isFavorite: targetValue)
+			} catch {
+				guard !Task.isCancelled else { return }
+				if let currentIndex = products.firstIndex(where: { $0.id == productID }),
+				   products[currentIndex].isFavorite == targetValue {
+					products[currentIndex].isFavorite = !targetValue
+				}
+				favoriteErrorMessage = "favorites.persistence_error.subtitle".localized
+			}
+		}
+	}
+
 	// MARK: – Private
 
 	private func fetch(reset: Bool) async {
@@ -149,8 +179,21 @@ final class SearchResultsViewModel: ObservableObject {
 			print(languageManager.currentLanguage.rawValue)
 			guard !Task.isCancelled else { return }
 
-			let mapped = result.items.map {
-				ProductPresentationMapper.map($0, isRTL: languageManager.isRTL)
+			let favorites = (try? await fetchFavoritesUseCase.execute()) ?? []
+			let favoriteIDs = Set(favorites.map(\.id))
+			if reset {
+				favoriteCandidates = [:]
+			}
+
+			let mapped = result.items.map { product in
+				let candidate = ProductPresentationMapper.favorite(product)
+				favoriteCandidates[String(product.id)] = candidate
+				var mappedProduct = ProductPresentationMapper.map(
+					product,
+					isRTL: languageManager.isRTL
+				)
+				mappedProduct.isFavorite = favoriteIDs.contains(product.id)
+				return mappedProduct
 			}
 
 			let uniqueMapped = mapped.filter { newProduct in

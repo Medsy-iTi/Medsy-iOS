@@ -49,20 +49,33 @@ enum PharmacyOrderMapper {
     }
 
     static func map(_ dto: PharmacyMedicineRequestDTO) -> PharmacyOrder {
-        let total = (dto.items ?? []).reduce(0.0) { $0 + (($1.unitPrice ?? 0.0) * Double($1.quantity)) }
+        var total = 0.0
+        if let items = dto.items {
+            for item in items {
+                let unitPrice = item.product?.price ?? item.unitPrice ?? 0.0
+                total += unitPrice * Double(item.quantity)
+            }
+        }
         let parsedDate = parseDate(from: dto.createdAt)
 
-        let items = (dto.items ?? []).map { item in
-            PharmacyOrderLineItem(
+        let items = (dto.items ?? []).map { item -> PharmacyOrderLineItem in
+            let unitPrice = item.product?.price ?? item.unitPrice ?? 0.0
+            let productName = item.product?.name ?? item.product?.productName ?? item.productName
+            let imageUrl = item.product?.imageUrl ?? item.imageUrl
+            let form = item.product?.form ?? item.form
+            let strength = item.product?.strength ?? item.strength
+            let packSize = item.product?.packSize ?? item.packSize
+
+            return PharmacyOrderLineItem(
                 id: item.id,
-                productId: item.productId,
+                productId: item.product?.id ?? item.productId ?? 0,
                 quantity: item.quantity,
-                unitPrice: item.unitPrice ?? 0.0,
-                productName: item.productName,
-                imageUrl: item.imageUrl,
-                form: item.form,
-                strength: item.strength,
-                packSize: item.packSize
+                unitPrice: unitPrice,
+                productName: productName,
+                imageUrl: imageUrl,
+                form: form,
+                strength: strength,
+                packSize: packSize
             )
         }
 
@@ -92,9 +105,58 @@ enum PharmacyOrderMapper {
         )
     }
 
-    static func map(_ dto: PageResponseDTO<PharmacyMedicineRequestDTO>) -> PharmacyOrdersPage {
+    static func map(_ dto: PharmacyRequestAssignmentDTO) -> PharmacyOrder {
+        var total = 0.0
+        if let items = dto.request.items {
+            for item in items {
+                let unitPrice = item.product?.price ?? item.unitPrice ?? 0.0
+                total += unitPrice * Double(item.quantity)
+            }
+        }
+        let parsedDate = parseDate(from: dto.request.createdAt)
+
+        let items = (dto.request.items ?? []).map { item -> PharmacyOrderLineItem in
+            let unitPrice = item.product?.price ?? item.unitPrice ?? 0.0
+            let productName = item.product?.name ?? item.product?.productName ?? item.productName
+            let imageUrl = item.product?.imageUrl ?? item.imageUrl
+            let form = item.product?.form ?? item.form
+            let strength = item.product?.strength ?? item.strength
+            let packSize = item.product?.packSize ?? item.packSize
+
+            return PharmacyOrderLineItem(
+                id: item.id,
+                productId: item.product?.id ?? item.productId ?? 0,
+                quantity: item.quantity,
+                unitPrice: unitPrice,
+                productName: productName,
+                imageUrl: imageUrl,
+                form: form,
+                strength: strength,
+                packSize: packSize
+            )
+        }
+
+        return PharmacyOrder(
+            id: dto.request.id,
+            userId: dto.request.customerId ?? 0,
+            pharmacyId: 0,
+            totalPrice: total,
+            deliveryCoordinate: (dto.request.deliveryLatitude ?? 0.0, dto.request.deliveryLongitude ?? 0.0),
+            status: PharmacyOrderAPIStatus(rawValue: dto.request.status),
+            date: parsedDate,
+            items: items,
+            deliveryAddress: dto.request.deliveryAddress ?? "pharmacy.orders.address.fallback".localized,
+            prescriptionUrl: dto.request.prescriptionUrl,
+            customerName: dto.request.customerName,
+            customerPhone: dto.request.customerPhone,
+            notes: dto.request.notes,
+            assignmentStatus: dto.assignmentStatus
+        )
+    }
+
+    static func map(_ dto: PageResponseDTO<PharmacyRequestAssignmentDTO>) -> PharmacyOrdersPage {
         PharmacyOrdersPage(
-            orders: dto.content.map(map),
+            orders: dto.content.map { map($0) }.reversed(),
             pageNumber: dto.pageNumber,
             totalPages: dto.totalPages,
             isLastPage: dto.last
@@ -111,19 +173,37 @@ enum PharmacyOrderMapper {
             paymentMethod: .cash,
             amount: Int(order.totalPrice.rounded()),
             createdAt: order.date,
-            status: mapStatus(order.status, orderId: order.id)
+            status: mapStatus(order.status, assignmentStatus: order.assignmentStatus, orderId: order.id)
         )
     }
 
-    private static func mapStatus(_ status: PharmacyOrderAPIStatus, orderId: Int) -> PharmacyOrderListStatus {
+    private static func mapStatus(_ status: PharmacyOrderAPIStatus, assignmentStatus: String?, orderId: Int) -> PharmacyOrderListStatus {
         switch status {
-        case .pending:
-            return PharmacySubmittedOffersStore.shared.contains(orderId) ? .pendingApproval : .new
-        case .accepted, .preparing, .outForDelivery: return .preparing
-        case .delivered: return .delivered
-        case .completed: return .completed
-        case .expired: return .expired
-        case .cancelled, .unknown: return .expired
+        case .accepted, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery:
+            return .preparing
+        case .delivered:
+            return .delivered
+        case .completed:
+            return .completed
+        case .expired:
+            return .expired
+        case .cancelled:
+            return .expired
+        case .pending, .unknown:
+            let rawAssignment = assignmentStatus?.uppercased() ?? "PENDING"
+            let isOffered = rawAssignment == "OFFER_CREATED" ||
+                            rawAssignment == "OFFER_MADE" ||
+                            rawAssignment == "SUBMITTED" ||
+                            rawAssignment == "OFFERED" ||
+                            PharmacySubmittedOffersStore.shared.contains(orderId)
+            
+            if isOffered {
+                return .pendingApproval
+            } else if rawAssignment == "PENDING" {
+                return .new
+            } else {
+                return .expired
+            }
         }
     }
 
@@ -177,7 +257,7 @@ enum PharmacyOrderMapper {
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
         case .pending: return "pharmacy.home.order_new".localized
-        case .accepted, .preparing, .outForDelivery: return "pharmacy.home.order_preparing".localized
+        case .accepted, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery: return "pharmacy.home.order_preparing".localized
         case .delivered: return "pharmacy.home.order_delivered".localized
         case .completed: return "pharmacy.orders.status.completed".localized
         case .expired: return "pharmacy.orders.status.expired".localized

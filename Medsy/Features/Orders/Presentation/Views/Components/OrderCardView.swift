@@ -10,81 +10,121 @@ import SwiftUI
 struct OrderCardView: View {
     let order: OrderPresentationModel
     let onTap: () -> Void
+    var onPaymentTap: (() -> Void)? = nil
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: MedsySpacing.xs) {
+        Button(action: cardAction) {
+            HStack(spacing: 0) {
+                Rectangle()
+                    .fill(accentColor)
+                    .frame(width: 5)
+                    .frame(maxHeight: .infinity)
 
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("#\(order.orderNumber)")
-                            .font(AppColor.sans(16, .bold))
-                            .foregroundStyle(AppColor.textPrim)
-
-                        Text(dateLabel)
-                            .font(AppColor.sans(12))
-                            .foregroundStyle(AppColor.textSec)
-                    }
-
-                    Spacer(minLength: 0)
-
-                    Image(systemName: "chevron.forward")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(AppColor.textSec)
-                }
-
-                Text(order.status.labelKey.localized)
-                    .font(AppColor.sans(14, .semibold))
-                    .foregroundStyle(order.status.color)
-
-                fulfillmentBadge
-
-                HStack(alignment: .bottom) {
-                    HStack(spacing: -MedsySpacing.xxs) {
-                        ForEach(0..<min(order.itemCount, 3), id: \.self) { index in
-                            OrderProductImageView(imageURL: imageURL(at: index), size: 40)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
-                                        .stroke(AppColor.card, lineWidth: 2)
-                                )
-                        }
-                    }
-
-                    Spacer(minLength: 0)
-
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(String(format: "orders.price_format".localized, order.totalPrice))
-                            .font(MedsyFont.price(15))
-                            .foregroundStyle(AppColor.textPrim)
-
-                        Text(itemCountText)
-                            .font(AppColor.sans(12))
-                            .foregroundStyle(AppColor.textSec)
-                    }
-                }
+                content
+                    .padding(MedsySpacing.md)
             }
-            .padding(MedsySpacing.md)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                    .stroke(AppColor.border, lineWidth: 1)
-            )
-            .medsyCardShadow()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(OrderCardButtonStyle())
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppColor.card)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.outline.opacity(0.15), lineWidth: 1)
+        )
     }
 
-    private var dateLabel: String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(order.date) {
-            return "orders.section.today".localized
-        } else if calendar.isDateInYesterday(order.date) {
-            return "orders.section.yesterday".localized
-        } else {
-            return order.date.formatted(.dateTime.day().month(.abbreviated))
+    private var content: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center) {
+                Text(String(format: "orders.detail.order_number".localized, order.orderNumber))
+                    .font(AppColor.sans(16, .bold))
+                    .foregroundStyle(AppColor.onSurface)
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.forward")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppColor.onSurfaceVariant)
+            }
+
+            Text(order.status.labelKey.localized)
+                .font(AppColor.sans(12, .bold))
+                .foregroundStyle(statusForegroundColor)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(statusBackgroundColor)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .padding(.top, 12)
+
+            pharmacyNames
+                .padding(.top, MedsySpacing.xs)
+
+            HStack(alignment: .center) {
+                productThumbnails
+
+                Spacer(minLength: 0)
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(String(format: "orders.price_format".localized, order.totalPrice))
+                        .font(MedsyFont.price(15))
+                        .foregroundStyle(AppColor.onSurface)
+
+                    Text(itemCountText)
+                        .font(AppColor.sans(12))
+                        .foregroundStyle(AppColor.onSurfaceVariant)
+                }
+            }
+            .padding(.top, 14)
         }
+    }
+
+    @ViewBuilder
+    private var pharmacyNames: some View {
+        let names = order.displayedPharmacyNames
+        if !names.isEmpty {
+            Text(
+                String(
+                    format: "orders.from_pharmacy".localized,
+                    names.joined(separator: ", ")
+                )
+            )
+            .font(AppColor.sans(14))
+            .foregroundStyle(AppColor.onSurfaceVariant)
+            .lineLimit(2)
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    private var productThumbnails: some View {
+        HStack(spacing: -12) {
+            ForEach(0..<min(order.itemCount, 3), id: \.self) { index in
+                OrderProductImageView(
+                    imageURL: imageURL(at: index),
+                    size: 40,
+                    containerColor: AppColor.surfaceVariant
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(AppColor.surface, lineWidth: 2)
+                )
+                .zIndex(Double(3 - index))
+            }
+
+            if order.itemCount > 3 {
+                Text("+\(order.itemCount - 3)")
+                    .font(AppColor.sans(11, .bold))
+                    .foregroundStyle(AppColor.onPrimaryContainer)
+                    .frame(width: 40, height: 40)
+                    .background(AppColor.primaryContainer)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(AppColor.surface, lineWidth: 2)
+                    )
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private var itemCountText: String {
@@ -92,20 +132,44 @@ struct OrderCardView: View {
         return String(format: key.localized, order.itemCount)
     }
 
-    private var fulfillmentBadge: some View {
-        Label(
-            order.fulfillmentType == .delivery
-                ? "orders.fulfillment.delivery".localized
-                : "orders.fulfillment.pickup".localized,
-            systemImage: order.fulfillmentType == .delivery ? "shippingbox.fill" : "bag.fill"
-        )
-        .font(AppColor.sans(12, .medium))
-        .foregroundStyle(AppColor.green)
+    private var accentColor: Color {
+        if order.status.isCompleted { return AppColor.success }
+        if order.status.isCancelled { return AppColor.error }
+        return AppColor.green
+    }
+
+    private var statusBackgroundColor: Color {
+        order.status.isCancelled ? AppColor.errorContainer : AppColor.primaryContainer
+    }
+
+    private var statusForegroundColor: Color {
+        order.status.isCancelled ? AppColor.error : AppColor.onPrimaryContainer
+    }
+
+    private func cardAction() {
+        switch order.paymentAction {
+        case .payNow, .retry:
+            if let onPaymentTap {
+                onPaymentTap()
+            } else {
+                onTap()
+            }
+        case .processing, .expired, .none:
+            onTap()
+        }
     }
 
     private func imageURL(at index: Int) -> String? {
         guard order.itemImageURLs.indices.contains(index) else { return nil }
         return order.itemImageURLs[index]
+    }
+}
+
+private struct OrderCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 

@@ -59,6 +59,10 @@ final class CartRepository: CartRepositoryProtocol {
         try await localDataSource.clearCart()
     }
 
+    func clearCachedCart() async throws {
+        try await localDataSource.clearCart()
+    }
+
     func fetchItemCount() async throws -> Int {
         try await remoteDataSource.fetchItemCount()
     }

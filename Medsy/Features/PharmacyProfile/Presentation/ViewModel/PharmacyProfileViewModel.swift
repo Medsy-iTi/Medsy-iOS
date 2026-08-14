@@ -1,10 +1,3 @@
-//
-//  PharmacyProfileViewModel.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 21/07/2026.
-//
-
 import Foundation
 import Observation
 import UIKit
@@ -25,9 +18,6 @@ final class PharmacyProfileViewModel {
     ) {
         self.pharmacyId = pharmacyId
         self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
-        Task { @MainActor in
-            self.loadPharmacy(id: pharmacyId)
-        }
     }
 
     func loadPharmacy(id: Int? = nil) {

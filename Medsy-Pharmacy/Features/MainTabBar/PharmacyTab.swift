@@ -10,7 +10,7 @@ import Foundation
 enum PharmacyTab: String, CaseIterable, Identifiable {
     case home
     case orders
-    case products
+    case chatBot
 	case completedOrders
     case more
 
@@ -28,8 +28,8 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
             "house"
         case .orders:
             "list.clipboard"
-        case .products:
-            "bag"
+        case .chatBot:
+            "sparkles"
 			case .completedOrders:
 			"checkmark.seal"
         case .more:
@@ -43,8 +43,8 @@ enum PharmacyTab: String, CaseIterable, Identifiable {
             "house.fill"
         case .orders:
             "list.clipboard.fill"
-        case .products:
-            "bag.fill"
+        case .chatBot:
+            "sparkles"
 			case .completedOrders:
 				"checkmark.seal.fill"
         case .more:

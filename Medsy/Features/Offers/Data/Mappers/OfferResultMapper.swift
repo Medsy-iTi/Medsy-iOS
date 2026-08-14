@@ -35,7 +35,13 @@ enum OfferResultMapper {
         ]
         return ConfirmOfferResult(
             requestId: requestId,
-            orders: orders
+            orders: orders,
+            masterOrderId: dto.masterOrderId,
+            orderStatus: MasterOrderStatus(rawValue: dto.orderStatus.uppercased()) ?? .unknown,
+            paymentMethod: MasterOrderPaymentMethod(rawValue: dto.paymentMethod.uppercased()) ?? .unknown,
+            paymentStatus: dto.paymentStatus.flatMap {
+                MasterOrderPaymentStatus(rawValue: $0.uppercased()) ?? .unknown
+            }
         )
     }
 }

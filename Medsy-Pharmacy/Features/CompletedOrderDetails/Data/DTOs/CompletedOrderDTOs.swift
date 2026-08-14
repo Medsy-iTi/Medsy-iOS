@@ -16,9 +16,11 @@ struct CompletedOrderDetailsDTO: Decodable {
     let prescriptionUrl: String?
     let offerId: Int?
     let subTotal: Double
-    let deliveryFee: Double
+    let deliveryFee: Double?
     let total: Double
     let createdAt: String
+    let status: String?
+    let fulfillmentMethod: String?
     let items: [CompletedOrderDetailsItemDTO]
     
     let deliveryAddress: String?
@@ -31,11 +33,24 @@ struct CompletedOrderDetailsDTO: Decodable {
     let pharmacyAddress: String?
 }
 
+struct CompletedOrderDetailsProductDTO: Decodable {
+    let id: Int?
+    let name: String?
+    let productName: String?
+    let imageUrl: String?
+    let form: String?
+    let strength: String?
+    let packSize: String?
+    let scientificName: String?
+    let description: String?
+    let company: String?
+    let price: Double?
+}
+
 struct CompletedOrderDetailsItemDTO: Decodable {
     let id: Int
     let productId: Int
-    let productName: String
-    let imageUrl: String?
+    let product: CompletedOrderDetailsProductDTO?
     let quantity: Int
     let unitPrice: Double
     let totalPrice: Double

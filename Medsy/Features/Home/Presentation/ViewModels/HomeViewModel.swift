@@ -77,7 +77,7 @@ final class HomeViewModel {
             }
 
             let resumableOrder = recentOrders.first(where: { order in
-                let upperStatus = order.orderStatus?.uppercased() ?? ""
+                let upperStatus = order.orderStatus.uppercased()
                 let isCardAwaitingPayment = (order.paymentMethod?.uppercased() == "CARD" && upperStatus == "PENDING")
                 if isCardAwaitingPayment { return true }
                 let isFulfillmentAwaiting = (upperStatus == "PENDING" && order.fulfillmentMethod == nil)

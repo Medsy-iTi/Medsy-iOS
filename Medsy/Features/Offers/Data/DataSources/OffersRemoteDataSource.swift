@@ -64,6 +64,28 @@ struct ProductNestedDTO: Codable, Equatable, Hashable, Sendable {
         case description
     }
 
+    init(
+        id: Int? = nil,
+        name: String? = nil,
+        productName: String? = nil,
+        price: Double? = nil,
+        imageUrl: String? = nil,
+        form: String? = nil,
+        strength: String? = nil,
+        company: String? = nil,
+        description: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.productName = productName
+        self.price = price
+        self.imageUrl = imageUrl
+        self.form = form
+        self.strength = strength
+        self.company = company
+        self.description = description
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decodeIfPresent(Int.self, forKey: .id)
@@ -266,20 +288,6 @@ struct ConfirmOfferOrderDTO: Decodable, Equatable {
     let pharmacyId: Int
     let pharmacyName: String
     let itemIds: [Int]
-}
-
-struct MasterOrderDTO: Codable, Equatable, Hashable, Sendable {
-    let id: Int
-    let requestId: Int
-    let paymentMethod: String?
-    let paymentStatus: String?
-    let fulfillmentMethod: String?
-    let deliveryFee: Double?
-    let totalPrice: Double?
-    let orderStatus: String?
-    let paymentExpiresAt: String?
-    let paidAt: String?
-    let orderResponses: [SelectPharmacyOfferDTO]?
 }
 
 struct MasterOrdersListResponseDTO: Decodable {

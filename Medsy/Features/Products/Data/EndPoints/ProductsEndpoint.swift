@@ -7,11 +7,11 @@ import Foundation
 import Alamofire
 
 enum ProductsEndpoint: ApiEndpoint {
-    case fetchByCategory(id: Int, page: Int, size: Int)
+    case fetchByCategory(id: Int, page: Int, size: Int, language: String)
 
     var path: String {
         switch self {
-        case let .fetchByCategory(id, _, _):
+        case let .fetchByCategory(id, _, _, _):
             return "products/category/\(id)"
         }
     }
@@ -22,11 +22,12 @@ enum ProductsEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .fetchByCategory(_, page, size):
+        case let .fetchByCategory(_, page, size, language):
             return [
                 "page": page,
                 "size": size,
-                "sort": "price,desc"
+                "sort": "price,desc",
+                "lang": language
             ]
         }
     }

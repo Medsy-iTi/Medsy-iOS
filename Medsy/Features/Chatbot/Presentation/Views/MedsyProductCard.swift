@@ -2,16 +2,13 @@
 //  MedsyProductCard.swift
 //  Medsy
 //
-//  Created by ITI_JETS on 23/07/2026.
-//
-
 
 import SwiftUI
-
 
 struct MedsyProductCard: View {
     var eyebrow: String? = nil
     var iconName: String = "cross.case.fill"
+    var imageURL: String? = nil   // ← new: real product image URL
 
     var name: String
     var subtitle: String
@@ -25,7 +22,7 @@ struct MedsyProductCard: View {
     var footnote: String? = nil
 
     var accentColor: Color = MedsyTheme.default.primary
-    var cardBackground: Color = .white
+    var cardBackground: Color = AppColor.card
 
     var onPrimaryTap: () -> Void = {}
     var onSecondaryTap: () -> Void = {}
@@ -39,20 +36,20 @@ struct MedsyProductCard: View {
             }
 
             HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(accentColor.opacity(0.12))
-                    Image(systemName: iconName)
-                        .foregroundColor(accentColor)
-                }
-                .frame(width: 44, height: 44)
+                // Product image
+                productImage
+                    .frame(width: 52, height: 52)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(name)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(AppColor.textPrim)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(AppColor.textSec)
                     Text(price)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(accentColor)
@@ -99,12 +96,44 @@ struct MedsyProductCard: View {
             if let footnote {
                 Text(footnote)
                     .font(.system(size: 11))
-                    .foregroundColor(.gray)
+                    .foregroundColor(AppColor.textSec)
             }
         }
         .padding(16)
+        .padding(.bottom, 12)    // ← extra bottom padding per requirement
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
+    }
+
+    @ViewBuilder
+    private var productImage: some View {
+        if let urlString = imageURL, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure, .empty:
+                    fallbackIcon
+                @unknown default:
+                    fallbackIcon
+                }
+            }
+        } else {
+            fallbackIcon
+        }
+    }
+
+    private var fallbackIcon: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(accentColor.opacity(0.12))
+            Image(systemName: iconName)
+                .foregroundColor(accentColor)
+        }
     }
 }
 

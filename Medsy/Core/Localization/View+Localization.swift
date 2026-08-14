@@ -17,6 +17,24 @@ extension View {
     func localizedNavigationBackButton(action: @escaping () -> Void) -> some View {
         modifier(LocalizedNavigationBackButtonModifier(action: action))
     }
+
+    func localizedTextInput() -> some View {
+        modifier(LocalizedTextInputModifier())
+    }
+}
+
+private struct LocalizedTextInputModifier: ViewModifier {
+
+    @Environment(LanguageManager.self) private var languageManager
+
+    func body(content: Content) -> some View {
+        content
+            .environment(
+                \.layoutDirection,
+                languageManager.isRTL ? .rightToLeft : .leftToRight
+            )
+            .multilineTextAlignment(.leading)
+    }
 }
 
 
@@ -33,7 +51,6 @@ private struct LocalizationModifier: ViewModifier {
 
 private struct LocalizedNavigationBackButtonModifier: ViewModifier {
 
-    @Environment(LanguageManager.self) private var languageManager
     let action: () -> Void
 
     func body(content: Content) -> some View {
@@ -41,15 +58,7 @@ private struct LocalizedNavigationBackButtonModifier: ViewModifier {
             .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(action: action) {
-                        HStack(spacing: 4) {
-                            Image(systemName: languageManager.isRTL ? "chevron.forward" : "chevron.backward")
-                                .font(.system(size: 15, weight: .semibold))
-
-                            Text("common.back".localized)
-                        }
-                        .foregroundStyle(AppColor.green)
-                    }
+                    MedsyNavBarBackButton(action: action)
                 }
             }
     }

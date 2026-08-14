@@ -9,11 +9,18 @@ import SwiftUI
 
 struct MedsyNavBarBackButton: View {
     let action: () -> Void
+    var isEnabled = true
 
     var body: some View {
         Button(action: action) {
             Image(systemName: "chevron.backward")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppColor.green)
+                .frame(width: 36, height: 36)
         }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.45)
         .accessibilityLabel("accessibility.back".localized)
     }
 }

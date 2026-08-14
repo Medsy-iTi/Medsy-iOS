@@ -12,62 +12,57 @@ struct CartPrescriptionAttachmentView: View {
     @State private var showsRemovalConfirmation = false
 
     let attachment: CartPrescriptionAttachment
-    let position: Int
     let onChange: () -> Void
     let onRemove: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.md) {
-            HStack {
-                Label(
-                    "cart.prescription.number".localized(position),
-                    systemImage: "doc.text.image"
-                )
-                    .font(MedsyFont.title(17))
-                    .foregroundStyle(AppColor.textPrim)
-
-                Spacer()
-
-                Button {
-                    showsRemovalConfirmation = true
-                } label: {
-                    Image(systemName: "trash")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(AppColor.danger)
-                        .frame(width: 38, height: 38)
-                        .background(AppColor.danger.opacity(0.1))
-                        .clipShape(Circle())
-                }
-                .accessibilityLabel("cart.prescription.remove".localized)
-            }
-
+        HStack(spacing: MedsySpacing.sm) {
             if let image = UIImage(data: attachment.imageData) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 180)
-                    .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+                    .frame(width: 64, height: 64)
+                    .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
                     .clipped()
             }
 
-            Button(action: onChange) {
-                Label("cart.prescription.change".localized, systemImage: "arrow.triangle.2.circlepath")
-                    .font(MedsyFont.button(14))
-                    .foregroundStyle(AppColor.green)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(AppColor.pill)
-                    .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+            VStack(alignment: .leading, spacing: 3) {
+                Text("cart.prescription.title".localized)
+                    .font(MedsyFont.title(15))
+                    .foregroundStyle(AppColor.textPrim)
+
+                Text("cart.prescription.local_only".localized)
+                    .font(MedsyFont.body(12))
+                    .foregroundStyle(AppColor.textSec)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: onChange) {
+                Image(systemName: "pencil")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(AppColor.textPrim)
+                    .frame(width: 38, height: 38)
+            }
+            .accessibilityLabel("cart.prescription.change".localized)
+
+            Button {
+                showsRemovalConfirmation = true
+            } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(AppColor.danger)
+                    .frame(width: 38, height: 38)
+            }
+            .accessibilityLabel("cart.prescription.remove".localized)
         }
-        .padding(MedsySpacing.md)
+        .padding(10)
         .background(AppColor.card)
         .overlay(
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+            RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)
                 .stroke(AppColor.border, lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous))
         .alert("cart.prescription.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
             Button("common.cancel".localized, role: .cancel) {}
             Button("cart.remove_confirmation.action".localized, role: .destructive, action: onRemove)

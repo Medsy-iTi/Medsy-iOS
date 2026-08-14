@@ -1,6 +1,7 @@
 "pharmacy.tab.home" = "Home";
 "pharmacy.tab.orders" = "Requests";
 "pharmacy.tab.products" = "Products";
+"pharmacy.tab.chatBot" = "Medsy AI";
 "pharmacy.tab.completedOrders" = "Orders";
 "pharmacy.tab.more" = "More";
 "pharmacy.setup.placeholder" = "Pharmacy app setup is ready for feature work.";
@@ -394,9 +395,31 @@
 "pharmacy.orders.action.view" = "View Details";
 "pharmacy.orders.status.completed" = "Completed";
 "pharmacy.orders.status.expired" = "Expired";
+"pharmacy.orders.status.cancelled" = "Cancelled";
 "pharmacy.orders.status.pending" = "Pending Approval";
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
+
+"pharmacy.status.preparing" = "Preparing";
+"pharmacy.status.ready" = "Ready";
+"pharmacy.status.on_the_way" = "On the way";
+"pharmacy.status.delivered" = "Delivered";
+"pharmacy.status.mark_ready" = "Mark as Ready";
+"pharmacy.status.marking_ready" = "Marking as Ready...";
+"pharmacy.status.mark_out_for_delivery" = "Mark as Out for Delivery";
+"pharmacy.status.marking_out_for_delivery" = "Marking as Out for Delivery...";
+"pharmacy.status.mark_delivered" = "Mark as Delivered";
+"pharmacy.status.marking_delivered" = "Marking as Delivered...";
+"pharmacy.status.mark_collected" = "Mark as Collected";
+"pharmacy.status.marking_collected" = "Marking as Collected...";
+
+"completed_orders.filter.all" = "All";
+"completed_orders.filter.preparing" = "Preparing";
+"completed_orders.filter.out_for_delivery" = "Out for Delivery";
+"completed_orders.filter.delivered" = "Delivered";
+
+"pharmacy.error.title" = "Error";
+"pharmacy.ok" = "OK";
 
 "orders_title" = "Orders";
 "orders_search_placeholder" = "Search by order # or customer name";
@@ -446,3 +469,75 @@
 "pharmacy_pending_invitations.pharmacist_id" = "Pharmacist ID";
 "pharmacy_pending_invitations.invitation_id" = "Invitation ID";
 "pharmacy_pending_invitations.created_at" = "Created at";
+
+/* AI ChatBot */
+"pharmacy.chatbot.title" = "Medsy AI Assistant";
+"pharmacy.chatbot.status.online" = "Online";
+"pharmacy.chatbot.menu.new_chat" = "New Chat";
+"pharmacy.chatbot.input.placeholder" = "Ask about pharmacy operations...";
+"pharmacy.chatbot.state.loading_history" = "Loading conversation...";
+"pharmacy.chatbot.state.error_loading" = "Failed to load chat history.";
+"pharmacy.chatbot.state.retry" = "Retry";
+"pharmacy.chatbot.empty.title" = "How can I help you today?";
+"pharmacy.chatbot.empty.subtitle" = "I can help you review your pharmacy performance, answer drug interaction questions, and more.";
+"pharmacy.chatbot.error.generic" = "An error occurred while sending your message. Please try again.";
+"pharmacy.chatbot.camera.image_preview" = "Image attached";
+
+"pharmacy.chatbot.product.add_to_cart" = "Add to Cart";
+"pharmacy.chatbot.product.details" = "View Details";
+
+"pharmacy.chatbot.alternatives" = "Suggested Alternatives";
+"pharmacy.chatbot.specialization.header" = "Relevant Specializations";
+
+"pharmacy.chatbot.emergency.title" = "Emergency Services";
+"pharmacy.chatbot.emergency.call" = "Call";
+"pharmacy.chatbot.emergency.ambulance" = "Ambulance";
+"pharmacy.chatbot.emergency.police" = "Police";
+"pharmacy.chatbot.emergency.fire" = "Fire Department";
+
+"pharmacy.chatbot.suggestion.performance" = "Show my performance ranking for this month";
+"pharmacy.chatbot.suggestion.drug_info" = "Check interactions for Panadol and Aspirin";
+"pharmacy.chatbot.suggestion.interactions" = "What are the side effects of Amoxicillin?";
+
+"pharmacy.chatbot.ranking.empty" = "No performance data available.";
+"pharmacy.chatbot.ranking.metric.offers" = "Offers Created";
+"pharmacy.chatbot.ranking.metric.orders" = "Successful Orders";
+"pharmacy.chatbot.ranking.period.day" = "Today";
+"pharmacy.chatbot.ranking.period.week" = "This Week";
+"pharmacy.chatbot.ranking.period.month" = "This Month";
+"pharmacy.chatbot.ranking.period.year" = "This Year";
+"pharmacy.chatbot.ranking.direction.top" = "Top Performers";
+"pharmacy.chatbot.ranking.direction.bottom" = "Needs Improvement";
+
+/* AI ChatBot — mic, disclaimer, suggestion grid */
+"pharmacy.chatbot.disclaimer" = "Medsy AI provides general information only and does not replace professional medical advice.";
+"pharmacy.chatbot.mic.error" = "Could not access microphone. Please check permissions in Settings.";
+"pharmacy.chatbot.suggestion.alternative" = "What is an alternative for Panadol?";
+"pharmacy.chatbot.suggestion.performance.title" = "Performance";
+"pharmacy.chatbot.suggestion.performance.subtitle" = "View my monthly ranking";
+"pharmacy.chatbot.suggestion.drug_info.title" = "Drug Info";
+"pharmacy.chatbot.suggestion.drug_info.subtitle" = "Check drug interactions";
+"pharmacy.chatbot.suggestion.interactions.title" = "Side Effects";
+"pharmacy.chatbot.suggestion.interactions.subtitle" = "Find out about side effects";
+"pharmacy.chatbot.suggestion.alternative.title" = "Alternatives";
+"pharmacy.chatbot.suggestion.alternative.subtitle" = "Find a substitute medication";
+"pharmacy.chatbot.product.hide_details" = "Hide Details";
+"pharmacy.chatbot.product.scientific_name" = "Scientific Name: ";
+"pharmacy.chatbot.product.company" = "Company: ";
+"pharmacy.chatbot.product.category" = "Category: ";
+"pharmacy.chatbot.product.route" = "Route: ";
+
+"pharmacy.status.ready_for_pickup" = "Ready for Pickup";
+
+"completed_orders.empty.all.title" = "No Completed Orders";
+"completed_orders.empty.all.message" = "You have no completed orders at this time.";
+"completed_orders.empty.preparing.title" = "No Preparing Orders";
+"completed_orders.empty.preparing.message" = "There are currently no orders being prepared.";
+"completed_orders.empty.ready_for_pickup.title" = "No Orders Ready for Pickup";
+"completed_orders.empty.ready_for_pickup.message" = "There are no orders waiting to be picked up.";
+"completed_orders.empty.out_for_delivery.title" = "No Orders Out for Delivery";
+"completed_orders.empty.out_for_delivery.message" = "There are no orders currently out for delivery.";
+"completed_orders.empty.delivered.title" = "No Delivered Orders";
+"completed_orders.empty.delivered.message" = "You haven't delivered any orders yet.";
+
+"pharmacy.status.collected" = "Collected";

@@ -21,7 +21,7 @@ struct MedsyQuickActionChip: View {
     var style: Style = .outline
 
     var accentColor: Color = MedsyTheme.default.primary
-    var backgroundColor: Color = .white
+    var backgroundColor: Color = AppColor.surface
 
     var onTap: () -> Void = {}
 

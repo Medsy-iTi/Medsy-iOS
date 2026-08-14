@@ -3,11 +3,13 @@ import SwiftUI
 
 enum HomeRoute: Hashable {
     case search(String)
+    case favorites
     case prescription
     case offersList
     case offerDetails(OfferPresentationModel)
     case offerResult(OfferResult, Int)
     case orderReview(OfferDetailPresentationModel, Int? = nil, SelectPharmacyResponseDTO? = nil, String? = nil)
+    case payment(ConfirmOfferResult, OfferDetailPresentationModel)
     case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
     case medicineAnalyze
     case pharmacyProfile(Int)
@@ -24,6 +26,10 @@ final class HomeCoordinator {
 
     func openSearch() {
         path.append(HomeRoute.search(""))
+    }
+
+    func openFavorites() {
+        path.append(HomeRoute.favorites)
     }
 
     func showPrescription() {
@@ -47,6 +53,20 @@ final class HomeCoordinator {
     }
 
     func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.orderComplete(result, offerDetail))
+    }
+
+    func openPayment(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
+        path.append(HomeRoute.payment(result, offerDetail))
+    }
+
+    func replacePaymentWithOrderComplete(
+        _ result: ConfirmOfferResult,
+        offerDetail: OfferDetailPresentationModel
+    ) {
+        if !path.isEmpty {
+            path.removeLast()
+        }
         path.append(HomeRoute.orderComplete(result, offerDetail))
     }
 
@@ -77,6 +97,7 @@ struct HomeCoordinatorView: View {
     private let onOpenCart: () -> Void
     private let homeAddress: String
     private let onOpenProfile: () -> Void
+    private let onPaymentCompleted: (Int) -> Void
 
     init(
         requestedRoute: Binding<HomeRoute?> = .constant(nil),
@@ -84,7 +105,8 @@ struct HomeCoordinatorView: View {
         onTabBarHiddenChange: @escaping (Bool) -> Void = { _ in },
         onOpenCart: @escaping () -> Void = {},
         homeAddress: String,
-        onOpenProfile: @escaping () -> Void
+        onOpenProfile: @escaping () -> Void,
+        onPaymentCompleted: @escaping (Int) -> Void = { _ in }
     ) {
         _requestedRoute = requestedRoute
         _rootResetSignal = rootResetSignal
@@ -92,6 +114,7 @@ struct HomeCoordinatorView: View {
         self.onOpenCart = onOpenCart
         self.homeAddress = homeAddress
         self.onOpenProfile = onOpenProfile
+        self.onPaymentCompleted = onPaymentCompleted
     }
 
     var body: some View {
@@ -99,9 +122,11 @@ struct HomeCoordinatorView: View {
 
         NavigationStack(path: $coordinator.path) {
             HomeView(
+                refreshSignal: rootResetSignal,
                 onSearchTap: coordinator.openSearch,
                 onMedicineAnalyze: coordinator.showMedicineAnalyze,
                 onPrescription: coordinator.showPrescription,
+                onFavoritesTap: coordinator.openFavorites,
                 onCompareOffers: coordinator.openOffersList,
                 onOpenOfferResult: coordinator.openOfferResult,
                 onContinueOrder: { order in
@@ -116,6 +141,16 @@ struct HomeCoordinatorView: View {
                     SearchCoordinatorView(query: query, onBack: coordinator.goBack, onPush: { dest in
                         coordinator.path.append(dest)
                     })
+                case .favorites:
+                    FavoriteView(
+                        onBack: coordinator.goBack,
+                        onBrowse: coordinator.openSearch,
+                        onSelectMedicine: { productID in
+                            coordinator.path.append(
+                                ProductDetailDestination(productId: productID)
+                            )
+                        }
+                    )
                 case .prescription:
                     PrescriptionCoordinatorView(
                         onExit: coordinator.goBack,
@@ -161,9 +196,29 @@ struct HomeCoordinatorView: View {
                             coordinator.openPharmacyProfile(pharmacyId)
                         },
                         onConfirmOrder: { result in
-                            coordinator.openOrderComplete(result, offerDetail: offerDetail)
+                            coordinator.openPayment(result, offerDetail: offerDetail)
                         }
                     )
+                case let .payment(result, _):
+                    if let masterOrderId = result.masterOrderId {
+                        PaymentFlowView(
+                            viewModel: DIContainer.shared.resolve(PaymentFactory.self).makeViewModel(
+                                masterOrderId: masterOrderId
+                            ),
+                            onCompleted: {
+                                onPaymentCompleted(masterOrderId)
+                            },
+                            onViewOrder: {
+                                onPaymentCompleted(masterOrderId)
+                            }
+                        )
+                    } else {
+                        PaymentStatusView(
+                            status: .failure(message: "payment.error.master_order_unavailable".localized),
+                            onPrimaryAction: coordinator.goBack,
+                            onSecondaryAction: coordinator.goBack
+                        )
+                    }
                 case let .orderComplete(result, offerDetail):
                     OrderCompleteView(
                         result: result,
@@ -211,55 +266,89 @@ struct HomeCoordinatorView: View {
         self.requestedRoute = nil
     }
 }
-
 extension MasterOrderDTO {
     func toSelectResult() -> SelectPharmacyResponseDTO {
-        SelectPharmacyResponseDTO(
+        var offersList: [SelectPharmacyOfferDTO] = []
+        for offer in orderResponses {
+            var itemsList: [SelectPharmacyItemDTO] = []
+            for item in offer.items {
+                let nestedProduct = ProductNestedDTO(
+                    id: item.product?.id ?? item.productId,
+                    name: item.product?.name ?? item.product?.productName,
+                    productName: item.product?.productName ?? item.product?.name,
+                    price: item.product?.price ?? item.unitPrice,
+                    imageUrl: item.product?.imageUrl,
+                    form: item.product?.form,
+                    strength: item.product?.strength,
+                    company: item.product?.company,
+                    description: item.product?.description
+                )
+                let itemTotal = item.totalPrice ?? (Double(item.quantity) * item.unitPrice)
+                let selectItem = SelectPharmacyItemDTO(
+                    id: item.id,
+                    productId: item.productId ?? item.product?.id,
+                    product: nestedProduct,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    totalPrice: itemTotal
+                )
+                itemsList.append(selectItem)
+            }
+            let selectOffer = SelectPharmacyOfferDTO(
+                offerId: offer.offerId,
+                pharmacyId: offer.pharmacyId,
+                pharmacyName: offer.pharmacyName,
+                latitude: offer.latitude ?? 0,
+                longitude: offer.longitude ?? 0,
+                items: itemsList
+            )
+            offersList.append(selectOffer)
+        }
+
+        return SelectPharmacyResponseDTO(
             requestId: requestId,
-            offers: orderResponses ?? [],
+            offers: offersList,
             deliveryFees: deliveryFee ?? 0,
-            totalPrice: totalPrice ?? 0
+            totalPrice: totalPrice
         )
     }
 
     func toOfferDetail() -> OfferDetailPresentationModel {
         var items: [OfferMedicineItem] = []
-        for offer in orderResponses ?? [] {
+        for offer in orderResponses {
             for item in offer.items {
                 let medName = item.product?.name ?? item.product?.productName ?? "Medicine"
                 let medImg = item.product?.imageUrl
                 let medDosage = item.product?.strength ?? item.product?.form ?? ""
-                items.append(
-                    OfferMedicineItem(
-                        id: "\(item.id)",
-                        requestItemId: item.id,
-                        productId: item.productId ?? item.product?.id,
-                        name: medName,
-                        dosage: medDosage,
-                        price: item.totalPrice > 0 ? item.totalPrice : (Double(item.quantity) * item.unitPrice),
-                        isAvailable: true,
-                        isAlternative: false,
-                        imageName: "pill.fill",
-                        imageUrl: medImg,
-                        isSelected: true,
-                        quantity: item.quantity,
-                        supplierName: offer.pharmacyName
-                    )
+                let itemTotal = item.totalPrice ?? (Double(item.quantity) * item.unitPrice)
+                let medicineItem = OfferMedicineItem(
+                    id: "\(item.id)",
+                    requestItemId: item.id,
+                    productId: item.productId ?? item.product?.id,
+                    name: medName,
+                    dosage: medDosage,
+                    price: itemTotal > 0 ? itemTotal : (Double(item.quantity) * item.unitPrice),
+                    isAvailable: true,
+                    isAlternative: false,
+                    imageName: "pill.fill",
+                    imageUrl: medImg,
+                    isSelected: true,
+                    quantity: item.quantity,
+                    supplierName: offer.pharmacyName
                 )
+                items.append(medicineItem)
             }
         }
 
         return OfferDetailPresentationModel(
             id: "\(id)",
-            pharmacyName: orderResponses?.first?.pharmacyName ?? "offers.details.title".localized,
+            pharmacyName: orderResponses.first?.pharmacyName ?? "offers.details.title".localized,
             managerName: "",
             medicines: items,
             pharmacistComment: "",
-            totalPrice: totalPrice ?? 0,
+            totalPrice: totalPrice,
             prescriptionUrl: nil,
             paymentMethod: paymentMethod
         )
     }
 }
-
-

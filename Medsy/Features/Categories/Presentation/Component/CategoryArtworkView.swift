@@ -1,9 +1,29 @@
+//
+//  CategoryArtworkView.swift
+//  Medsy
+//
+//  Created by Ahmed Elkady on 12/08/2026.
+//
+
 import SwiftUI
 
 struct CategoryArtworkView: View {
     let category: Category
+    @ObservedObject private var appSettings = AppSettings.shared
 
     var body: some View {
+        artwork
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(category.artworkName == nil ? category.bgColor : artworkBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .accessibilityHidden(true)
+    }
+
+    private var artworkBackground: Color {
+        appSettings.isDarkMode ? Color(hex: "#0E1418") : Color(hex: "#FFFFFF")
+    }
+
+    private var artwork: some View {
         Group {
             if let artworkName = category.artworkName {
                 Image(artworkName)
@@ -13,14 +33,5 @@ struct CategoryArtworkView: View {
                 MedsyBrandImageFallback(logoScale: 0.55)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(category.bgColor)
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border.opacity(0.55), lineWidth: 1)
-        }
-        .medsyCardShadow()
-        .accessibilityHidden(true)
     }
 }

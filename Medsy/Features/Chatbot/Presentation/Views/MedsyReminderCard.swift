@@ -15,7 +15,7 @@ struct MedsyReminderCard: View {
     var subtitle: String
 
     var accentColor: Color = MedsyTheme.default.primary
-    var cardBackground: Color = .white
+    var cardBackground: Color = AppColor.card
 
     @Binding var isOn: Bool
 
@@ -32,9 +32,10 @@ struct MedsyReminderCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(AppColor.textPrim)
                 Text(subtitle)
                     .font(.system(size: 12))
-                    .foregroundColor(.gray)
+                    .foregroundColor(AppColor.textSec)
             }
 
             Spacer()
@@ -46,6 +47,10 @@ struct MedsyReminderCard: View {
         .padding(14)
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppColor.border.opacity(0.65), lineWidth: 1)
+        }
     }
 }
 

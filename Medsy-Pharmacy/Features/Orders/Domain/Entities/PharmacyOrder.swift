@@ -51,6 +51,39 @@ struct PharmacyOrder: Identifiable, Equatable, Sendable, Hashable {
     let customerName: String?
     let customerPhone: String?
     let notes: String?
+    let assignmentStatus: String?
+
+    init(
+        id: Int,
+        userId: Int,
+        pharmacyId: Int,
+        totalPrice: Double,
+        deliveryCoordinate: (latitude: Double, longitude: Double),
+        status: PharmacyOrderAPIStatus,
+        date: Date,
+        items: [PharmacyOrderLineItem],
+        deliveryAddress: String,
+        prescriptionUrl: String? = nil,
+        customerName: String? = nil,
+        customerPhone: String? = nil,
+        notes: String? = nil,
+        assignmentStatus: String? = nil
+    ) {
+        self.id = id
+        self.userId = userId
+        self.pharmacyId = pharmacyId
+        self.totalPrice = totalPrice
+        self.deliveryCoordinate = deliveryCoordinate
+        self.status = status
+        self.date = date
+        self.items = items
+        self.deliveryAddress = deliveryAddress
+        self.prescriptionUrl = prescriptionUrl
+        self.customerName = customerName
+        self.customerPhone = customerPhone
+        self.notes = notes
+        self.assignmentStatus = assignmentStatus
+    }
 
     static func == (lhs: PharmacyOrder, rhs: PharmacyOrder) -> Bool {
         lhs.id == rhs.id
@@ -86,6 +119,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
     case pending
     case accepted
     case preparing
+    case readyForPickup
+    case readyForDelivery
     case outForDelivery
     case delivered
     case cancelled
@@ -98,6 +133,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
         case "PENDING": self = .pending
         case "ACCEPTED": self = .accepted
         case "PREPARING": self = .preparing
+        case "READY_FOR_PICKUP": self = .readyForPickup
+        case "READY_FOR_DELIVERY": self = .readyForDelivery
         case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED": self = .delivered
         case "CANCELLED", "CANCELED": self = .cancelled

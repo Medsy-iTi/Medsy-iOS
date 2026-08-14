@@ -12,6 +12,7 @@ struct ProductDetailView: View {
     @Environment(CartViewModel.self) private var cartViewModel
     @ObservedObject private var appSettings = AppSettings.shared
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openChatbotPrompt) private var openChatbotPrompt
 
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(productId: productId))
@@ -20,14 +21,13 @@ struct ProductDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             MedsyNavBar(onBack: { dismiss() }) {
-                Button {
-
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundStyle(AppColor.textPrim)
-                        .imageScale(.large)
+                if viewModel.product != nil {
+                    FavoriteButton(
+                        isFavorite: viewModel.isFavorite,
+                        size: 40,
+                        action: viewModel.toggleFavorite
+                    )
                 }
-                .accessibilityLabel("accessibility.share".localized)
             }
 
             content
@@ -36,6 +36,19 @@ struct ProductDetailView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .onAppear { viewModel.load() }
+        .alert(
+            "favorites.persistence_error.title".localized,
+            isPresented: Binding(
+                get: { viewModel.favoriteErrorMessage != nil },
+                set: { if !$0 { viewModel.favoriteErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {
+                viewModel.favoriteErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.favoriteErrorMessage ?? "")
+        }
     }
 
     // MARK: - Content switcher
@@ -83,8 +96,7 @@ struct ProductDetailView: View {
 
                 ImageCarousel(
                     images: product.images,
-                    selectedIndex: $viewModel.selectedImageIndex,
-                    isFavorite: $viewModel.isFavorite
+                    selectedIndex: $viewModel.selectedImageIndex
                 )
 
                 ProductHeaderInfo(
@@ -133,7 +145,7 @@ struct ProductDetailView: View {
                         systemImage: "bubble.left.and.bubble.right",
                         style: .secondary
                     ) {
-                        viewModel.consultPharmacist()
+                        openChatbotPrompt?("chatbot.consult_product_prompt".localized(product.title))
                     }
                 }
                 .padding(.horizontal, MedsySpacing.md)

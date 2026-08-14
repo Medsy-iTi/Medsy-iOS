@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CompleteRequestView: View {
     @Environment(LanguageManager.self) private var languageManager
-    @ObservedObject private var appSettings = AppSettings.shared
     @State private var viewModel: CompleteRequestViewModel
     let onBack: () -> Void
     let onChangeLocation: () -> Void
@@ -32,56 +31,47 @@ struct CompleteRequestView: View {
         VStack(spacing: 0) {
             MedsyNavBar(
                 title: "complete_request.title".localized,
-                onBack: onBack
+                onBack: onBack,
+                isBackEnabled: !viewModel.isSubmitting
             )
 
             ScrollView {
                 VStack(spacing: MedsySpacing.md) {
+                    Text("complete_request.subtitle".localized)
+                        .font(MedsyFont.body())
+                        .foregroundStyle(AppColor.textSec)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+
                     CompleteRequestSummaryView(
                         draft: viewModel.draft,
                         isExpanded: $viewModel.isSummaryExpanded
                     )
 
-                    CompleteRequestReceiveMethodView(
-                        selectedMethod: viewModel.receiveMethod,
-                        onSelect: viewModel.selectReceiveMethod
+                    CompleteRequestPaymentMethodView(
+                        selectedMethod: viewModel.paymentMethod,
+                        onSelect: viewModel.selectPaymentMethod
                     )
 
-                    if viewModel.showsDeliveryDetails {
-                        CompleteRequestDeliveryAddressView(
-                            savedAddress: viewModel.savedAddress,
-                            location: viewModel.deliveryLocation,
-                            isLoading: viewModel.isLoadingAddress,
-                            validationMessage: locationValidationMessage,
-                            onChangeLocation: onChangeLocation
-                        )
-
-                        CompleteRequestPaymentMethodView(
-                            selectedMethod: viewModel.paymentMethod,
-                            onSelect: viewModel.selectPaymentMethod
-                        )
-
-                        if viewModel.showsVisaForm {
-                            CompleteRequestVisaFormView(
-                                cardholderName: $viewModel.cardholderName,
-                                cardNumber: $viewModel.cardNumber,
-                                expiry: $viewModel.expiry,
-                                cvv: $viewModel.cvv,
-                                errorMessage: viewModel.validationMessage,
-                                onCardNumberChange: viewModel.formatCardNumber,
-                                onExpiryChange: viewModel.formatExpiry,
-                                onCVVChange: viewModel.formatCVV
-                            )
-                        }
-
-                        CompleteRequestNotesView(notes: $viewModel.notes)
-                    }
+                    CompleteRequestDeliveryAddressView(
+                        savedAddress: viewModel.savedAddress,
+                        savedLocation: viewModel.savedLocation,
+                        customLocation: viewModel.customLocation,
+                        selectedOption: viewModel.selectedAddressOption,
+                        isLoading: viewModel.isLoadingAddress,
+                        validationMessage: locationValidationMessage,
+                        onSelectSavedAddress: viewModel.selectSavedAddress,
+                        onSelectCustomAddress: viewModel.selectCustomAddress,
+                        onChangeLocation: onChangeLocation
+                    )
                 }
                 .padding(.horizontal, MedsySpacing.md)
                 .padding(.vertical, MedsySpacing.md)
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
+        .interactiveDismissDisabled(viewModel.isSubmitting)
+        .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(
                 title: "complete_request.submit".localized,
@@ -95,7 +85,10 @@ struct CompleteRequestView: View {
             }
             .padding(.horizontal, MedsySpacing.md)
             .padding(.vertical, MedsySpacing.sm)
-            .background(.ultraThinMaterial)
+            .background(AppColor.bg)
+            .overlay(alignment: .top) {
+                Divider().background(AppColor.border)
+            }
         }
         .task {
             await viewModel.loadSavedAddress()
@@ -115,7 +108,6 @@ struct CompleteRequestView: View {
         }
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
     }
 
     private var locationValidationMessage: String? {

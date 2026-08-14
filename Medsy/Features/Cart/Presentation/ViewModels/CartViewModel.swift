@@ -17,6 +17,7 @@ final class CartViewModel: CartViewModelProtocol {
     private(set) var feedbackSequence = 0
     private(set) var syncState: CartSyncState = .idle
     private(set) var prescriptions: [CartPrescriptionAttachment]
+    private(set) var pharmacistNote = ""
     private(set) var interactionWarnings: [CartInteractionWarning]
     private(set) var interactionsState: CartInteractionsState = .idle
 
@@ -117,6 +118,54 @@ final class CartViewModel: CartViewModelProtocol {
 
     var hasContent: Bool {
         !items.isEmpty || !prescriptions.isEmpty
+    }
+
+    func attachPrescription(
+        data: Data,
+        source: CartPrescriptionSource
+    ) async throws {
+        guard canMutate else { throw CartPrescriptionReviewError.cartIsBusy }
+        guard !data.isEmpty else { return }
+
+        let previousPrescriptions = prescriptions
+        let existingPrescription = prescriptions.first
+        let attachment = CartPrescriptionAttachment(
+            id: existingPrescription?.id ?? UUID(),
+            imageData: data,
+            source: source,
+            createdAt: existingPrescription?.createdAt ?? Date()
+        )
+
+        prescriptions = [attachment]
+        feedback = nil
+
+        guard let manageCartPrescriptionsUseCase else {
+            syncState = .synced
+            return
+        }
+
+        syncState = .syncing
+        do {
+            let prescription = CartPrescriptionPresentationMapper.map(attachment)
+            let updatedPrescriptions: [CartPrescription]
+            if let existingPrescription {
+                updatedPrescriptions = try await manageCartPrescriptionsUseCase.replace(
+                    id: existingPrescription.id,
+                    with: prescription
+                )
+            } else {
+                updatedPrescriptions = try await manageCartPrescriptionsUseCase.add(prescription)
+            }
+
+            prescriptions = updatedPrescriptions.map(CartPrescriptionPresentationMapper.map)
+            syncState = .synced
+        } catch {
+            prescriptions = previousPrescriptions
+            let message = error.localizedDescription
+            syncState = .failed(message)
+            feedback = .operationFailed(message)
+            throw error
+        }
     }
 
     func addPrescriptionReview(
@@ -241,12 +290,16 @@ final class CartViewModel: CartViewModelProtocol {
             return handleRemove(itemID: itemID)
         case .undoRemoval:
             return handleUndoRemoval()
+        case .dismissRemoval:
+            clearRemoval()
         case let .setPrescription(data, source):
             return handleAddPrescription(data: data, source: source)
         case let .replacePrescription(id, data, source):
             return handleReplacePrescription(id: id, data: data, source: source)
         case let .removePrescriptionByID(id):
             return handleRemovePrescription(id: id)
+        case let .updatePharmacistNote(note):
+            pharmacistNote = String(note.prefix(500))
         case .clear:
             return handleClear()
         case .dismissFeedback:
@@ -263,7 +316,11 @@ final class CartViewModel: CartViewModelProtocol {
         case .continueRequest:
             guard hasContent else { return nil }
             return .continueRequest(
-                CartRequestDraft(items: items, prescriptions: prescriptions)
+                CartRequestDraft(
+                    items: items,
+                    prescriptions: prescriptions,
+                    pharmacistNote: pharmacistNote
+                )
             )
         }
 
@@ -271,34 +328,25 @@ final class CartViewModel: CartViewModelProtocol {
     }
 
     func clearAfterCompletedRequest() async -> Bool {
-        guard canMutate, hasContent else { return !hasContent }
+        guard canMutate else { return !hasContent }
 
-        guard let clearCartUseCase else {
-            replaceItems([])
-            prescriptions = []
-            clearRemoval()
-            clearInteractions()
-            syncState = .synced
-            feedback = nil
-            return true
+        if let clearCartUseCase {
+            do {
+                try await clearCartUseCase.clearAfterCompletedRequest()
+            } catch {
+                // The backend has already created the request and cleared its cart.
+                // Keep completion navigation independent from a local cache cleanup failure.
+            }
         }
 
-        syncState = .syncing
-        do {
-            try await clearCartUseCase.execute()
-            replaceItems([])
-            prescriptions = []
-            clearRemoval()
-            clearInteractions()
-            syncState = .synced
-            feedback = nil
-            return true
-        } catch {
-            let message = error.localizedDescription
-            syncState = .failed(message)
-            feedback = .operationFailed(message)
-            return false
-        }
+        replaceItems([])
+        prescriptions = []
+        pharmacistNote = ""
+        clearRemoval()
+        clearInteractions()
+        syncState = .synced
+        feedback = nil
+        return true
     }
 
     func refreshInteractions(language: String) async {
@@ -419,7 +467,7 @@ final class CartViewModel: CartViewModelProtocol {
             return .sync
         }
 
-        startCartMutation(previousItems: previousItems) {
+        startCartMutation(previousItems: previousItems, refreshInteractionsAfterSync: false) {
             try await useCase.execute(itemID: cartItemID, quantity: item.quantity + 1)
         }
         return .sync
@@ -439,7 +487,7 @@ final class CartViewModel: CartViewModelProtocol {
             return .sync
         }
 
-        startCartMutation(previousItems: previousItems) {
+        startCartMutation(previousItems: previousItems, refreshInteractionsAfterSync: false) {
             try await useCase.execute(itemID: cartItemID, quantity: item.quantity - 1)
         }
         return .sync
@@ -561,6 +609,7 @@ final class CartViewModel: CartViewModelProtocol {
         guard let clearCartUseCase else {
             replaceItems([])
             prescriptions = []
+            pharmacistNote = ""
             clearRemoval()
             clearInteractions()
             return .sync
@@ -572,6 +621,7 @@ final class CartViewModel: CartViewModelProtocol {
                 try await clearCartUseCase.execute()
                 replaceItems([])
                 prescriptions = []
+                pharmacistNote = ""
                 clearRemoval()
                 clearInteractions()
                 syncState = .synced
@@ -587,6 +637,7 @@ final class CartViewModel: CartViewModelProtocol {
 
     private func startCartMutation(
         previousItems: [CartDisplayItem],
+        refreshInteractionsAfterSync: Bool = true,
         operation: @escaping () async throws -> Cart
     ) {
         let previousPrescriptions = prescriptions
@@ -596,7 +647,9 @@ final class CartViewModel: CartViewModelProtocol {
                 let cart = try await operation()
                 apply(cart)
                 syncState = .synced
-                await refreshInteractions(language: interactionLanguage)
+                if refreshInteractionsAfterSync {
+                    await refreshInteractions(language: interactionLanguage)
+                }
             } catch {
                 replaceItems(previousItems)
                 prescriptions = previousPrescriptions

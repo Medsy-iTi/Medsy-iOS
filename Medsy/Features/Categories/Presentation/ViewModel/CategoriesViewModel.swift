@@ -32,7 +32,11 @@ final class CategoriesViewModel {
         isLastPage = false
         isFetchingNextPage = false
         do {
-            let data = try await getCategoriesUseCase.execute(page: currentPage, lang: languageManager.currentLanguage.rawValue)
+            let data = try await getCategoriesUseCase.execute(
+                page: currentPage,
+                size: 100,
+                lang: languageManager.currentLanguage.rawValue
+            )
             categories = data.items
             isLastPage = data.isLast ?? true
             state = .success
@@ -46,7 +50,11 @@ final class CategoriesViewModel {
         isFetchingNextPage = true
         do {
             let nextPage = currentPage + 1
-            let data = try await getCategoriesUseCase.execute(page: nextPage, lang: languageManager.currentLanguage.rawValue)
+            let data = try await getCategoriesUseCase.execute(
+                page: nextPage,
+                size: 100,
+                lang: languageManager.currentLanguage.rawValue
+            )
             categories.append(contentsOf: data.items)
             isLastPage = data.isLast ?? true
             currentPage = nextPage

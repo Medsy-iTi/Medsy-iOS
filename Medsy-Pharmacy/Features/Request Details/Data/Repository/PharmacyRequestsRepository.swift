@@ -11,11 +11,11 @@ final class PharmacyRequestsRepository: PharmacyRequestsRepositoryProtocol {
 
     func fetchRequests(page: Int, size: Int) async throws -> [PharmacyMedicineRequestEntity] {
         let endpoint = PharmacyRequestsEndpoint.fetchRequests(page: page, size: size)
-        let response: APIEnvelope<PageResponseDTO<PharmacyMedicineRequestDTO>> = try await networkService.request(endpoint: endpoint)
+        let response: APIEnvelope<PageResponseDTO<PharmacyRequestAssignmentDTO>> = try await networkService.request(endpoint: endpoint)
         guard response.success, let data = response.data else {
             throw NetworkError.validationError(response.message)
         }
-        return data.content.map { PharmacyMedicineRequestMapper.map($0) }
+        return data.content.map { PharmacyMedicineRequestMapper.map($0) }.reversed()
     }
 
     func fetchRequestById(requestId: Int) async throws -> PharmacyMedicineRequestEntity {

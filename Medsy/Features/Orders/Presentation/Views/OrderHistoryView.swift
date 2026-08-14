@@ -15,6 +15,7 @@ struct OrderHistoryView: View {
     let onRetry: () -> Void
     let onLoadNextPage: () -> Void
     var onSearch: () -> Void = {}
+    var onPaymentAction: (Int) -> Void = { _ in }
 
     @State private var isFilterSheetPresented = false
 
@@ -98,9 +99,11 @@ struct OrderHistoryView: View {
                 ForEach(sections) { section in
                     Section {
                         ForEach(section.orders) { order in
-                            OrderCardView(order: order) {
-                                onSelectOrder(order)
-                            }
+                            OrderCardView(
+                                order: order,
+                                onTap: { onSelectOrder(order) },
+                                onPaymentTap: { onPaymentAction(order.id) }
+                            )
                         }
                     } header: {
                         Text(section.title)
