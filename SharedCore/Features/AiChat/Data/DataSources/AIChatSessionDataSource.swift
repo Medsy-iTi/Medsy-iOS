@@ -26,7 +26,8 @@ final class AIChatSessionDataSource {
                 historyMessage: msg,
                 isTyping: false,
                 isRetryable: false,
-                localGeneration: generation
+                localGeneration: generation,
+                attachedImageData: nil
             )
         }
     }
@@ -36,7 +37,7 @@ final class AIChatSessionDataSource {
     }
 
 
-    func appendOptimisticUserMessage(text: String) -> Int {
+    func appendOptimisticUserMessage(text: String, imageData: Data? = nil) -> Int {
         let id = nextLocalID
         nextLocalID -= 1
         let msg = AiChatMessage(
@@ -48,7 +49,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: false,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: imageData
         )
         messages.append(msg)
         return id
@@ -67,7 +69,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: true,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: nil
         )
         messages.append(msg)
         return id
@@ -88,7 +91,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: false,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: nil
         )
         messages.append(msg)
     }

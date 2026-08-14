@@ -19,7 +19,8 @@ enum AIChatContractMapper {
             categories: (dto.categories ?? []).compactMap(mapCategory),
             pharmacistRankings: (dto.pharmacistRankings ?? []).compactMap(mapRanking),
             disclaimer: dto.disclaimer,
-            action: mapAction(dto.action)
+            action: mapAction(dto.action),
+            reminder: mapReminder(dto.reminder)
         )
     }
 
@@ -62,8 +63,7 @@ enum AIChatContractMapper {
         case "ADD_TO_CART": return .addToCart
         case "CREATE_REQUEST": return .createRequest
         case "SET_REMINDER": return .setReminder
-        case "DELETE_REMINDER": return .deleteReminder
-        case "LIST_REMINDERS": return .listReminders
+        // DELETE_REMINDER / LIST_REMINDERS removed — backend no longer sends them
         case "PHARMACIST_PERFORMANCE": return .pharmacistPerformance
         default: return .other
         }
@@ -278,5 +278,18 @@ enum AIChatContractMapper {
 
         localFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return localFormatter.date(from: value)
+    }
+    private static func mapReminder(_ dto: AIChatReminderDTO?) -> AIChatReminder? {
+        guard let dto,
+              let medicineName = dto.medicineName, !medicineName.isEmpty,
+              let times = dto.times, !times.isEmpty,
+              let durationDays = dto.durationDays, durationDays > 0 else {
+            return nil
+        }
+        return AIChatReminder(
+            medicineName: medicineName,
+            times: times,
+            durationDays: durationDays
+        )
     }
 }
