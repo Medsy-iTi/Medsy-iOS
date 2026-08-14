@@ -80,9 +80,20 @@ struct ProfileScreen: View {
                 titleKey: "profile.theme",
                 iconName: "sun.max",
                 iconColor: Color(hex: "#A855F7"),
-                trailingTextKey: appSettings.isDarkMode ? "profile.theme.dark" : "profile.theme.light"
+                trailingTextKey: themeTrailingTextKey
             )
         ]
+    }
+
+    private var themeTrailingTextKey: String {
+        switch appSettings.themeMode {
+        case .system:
+            return "profile.theme.system"
+        case .light:
+            return "profile.theme.light"
+        case .dark:
+            return "profile.theme.dark"
+        }
     }
 
     private var supportRows: [ProfileRowItem] {

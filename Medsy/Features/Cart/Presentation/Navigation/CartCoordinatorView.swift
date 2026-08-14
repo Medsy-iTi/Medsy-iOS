@@ -110,9 +110,18 @@ struct CartCoordinatorView: View {
         }
         .onAppear {
             onTabBarHiddenChange(!coordinator.path.isEmpty)
+            refreshCartIfNeeded()
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
+            if isEmpty {
+                refreshCartIfNeeded()
+            }
         }
+    }
+
+    private func refreshCartIfNeeded() {
+        guard coordinator.path.isEmpty else { return }
+        viewModel.handle(.load)
     }
 }

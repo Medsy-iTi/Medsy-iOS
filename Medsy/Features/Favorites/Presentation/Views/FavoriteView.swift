@@ -105,15 +105,7 @@ struct FavoriteView: View {
             }
             .refreshable { await viewModel.load() }
         case .empty:
-            MedsyStatusView(config: MedsyStatusConfig(
-                systemIcon: "heart.slash",
-                iconColor: { AppColor.green },
-                iconBackground: { AppColor.green.opacity(0.12) },
-                title: "favorites.empty.title".localized,
-                subtitle: "favorites.empty.subtitle".localized,
-                primaryButtonTitle: "favorites.empty.action".localized,
-                primaryAction: onBrowse
-            ))
+            FavoriteEmptyStateView(onBrowse: onBrowse)
         case let .failed(message):
             MedsyStatusView(config: MedsyStatusConfig(
                 systemIcon: "exclamationmark.triangle",
@@ -133,5 +125,43 @@ struct FavoriteView: View {
 
     private func cartQuantity(for product: FavoriteMedicineDisplayModel) -> Int {
         cartViewModel.quantity(forProductID: Int64(product.id))
+    }
+}
+
+private struct FavoriteEmptyStateView: View {
+    let onBrowse: () -> Void
+
+    var body: some View {
+        VStack(spacing: MedsySpacing.md) {
+            Spacer(minLength: MedsySpacing.xxl)
+
+            MedsyLottieView(
+                animationName: "favorites_empty"
+            )
+            .frame(width: 220, height: 220)
+            .accessibilityHidden(true)
+
+            VStack(spacing: MedsySpacing.xs) {
+                Text("favorites.empty.title".localized)
+                    .font(MedsyFotitle(22))
+                    .foregroundStyle(AppColor.textPrim)
+                    .multilineTextAlignment(.center)
+
+                Text("favorites.empty.subtitle".localized)
+                    .font(MedsyFont.body(16))
+                    .foregroundStyle(AppColor.textSec)
+                    .multilineTextAlignment(.center)
+            }
+
+            PrimaryButton(
+                title: "favorites.empty.action".localized,
+                systemImage: "magnifyingglass",
+                action: onBrowse
+            )
+            .padding(.top, MedsySpacing.md)
+
+            Spacer(minLength: MedsySpacing.lg)
+        }
+        .padding(.horizontal, MedsySpacing.md)
     }
 }
