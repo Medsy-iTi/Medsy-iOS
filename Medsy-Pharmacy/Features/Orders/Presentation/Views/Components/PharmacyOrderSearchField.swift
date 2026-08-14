@@ -10,6 +10,7 @@ import SwiftUI
 struct PharmacyOrderSearchField: View {
     @Binding var text: String
     let onClear: () -> Void
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: PharmacySpacing.sm) {
@@ -22,6 +23,7 @@ struct PharmacyOrderSearchField: View {
                 .foregroundStyle(PharmacyColor.textPrimary)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+                .focused($isFocused)
 
             if !text.isEmpty {
                 Button {
@@ -45,8 +47,7 @@ struct PharmacyOrderSearchField: View {
             .accessibilityLabel("pharmacy.orders.filters".localized)
         }
         .padding(.horizontal, PharmacySpacing.sm)
-        .frame(height: 46)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
+        .frame(minHeight: 48)
+        .pharmacyInputSurface(isFocused: isFocused)
     }
 }

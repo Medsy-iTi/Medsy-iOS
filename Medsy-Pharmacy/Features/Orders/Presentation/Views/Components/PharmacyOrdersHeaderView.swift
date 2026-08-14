@@ -9,10 +9,11 @@ import SwiftUI
 
 struct PharmacyOrdersHeaderView: View {
     var body: some View {
-        Text("pharmacy.orders.title".localized)
-            .font(PharmacyColor.sans(22, .bold))
-            .foregroundStyle(PharmacyColor.textPrimary)
-            .frame(maxWidth: .infinity)
+        PharmacySectionHeader(
+            title: "pharmacy.orders.title".localized,
+            systemImage: "shippingbox.fill"
+        )
+            .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 44)
             .accessibilityAddTraits(.isHeader)
     }
