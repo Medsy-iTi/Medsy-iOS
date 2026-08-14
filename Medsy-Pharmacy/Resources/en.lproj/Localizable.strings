@@ -474,6 +474,8 @@
 "pharmacy.chatbot.title" = "Medsy AI Assistant";
 "pharmacy.chatbot.status.online" = "Online";
 "pharmacy.chatbot.menu.new_chat" = "New Chat";
+"pharmacy.chatbot.new_chat.title" = "New Chat";
+"pharmacy.chatbot.new_chat.confirm" = "Are you sure you want to clear this conversation and start a new one?";
 "pharmacy.chatbot.input.placeholder" = "Ask about pharmacy operations...";
 "pharmacy.chatbot.state.loading_history" = "Loading conversation...";
 "pharmacy.chatbot.state.error_loading" = "Failed to load chat history.";

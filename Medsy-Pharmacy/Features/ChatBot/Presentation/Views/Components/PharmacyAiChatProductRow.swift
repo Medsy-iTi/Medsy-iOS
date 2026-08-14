@@ -12,7 +12,8 @@ struct PharmacyAiChatProductRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.md) {
             HStack(spacing: PharmacySpacing.md) {
-                AsyncImage(url: product.imageURL.flatMap(URL.init(string:))) { phase in
+                let encodedURLString = product.imageURL?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                AsyncImage(url: URL(string: encodedURLString)) { phase in
                     switch phase {
                     case .empty:
                         ProgressView().frame(width: 60, height: 60)

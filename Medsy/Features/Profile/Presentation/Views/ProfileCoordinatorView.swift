@@ -48,6 +48,7 @@ struct ProfileCoordinatorView: View {
                 onHowMedsyWorks: coordinator.showHowMedsyWorks,
                 onHelpCenter: coordinator.showHelpCenter,
                 onReportProblem: coordinator.showReportProblem,
+                onReminders: coordinator.showMyReminders,
                 onLogout: coordinator.requestLogout
             )
             .navigationDestination(for: ProfileRoute.self) { route in
@@ -74,6 +75,8 @@ struct ProfileCoordinatorView: View {
                     ProfileHelpCenterView(onBack: coordinator.goBack)
                 case .reportProblem:
                     ReportProblemView(onBack: coordinator.goBack)
+                case .myReminders:
+                    MyRemindersView(onBack: coordinator.goBack)
                 }
             }
             .navigationDestination(for: ProductDetailDestination.self) { destination in
@@ -94,6 +97,13 @@ struct ProfileCoordinatorView: View {
             Button("profile.logout".localized, role: .destructive) { coordinator.confirmLogout() }
         } message: {
             Text("profile.logout.message".localized)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openRemindersTab)) { _ in
+            // Small delay to allow tab switch animation before pushing
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                coordinator.path = NavigationPath()
+                coordinator.showMyReminders()
+            }
         }
         .onAppear {
             onTabBarHiddenChange(!coordinator.path.isEmpty)

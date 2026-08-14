@@ -17,5 +17,7 @@
 	<string>Medsy needs access to your microphone so you can speak to Medsy AI.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Medsy needs speech recognition to transcribe your voice messages to Medsy AI.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Medsy sends medication reminder notifications so you never miss a dose.</string>
 </dict>
 </plist>

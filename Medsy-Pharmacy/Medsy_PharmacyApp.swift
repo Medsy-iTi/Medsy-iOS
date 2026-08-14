@@ -67,7 +67,6 @@ struct Medsy_PharmacyApp: App {
             }
             .pharmacyLocalizedEnvironment()
             .environment(languageManager)
-            .id("\(languageManager.currentLanguage.rawValue)-\(PharmacyAppSettings.shared.isDarkMode)")
         }
     }
 }
