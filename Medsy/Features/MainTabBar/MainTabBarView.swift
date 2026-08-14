@@ -175,6 +175,14 @@ struct MainTabBarView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
+        .overlay(alignment: .bottom) {
+            if !isTabBarHidden {
+                MedsyAITabOverlay(isSelected: coordinator.selectedTab == .chatbot)
+                    .padding(.bottom, 18)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
         .onChange(of: cartViewModel.feedbackSequence) { _, _ in
             scheduleFeedbackDismissal()
         }
@@ -285,6 +293,31 @@ struct MainTabBarView: View {
             isDarkMode: appSettings.isDarkMode,
             isRTL: languageManager.isRTL
         )
+    }
+}
+
+private struct MedsyAITabOverlay: View {
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(AppColor.green)
+                .shadow(color: .black.opacity(0.12), radius: 6, y: 3)
+
+            MedsyLottieView(
+                animationName: "ai_sparkles_loop",
+                contentMode: .scaleAspectFit,
+                animationSpeed: 1.1,
+                clipsToBounds: true,
+                tintColor: .white
+            )
+            .frame(width: 32, height: 32)
+            .accessibilityHidden(true)
+        }
+        .frame(width: 50, height: 50)
+        .clipShape(Circle())
+        .scaleEffect(isSelected ? 1.02 : 0.98)
     }
 }
 
