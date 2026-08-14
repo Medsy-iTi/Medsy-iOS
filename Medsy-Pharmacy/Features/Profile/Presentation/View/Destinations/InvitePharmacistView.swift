@@ -13,6 +13,7 @@ struct InvitePharmacistView: View {
 
     @State private var email = ""
     @State private var validationError: String?
+    @FocusState private var isEmailFocused: Bool
 
     var body: some View {
         ScrollView {
@@ -49,7 +50,10 @@ struct InvitePharmacistView: View {
             inviteButton
                 .padding(.horizontal, PharmacySpacing.md)
                 .padding(.vertical, PharmacySpacing.sm)
-                .background(PharmacyColor.bg)
+                .background(PharmacyColor.surface)
+                .overlay(alignment: .top) {
+                    Rectangle().fill(PharmacyColor.border).frame(height: 1)
+                }
         }
     }
 
@@ -91,43 +95,25 @@ struct InvitePharmacistView: View {
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+                .focused($isEmailFocused)
                 .onChange(of: email) {
                     validationError = nil
                 }
             }
             .padding(.horizontal, PharmacySpacing.md)
             .frame(minHeight: 56)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .stroke(
-                        validationError == nil ? PharmacyColor.border : PharmacyColor.danger,
-                        lineWidth: 1
-                    )
-            }
+            .pharmacyInputSurface(isFocused: isEmailFocused)
         }
     }
 
     private var inviteButton: some View {
-        Button(action: invite) {
-            Group {
-                if isInviting {
-                    ProgressView().tint(.white)
-                } else {
-                    Text("pharmacy_team.invite_button".localized)
-                        .font(.headline)
-                }
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 52)
-        }
-        .buttonStyle(.plain)
-        .background(
-            isInviting ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary,
-            in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+        PharmacyPrimaryButton(
+            title: "pharmacy_team.invite_button".localized,
+            systemImage: "paperplane.fill",
+            isLoading: isInviting,
+            isDisabled: isInviting,
+            action: invite
         )
-        .disabled(isInviting)
     }
 
     private func invite() {
