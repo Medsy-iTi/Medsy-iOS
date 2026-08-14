@@ -12,11 +12,13 @@ struct PharmacyMetricItem: View {
 
     var body: some View {
         HStack(spacing: PharmacySpacing.sm) {
-            Image(systemName: metric.icon)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(metric.tint)
-                .frame(width: 34, height: 34)
-                .background(metric.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
+            PharmacyIconTile(
+                systemImage: metric.icon,
+                tint: metric.tint,
+                background: metric.tint.opacity(0.12),
+                size: 38,
+                iconSize: 15
+            )
 
             VStack(alignment: .leading, spacing: 3) {
                 metricValue
@@ -32,10 +34,13 @@ struct PharmacyMetricItem: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(PharmacySpacing.sm)
         .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
-        .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
+        .pharmacyCard(
+            cornerRadius: PharmacyRadius.md,
+            padding: PharmacySpacing.sm,
+            elevation: .subtle
+        )
+        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder

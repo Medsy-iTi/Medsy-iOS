@@ -72,7 +72,7 @@ struct ProfileNavigationRow: View {
             .padding(.vertical, PharmacySpacing.sm + 2)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
     }

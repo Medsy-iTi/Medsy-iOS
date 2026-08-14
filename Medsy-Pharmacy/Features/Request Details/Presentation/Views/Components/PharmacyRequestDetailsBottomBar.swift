@@ -14,29 +14,25 @@ struct PharmacyRequestDetailsBottomBar: View {
     let onSendOffer: () -> Void
 
     var body: some View {
-        VStack(spacing: PharmacySpacing.xs) {
-            Button(action: onSendOffer) {
-                HStack(spacing: 8) {
-                    if isSubmitting {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Text(buttonTitle)
-                            .font(PharmacyColor.sans(16, .bold))
-                        Image(systemName: isButtonDisabled ? "checkmark.circle.fill" : "paperplane.fill")
-                            .font(.system(size: 15, weight: .bold))
-                    }
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(isButtonDisabled ? PharmacyColor.textSecondary : PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .disabled(isButtonDisabled)
-        }
+        PharmacyPrimaryButton(
+            title: buttonTitle,
+            systemImage: isButtonDisabled ? "checkmark.circle.fill" : "paperplane.fill",
+            isLoading: isSubmitting,
+            isDisabled: isButtonDisabled,
+            action: onSendOffer
+        )
         .padding(.horizontal, PharmacySpacing.md)
         .padding(.vertical, PharmacySpacing.sm)
-        .background(PharmacyColor.bg)
+        .background(PharmacyColor.surface)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(PharmacyColor.border)
+                .frame(height: 1)
+        }
+        .shadow(
+            color: .black.opacity(PharmacyAppSettings.shared.isDarkMode ? 0.28 : 0.08),
+            radius: 14,
+            y: -4
+        )
     }
 }

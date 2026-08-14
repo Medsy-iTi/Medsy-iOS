@@ -68,11 +68,12 @@ struct EditPharmacyScreen: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .background(PharmacyColor.surface)
                     .clipShape(Circle())
+                    .overlay(Circle().stroke(PharmacyColor.border, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
 
             Text("pharmacy_edit.title".localized)
                 .font(PharmacyColor.sans(17, .bold))
@@ -161,12 +162,7 @@ struct EditPharmacyScreen: View {
             }
             .padding(.horizontal, 17)
             .padding(.vertical, 14)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            }
+            .pharmacyInputSurface()
         }
     }
 
@@ -203,7 +199,8 @@ struct EditPharmacyScreen: View {
             .background(isSaving ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
+        .shadow(color: PharmacyColor.primary.opacity(0.16), radius: 8, y: 4)
         .disabled(isSaving)
         .padding(.top, 8)
     }

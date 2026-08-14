@@ -82,7 +82,7 @@ struct CartView: View {
         }
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .alert("cart.clear_confirmation.title".localized, isPresented: $showsClearConfirmation) {
             Button("common.cancel".localized, role: .cancel) {}
             Button("cart.clear_confirmation.action".localized, role: .destructive) {

@@ -9,48 +9,6 @@
 import SwiftUI
 
 
-struct PharmacyCardContainer: ViewModifier {
-    var cornerRadius: CGFloat = PharmacyRadius.lg
-    var padding: CGFloat? = PharmacySpacing.md
-
-    func body(content: Content) -> some View {
-        content
-            .padding(padding ?? 0)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
-            .pharmacyCardShadow()
-    }
-}
-
-struct PharmacyCardShadow: ViewModifier {
-    func body(content: Content) -> some View {
-        content.shadow(
-            color: Color.black.opacity(PharmacyAppSettings.shared.isDarkMode ? 0.35 : 0.06),
-            radius: 10,
-            x: 0,
-            y: 4
-        )
-    }
-}
-
-extension View {
-
-
-    func pharmacyCard(cornerRadius: CGFloat = PharmacyRadius.lg, padding: CGFloat? = PharmacySpacing.md) -> some View {
-        modifier(PharmacyCardContainer(cornerRadius: cornerRadius, padding: padding))
-    }
-
-
-    func pharmacyCardShadow() -> some View {
-        modifier(PharmacyCardShadow())
-    }
-}
-
-
 
 // MARK: - Error state
 
@@ -61,9 +19,13 @@ struct PharmacyErrorView: View {
 
     var body: some View {
         VStack(spacing: PharmacySpacing.lg) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 40, weight: .light))
-                .foregroundStyle(PharmacyColor.warning)
+            PharmacyIconTile(
+                systemImage: "exclamationmark.triangle.fill",
+                tint: PharmacyColor.warning,
+                background: PharmacyColor.warningSoft,
+                size: 64,
+                iconSize: 26
+            )
 
             Text(message)
                 .font(PharmacyColor.sans(15))
@@ -71,16 +33,15 @@ struct PharmacyErrorView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, PharmacySpacing.lg)
 
-            Button(action: onRetry) {
-                Text("common.retry".localized)
-                    .font(PharmacyColor.sans(15, .semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, PharmacySpacing.lg)
-                    .padding(.vertical, PharmacySpacing.sm)
-                    .background(PharmacyColor.primary)
-                    .clipShape(Capsule())
-            }
+            PharmacyPrimaryButton(
+                title: "common.retry".localized,
+                style: .soft,
+                action: onRetry
+            )
         }
+        .padding(PharmacySpacing.lg)
+        .pharmacyCard(elevation: .raised)
+        .padding(PharmacySpacing.md)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PharmacyColor.bg)
     }

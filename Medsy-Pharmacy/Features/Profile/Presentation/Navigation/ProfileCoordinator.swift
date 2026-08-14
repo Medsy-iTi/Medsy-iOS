@@ -388,8 +388,9 @@ private struct ProfileSettingsView: View {
 
 			Section("theme_title".localized) {
 				Picker("theme_title".localized, selection: themeBinding) {
-					Text("theme_light".localized).tag(false)
-					Text("theme_dark".localized).tag(true)
+					ForEach(PharmacyThemePreference.allCases) { preference in
+						Text(preference.localizationKey.localized).tag(preference)
+					}
 				}
 				.pickerStyle(.inline)
 			}
@@ -407,9 +408,9 @@ private struct ProfileSettingsView: View {
 		)
 	}
 
-	private var themeBinding: Binding<Bool> {
+	private var themeBinding: Binding<PharmacyThemePreference> {
 		Binding(
-			get: { appSettings.isDarkMode },
+			get: { appSettings.themePreference },
 			set: viewModel.setTheme
 		)
 	}

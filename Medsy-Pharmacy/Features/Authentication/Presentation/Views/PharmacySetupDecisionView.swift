@@ -150,6 +150,7 @@ struct PharmacySetupDecisionView: View {
             )
             .stroke(PharmacyColor.border, lineWidth: 1)
         }
+        .buttonStyle(PharmacyPressableButtonStyle())
     }
 }
 
@@ -166,7 +167,7 @@ private struct PharmacySetupDecisionCard: View {
                 Button(action: action) {
                     content
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
             } else {
                 content
             }
@@ -177,12 +178,7 @@ private struct PharmacySetupDecisionCard: View {
 
     private var content: some View {
         HStack(spacing: PharmacySpacing.md) {
-            Image(systemName: systemImage)
-                .font(.system(size: 19, weight: .semibold))
-                .foregroundStyle(PharmacyColor.primary)
-                .frame(width: 42, height: 42)
-                .background(PharmacyColor.surface.opacity(0.8), in: Circle())
-                .accessibilityHidden(true)
+            PharmacyIconTile(systemImage: systemImage, size: 44, iconSize: 18)
 
             VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
                 Text(title)
@@ -208,13 +204,7 @@ private struct PharmacySetupDecisionCard: View {
         }
         .padding(PharmacySpacing.md)
         .frame(maxWidth: .infinity, minHeight: 96)
-        .background(
-            PharmacyColor.primarySoft,
-            in: RoundedRectangle(
-                cornerRadius: PharmacyRadius.lg,
-                style: .continuous
-            )
-        )
+        .pharmacyCard(padding: nil, elevation: .subtle)
         .contentShape(
             RoundedRectangle(
                 cornerRadius: PharmacyRadius.lg,

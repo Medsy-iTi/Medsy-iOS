@@ -94,7 +94,7 @@ struct PharmacyMainTabView: View {
         .tint(PharmacyColor.primary)
         .toolbarBackground(PharmacyColor.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .fullScreenCover(item: $selectedCompletedOrder) { selection in
             CompletedOrderDetailsCoordinatorView.Embedded(orderId: selection.id)
         }

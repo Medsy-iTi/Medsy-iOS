@@ -59,7 +59,7 @@ extension MedsyChatView {
             // Dark mode toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                    appSettings.isDarkMode.toggle()
+                    appSettings.toggleResolvedTheme()
                 }
             } label: {
                 Image(systemName: appSettings.isDarkMode ? "sun.max.fill" : "moon.fill")

@@ -14,9 +14,7 @@ struct PharmacyOrderNotFoundView: View {
 
     var body: some View {
         VStack(spacing: PharmacySpacing.lg) {
-            Image(systemName: "doc.questionmark")
-                .font(.system(size: 48, weight: .light))
-                .foregroundStyle(PharmacyColor.textSecondary.opacity(0.5))
+            PharmacyIconTile(systemImage: "doc.questionmark", size: 64, iconSize: 26)
             Text("completed_order.not_found".localized)
                 .font(PharmacyColor.sans(17, .semibold))
                 .foregroundStyle(PharmacyColor.textPrimary)
@@ -26,6 +24,9 @@ struct PharmacyOrderNotFoundView: View {
                     .foregroundStyle(PharmacyColor.primary)
             }
         }
+        .padding(PharmacySpacing.lg)
+        .pharmacyCard(elevation: .raised)
+        .padding(PharmacySpacing.md)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PharmacyColor.bg)
     }

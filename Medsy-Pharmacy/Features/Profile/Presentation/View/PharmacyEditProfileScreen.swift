@@ -77,7 +77,10 @@ struct PharmacyEditProfileScreen: View {
 			saveButton
 				.padding(.horizontal, PharmacySpacing.md)
 				.padding(.vertical, PharmacySpacing.sm)
-				.background(PharmacyColor.bg)
+				.background(PharmacyColor.surface)
+				.overlay(alignment: .top) {
+					Rectangle().fill(PharmacyColor.border).frame(height: 1)
+				}
 		}
 	}
 
@@ -101,12 +104,7 @@ struct PharmacyEditProfileScreen: View {
 			}
 			.padding(.horizontal, PharmacySpacing.md)
 			.frame(minHeight: 56)
-			.background(PharmacyColor.card)
-			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-			.overlay {
-				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-					.stroke(PharmacyColor.border, lineWidth: 1)
-			}
+			.pharmacyInputSurface()
 		}
 	}
 
@@ -137,15 +135,7 @@ struct PharmacyEditProfileScreen: View {
 			}
 			.padding(PharmacySpacing.md)
 			.frame(minHeight: 64)
-			.background(PharmacyColor.card)
-			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-			.overlay {
-				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-					.stroke(
-						addressError == nil ? PharmacyColor.border : PharmacyColor.danger,
-						lineWidth: 1
-					)
-			}
+			.pharmacyInputSurface()
 
 			if let addressError {
 				Text(addressError)
@@ -197,12 +187,7 @@ struct PharmacyEditProfileScreen: View {
 			}
 			.padding(.horizontal, PharmacySpacing.md)
 			.frame(minHeight: 56)
-			.background(PharmacyColor.card)
-			.clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-			.overlay {
-				RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-					.stroke(PharmacyColor.border, lineWidth: 1)
-			}
+			.pharmacyInputSurface()
 		}
 	}
 
@@ -229,7 +214,8 @@ struct PharmacyEditProfileScreen: View {
 			.foregroundStyle(.white)
 			.frame(maxWidth: .infinity, minHeight: 52)
 		}
-		.buttonStyle(.plain)
+		.buttonStyle(PharmacyPressableButtonStyle())
+		.shadow(color: PharmacyColor.primary.opacity(0.16), radius: 8, y: 4)
 		.background(
 			isSaving ? PharmacyColor.primary.opacity(0.72) : PharmacyColor.primary,
 			in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)

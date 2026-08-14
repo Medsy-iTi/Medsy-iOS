@@ -6,6 +6,7 @@ struct PharmacyProductSearchView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = PharmacyProductSearchViewModel()
     @State private var searchTask: Task<Void, Never>? = nil
+    @FocusState private var isSearchFocused: Bool
 
     let onSelectProduct: (PharmacyProductDTO) -> Void
 
@@ -17,10 +18,11 @@ struct PharmacyProductSearchView: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundStyle(PharmacyColor.textSecondary)
                         
-                        TextField("البحث عن المنتجات...", text: $viewModel.searchQuery)
+                        TextField("pharmacy.request.product_search.placeholder".localized, text: $viewModel.searchQuery)
                             .font(PharmacyColor.sans(14))
                             .foregroundStyle(PharmacyColor.textPrimary)
                             .autocorrectionDisabled()
+                            .focused($isSearchFocused)
                         
                         if !viewModel.searchQuery.isEmpty {
                             Button {
@@ -32,8 +34,8 @@ struct PharmacyProductSearchView: View {
                         }
                     }
                     .padding(.horizontal, PharmacySpacing.sm)
-                    .padding(.vertical, 10)
-                    .background(PharmacyColor.mutedSurface, in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
+                    .frame(minHeight: 50)
+                    .pharmacyInputSurface(isFocused: isSearchFocused)
                 }
                 .padding(.horizontal, PharmacySpacing.md)
                 .padding(.vertical, PharmacySpacing.sm)
@@ -44,22 +46,27 @@ struct PharmacyProductSearchView: View {
                     Spacer()
                 } else if let error = viewModel.errorMessage {
                     Spacer()
-                    Text(error)
+                    Label(error, systemImage: "exclamationmark.triangle.fill")
                         .font(PharmacyColor.sans(14, .medium))
                         .foregroundStyle(PharmacyColor.danger)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
+                        .pharmacyCard(elevation: .subtle)
+                        .padding(.horizontal, PharmacySpacing.md)
                     Spacer()
                 } else if viewModel.products.isEmpty {
                     Spacer()
                     VStack(spacing: 8) {
-                        Image(systemName: "square.dashed")
-                            .font(.system(size: 40))
-                            .foregroundStyle(PharmacyColor.textSecondary)
-                        Text(viewModel.searchQuery.isEmpty ? "اكتب للبحث عن بديل" : "لا توجد نتائج بحث")
+                        PharmacyIconTile(systemImage: "magnifyingglass", size: 64, iconSize: 26)
+                        Text(
+                            viewModel.searchQuery.isEmpty
+                                ? "pharmacy.request.product_search.prompt".localized
+                                : "pharmacy.request.product_search.empty".localized
+                        )
                             .font(PharmacyColor.sans(14, .semibold))
                             .foregroundStyle(PharmacyColor.textSecondary)
                     }
+                    .pharmacyCard(elevation: .subtle)
+                    .padding(.horizontal, PharmacySpacing.md)
                     Spacer()
                 } else {
                     List(viewModel.products) { product in
@@ -131,28 +138,41 @@ struct PharmacyProductSearchView: View {
                                 onSelectProduct(product)
                                 dismiss()
                             } label: {
-                                Text("اختر")
+                                Text("pharmacy.request.product_search.select".localized)
                                     .font(PharmacyColor.sans(12, .bold))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 6)
                                     .background(PharmacyColor.primary, in: Capsule())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PharmacyPressableButtonStyle())
                         }
-                        .padding(.vertical, 4)
-                        .listRowBackground(PharmacyColor.card)
+                        .pharmacyCard(
+                            cornerRadius: PharmacyRadius.md,
+                            padding: PharmacySpacing.sm,
+                            elevation: .subtle
+                        )
+                        .listRowInsets(
+                            EdgeInsets(
+                                top: PharmacySpacing.xs,
+                                leading: PharmacySpacing.md,
+                                bottom: PharmacySpacing.xs,
+                                trailing: PharmacySpacing.md
+                            )
+                        )
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
                     .listStyle(.plain)
                     .background(PharmacyColor.bg)
                 }
             }
             .background(PharmacyColor.bg)
-            .navigationTitle("البحث عن بديل")
+            .navigationTitle("pharmacy.request.product_search.title".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("إلغاء") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                     .font(PharmacyColor.sans(14, .medium))

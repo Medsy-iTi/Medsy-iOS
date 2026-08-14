@@ -385,6 +385,8 @@
 "profile.language.english.subtitle" = "English layout, left to right";
 "profile.theme.title" = "Choose appearance";
 "profile.theme.message" = "Pick how Medsy should look on this device.";
+"profile.theme.system" = "System default";
+"profile.theme.system.subtitle" = "Match this device";
 "profile.theme.light" = "Light";
 "profile.theme.light.subtitle" = "Bright interface";
 "profile.theme.dark" = "Dark";

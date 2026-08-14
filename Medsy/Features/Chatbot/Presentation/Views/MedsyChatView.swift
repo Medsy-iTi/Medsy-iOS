@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct MedsyChatView: View {
     @Bindable var viewModel: AiChatViewModel
@@ -50,6 +51,8 @@ struct MedsyChatView: View {
                         .padding(.horizontal, MedsySpacing.md)
                         .padding(.bottom, MedsySpacing.lg)
                     }
+                    .scrollDismissesKeyboard(.interactively)
+                    .onTapGesture(perform: dismissKeyboard)
                     .background(AppColor.bg)
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: viewModel.messages.count) {
@@ -102,6 +105,16 @@ struct MedsyChatView: View {
                 photosPickerItem = nil
             }
         }
+    }
+
+    @MainActor
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
 

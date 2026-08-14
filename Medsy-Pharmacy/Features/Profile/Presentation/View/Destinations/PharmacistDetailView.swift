@@ -52,12 +52,7 @@ struct PharmacistDetailView: View {
             infoRow(icon: "envelope.fill", title: "profile.email".localized, value: member.email)
             infoRow(icon: "phone.fill", title: "profile.phone".localized, value: member.phoneNumber)
         }
-        .padding(PharmacySpacing.lg)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .raised)
     }
     
     private func infoRow(icon: String, title: String, value: String) -> some View {
@@ -82,12 +77,7 @@ struct PharmacistDetailView: View {
             
             Spacer(minLength: 0)
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .subtle)
     }
     
     @ViewBuilder
@@ -109,7 +99,7 @@ struct PharmacistDetailView: View {
                     .background(PharmacyColor.primary.opacity(0.12))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
             }
             
             if canRemove {
@@ -128,7 +118,7 @@ struct PharmacistDetailView: View {
                     .background(PharmacyColor.danger.opacity(0.12))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
             }
         }
     }

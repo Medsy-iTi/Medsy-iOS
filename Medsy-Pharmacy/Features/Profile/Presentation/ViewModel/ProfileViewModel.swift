@@ -156,6 +156,7 @@ final class ProfileViewModel {
 
     var currentLanguage: PharmacyAppLanguage { languageManager.currentLanguage }
     var isDarkMode: Bool { appSettings.isDarkMode }
+    var themePreference: PharmacyThemePreference { appSettings.themePreference }
 
     var pharmacyMembers: [PharmacistMember] {
         profile?.pharmacyMembers ?? []
@@ -508,6 +509,10 @@ final class ProfileViewModel {
 
     func setLanguage(_ language: PharmacyAppLanguage) {
         languageManager.set(language)
+    }
+
+    func setTheme(_ preference: PharmacyThemePreference) {
+        appSettings.themePreference = preference
     }
 
     func setTheme(isDark: Bool) {

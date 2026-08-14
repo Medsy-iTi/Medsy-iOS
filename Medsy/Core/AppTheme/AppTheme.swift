@@ -7,22 +7,86 @@
 
 import Foundation
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
+
+enum AppThemeMode: String, CaseIterable {
+    case system
+    case light
+    case dark
+}
 
 class AppSettings: ObservableObject {
     static let shared = AppSettings()
 
     private enum Keys {
         static let isDarkMode = "app_is_dark_mode"
+        static let themeMode = "app_theme_mode"
     }
 
-    @Published var isDarkMode: Bool {
+    @Published var themeMode: AppThemeMode {
         didSet {
-            UserDefaults.standard.set(isDarkMode, forKey: Keys.isDarkMode)
+            UserDefaults.standard.set(themeMode.rawValue, forKey: Keys.themeMode)
+        }
+    }
+
+    @Published private(set) var systemColorScheme: ColorScheme = .light
+
+    var isDarkMode: Bool {
+        switch themeMode {
+        case .system:
+            return systemColorScheme == .dark
+        case .light:
+            return false
+        case .dark:
+            return true
+        }
+    }
+
+    var preferredColorScheme: ColorScheme? {
+        switch themeMode {
+        case .system:
+            return nil
+        case .light:
+            return .light
+        case .dark:
+            return .dark
         }
     }
 
     private init() {
-        isDarkMode = UserDefaults.standard.bool(forKey: Keys.isDarkMode)
+        systemColorScheme = Self.currentSystemColorScheme()
+
+        if let rawThemeMode = UserDefaults.standard.string(forKey: Keys.themeMode),
+           let savedThemeMode = AppThemeMode(rawValue: rawThemeMode) {
+            themeMode = savedThemeMode
+        } else if UserDefaults.standard.object(forKey: Keys.isDarkMode) != nil {
+            themeMode = UserDefaults.standard.bool(forKey: Keys.isDarkMode) ? .dark : .light
+        } else {
+            themeMode = .system
+        }
+    }
+
+    func updateSystemColorScheme(_ colorScheme: ColorScheme) {
+        guard systemColorScheme != colorScheme else { return }
+        systemColorScheme = colorScheme
+    }
+
+    func setThemeMode(_ mode: AppThemeMode) {
+        themeMode = mode
+    }
+
+    func toggleResolvedTheme() {
+        themeMode = isDarkMode ? .light : .dark
+    }
+
+    private static func currentSystemColorScheme() -> ColorScheme {
+        #if canImport(UIKit)
+        UITraitCollection.current.userInterfaceStyle == .dark ? .dark : .light
+        #else
+        .light
+        #endif
     }
 }
 

@@ -15,9 +15,10 @@ struct ProfilePharmacySection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
-            Text("profile.my_pharmacy".localized)
-                .font(.headline)
-                .foregroundStyle(PharmacyColor.textPrimary)
+            PharmacySectionHeader(
+                title: "profile.my_pharmacy".localized,
+                systemImage: "cross.case.fill"
+            )
 
             if profile.pharmacyId != nil {
                 assignedPharmacyContent
@@ -60,7 +61,11 @@ struct ProfilePharmacySection: View {
     private var inviteButton: some View {
         Button(action: onInviteTap) {
             HStack(spacing: PharmacySpacing.sm) {
-                Image(systemName: "person.badge.plus")
+                PharmacyIconTile(
+                    systemImage: "person.badge.plus",
+                    size: 38,
+                    iconSize: 15
+                )
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("pharmacy_team.invite".localized)
@@ -77,7 +82,7 @@ struct ProfilePharmacySection: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .background(PharmacyColor.primarySoft.opacity(0.45))
         .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
         .overlay {
@@ -87,6 +92,7 @@ struct ProfilePharmacySection: View {
                     style: StrokeStyle(lineWidth: 1, dash: [5, 4])
                 )
         }
+        .shadow(color: PharmacyColor.primary.opacity(0.08), radius: 8, y: 3)
     }
 }
 
