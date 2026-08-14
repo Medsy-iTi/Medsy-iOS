@@ -24,20 +24,20 @@ struct ProfileConfirmationDialogsModifier: ViewModifier {
             } message: {
                 Text("pharmacy_card.leave_confirm_message".localized)
             }
-            .confirmationDialog(
-                "logout_confirmation_title".localized,
+            .confirmationAlert(
                 isPresented: $viewModel.showLogoutConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("logout_confirm_action".localized, role: .destructive) {
-                    Task { await viewModel.confirmLogout() }
-                }
-                Button("cancel".localized, role: .cancel) {
-                    viewModel.cancelLogout()
-                }
-            } message: {
-                Text("logout_confirmation_message".localized)
-            }
+                configuration: ConfirmationAlert<Void>(
+                    title: "logout_confirmation_title".localized,
+                    message: "logout_confirmation_message".localized,
+                    confirmButtonTitle: "logout_confirm_action".localized,
+                    cancelButtonTitle: "cancel".localized,
+                    confirmRole: .destructive,
+                    onCancel: viewModel.cancelLogout,
+                    onConfirm: {
+                        Task { await viewModel.confirmLogout() }
+                    }
+                )
+            )
             .confirmationDialog(
                 "pharmacy_card.delete_confirm_title".localized,
                 isPresented: $viewModel.showDeletePharmacyConfirmation,
