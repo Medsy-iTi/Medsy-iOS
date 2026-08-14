@@ -21,9 +21,10 @@ struct ProfilePresenceSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
-            Text("profile.presence.section_title".localized)
-                .font(.headline)
-                .foregroundStyle(PharmacyColor.textPrimary)
+            PharmacySectionHeader(
+                title: "profile.presence.section_title".localized,
+                systemImage: "clock.badge.checkmark"
+            )
 
             ProfileSectionContainer {
                 ProfileToggleRow(

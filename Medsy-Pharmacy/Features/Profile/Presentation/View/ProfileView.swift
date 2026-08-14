@@ -91,6 +91,11 @@ struct ProfileView: View {
 				onInviteTap: viewModel.didTapInvitePharmacist
 			)
 
+			PharmacySectionHeader(
+				title: "settings_title".localized,
+				systemImage: "gearshape.fill"
+			)
+
 			ProfilePreferencesSection(
 				currentLanguage: languageManager.currentLanguage,
 				isDarkMode: appSettings.isDarkMode,

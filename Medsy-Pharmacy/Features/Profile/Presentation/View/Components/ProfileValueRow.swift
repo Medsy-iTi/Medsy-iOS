@@ -46,7 +46,7 @@ struct ProfileValueRow: View {
                     .padding(.vertical, 6)
                     .background(PharmacyColor.primarySoft, in: Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .accessibilityLabel(actionTitle + " " + title)
         }
         .padding(.horizontal, PharmacySpacing.md)
