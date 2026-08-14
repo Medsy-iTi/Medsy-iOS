@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FavoriteView: View {
     @State private var viewModel: FavoriteViewModel
+    @State private var medicinePendingRemoval: FavoriteMedicineDisplayModel?
     @Environment(CartViewModel.self) private var cartViewModel
 
     private let onBack: () -> Void
@@ -23,6 +24,7 @@ struct FavoriteView: View {
         onSelectMedicine: @escaping (String) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
+        _medicinePendingRemoval = State(initialValue: nil)
         self.onBack = onBack
         self.onBrowse = onBrowse
         self.onSelectMedicine = onSelectMedicine
@@ -37,6 +39,19 @@ struct FavoriteView: View {
         }
         .background(AppColor.bg.ignoresSafeArea())
         .onAppear { Task { await viewModel.load() } }
+        .confirmationAlert(
+            item: $medicinePendingRemoval,
+            configuration: ConfirmationAlert(
+                title: "favorites.remove_confirmation.title".localized,
+                message: { "favorites.remove_confirmation.message".localized($0.title) },
+                confirmButtonTitle: "favorites.remove_confirmation.action".localized,
+                cancelButtonTitle: "common.cancel".localized,
+                confirmRole: .destructive,
+                onConfirm: { product in
+                    Task { await viewModel.remove(product) }
+                }
+            )
+        )
         .alert("favorites.offline.title".localized, isPresented: $viewModel.isShowingOfflineAlert) {
             Button("common.ok".localized, role: .cancel) {}
         } message: {
@@ -72,7 +87,7 @@ struct FavoriteView: View {
                         FavoriteMedicineCard(
                             product: product,
                             quantity: cartQuantity(for: product),
-                            onToggleFavorite: { Task { await viewModel.remove(product) } },
+                            onToggleFavorite: { medicinePendingRemoval = product },
                             onAdd: { addOneToCart(product) },
                             onIncrement: { addOneToCart(product) },
                             onDecrement: {
