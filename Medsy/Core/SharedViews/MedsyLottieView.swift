@@ -14,11 +14,14 @@ struct MedsyLottieView: UIViewRepresentable {
     var loopMode: LottieLoopMode = .loop
     var contentMode: UIView.ContentMode = .scaleAspectFit
     var animationSpeed: CGFloat = 1
+    var clipsToBounds = false
 
     func makeUIView(context: Context) -> LottieAnimationView {
         let animationView = LottieAnimationView()
         animationView.backgroundBehavior = .pauseAndRestore
         animationView.contentMode = contentMode
+        animationView.clipsToBounds = clipsToBounds
+        animationView.layer.masksToBounds = clipsToBounds
         animationView.loopMode = loopMode
         animationView.animationSpeed = animationSpeed
         animationView.animation = loadAnimation()
@@ -28,6 +31,8 @@ struct MedsyLottieView: UIViewRepresentable {
 
     func updateUIView(_ animationView: LottieAnimationView, context: Context) {
         animationView.contentMode = contentMode
+        animationView.clipsToBounds = clipsToBounds
+        animationView.layer.masksToBounds = clipsToBounds
         animationView.loopMode = loopMode
         animationView.animationSpeed = animationSpeed
 

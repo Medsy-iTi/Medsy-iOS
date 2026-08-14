@@ -127,13 +127,16 @@ struct MainTabBarView: View {
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .onAppear(perform: configureTabBarAppearance)
         .onChange(of: appSettings.isDarkMode) { _, _ in
             configureTabBarAppearance()
         }
         .onChange(of: languageManager.currentLanguage) { _, _ in
             configureTabBarAppearance()
+        }
+        .onChange(of: coordinator.selectedTab) { _, selectedTab in
+            refreshCartIfNeeded(for: selectedTab)
         }
         .task(id: coordinator.selectedTab) {
             await refreshTabBarAppearanceAfterTransition()
@@ -235,6 +238,11 @@ struct MainTabBarView: View {
         homeRootResetSignal += 1
         requestedOrderID = masterOrderID
         coordinator.select(.orders)
+    }
+
+    private func refreshCartIfNeeded(for selectedTab: AppTab) {
+        guard selectedTab == .cart else { return }
+        cartViewModel.handle(.load)
     }
 
     private func scheduleFeedbackDismissal() {

@@ -76,7 +76,7 @@ struct PaymentStatusView: View {
         .background(AppColor.bg.ignoresSafeArea())
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .navigationBarBackButtonHidden()
     }
 }
