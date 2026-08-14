@@ -26,6 +26,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     func sendWithImage()
     func startNewChat()
     func retryMessage(id: Int)
+    func retryLastFailedMessage()
     func dismissError()
     func toggleRecording()
     func prefillPrompt(_ text: String)
@@ -172,12 +173,21 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     // MARK: - Retry
 
     func retryMessage(id: Int) {
+        guard !isSending else { return }
         guard let msg = session.messages.first(where: { $0.id == id }),
               msg.isRetryable else { return }
         session.beginRetry(userMessageID: id)
         syncMessages()
         let imageData: Data? = nil  // image not preserved on retry
         performSend(text: msg.text, image: imageData, existingUserID: id)
+    }
+
+    func retryLastFailedMessage() {
+        guard let message = session.messages.last(where: { $0.isRetryable }) else {
+            dismissError()
+            return
+        }
+        retryMessage(id: message.id)
     }
 
     // MARK: - New chat

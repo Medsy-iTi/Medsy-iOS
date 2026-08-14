@@ -14,7 +14,7 @@ extension MedsyChatView {
             VStack(alignment: .trailing, spacing: MedsySpacing.xs) {
                 userBubble(message.text)
                 if message.isRetryable {
-                    Button("chatbot.error.dismiss".localized) {
+                    Button("common.retry".localized) {
                         viewModel.retryMessage(id: message.id)
                     }
                     .font(MedsyFont.caption())
