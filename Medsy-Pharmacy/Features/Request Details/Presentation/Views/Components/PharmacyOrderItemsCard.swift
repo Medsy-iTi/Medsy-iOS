@@ -21,11 +21,10 @@ struct PharmacyOrderItemsCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
-            Text("pharmacy.request.requested_medicines".localized)
-                .font(PharmacyColor.sans(16, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 2)
+            PharmacySectionHeader(
+                title: "pharmacy.request.requested_medicines".localized,
+                systemImage: "pills.fill"
+            )
 
             VStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
@@ -117,7 +116,7 @@ struct PharmacyOrderItemsCard: View {
                                             .foregroundStyle(item.isAvailable ? PharmacyColor.primary : PharmacyColor.textSecondary)
                                     }
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(PharmacyPressableButtonStyle())
                                 .disabled(isOfferSubmitted)
                             }
                         }
@@ -138,7 +137,7 @@ struct PharmacyOrderItemsCard: View {
                                     .background(PharmacyColor.primary, in: RoundedRectangle(cornerRadius: PharmacyRadius.sm))
                                     .foregroundStyle(.white)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(PharmacyPressableButtonStyle())
                             } else {
                                 HStack(spacing: 8) {
                                     Image(systemName: "box.truck.fill")
@@ -160,12 +159,7 @@ struct PharmacyOrderItemsCard: View {
                     }
                 }
             }
-            .padding(PharmacySpacing.md)
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(elevation: .subtle)
         }
     }
 }

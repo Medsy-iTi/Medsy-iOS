@@ -12,7 +12,15 @@ struct PharmacyOrderTotalCard: View {
     var onViewPaymentSummary: (() -> Void)? = nil
 
     var body: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: .center, spacing: PharmacySpacing.sm) {
+            PharmacyIconTile(
+                systemImage: "banknote.fill",
+                tint: PharmacyColor.success,
+                background: PharmacyColor.successSoft,
+                size: 44,
+                iconSize: 18
+            )
+
             VStack(alignment: .leading, spacing: 6) {
                 Text("pharmacy.request.order_total_header".localized)
                     .font(PharmacyColor.sans(14, .medium))
@@ -25,7 +33,7 @@ struct PharmacyOrderTotalCard: View {
                         .font(PharmacyColor.sans(12, .semibold))
                         .foregroundStyle(PharmacyColor.primary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
             }
 
             Spacer()
@@ -34,11 +42,6 @@ struct PharmacyOrderTotalCard: View {
                 .font(PharmacyColor.sans(20, .bold))
                 .foregroundStyle(PharmacyColor.primary)
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .raised)
     }
 }
