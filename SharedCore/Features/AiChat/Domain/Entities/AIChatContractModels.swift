@@ -16,8 +16,6 @@ enum AIChatIntent: Equatable, Sendable {
     case addToCart
     case createRequest
     case setReminder
-    case deleteReminder
-    case listReminders
     case pharmacistPerformance
     case other
 }
@@ -109,6 +107,15 @@ struct AIChatPharmacistRanking: Equatable, Sendable {
     let entries: [AIChatPharmacistPerformanceEntry]
 }
 
+struct AIChatReminder: Equatable, Sendable {
+    /// Display name for the medicine (e.g. "Concor").
+    let medicineName: String
+    /// One or more 24-hour "HH:mm" strings (already resolved server-side).
+    let times: [String]
+    /// How many days the medication course lasts.
+    let durationDays: Int
+}
+
 struct AIChatAssistantResponse: Equatable, Sendable {
     let conversationID: Int?
     let messageID: Int?
@@ -122,6 +129,8 @@ struct AIChatAssistantResponse: Equatable, Sendable {
     let pharmacistRankings: [AIChatPharmacistRanking]
     let disclaimer: String?
     let action: AIChatAction?
+    /// One-shot scheduling instruction; never replayed from history.
+    let reminder: AIChatReminder?
 }
 
 struct AIChatHistory: Equatable, Sendable {
