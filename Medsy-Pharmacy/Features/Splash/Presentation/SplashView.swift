@@ -90,6 +90,13 @@ struct SplashView: View {
                             .lineSpacing(3)
                             .padding(.horizontal, PharmacySpacing.xl)
                     }
+                    .padding(.vertical, PharmacySpacing.md)
+                    .frame(maxWidth: 360)
+                    .pharmacyCard(
+                        cornerRadius: PharmacyRadius.xl,
+                        padding: nil,
+                        elevation: .subtle
+                    )
                     .offset(y: contentOffset)
                     .opacity(contentOpacity)
                 }
