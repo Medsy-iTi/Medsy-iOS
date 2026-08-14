@@ -8,14 +8,30 @@
 import SwiftUI
 
 struct PharmacyProfileView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: PharmacyProfileViewModel
+    private let onBack: (() -> Void)?
 
-    init(viewModel: PharmacyProfileViewModel = DIContainer.shared.resolve(PharmacyProfileViewModel.self)) {
+    init(
+        viewModel: PharmacyProfileViewModel = DIContainer.shared.resolve(PharmacyProfileViewModel.self),
+        onBack: (() -> Void)? = nil
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onBack = onBack
+    }
+
+    init(pharmacyID: Int, onBack: (() -> Void)? = nil) {
+        _viewModel = State(initialValue: PharmacyProfileViewModel(initialPharmacyID: pharmacyID))
+        self.onBack = onBack
     }
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            navigationBar
+
+            Divider()
+                .background(AppColor.border)
+
             ZStack {
                 AppColor.bg
                     .ignoresSafeArea()
@@ -76,8 +92,36 @@ struct PharmacyProfileView: View {
                     }
                 }
             }
-            .navigationTitle("pharmacyProfile.title".localized)
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .background(AppColor.bg)
+        .navigationBarHidden(true)
+        .task {
+            guard case .idle = viewModel.state else { return }
+            viewModel.loadPharmacy()
+        }
+    }
+
+    private var navigationBar: some View {
+        ZStack {
+            Text("pharmacyProfile.title".localized)
+                .font(AppColor.sans(17, .bold))
+                .foregroundStyle(AppColor.textPrim)
+                .frame(maxWidth: .infinity)
+
+            HStack {
+                MedsyNavBarBackButton(action: navigateBack)
+                    .padding(.leading, MedsySpacing.md)
+                Spacer()
+            }
+        }
+        .frame(height: 52)
+    }
+
+    private func navigateBack() {
+        if let onBack {
+            onBack()
+        } else {
+            dismiss()
         }
     }
 }
