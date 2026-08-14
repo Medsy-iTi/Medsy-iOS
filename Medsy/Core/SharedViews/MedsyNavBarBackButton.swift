@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MedsyNavBarBackButton: View {
     let action: () -> Void
+    var isEnabled = true
 
     var body: some View {
         Button(action: action) {
@@ -18,6 +19,8 @@ struct MedsyNavBarBackButton: View {
                 .frame(width: 36, height: 36)
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.45)
         .accessibilityLabel("accessibility.back".localized)
     }
 }

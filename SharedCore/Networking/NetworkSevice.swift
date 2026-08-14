@@ -147,6 +147,8 @@ final class NetworkService: NetworkServiceProtocol {
             accessToken: endpoint.requiresAuthentication ? tokenStore?.accessToken() : nil
         )
 
+        print("[Network] \(endpoint.method.rawValue) \(endpoint.path) [Started]")
+
         let response: NetworkResponse
         do {
             response = try await transport.execute(request)

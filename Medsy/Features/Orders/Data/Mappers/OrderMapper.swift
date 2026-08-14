@@ -24,7 +24,7 @@ enum OrderMapper {
             ),
             date: displayDate(for: dto),
             totalPrice: dto.totalPrice,
-            itemCount: allItems.reduce(0) { $0 + $1.quantity },
+            itemCount: allItems.count,
             itemImageURLs: allItems.compactMap(\.imageURL),
             requestID: dto.requestId,
             pharmacyNames: pharmacyNames,

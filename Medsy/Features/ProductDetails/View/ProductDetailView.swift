@@ -21,14 +21,13 @@ struct ProductDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             MedsyNavBar(onBack: { dismiss() }) {
-                Button {
-
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundStyle(AppColor.textPrim)
-                        .imageScale(.large)
+                if viewModel.product != nil {
+                    FavoriteButton(
+                        isFavorite: viewModel.isFavorite,
+                        size: 40,
+                        action: viewModel.toggleFavorite
+                    )
                 }
-                .accessibilityLabel("accessibility.share".localized)
             }
 
             content
@@ -97,9 +96,7 @@ struct ProductDetailView: View {
 
                 ImageCarousel(
                     images: product.images,
-                    selectedIndex: $viewModel.selectedImageIndex,
-                    isFavorite: viewModel.isFavorite,
-                    onToggleFavorite: viewModel.toggleFavorite
+                    selectedIndex: $viewModel.selectedImageIndex
                 )
 
                 ProductHeaderInfo(

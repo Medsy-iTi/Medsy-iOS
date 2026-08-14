@@ -5,21 +5,13 @@
 //  Created by Ahmed Elkady on 18/07/2026.
 //
 
-import PhotosUI
 import SwiftUI
-import UIKit
 
 struct CartView: View {
     @Environment(LanguageManager.self) private var languageManager
     @ObservedObject private var appSettings = AppSettings.shared
     private let viewModel: CartViewModel
-    @State private var selectedPhotoItem: PhotosPickerItem?
-    @State private var showsPrescriptionSources = false
-    @State private var showsPhotoPicker = false
-    @State private var showsCamera = false
-    @State private var showsCameraUnavailable = false
     @State private var showsClearConfirmation = false
-    @State private var prescriptionBeingReplaced: UUID?
     @State private var operationErrorMessage: String?
     @State private var showsNoteEditor = false
     @State private var noteInput = ""
@@ -77,40 +69,6 @@ struct CartView: View {
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
         .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
-        .confirmationDialog(
-            "cart.prescription.source_title".localized,
-            isPresented: $showsPrescriptionSources,
-            titleVisibility: .visible
-        ) {
-            Button("prescription.camera.title".localized) {
-                openCamera()
-            }
-
-            Button("prescription.gallery.title".localized) {
-                showsPhotoPicker = true
-            }
-
-            Button("common.cancel".localized, role: .cancel) {}
-        }
-        .photosPicker(
-            isPresented: $showsPhotoPicker,
-            selection: $selectedPhotoItem,
-            matching: .images
-        )
-        .onChange(of: selectedPhotoItem) { _, item in
-            loadPhoto(item)
-        }
-        .sheet(isPresented: $showsCamera) {
-            PrescriptionCameraPicker { data in
-                storePrescription(data, source: .camera)
-            }
-            .ignoresSafeArea()
-        }
-        .alert("prescription.camera.unavailable.title".localized, isPresented: $showsCameraUnavailable) {
-            Button("common.ok".localized, role: .cancel) {}
-        } message: {
-            Text("prescription.camera.unavailable.message".localized)
-        }
         .alert("cart.clear_confirmation.title".localized, isPresented: $showsClearConfirmation) {
             Button("common.cancel".localized, role: .cancel) {}
             Button("cart.clear_confirmation.action".localized, role: .destructive) {
@@ -179,6 +137,12 @@ struct CartView: View {
         .task(id: languageManager.languageCode) {
             await viewModel.refreshInteractions(language: languageManager.languageCode)
         }
+        .task(id: viewModel.removedItem?.id) {
+            guard viewModel.removedItem != nil else { return }
+            try? await Task.sleep(for: .seconds(4))
+            guard !Task.isCancelled else { return }
+            viewModel.handle(.dismissRemoval)
+        }
         .animation(.easeInOut(duration: 0.2), value: viewModel.removedItem)
     }
 
@@ -189,14 +153,7 @@ struct CartView: View {
             CartLoadingSkeleton()
 
         case .empty:
-            if viewModel.prescriptions.isEmpty {
-                CartEmptyStateView(
-                    onSearch: onSearch,
-                    onScanPrescription: onScanPrescription
-                )
-            } else {
-                cartContent(items: [])
-            }
+            CartEmptyStateView(onSearch: onSearch)
 
         case let .error(message):
             MedsyStatusView(
@@ -212,11 +169,8 @@ struct CartView: View {
             )
 
         case let .loaded(items):
-            if items.isEmpty && viewModel.prescriptions.isEmpty {
-                CartEmptyStateView(
-                    onSearch: onSearch,
-                    onScanPrescription: onScanPrescription
-                )
+            if items.isEmpty {
+                CartEmptyStateView(onSearch: onSearch)
             } else {
                 cartContent(items: items)
             }
@@ -234,30 +188,6 @@ struct CartView: View {
                     Text("cart.message".localized)
                         .font(MedsyFont.body(15))
                         .foregroundStyle(AppColor.textSec)
-                }
-
-                if viewModel.prescriptions.isEmpty {
-                    PrimaryButton(
-                        title: "cart.prescription.add".localized,
-                        systemImage: "camera",
-                        style: .secondary,
-                        action: { presentPrescriptionSources() }
-                    )
-                } else {
-                    VStack(spacing: MedsySpacing.sm) {
-                        ForEach(Array(viewModel.prescriptions.enumerated()), id: \.element.id) { index, prescription in
-                            CartPrescriptionAttachmentView(
-                                attachment: prescription,
-                                position: index + 1,
-                                onChange: {
-                                    presentPrescriptionSources(replacing: prescription.id)
-                                },
-                                onRemove: {
-                                    removePrescription(id: prescription.id)
-                                }
-                            )
-                        }
-                    }
                 }
 
                 VStack(spacing: MedsySpacing.sm) {
@@ -278,6 +208,16 @@ struct CartView: View {
                     onRetry: retryInteractions
                 )
 
+                if let prescription = viewModel.prescriptions.first {
+                    CartPrescriptionAttachmentView(
+                        attachment: prescription,
+                        onChange: onScanPrescription,
+                        onRemove: { removePrescription(id: prescription.id) }
+                    )
+                } else {
+                    CartAddPrescriptionButton(action: onScanPrescription)
+                }
+
                 CartPharmacistNoteView(note: viewModel.pharmacistNote) {
                     noteInput = viewModel.pharmacistNote
                     showsNoteEditor = true
@@ -296,48 +236,10 @@ struct CartView: View {
         }
     }
 
-    private func presentPrescriptionSources(replacing id: UUID? = nil) {
-        prescriptionBeingReplaced = id
-        showsPrescriptionSources = true
-    }
-
     private func retryInteractions() {
         Task {
             await viewModel.refreshInteractions(language: languageManager.languageCode)
         }
-    }
-
-    private func openCamera() {
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            showsCamera = true
-        } else {
-            showsCameraUnavailable = true
-        }
-    }
-
-    private func loadPhoto(_ item: PhotosPickerItem?) {
-        guard let item else { return }
-
-        Task {
-            guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-            storePrescription(data, source: .photoLibrary)
-            selectedPhotoItem = nil
-        }
-    }
-
-    private func storePrescription(_ data: Data, source: CartPrescriptionSource) {
-        if let prescriptionBeingReplaced {
-            viewModel.handle(
-                .replacePrescription(
-                    id: prescriptionBeingReplaced,
-                    data: data,
-                    source: source
-                )
-            )
-        } else {
-            viewModel.handle(.setPrescription(data, source))
-        }
-        prescriptionBeingReplaced = nil
     }
 
     private func removePrescription(id: UUID) {

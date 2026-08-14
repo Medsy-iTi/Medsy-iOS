@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CartEmptyStateView: View {
     let onSearch: () -> Void
-    let onScanPrescription: () -> Void
 
     var body: some View {
         VStack(spacing: MedsySpacing.sm) {
