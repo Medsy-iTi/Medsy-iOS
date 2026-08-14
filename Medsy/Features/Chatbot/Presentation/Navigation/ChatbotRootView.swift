@@ -19,7 +19,7 @@ struct ChatbotRootView: View {
     private let onBackToProduct: (() -> Void)?
 
     init(
-        viewModel: AiChatViewModel = DIContainer.shared.resolve(AiChatViewModel.self),
+        viewModel: AiChatViewModel? = nil,
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
         onOpenCompleteRequest: (() -> Void)? = nil,
@@ -33,7 +33,9 @@ struct ChatbotRootView: View {
         self._pendingPrompt = pendingPrompt
         self.promptSequence = promptSequence
         self.onBackToProduct = onBackToProduct
-        self._viewModel = State(wrappedValue: viewModel)
+        self._viewModel = State(
+            wrappedValue: viewModel ?? DIContainer.shared.resolve(AiChatViewModel.self)
+        )
     }
 
     var body: some View {

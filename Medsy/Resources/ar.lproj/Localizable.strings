@@ -206,6 +206,8 @@
 "product.consumer_category" = "فئة المستهلك";
 "product.add_to_cart" = "أضف إلى السلة";
 "product.consult_pharmacist" = "استشارة صيدلي";
+"product.consult_pharmacist.message" = "أريد الاستفسار عن هذا الدواء: %@. هل يمكنك مساعدتي؟";
+"product.consult_pharmacist.default_message" = "أريد استشارة صيدلي بخصوص دواء.";
 "product.pharmacist_review_notice" = "لا يُصرف هذا الدواء إلا بعد مراجعة الصيدلي لتحديد الجرعة المناسبة لحالتك.";
 "product.manufacturer" = "الشركة المنتجة";
 "product.type" = "النوع";

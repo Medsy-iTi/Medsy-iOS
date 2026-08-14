@@ -27,5 +27,7 @@ struct CompletedOrder: Identifiable, Equatable {
     let deliveryLatitude: Double
     let deliveryLongitude: Double
     let createdAt: Date
+    let paymentMethod: PharmacyOrderPaymentMethod
+    let status: PharmacyOrderAPIStatus
     let items: [CompletedOrderItem]
 }

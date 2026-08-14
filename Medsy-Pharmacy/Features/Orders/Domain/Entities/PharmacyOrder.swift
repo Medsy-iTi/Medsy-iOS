@@ -119,6 +119,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
     case pending
     case accepted
     case preparing
+    case readyForPickup
+    case readyForDelivery
     case outForDelivery
     case delivered
     case cancelled
@@ -131,6 +133,8 @@ enum PharmacyOrderAPIStatus: Equatable, Sendable, Hashable {
         case "PENDING": self = .pending
         case "ACCEPTED": self = .accepted
         case "PREPARING": self = .preparing
+        case "READY_FOR_PICKUP": self = .readyForPickup
+        case "READY_FOR_DELIVERY": self = .readyForDelivery
         case "OUT_FOR_DELIVERY": self = .outForDelivery
         case "DELIVERED": self = .delivered
         case "CANCELLED", "CANCELED": self = .cancelled

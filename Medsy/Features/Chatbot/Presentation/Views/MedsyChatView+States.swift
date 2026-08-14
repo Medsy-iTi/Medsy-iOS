@@ -151,8 +151,8 @@ extension MedsyChatView {
                 .font(MedsyFont.caption())
                 .foregroundColor(theme.danger)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Button("chatbot.error.dismiss".localized) {
-                withAnimation { viewModel.dismissError() }
+            Button("common.retry".localized) {
+                withAnimation { viewModel.retryLastFailedMessage() }
             }
             .font(MedsyFont.caption())
             .foregroundColor(theme.danger)

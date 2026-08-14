@@ -11,6 +11,7 @@ import SwiftUI
 
 struct PharmacyCompletedOrdersFactory {
     let getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol
+    let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
     let identityProvider: PharmacyIdentityProviding
 
     @MainActor
@@ -21,8 +22,9 @@ struct PharmacyCompletedOrdersFactory {
     @MainActor
     func makeViewModel(coordinator: CompletedOrdersCoordinatorProtocol) -> CompletedOrdersViewModel {
         CompletedOrdersViewModel(
-            pharmacyId: identityProvider.currentPharmacyId ?? 0,
             getCompletedOrdersUseCase: getCompletedOrdersUseCase,
+            getProfileUseCase: getProfileUseCase,
+            identityProvider: identityProvider,
             coordinator: coordinator
         )
     }

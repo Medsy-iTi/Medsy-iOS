@@ -15,6 +15,7 @@ struct MainTabBarView: View {
     @State private var isTabBarHidden = false
     @State private var cartViewModel: CartViewModel
     @State private var profileViewModel: ProfileViewModel
+    @State private var chatbotViewModel: AiChatViewModel
     @State private var requestedHomeRoute: HomeRoute?
     @State private var requestedOrderID: Int?
     @State private var homeRootResetSignal = 0
@@ -23,7 +24,6 @@ struct MainTabBarView: View {
     @State private var isShowingRequestSuccess = false
     @State private var pendingChatbotPrompt: String?
     @State private var chatbotPromptSequence = 0
-    @State private var chatbotViewModel: AiChatViewModel
     @State private var tabBeforeChatbot: AppTab = .home
     @State private var showsProductChatbotBackButton = false
     @ObservedObject private var appSettings = AppSettings.shared
@@ -138,6 +138,23 @@ struct MainTabBarView: View {
             await refreshTabBarAppearanceAfterTransition()
         }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .onReceive(NotificationCenter.default.publisher(for: .openChatbotTab)) { notification in
+            isTabBarHidden = false
+            coordinator.select(.chatbot)
+            // After switching tabs, fire the auto-message about the product
+            let productName = notification.userInfo?["productName"] as? String ?? ""
+            let message: String
+            if productName.isEmpty {
+                message = "product.consult_pharmacist.default_message".localized
+            } else {
+                message = String(format: "product.consult_pharmacist.message".localized, productName)
+            }
+            Task {
+                // Small delay so the tab switch animation completes first
+                try? await Task.sleep(for: .milliseconds(400))
+                chatbotViewModel.sendSuggestion(message)
+            }
+        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()

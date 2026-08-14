@@ -23,9 +23,10 @@ enum CompletedOrderDetailsEntityMapper {
             subTotal: entity.subTotal,
             deliveryFee: entity.deliveryFee,
             total: entity.total,
-            hasDelivery: true,
+            hasDelivery: entity.fulfillmentMethod.uppercased() == "DELIVERY",
             deliveryLatitude: entity.deliveryLatitude,
-            deliveryLongitude: entity.deliveryLongitude
+            deliveryLongitude: entity.deliveryLongitude,
+            status: entity.status
         )
     }
 

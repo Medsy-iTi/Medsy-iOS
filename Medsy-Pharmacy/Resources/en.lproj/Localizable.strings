@@ -395,9 +395,31 @@
 "pharmacy.orders.action.view" = "View Details";
 "pharmacy.orders.status.completed" = "Completed";
 "pharmacy.orders.status.expired" = "Expired";
+"pharmacy.orders.status.cancelled" = "Cancelled";
 "pharmacy.orders.status.pending" = "Pending Approval";
 "pharmacy.orders.status.approved" = "Approved";
 "pharmacy.orders.status.offer_sent" = "Offer Sent";
+
+"pharmacy.status.preparing" = "Preparing";
+"pharmacy.status.ready" = "Ready";
+"pharmacy.status.on_the_way" = "On the way";
+"pharmacy.status.delivered" = "Delivered";
+"pharmacy.status.mark_ready" = "Mark as Ready";
+"pharmacy.status.marking_ready" = "Marking as Ready...";
+"pharmacy.status.mark_out_for_delivery" = "Mark as Out for Delivery";
+"pharmacy.status.marking_out_for_delivery" = "Marking as Out for Delivery...";
+"pharmacy.status.mark_delivered" = "Mark as Delivered";
+"pharmacy.status.marking_delivered" = "Marking as Delivered...";
+"pharmacy.status.mark_collected" = "Mark as Collected";
+"pharmacy.status.marking_collected" = "Marking as Collected...";
+
+"completed_orders.filter.all" = "All";
+"completed_orders.filter.preparing" = "Preparing";
+"completed_orders.filter.out_for_delivery" = "Out for Delivery";
+"completed_orders.filter.delivered" = "Delivered";
+
+"pharmacy.error.title" = "Error";
+"pharmacy.ok" = "OK";
 
 "orders_title" = "Orders";
 "orders_search_placeholder" = "Search by order # or customer name";
@@ -504,3 +526,18 @@
 "pharmacy.chatbot.product.company" = "Company: ";
 "pharmacy.chatbot.product.category" = "Category: ";
 "pharmacy.chatbot.product.route" = "Route: ";
+
+"pharmacy.status.ready_for_pickup" = "Ready for Pickup";
+
+"completed_orders.empty.all.title" = "No Completed Orders";
+"completed_orders.empty.all.message" = "You have no completed orders at this time.";
+"completed_orders.empty.preparing.title" = "No Preparing Orders";
+"completed_orders.empty.preparing.message" = "There are currently no orders being prepared.";
+"completed_orders.empty.ready_for_pickup.title" = "No Orders Ready for Pickup";
+"completed_orders.empty.ready_for_pickup.message" = "There are no orders waiting to be picked up.";
+"completed_orders.empty.out_for_delivery.title" = "No Orders Out for Delivery";
+"completed_orders.empty.out_for_delivery.message" = "There are no orders currently out for delivery.";
+"completed_orders.empty.delivered.title" = "No Delivered Orders";
+"completed_orders.empty.delivered.message" = "You haven't delivered any orders yet.";
+
+"pharmacy.status.collected" = "Collected";

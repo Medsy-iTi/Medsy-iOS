@@ -30,6 +30,7 @@ struct CompletedOrdersAssembly: PharmacyModuleAssembly {
 		container.register(PharmacyCompletedOrdersFactory.self) { container in
 			PharmacyCompletedOrdersFactory(
 				getCompletedOrdersUseCase: container.resolve(GetCompletedOrdersUseCaseProtocol.self),
+				getProfileUseCase: container.resolve(GetPharmacyProfileUseCaseProtocol.self),
 				identityProvider: container.resolve(PharmacyIdentityProviding.self)
 			)
 		}

@@ -11,7 +11,7 @@ struct CompletedOrderItem: Identifiable, Equatable {
     let id: Int
     let productId: Int
     let productName: String
-    let imageUrl: String
+    let imageUrl: String?
     let quantity: Int
     let unitPrice: Double
     let totalPrice: Double

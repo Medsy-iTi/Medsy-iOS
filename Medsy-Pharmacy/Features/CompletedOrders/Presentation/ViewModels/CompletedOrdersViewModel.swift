@@ -33,26 +33,34 @@ final class CompletedOrdersViewModel {
         didSet { recomputeVisibleState() }
     }
 
-    var visibleOrders: [CompletedOrder] {
-        guard !searchText.isEmpty else { return orders }
-        return orders.filter(matchesSearch)
+    var selectedFilter: CompletedOrdersListFilter = .all {
+        didSet {
+            guard selectedFilter != oldValue else { return }
+            Task { await reload() }
+        }
     }
 
-    private let pharmacyId: Int
+    private(set) var visibleOrders: [CompletedOrder] = []
+
     private let getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol
+    private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
+    private let identityProvider: PharmacyIdentityProviding
     private let coordinator: CompletedOrdersCoordinatorProtocol
+    private var pharmacyId: Int?
 
     private var currentPage = 0
     private let pageSize = 20
     private var isLastPage = false
 
     init(
-        pharmacyId: Int,
         getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol,
+        getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
+        identityProvider: PharmacyIdentityProviding,
         coordinator: CompletedOrdersCoordinatorProtocol
     ) {
-        self.pharmacyId = pharmacyId
         self.getCompletedOrdersUseCase = getCompletedOrdersUseCase
+        self.getProfileUseCase = getProfileUseCase
+        self.identityProvider = identityProvider
         self.coordinator = coordinator
     }
 
@@ -66,8 +74,10 @@ final class CompletedOrdersViewModel {
         currentPage = 0
         isLastPage = false
         do {
+            let pharmacyId = try await resolvePharmacyId()
             let result = try await getCompletedOrdersUseCase.execute(
                 pharmacyId: pharmacyId,
+                status: selectedFilter.apiStatusValue,
                 page: currentPage,
                 size: pageSize,
                 sort: ["date,desc"]
@@ -86,6 +96,7 @@ final class CompletedOrdersViewModel {
 
         guard searchText.isEmpty else { return }
         guard index >= visibleOrders.count - 5 else { return }
+        guard let pharmacyId else { return }
 
         isLoadingNextPage = true
         defer { isLoadingNextPage = false }
@@ -94,6 +105,7 @@ final class CompletedOrdersViewModel {
             let nextPage = currentPage + 1
             let result = try await getCompletedOrdersUseCase.execute(
                 pharmacyId: pharmacyId,
+                status: selectedFilter.apiStatusValue,
                 page: nextPage,
                 size: pageSize,
                 sort: ["date,desc"]
@@ -111,14 +123,36 @@ final class CompletedOrdersViewModel {
         coordinator.showDetails(for: order)
     }
 
+    private func resolvePharmacyId() async throws -> Int {
+        if let pharmacyId {
+            return pharmacyId
+        }
+
+        let profile = try await getProfileUseCase.execute()
+        guard let pharmacyId = profile.pharmacyId, pharmacyId > 0 else {
+            throw CompletedOrdersResolutionError.noPharmacy
+        }
+
+        self.pharmacyId = pharmacyId
+        identityProvider.currentPharmacyId = pharmacyId
+        return pharmacyId
+    }
+
     private func matchesSearch(_ order: CompletedOrder) -> Bool {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !query.isEmpty else { return true }
         return order.customerName.lowercased().contains(query)
+            || order.customerPhone.contains(query)
             || String(order.id).contains(query)
     }
 
-    private func recomputeVisibleState() {
+    func recomputeVisibleState() {
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            visibleOrders = orders
+        } else {
+            visibleOrders = orders.filter(matchesSearch)
+        }
+
         if orders.isEmpty {
             state = .empty(.noOrders)
         } else if visibleOrders.isEmpty {
@@ -127,4 +161,8 @@ final class CompletedOrdersViewModel {
             state = .loaded
         }
     }
+}
+
+private enum CompletedOrdersResolutionError: Error {
+    case noPharmacy
 }

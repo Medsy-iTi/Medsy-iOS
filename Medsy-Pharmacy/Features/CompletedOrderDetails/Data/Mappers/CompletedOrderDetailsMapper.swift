@@ -27,11 +27,13 @@ enum CompletedOrderDetailsMapper {
             pharmacistPhone: dto.pharmacyPhone ?? "",
             offerId: dto.offerId,
             subTotal: dto.subTotal,
-            deliveryFee: dto.deliveryFee,
+            deliveryFee: dto.deliveryFee ?? 0,
             total: dto.total,
             deliveryLatitude: dto.deliveryLatitude,
             deliveryLongitude: dto.deliveryLongitude,
             createdAt: date(from: dto.createdAt),
+            status: PharmacyOrderAPIStatus(rawValue: dto.status ?? ""),
+            fulfillmentMethod: dto.fulfillmentMethod ?? "",
             items: dto.items.map(mapItem)
         )
     }
@@ -40,8 +42,8 @@ enum CompletedOrderDetailsMapper {
         CompletedOrderDetailsItemEntity(
             id: dto.id,
             productId: dto.productId,
-            productName: dto.productName,
-            imageUrl: dto.imageUrl,
+            productName: dto.product?.name ?? dto.product?.productName ?? "",
+            imageUrl: dto.product?.imageUrl,
             quantity: dto.quantity,
             unitPrice: dto.unitPrice,
             totalPrice: dto.totalPrice

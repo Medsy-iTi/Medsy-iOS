@@ -9,7 +9,6 @@ struct CompletedOrderDetailsCoordinatorView: View {
     @State private var coordinator = CompletedOrderDetailsCoordinator()
     @State private var viewModel: CompletedOrderDetailViewModel
 
-
     var onTabBarHiddenChange: (Bool) -> Void
 
     // MARK: - Production init
@@ -44,8 +43,17 @@ struct CompletedOrderDetailsCoordinatorView: View {
                     case .detail(let orderId):
                         PharmacyCompletedOrderDetailView(
                             state: viewModel.viewState,
+                            isMarkingReady: viewModel.isMarkingReady,
+                            isMarkingOutForDelivery: viewModel.isMarkingOutForDelivery,
+                            isMarkingDelivered: viewModel.isMarkingDelivered,
+                            markReadyError: viewModel.markReadyError,
+                            markOutForDeliveryError: viewModel.markOutForDeliveryError,
+                            markDeliveredError: viewModel.markDeliveredError,
                             onRetry: { viewModel.handle(.retry(orderId: orderId)) },
-                            onBack: { coordinator.pop() }
+                            onBack: { coordinator.pop() },
+                            onMarkReady: { viewModel.handle(.markReady(orderId: orderId)) },
+                            onMarkOutForDelivery: { viewModel.handle(.markOutForDelivery(orderId: orderId)) },
+                            onMarkDelivered: { viewModel.handle(.markDelivered(orderId: orderId)) }
                         )
                         .task {
                             viewModel.handle(.load(orderId: orderId))
@@ -84,8 +92,17 @@ extension CompletedOrderDetailsCoordinatorView {
         var body: some View {
             PharmacyCompletedOrderDetailView(
                 state: viewModel.viewState,
+                isMarkingReady: viewModel.isMarkingReady,
+                isMarkingOutForDelivery: viewModel.isMarkingOutForDelivery,
+                isMarkingDelivered: viewModel.isMarkingDelivered,
+                markReadyError: viewModel.markReadyError,
+                markOutForDeliveryError: viewModel.markOutForDeliveryError,
+                markDeliveredError: viewModel.markDeliveredError,
                 onRetry: { viewModel.handle(.retry(orderId: orderId)) },
-                onBack: { dismiss() }
+                onBack: { dismiss() },
+                onMarkReady: { viewModel.handle(.markReady(orderId: orderId)) },
+                onMarkOutForDelivery: { viewModel.handle(.markOutForDelivery(orderId: orderId)) },
+                onMarkDelivered: { viewModel.handle(.markDelivered(orderId: orderId)) }
             )
             .task {
                 viewModel.handle(.load(orderId: orderId))
@@ -95,4 +112,3 @@ extension CompletedOrderDetailsCoordinatorView {
         }
     }
 }
-
