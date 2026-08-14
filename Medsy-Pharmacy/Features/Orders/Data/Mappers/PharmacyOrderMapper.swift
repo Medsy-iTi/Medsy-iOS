@@ -92,7 +92,8 @@ enum PharmacyOrderMapper {
             prescriptionUrl: dto.prescriptionUrl,
             customerName: dto.customerName,
             customerPhone: dto.customerPhone,
-            notes: dto.notes
+            notes: dto.notes,
+            paymentMethod: dto.paymentMethod
         )
     }
 
@@ -150,27 +151,38 @@ enum PharmacyOrderMapper {
             customerName: dto.request.customerName,
             customerPhone: dto.request.customerPhone,
             notes: dto.request.notes,
-            assignmentStatus: dto.assignmentStatus
+            assignmentStatus: dto.assignmentStatus,
+            paymentMethod: dto.request.paymentMethod
         )
     }
 
     static func map(_ dto: PageResponseDTO<PharmacyRequestAssignmentDTO>) -> PharmacyOrdersPage {
         PharmacyOrdersPage(
-            orders: dto.content.map { map($0) }.reversed(),
+            orders: dto.content.map { map($0) },
             pageNumber: dto.pageNumber,
             totalPages: dto.totalPages,
             isLastPage: dto.last
         )
     }
 
+    static func map(_ dto: PageResponseDTO<PharmacyMedicineRequestDTO>) -> PharmacyOrdersPage {
+        PharmacyOrdersPage(
+            orders: dto.content.map { map($0) },
+            pageNumber: dto.pageNumber,
+            totalPages: dto.totalPages,
+            isLastPage: dto.last
+        )
+    }
 
     static func mapToListItem(_ order: PharmacyOrder) -> PharmacyOrderListItem {
-        PharmacyOrderListItem(
+        let rawPayment = order.paymentMethod?.uppercased()
+        let paymentMethod: PharmacyOrderPaymentMethod = (rawPayment == "CARD" || rawPayment == "ONLINE" || rawPayment == "VISA") ? .visa(lastFourDigits: "") : .cash
+        return PharmacyOrderListItem(
             id: String(order.id),
             customerName: order.customerName ?? "pharmacy.orders.customer.fallback".localized(String(order.userId)),
             phoneNumber: order.customerPhone ?? "—",
             address: order.deliveryAddress.isEmpty ? "pharmacy.orders.address.fallback".localized : order.deliveryAddress,
-            paymentMethod: .cash,
+            paymentMethod: paymentMethod,
             amount: Int(order.totalPrice.rounded()),
             createdAt: order.date,
             status: mapStatus(order.status, assignmentStatus: order.assignmentStatus, orderId: order.id)
@@ -189,20 +201,20 @@ enum PharmacyOrderMapper {
             return .expired
         case .cancelled:
             return .expired
-        case .pending, .unknown:
-            let rawAssignment = assignmentStatus?.uppercased() ?? "PENDING"
-            let isOffered = rawAssignment == "OFFER_CREATED" ||
-                            rawAssignment == "OFFER_MADE" ||
-                            rawAssignment == "SUBMITTED" ||
-                            rawAssignment == "OFFERED" ||
-                            PharmacySubmittedOffersStore.shared.contains(orderId)
-            
-            if isOffered {
-                return .pendingApproval
-            } else if rawAssignment == "PENDING" {
-                return .new
+        case .pending, .searching, .unknown:
+            if let rawAssignment = assignmentStatus?.uppercased() {
+                if rawAssignment == "OFFER_CREATED" || rawAssignment == "OFFER_MADE" || rawAssignment == "SUBMITTED" || rawAssignment == "OFFERED" {
+                    return .pendingApproval
+                } else if rawAssignment == "PENDING" {
+                    return .new
+                } else {
+                    return .expired
+                }
             } else {
-                return .expired
+                if PharmacySubmittedOffersStore.shared.contains(orderId) {
+                    return .pendingApproval
+                }
+                return .new
             }
         }
     }
@@ -242,7 +254,8 @@ enum PharmacyOrderMapper {
             prescriptionImageUrl: makeFullImageUrl(order.prescriptionUrl),
             deliveryLatitude: order.deliveryCoordinate.latitude,
             deliveryLongitude: order.deliveryCoordinate.longitude,
-            createdAt: order.date
+            createdAt: order.date,
+            paymentMethod: order.paymentMethod
         )
     }
 
@@ -256,7 +269,7 @@ enum PharmacyOrderMapper {
 
     private static func mapStatusTitle(_ status: PharmacyOrderAPIStatus) -> String {
         switch status {
-        case .pending: return "pharmacy.home.order_new".localized
+        case .pending, .searching: return "pharmacy.home.order_new".localized
         case .accepted, .preparing, .readyForPickup, .readyForDelivery, .outForDelivery: return "pharmacy.home.order_preparing".localized
         case .delivered: return "pharmacy.home.order_delivered".localized
         case .completed: return "pharmacy.orders.status.completed".localized

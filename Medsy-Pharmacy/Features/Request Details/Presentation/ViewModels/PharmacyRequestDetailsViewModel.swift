@@ -103,12 +103,14 @@ final class PharmacyRequestDetailsViewModel {
             self.requestStatus = .completed
         case .expired:
             self.requestStatus = .expired
+        case .searching, .pending:
+            self.requestStatus = .open
         default:
             self.requestStatus = .open
         }
         
         if let rawAssignment = order.assignmentStatus?.uppercased() {
-            if rawAssignment == "OFFER_CREATED" || rawAssignment == "OFFER_MADE" || rawAssignment == "SUBMITTED" || rawAssignment == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(order.id) {
+            if rawAssignment == "OFFER_CREATED" || rawAssignment == "OFFER_MADE" || rawAssignment == "SUBMITTED" || rawAssignment == "OFFERED" {
                 self.assignmentStatus = .offered
             } else if rawAssignment == "PENDING" {
                 self.assignmentStatus = .canOffer

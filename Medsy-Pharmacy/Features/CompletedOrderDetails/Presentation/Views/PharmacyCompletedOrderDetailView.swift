@@ -396,7 +396,7 @@ private struct PharmacyOrderStatusTrackerView: View {
             return 1
         case .delivered, .completed:
             return 2
-        case .cancelled, .expired, .unknown:
+        case .cancelled, .expired, .searching, .unknown:
             return -1
         }
     }

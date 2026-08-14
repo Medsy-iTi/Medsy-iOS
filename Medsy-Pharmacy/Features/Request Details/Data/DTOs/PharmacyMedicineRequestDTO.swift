@@ -23,10 +23,13 @@ struct PharmacyRequestAssignmentDTO: Decodable, Equatable {
             return .cannotOffer
         }
         guard let statusStr = assignmentStatus else {
+            if PharmacySubmittedOffersStore.shared.contains(request.id) {
+                return .offered
+            }
             return .cannotOffer
         }
         let rawStatus = statusStr.uppercased()
-        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" || PharmacySubmittedOffersStore.shared.contains(request.id) {
+        if rawStatus == "OFFER_CREATED" || rawStatus == "OFFER_MADE" || rawStatus == "SUBMITTED" || rawStatus == "OFFERED" {
             return .offered
         }
         if rawStatus == "PENDING" {
@@ -49,6 +52,7 @@ struct PharmacyMedicineRequestDTO: Decodable, Equatable {
     let items: [PharmacyMedicineRequestItemDTO]?
     let prescriptionUrl: String?
     let notes: String?
+    let paymentMethod: String?
 
     var requestStatus: RequestStatus {
         switch status.uppercased() {
@@ -56,6 +60,8 @@ struct PharmacyMedicineRequestDTO: Decodable, Equatable {
             return .completed
         case "EXPIRED":
             return .expired
+        case "SEARCHING", "OPEN":
+            return .open
         default:
             return .open
         }

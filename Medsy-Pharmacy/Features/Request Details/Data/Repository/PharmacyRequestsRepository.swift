@@ -15,7 +15,7 @@ final class PharmacyRequestsRepository: PharmacyRequestsRepositoryProtocol {
         guard response.success, let data = response.data else {
             throw NetworkError.validationError(response.message)
         }
-        return data.content.map { PharmacyMedicineRequestMapper.map($0) }.reversed()
+        return data.content.map { PharmacyMedicineRequestMapper.map($0) }
     }
 
     func fetchRequestById(requestId: Int) async throws -> PharmacyMedicineRequestEntity {

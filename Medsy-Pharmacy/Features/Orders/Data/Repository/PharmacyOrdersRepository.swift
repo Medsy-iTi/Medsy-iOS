@@ -15,7 +15,7 @@ final class PharmacyOrdersRepository: PharmacyOrdersRepositoryProtocol {
     }
 
     func fetchOrders(pharmacyId: Int, page: Int, size: Int) async throws -> PharmacyOrdersPage {
-        let endpoint = PharmacyOrdersEndpoint.fetchOrders(pharmacyId: pharmacyId, page: page, size: size)
+        let endpoint = PharmacyOrdersEndpoint.fetchOrders(pharmacyId: pharmacyId, page: page, size: size, sort: ["id,desc"])
 
         do {
             let envelope: APIEnvelope<PageResponseDTO<PharmacyRequestAssignmentDTO>> =
