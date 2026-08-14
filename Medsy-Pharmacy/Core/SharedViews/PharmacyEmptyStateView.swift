@@ -41,7 +41,7 @@ struct PharmacyEmptyStateView: View {
 			Spacer()
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, PharmacySpacing.md)
     }
 }
-
 
