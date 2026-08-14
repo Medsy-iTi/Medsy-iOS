@@ -473,6 +473,8 @@
 "pharmacy.chatbot.title" = "المساعد الذكي Medsy";
 "pharmacy.chatbot.status.online" = "متصل";
 "pharmacy.chatbot.menu.new_chat" = "محادثة جديدة";
+"pharmacy.chatbot.new_chat.title" = "محادثة جديدة";
+"pharmacy.chatbot.new_chat.confirm" = "هل أنت متأكد من مسح المحادثة والبدء من جديد؟";
 "pharmacy.chatbot.input.placeholder" = "اسأل عن عمليات الصيدلية...";
 "pharmacy.chatbot.state.loading_history" = "جاري تحميل المحادثة...";
 "pharmacy.chatbot.state.error_loading" = "فشل في تحميل سجل المحادثة.";

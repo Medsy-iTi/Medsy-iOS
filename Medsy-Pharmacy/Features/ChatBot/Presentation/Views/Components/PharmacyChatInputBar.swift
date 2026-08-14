@@ -22,21 +22,21 @@ struct PharmacyChatInputBar: View {
     @State private var micPulse: Bool = false
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .bottom, spacing: 10) {
             // Camera button
             Button(action: onCamera) {
-                Image(systemName: "camera.fill")
-                    .font(.system(size: 18))
-                    .foregroundColor(PharmacyColor.primary)
-                    .frame(width: 40, height: 40)
-                    .background(PharmacyColor.primarySoft)
+                Image(systemName: "camera")
+                    .font(.system(size: 16))
+                    .foregroundColor(PharmacyColor.textSecondary)
+                    .padding(10)
+                    .background(PharmacyColor.border)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
             .disabled(disabled)
 
             // Text field with mic inside
-            HStack(spacing: 8) {
+            HStack(alignment: .bottom) {
                 TextField(placeholder, text: $text, axis: .vertical)
                     .font(PharmacyColor.sans(15))
                     .focused($isFocused)
@@ -47,18 +47,19 @@ struct PharmacyChatInputBar: View {
 
                 // Mic button
                 Button(action: onMic) {
-                    Image(systemName: isRecording ? "waveform" : "mic.fill")
+                    Image(systemName: isRecording ? "waveform" : "mic")
                         .font(.system(size: 16))
-                        .foregroundColor(isRecording ? PharmacyColor.danger : PharmacyColor.textSecondary)
-                        .scaleEffect(isRecording && micPulse ? 1.25 : 1.0)
+                        .foregroundColor(isRecording ? PharmacyColor.danger : PharmacyColor.primary)
+                        .scaleEffect(isRecording && micPulse ? 1.2 : 1.0)
                         .animation(
                             isRecording
-                                ? .easeInOut(duration: 0.55).repeatForever(autoreverses: true)
+                                ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true)
                                 : .default,
                             value: micPulse
                         )
                 }
                 .buttonStyle(.plain)
+                .padding(.bottom, 2)
                 .onChange(of: isRecording) { _, recording in
                     micPulse = recording
                 }
@@ -67,20 +68,16 @@ struct PharmacyChatInputBar: View {
             .padding(.vertical, 10)
             .background(PharmacyColor.mutedSurface)
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
 
             // Send button
             Button(action: { if isSendEnabled { onSend() } }) {
-                Image(systemName: "arrow.up")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
+                Image(systemName: "paperplane.fill")
+                    .flipsForRightToLeftLayoutDirection(true)
+                    .font(.system(size: 14))
+                    .foregroundColor(isSendEnabled ? .white : PharmacyColor.textSecondary)
+                    .padding(12)
                     .background(isSendEnabled ? PharmacyColor.primary : PharmacyColor.border)
                     .clipShape(Circle())
-                    .animation(.easeInOut(duration: 0.15), value: isSendEnabled)
             }
             .buttonStyle(.plain)
             .disabled(!isSendEnabled)

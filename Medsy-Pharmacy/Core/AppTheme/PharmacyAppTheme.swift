@@ -26,20 +26,26 @@ final class PharmacyAppSettings: ObservableObject {
 }
 
 enum PharmacyColor {
-    static var bg: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#07111F") : Color(hex: "#F7FAFF") }
-    static var surface: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#0B1728") : Color(hex: "#FFFFFF") }
-    static var card: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#101D31") : Color(hex: "#FFFFFF") }
-    static var border: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#20324F") : Color(hex: "#DDE8F6") }
+    private static func dynamic(light: String, dark: String) -> Color {
+        Color(UIColor { trait in
+            trait.userInterfaceStyle == .dark ? UIColor(Color(hex: dark)) : UIColor(Color(hex: light))
+        })
+    }
+
+    static var bg: Color { dynamic(light: "#F7FAFF", dark: "#07111F") }
+    static var surface: Color { dynamic(light: "#FFFFFF", dark: "#0B1728") }
+    static var card: Color { dynamic(light: "#FFFFFF", dark: "#101D31") }
+    static var border: Color { dynamic(light: "#DDE8F6", dark: "#20324F") }
     static var primary: Color { Color(hex: "#0B63E5") }
     static var primaryDark: Color { Color(hex: "#103F8F") }
     static var secondary: Color { Color(hex: "#7956D8") }
-    static var primarySoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#102A52") : Color(hex: "#EAF3FF") }
-    static var secondarySoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#24204D") : Color(hex: "#F0ECFF") }
-    static var successSoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#123D36") : Color(hex: "#E8F8F0") }
-    static var warningSoft: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#4A3015") : Color(hex: "#FFF1E5") }
-    static var mutedSurface: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#132238") : Color(hex: "#F3F7FD") }
-    static var textPrimary: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#F8FBFF") : Color(hex: "#071833") }
-    static var textSecondary: Color { PharmacyAppSettings.shared.isDarkMode ? Color(hex: "#9DAEC8") : Color(hex: "#5C6D86") }
+    static var primarySoft: Color { dynamic(light: "#EAF3FF", dark: "#102A52") }
+    static var secondarySoft: Color { dynamic(light: "#F0ECFF", dark: "#24204D") }
+    static var successSoft: Color { dynamic(light: "#E8F8F0", dark: "#123D36") }
+    static var warningSoft: Color { dynamic(light: "#FFF1E5", dark: "#4A3015") }
+    static var mutedSurface: Color { dynamic(light: "#F3F7FD", dark: "#132238") }
+    static var textPrimary: Color { dynamic(light: "#071833", dark: "#F8FBFF") }
+    static var textSecondary: Color { dynamic(light: "#5C6D86", dark: "#9DAEC8") }
     static var success: Color { Color(hex: "#12B76A") }
     static var warning: Color { Color(hex: "#F59E0B") }
     static var danger: Color { Color(hex: "#E5484D") }
