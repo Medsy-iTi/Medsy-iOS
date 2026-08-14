@@ -36,8 +36,8 @@ private func makeDefaultResponse() -> AIChatAssistantResponse {
         conversationID: nil, messageID: 1, intent: .other,
         answer: "Response text", products: [], alternatives: [],
         doctorSpecializations: [], emergencyNumbers: [],
-        categories: [], pharmacistRankings: [],
-        disclaimer: nil, action: nil
+        categories: [], pharmacistRankings: [], disclaimer: nil,
+        action: nil, reminder: nil, analytics: nil
     )
 }
 
@@ -165,8 +165,8 @@ final class AiChatViewModelTests: XCTestCase {
             conversationID: nil, messageID: 1, intent: .addToCart,
             answer: "Added!", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [],
-            disclaimer: nil, action: action
+            categories: [], pharmacistRankings: [], disclaimer: nil,
+            action: action, reminder: nil, analytics: nil
         )
         sendTextUseCase.result = .success(responseWithAction)
         sut.inputText = "add to cart"

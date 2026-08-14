@@ -56,13 +56,13 @@ struct MedsyChatPreviewWrapper: View {
 // MARK: - Preview fakes
 
 struct PreviewSendTextUseCase: SendAiChatTextMessageUseCaseProtocol {
-    func execute(text: String) async throws -> AIChatAssistantResponse {
+    func execute(text: String, analyticsPreset: String? = nil) async throws -> AIChatAssistantResponse {
         try await Task.sleep(nanoseconds: 800_000_000)
         return AIChatAssistantResponse(
             conversationID: 1, messageID: 1, intent: .other,
             answer: "This is a preview response.", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil, analytics: nil
         )
     }
 }
@@ -73,7 +73,7 @@ struct PreviewSendImageUseCase: SendAiChatImageMessageUseCaseProtocol {
             conversationID: 1, messageID: 1, intent: .other,
             answer: "Image received.", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil, analytics: nil
         )
     }
 }

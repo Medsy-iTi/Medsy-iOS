@@ -81,8 +81,8 @@ final class AiChatSessionDataSourceTests: XCTestCase {
             conversationID: nil, messageID: nil, intent: .other,
             answer: text, products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [],
-            disclaimer: nil, action: nil
+            categories: [], pharmacistRankings: [], disclaimer: nil,
+            action: nil, reminder: nil, analytics: nil
         )
     }
 
