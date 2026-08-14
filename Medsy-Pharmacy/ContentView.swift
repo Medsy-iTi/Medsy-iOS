@@ -130,8 +130,9 @@ private struct PharmacyAuthenticationRootView: View {
 		),
 		completedOrdersFactory: PharmacyCompletedOrdersFactory(
 			getCompletedOrdersUseCase: PreviewGetCompletedOrdersUseCase(),
+			getProfileUseCase: PreviewGetProfileUseCase(),
 			identityProvider: PreviewIdentityProvider()
-															  ),
+														  ),
         chatFactory: PreviewChatFactory(),
 		coordinator: RootCoordinator(container: PharmacyDIContainer())
 	)

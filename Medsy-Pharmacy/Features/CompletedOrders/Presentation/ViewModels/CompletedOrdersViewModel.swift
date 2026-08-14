@@ -42,21 +42,25 @@ final class CompletedOrdersViewModel {
 
     private(set) var visibleOrders: [CompletedOrder] = []
 
-    private let pharmacyId: Int
     private let getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol
+    private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
+    private let identityProvider: PharmacyIdentityProviding
     private let coordinator: CompletedOrdersCoordinatorProtocol
+    private var pharmacyId: Int?
 
     private var currentPage = 0
     private let pageSize = 20
     private var isLastPage = false
 
     init(
-        pharmacyId: Int,
         getCompletedOrdersUseCase: GetCompletedOrdersUseCaseProtocol,
+        getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
+        identityProvider: PharmacyIdentityProviding,
         coordinator: CompletedOrdersCoordinatorProtocol
     ) {
-        self.pharmacyId = pharmacyId
         self.getCompletedOrdersUseCase = getCompletedOrdersUseCase
+        self.getProfileUseCase = getProfileUseCase
+        self.identityProvider = identityProvider
         self.coordinator = coordinator
     }
 
@@ -70,6 +74,7 @@ final class CompletedOrdersViewModel {
         currentPage = 0
         isLastPage = false
         do {
+            let pharmacyId = try await resolvePharmacyId()
             let result = try await getCompletedOrdersUseCase.execute(
                 pharmacyId: pharmacyId,
                 status: selectedFilter.apiStatusValue,
@@ -91,6 +96,7 @@ final class CompletedOrdersViewModel {
 
         guard searchText.isEmpty else { return }
         guard index >= visibleOrders.count - 5 else { return }
+        guard let pharmacyId else { return }
 
         isLoadingNextPage = true
         defer { isLoadingNextPage = false }
@@ -117,6 +123,21 @@ final class CompletedOrdersViewModel {
         coordinator.showDetails(for: order)
     }
 
+    private func resolvePharmacyId() async throws -> Int {
+        if let pharmacyId {
+            return pharmacyId
+        }
+
+        let profile = try await getProfileUseCase.execute()
+        guard let pharmacyId = profile.pharmacyId, pharmacyId > 0 else {
+            throw CompletedOrdersResolutionError.noPharmacy
+        }
+
+        self.pharmacyId = pharmacyId
+        identityProvider.currentPharmacyId = pharmacyId
+        return pharmacyId
+    }
+
     private func matchesSearch(_ order: CompletedOrder) -> Bool {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !query.isEmpty else { return true }
@@ -140,4 +161,8 @@ final class CompletedOrdersViewModel {
             state = .loaded
         }
     }
+}
+
+private enum CompletedOrdersResolutionError: Error {
+    case noPharmacy
 }
