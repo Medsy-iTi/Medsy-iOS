@@ -31,27 +31,38 @@ struct CompleteRequestView: View {
         VStack(spacing: 0) {
             MedsyNavBar(
                 title: "complete_request.title".localized,
-                onBack: onBack
+                onBack: onBack,
+                isBackEnabled: !viewModel.isSubmitting
             )
 
             ScrollView {
                 VStack(spacing: MedsySpacing.md) {
+                    Text("complete_request.subtitle".localized)
+                        .font(MedsyFont.body())
+                        .foregroundStyle(AppColor.textSec)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+
                     CompleteRequestSummaryView(
                         draft: viewModel.draft,
                         isExpanded: $viewModel.isSummaryExpanded
                     )
 
-                    CompleteRequestDeliveryAddressView(
-                        savedAddress: viewModel.savedAddress,
-                        location: viewModel.deliveryLocation,
-                        isLoading: viewModel.isLoadingAddress,
-                        validationMessage: locationValidationMessage,
-                        onChangeLocation: onChangeLocation
-                    )
-
                     CompleteRequestPaymentMethodView(
                         selectedMethod: viewModel.paymentMethod,
                         onSelect: viewModel.selectPaymentMethod
+                    )
+
+                    CompleteRequestDeliveryAddressView(
+                        savedAddress: viewModel.savedAddress,
+                        savedLocation: viewModel.savedLocation,
+                        customLocation: viewModel.customLocation,
+                        selectedOption: viewModel.selectedAddressOption,
+                        isLoading: viewModel.isLoadingAddress,
+                        validationMessage: locationValidationMessage,
+                        onSelectSavedAddress: viewModel.selectSavedAddress,
+                        onSelectCustomAddress: viewModel.selectCustomAddress,
+                        onChangeLocation: onChangeLocation
                     )
                 }
                 .padding(.horizontal, MedsySpacing.md)
@@ -59,6 +70,7 @@ struct CompleteRequestView: View {
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
+        .interactiveDismissDisabled(viewModel.isSubmitting)
         .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom) {
             PrimaryButton(

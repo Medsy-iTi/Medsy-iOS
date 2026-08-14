@@ -98,6 +98,7 @@ struct CartCoordinatorView: View {
                     )
                 case .prescription:
                     PrescriptionCoordinatorView(
+                        mode: .cartAttachment,
                         onExit: coordinator.pop,
                         onViewCart: coordinator.pop
                     )

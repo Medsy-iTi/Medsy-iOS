@@ -14,6 +14,7 @@ enum CartEvent: Equatable {
     case decreaseQuantity(itemID: String)
     case removeItem(itemID: String)
     case undoRemoval
+    case dismissRemoval
     case setPrescription(Data, CartPrescriptionSource)
     case replacePrescription(id: UUID, data: Data, source: CartPrescriptionSource)
     case removePrescriptionByID(UUID)
@@ -71,6 +72,7 @@ protocol CartViewModelProtocol: AnyObject {
 
     @discardableResult
     func handle(_ event: CartEvent) -> CartEffect?
+    func attachPrescription(data: Data, source: CartPrescriptionSource) async throws
     func refreshInteractions(language: String) async
     func clearAfterCompletedRequest() async -> Bool
 }

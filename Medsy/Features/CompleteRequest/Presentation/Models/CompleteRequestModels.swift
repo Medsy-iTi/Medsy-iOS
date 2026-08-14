@@ -12,6 +12,11 @@ enum CompleteRequestPaymentMethod: String, CaseIterable, Equatable {
     case visa = "CARD"
 }
 
+enum CompleteRequestAddressOption: Equatable {
+    case saved
+    case custom
+}
+
 struct CompleteRequestLocation: Equatable {
     let address: String
     let latitude: Double

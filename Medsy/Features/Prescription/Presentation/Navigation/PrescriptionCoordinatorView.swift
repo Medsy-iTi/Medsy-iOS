@@ -9,6 +9,15 @@ import PhotosUI
 import SwiftUI
 import UIKit
 
+enum PrescriptionFlowMode: Equatable {
+    case analysis
+    case cartAttachment
+
+    var isCartAttachment: Bool {
+        self == .cartAttachment
+    }
+}
+
 @MainActor
 struct PrescriptionCoordinatorView: View {
     @Environment(CartViewModel.self) private var cartViewModel
@@ -17,16 +26,21 @@ struct PrescriptionCoordinatorView: View {
     @State private var showsPhotoPicker = false
     @State private var showsCamera = false
     @State private var showsCameraUnavailable = false
+    @State private var isAttachingToCart = false
+    @State private var attachmentErrorMessage: String?
 
+    private let mode: PrescriptionFlowMode
     private let onExit: () -> Void
     private let onViewCart: () -> Void
 
     init(
         viewModel: PrescriptionViewModel = DIContainer.shared.resolve(PrescriptionViewModel.self),
+        mode: PrescriptionFlowMode = .analysis,
         onExit: @escaping () -> Void,
         onViewCart: @escaping () -> Void = {}
     ) {
         _viewModel = State(initialValue: viewModel)
+        self.mode = mode
         self.onExit = onExit
         self.onViewCart = onViewCart
     }
@@ -36,6 +50,7 @@ struct PrescriptionCoordinatorView: View {
             switch viewModel.state {
             case .upload:
                 PrescriptionUploadView(
+                    isAttachmentOnly: mode.isCartAttachment,
                     onCamera: openCamera,
                     onGallery: { showsPhotoPicker = true },
                     onBack: { send(.back) }
@@ -43,7 +58,9 @@ struct PrescriptionCoordinatorView: View {
             case .preview:
                 PrescriptionPreviewView(
                     imageData: viewModel.selectedImageData,
-                    onContinue: { send(.continueFromPreview) },
+                    isAttachmentOnly: mode.isCartAttachment,
+                    isSubmitting: isAttachingToCart,
+                    onContinue: continueFromPreview,
                     onChangeImage: { send(.changeImage) },
                     onDelete: { send(.deleteImage) },
                     onBack: { send(.back) }
@@ -101,6 +118,17 @@ struct PrescriptionCoordinatorView: View {
         } message: {
             Text("prescription.camera.unavailable.message".localized)
         }
+        .alert(
+            "cart.error.title".localized,
+            isPresented: Binding(
+                get: { attachmentErrorMessage != nil },
+                set: { if !$0 { attachmentErrorMessage = nil } }
+            )
+        ) {
+            Button("common.ok".localized, role: .cancel) {}
+        } message: {
+            Text(attachmentErrorMessage ?? "")
+        }
     }
 
     private func openCamera() {
@@ -132,6 +160,36 @@ struct PrescriptionCoordinatorView: View {
         switch effect {
         case .exit:
             onExit()
+        }
+    }
+
+    private func continueFromPreview() {
+        if mode.isCartAttachment {
+            attachPrescriptionToCart()
+        } else {
+            send(.continueFromPreview)
+        }
+    }
+
+    private func attachPrescriptionToCart() {
+        guard !isAttachingToCart,
+              let data = viewModel.selectedImageData,
+              let selectedSource = viewModel.selectedImageSource else {
+            return
+        }
+
+        let source: CartPrescriptionSource = selectedSource == .camera ? .camera : .photoLibrary
+        isAttachingToCart = true
+
+        Task {
+            do {
+                try await cartViewModel.attachPrescription(data: data, source: source)
+                isAttachingToCart = false
+                onViewCart()
+            } catch {
+                isAttachingToCart = false
+                attachmentErrorMessage = error.localizedDescription
+            }
         }
     }
 

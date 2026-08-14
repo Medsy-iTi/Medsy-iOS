@@ -12,6 +12,9 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
     var draft: CompleteRequestDraft { get }
     var paymentMethod: CompleteRequestPaymentMethod { get set }
     var savedAddress: String? { get }
+    var savedLocation: CompleteRequestLocation? { get }
+    var customLocation: CompleteRequestLocation? { get }
+    var selectedAddressOption: CompleteRequestAddressOption { get set }
     var deliveryLocation: CompleteRequestLocation? { get }
     var notes: String { get set }
     var isSummaryExpanded: Bool { get set }
@@ -24,6 +27,8 @@ protocol CompleteRequestViewModelProtocol: AnyObject {
 
     func loadSavedAddress() async
     func selectPaymentMethod(_ method: CompleteRequestPaymentMethod)
+    func selectSavedAddress()
+    func selectCustomAddress()
     func confirmLocation(_ location: CompleteRequestLocation)
     func dismissSubmissionError()
     func submit() async -> Bool

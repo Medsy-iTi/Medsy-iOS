@@ -231,12 +231,11 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
 
     private func handleReorder() {
 
-        guard case .loaded(let order) = detailState, !order.items.isEmpty else { return }
+        guard case .loaded(let order) = detailState,
+              order.status == .delivered else { return }
         guard reorderState != .loading else { return }
 
-        let items = order.items.compactMap { item in
-            item.productId.map { ReorderItem(productId: $0, quantity: item.quantity) }
-        }
+        let items = reorderableItems(for: order)
         guard !items.isEmpty else { return }
 
         reorderTask?.cancel()
@@ -256,6 +255,15 @@ final class OrderDetailViewModel: OrderDetailViewModelProtocol {
             case .failure:
                 reorderState = .failed
             }
+        }
+    }
+
+    private func reorderableItems(for order: OrderDetailPresentationModel) -> [ReorderItem] {
+        let allocatedItems = order.pharmacies.flatMap(\.items)
+        let sourceItems = allocatedItems.isEmpty ? order.items : allocatedItems
+
+        return sourceItems.compactMap { item in
+            item.productId.map { ReorderItem(productId: $0, quantity: item.quantity) }
         }
     }
 }

@@ -12,6 +12,13 @@ protocol CartRepositoryProtocol {
     func updateItem(id: Int64, quantity: Int) async throws -> Cart
     func removeItem(id: Int64) async throws -> Cart
     func clearCart() async throws
+    func clearCachedCart() async throws
     func fetchItemCount() async throws -> Int
     func fetchInteractions(language: String) async throws -> [CartInteractionWarning]
+}
+
+extension CartRepositoryProtocol {
+    func clearCachedCart() async throws {
+        try await clearCart()
+    }
 }

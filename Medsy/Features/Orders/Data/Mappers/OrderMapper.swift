@@ -18,13 +18,13 @@ enum OrderMapper {
             orderNumber: dto.id,
             pharmacyName: pharmacyNames.first ?? "",
             status: OrderStatus(rawValue: dto.orderStatus),
-            fulfillmentType: OrderFulfillmentType(
+            fulfillmentType: resolvedFulfillmentType(
                 rawValue: dto.fulfillmentMethod,
-                hasDeliveryCoordinates: false
+                status: dto.orderStatus
             ),
             date: displayDate(for: dto),
             totalPrice: dto.totalPrice,
-            itemCount: allItems.reduce(0) { $0 + $1.quantity },
+            itemCount: allItems.count,
             itemImageURLs: allItems.compactMap(\.imageURL),
             requestID: dto.requestId,
             pharmacyNames: pharmacyNames,
@@ -39,9 +39,9 @@ enum OrderMapper {
         let pharmacies = dto.orderResponses.map(mapPharmacy)
         let allItems = pharmacies.flatMap(\.items)
         let firstPharmacy = pharmacies.first
-        let fulfillmentType = OrderFulfillmentType(
+        let fulfillmentType = resolvedFulfillmentType(
             rawValue: dto.fulfillmentMethod,
-            hasDeliveryCoordinates: false
+            status: dto.orderStatus
         )
 
         return OrderDetailEntity(
@@ -94,6 +94,20 @@ enum OrderMapper {
             coordinate: coordinate(latitude: dto.latitude, longitude: dto.longitude),
             items: dto.items.map(mapItem)
         )
+    }
+
+    private static func resolvedFulfillmentType(rawValue: String?, status: String) -> OrderFulfillmentType {
+        let parsed = OrderFulfillmentType(rawValue: rawValue, hasDeliveryCoordinates: false)
+        guard parsed == .notSelected else { return parsed }
+
+        switch status.uppercased() {
+        case "READY_FOR_PICKUP":
+            return .pickup
+        case "READY_FOR_DELIVERY", "OUT_FOR_DELIVERY":
+            return .delivery
+        default:
+            return .notSelected
+        }
     }
 
     private static func mapItem(_ dto: MasterOrderItemDTO) -> OrderDetailItemEntity {

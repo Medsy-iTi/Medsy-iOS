@@ -24,9 +24,17 @@ struct PharmacyHeaderView: View {
                     .frame(width: 80, height: 80)
                     .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
                     .overlay {
-                        Image(systemName: "cross.case.fill")
-                            .font(.system(size: 38, weight: .bold))
-                            .foregroundStyle(AppColor.green)
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(AppColor.green)
+                            .frame(width: 56, height: 56)
+                            .overlay {
+                                Image("PharmacySnakeIcon")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(Color.white)
+                                    .frame(width: 36, height: 36)
+                            }
                     }
                     .offset(x: MedsySpacing.md, y: 40)
             }

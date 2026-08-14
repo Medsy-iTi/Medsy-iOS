@@ -120,6 +120,54 @@ final class CartViewModel: CartViewModelProtocol {
         !items.isEmpty || !prescriptions.isEmpty
     }
 
+    func attachPrescription(
+        data: Data,
+        source: CartPrescriptionSource
+    ) async throws {
+        guard canMutate else { throw CartPrescriptionReviewError.cartIsBusy }
+        guard !data.isEmpty else { return }
+
+        let previousPrescriptions = prescriptions
+        let existingPrescription = prescriptions.first
+        let attachment = CartPrescriptionAttachment(
+            id: existingPrescription?.id ?? UUID(),
+            imageData: data,
+            source: source,
+            createdAt: existingPrescription?.createdAt ?? Date()
+        )
+
+        prescriptions = [attachment]
+        feedback = nil
+
+        guard let manageCartPrescriptionsUseCase else {
+            syncState = .synced
+            return
+        }
+
+        syncState = .syncing
+        do {
+            let prescription = CartPrescriptionPresentationMapper.map(attachment)
+            let updatedPrescriptions: [CartPrescription]
+            if let existingPrescription {
+                updatedPrescriptions = try await manageCartPrescriptionsUseCase.replace(
+                    id: existingPrescription.id,
+                    with: prescription
+                )
+            } else {
+                updatedPrescriptions = try await manageCartPrescriptionsUseCase.add(prescription)
+            }
+
+            prescriptions = updatedPrescriptions.map(CartPrescriptionPresentationMapper.map)
+            syncState = .synced
+        } catch {
+            prescriptions = previousPrescriptions
+            let message = error.localizedDescription
+            syncState = .failed(message)
+            feedback = .operationFailed(message)
+            throw error
+        }
+    }
+
     func addPrescriptionReview(
         items reviewItems: [CartDisplayItem],
         prescriptionData: Data?,
@@ -242,6 +290,8 @@ final class CartViewModel: CartViewModelProtocol {
             return handleRemove(itemID: itemID)
         case .undoRemoval:
             return handleUndoRemoval()
+        case .dismissRemoval:
+            clearRemoval()
         case let .setPrescription(data, source):
             return handleAddPrescription(data: data, source: source)
         case let .replacePrescription(id, data, source):
@@ -278,36 +328,25 @@ final class CartViewModel: CartViewModelProtocol {
     }
 
     func clearAfterCompletedRequest() async -> Bool {
-        guard canMutate, hasContent else { return !hasContent }
+        guard canMutate else { return !hasContent }
 
-        guard let clearCartUseCase else {
-            replaceItems([])
-            prescriptions = []
-            pharmacistNote = ""
-            clearRemoval()
-            clearInteractions()
-            syncState = .synced
-            feedback = nil
-            return true
+        if let clearCartUseCase {
+            do {
+                try await clearCartUseCase.clearAfterCompletedRequest()
+            } catch {
+                // The backend has already created the request and cleared its cart.
+                // Keep completion navigation independent from a local cache cleanup failure.
+            }
         }
 
-        syncState = .syncing
-        do {
-            try await clearCartUseCase.execute()
-            replaceItems([])
-            prescriptions = []
-            pharmacistNote = ""
-            clearRemoval()
-            clearInteractions()
-            syncState = .synced
-            feedback = nil
-            return true
-        } catch {
-            let message = error.localizedDescription
-            syncState = .failed(message)
-            feedback = .operationFailed(message)
-            return false
-        }
+        replaceItems([])
+        prescriptions = []
+        pharmacistNote = ""
+        clearRemoval()
+        clearInteractions()
+        syncState = .synced
+        feedback = nil
+        return true
     }
 
     func refreshInteractions(language: String) async {

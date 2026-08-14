@@ -7,6 +7,13 @@
 
 protocol ClearCartUseCaseProtocol {
     func execute() async throws
+    func clearAfterCompletedRequest() async throws
+}
+
+extension ClearCartUseCaseProtocol {
+    func clearAfterCompletedRequest() async throws {
+        try await execute()
+    }
 }
 
 final class ClearCartUseCase: ClearCartUseCaseProtocol {
@@ -24,5 +31,25 @@ final class ClearCartUseCase: ClearCartUseCaseProtocol {
     func execute() async throws {
         try await cartRepository.clearCart()
         try await prescriptionRepository.clearPrescriptions()
+    }
+
+    func clearAfterCompletedRequest() async throws {
+        var cleanupError: Error?
+
+        do {
+            try await prescriptionRepository.clearPrescriptions()
+        } catch {
+            cleanupError = error
+        }
+
+        do {
+            try await cartRepository.clearCachedCart()
+        } catch {
+            cleanupError = cleanupError ?? error
+        }
+
+        if let cleanupError {
+            throw cleanupError
+        }
     }
 }

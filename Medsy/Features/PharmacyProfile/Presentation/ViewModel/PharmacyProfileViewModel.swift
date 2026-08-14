@@ -16,20 +16,23 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
+    private let initialPharmacyID: Int
     private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol
 
-    nonisolated init(fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol = DIContainer.shared.resolve(FetchPharmacyProfileUseCaseProtocol.self)) {
+    nonisolated init(
+        initialPharmacyID: Int = 2,
+        fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol = DIContainer.shared.resolve(FetchPharmacyProfileUseCaseProtocol.self)
+    ) {
+        self.initialPharmacyID = initialPharmacyID
         self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
-        Task { @MainActor in
-            self.loadPharmacy()
-        }
     }
 
-    func loadPharmacy(id: Int = 2) {
+    func loadPharmacy(id: Int? = nil) {
+        let pharmacyID = id ?? initialPharmacyID
         state = .loading
         Task {
             do {
-                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: id)
+                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: pharmacyID)
                 state = .loaded(pharmacy)
             } catch {
                 state = .error(error.localizedDescription)

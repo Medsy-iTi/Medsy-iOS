@@ -12,6 +12,8 @@ import UIKit
 
 struct PrescriptionPreviewView: View {
     let imageData: Data?
+    let isAttachmentOnly: Bool
+    let isSubmitting: Bool
     let onContinue: () -> Void
     let onChangeImage: () -> Void
     let onDelete: () -> Void
@@ -22,16 +24,43 @@ struct PrescriptionPreviewView: View {
             VStack(spacing: MedsySpacing.lg) {
                 prescriptionImage
 
-                HStack {
-                    Button("prescription.change".localized, action: onChangeImage)
-                    Spacer()
-                    Button("common.delete".localized, role: .destructive, action: onDelete)
+                HStack(spacing: MedsySpacing.sm) {
+                    Button(action: onChangeImage) {
+                        Label("prescription.change".localized, systemImage: "arrow.clockwise")
+                            .font(MedsyFont.button(14))
+                            .foregroundStyle(AppColor.textPrim)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                                    .stroke(AppColor.border, lineWidth: 1)
+                            }
+                    }
+
+                    Button(role: .destructive, action: onDelete) {
+                        Label("common.delete".localized, systemImage: "trash")
+                            .font(MedsyFont.button(14))
+                            .foregroundStyle(AppColor.danger)
+                            .frame(height: 44)
+                            .padding(.horizontal, MedsySpacing.md)
+                            .background(AppColor.danger.opacity(0.1))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous)
+                                    .stroke(AppColor.danger.opacity(0.35), lineWidth: 1)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md, style: .continuous))
+                    }
                 }
-                .font(.body.weight(.semibold))
 
                 Spacer()
 
-                PrimaryButton(title: "prescription.continue".localized, action: onContinue)
+                PrimaryButton(
+                    title: isAttachmentOnly
+                        ? "prescription.attach_to_cart".localized
+                        : "prescription.continue".localized,
+                    isLoading: isSubmitting,
+                    action: onContinue
+                )
             }
             .padding()
         }
@@ -40,16 +69,32 @@ struct PrescriptionPreviewView: View {
     @ViewBuilder
     private var prescriptionImage: some View {
         if let imageData, let image = UIImage(data: imageData) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: 420)
-                .background(AppColor.card)
-                .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg))
-                .overlay(
-                    RoundedRectangle(cornerRadius: MedsyRadius.lg)
-                        .stroke(AppColor.border)
-                )
+            ZStack(alignment: .bottom) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: 420)
+                    .background(AppColor.card)
+
+                HStack(spacing: MedsySpacing.xs) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 15, weight: .semibold))
+
+                    Text("prescription.preview.selected".localized)
+                        .font(MedsyFont.button(13))
+
+                    Spacer()
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, MedsySpacing.md)
+                .padding(.vertical, MedsySpacing.xs)
+                .background(AppColor.green.opacity(0.9))
+            }
+            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                    .stroke(AppColor.border)
+            }
         } else {
             RoundedRectangle(cornerRadius: MedsyRadius.lg)
                 .fill(AppColor.card)

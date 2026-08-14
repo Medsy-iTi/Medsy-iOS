@@ -14,7 +14,9 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     let draft: CompleteRequestDraft
     var paymentMethod: CompleteRequestPaymentMethod = .cash
     private(set) var savedAddress: String?
-    private(set) var deliveryLocation: CompleteRequestLocation?
+    private(set) var savedLocation: CompleteRequestLocation?
+    private(set) var customLocation: CompleteRequestLocation?
+    var selectedAddressOption: CompleteRequestAddressOption = .custom
     var notes = ""
     var isSummaryExpanded = false
     private(set) var isLoadingAddress = false
@@ -29,6 +31,15 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private let onRequestCreated: (CompleteRequestSubmission) async -> Bool
     private let now: () -> Date
     private var hasLoadedAddress = false
+
+    var deliveryLocation: CompleteRequestLocation? {
+        switch selectedAddressOption {
+        case .saved:
+            return savedLocation
+        case .custom:
+            return customLocation
+        }
+    }
 
     init(
         draft: CompleteRequestDraft,
@@ -74,8 +85,12 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
             latitude: latitude,
             longitude: longitude
         )
-        if location.hasValidCoordinate, deliveryLocation == nil {
-            deliveryLocation = location
+        if location.hasValidCoordinate {
+            savedLocation = location
+            if customLocation == nil {
+                selectedAddressOption = .saved
+                clearValidationFeedback()
+            }
         }
     }
 
@@ -84,13 +99,24 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
         clearValidationFeedback()
     }
 
+    func selectSavedAddress() {
+        guard savedLocation != nil else { return }
+        selectedAddressOption = .saved
+        clearValidationFeedback()
+    }
+
+    func selectCustomAddress() {
+        selectedAddressOption = .custom
+        clearValidationFeedback()
+    }
+
     func confirmLocation(_ location: CompleteRequestLocation) {
         guard location.hasValidCoordinate,
               !location.address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return
         }
-        deliveryLocation = location
-        savedAddress = location.address
+        customLocation = location
+        selectedAddressOption = .custom
         clearValidationFeedback()
     }
 
@@ -140,6 +166,13 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
                 submittedRequest = result
                 statusStore?.savePendingRequestId(result.id)
             } catch {
+                if shouldRecoverAlreadySubmittedRequest(from: error) {
+                    guard await onRequestCreated(submission) else {
+                        submissionErrorMessage = "complete_request.submit_error".localized
+                        return false
+                    }
+                    return true
+                }
                 submissionErrorMessage = error.localizedDescription
                 return false
             }
@@ -163,5 +196,23 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
     private func clearValidationFeedback() {
         validationErrors = []
         submissionErrorMessage = nil
+    }
+
+    private func shouldRecoverAlreadySubmittedRequest(from error: Error) -> Bool {
+        guard let statusStore,
+              !statusStore.pendingRequestIds.isEmpty,
+              let networkError = error as? NetworkError,
+              case let .validationError(message) = networkError else {
+            return false
+        }
+
+        let normalizedMessage = message
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        let isEnglishEmptyCart = normalizedMessage.contains("cart")
+            && normalizedMessage.contains("empty")
+        let isArabicEmptyCart = normalizedMessage.contains("السلة")
+            && normalizedMessage.contains("فارغ")
+        return isEnglishEmptyCart || isArabicEmptyCart
     }
 }

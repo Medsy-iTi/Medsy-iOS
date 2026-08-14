@@ -118,37 +118,54 @@ struct OrderDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: MedsySpacing.md) {
                     statusHeader(order: order)
-                    OrderStatusProgressView(order: order)
-                    if !order.pharmacies.isEmpty {
-                        pharmacyMap(order: order)
-                        ForEach(order.pharmacies) { pharmacy in
-                            OrderPharmacySectionView(
-                                pharmacy: pharmacy,
-                                onSelectProduct: { onSelectProduct?($0) }
-                            )
-                        }
-                    } else {
-                        itemsSection(order: order)
+                    let namedPharmacies = namedPharmacies(for: order)
+                    if namedPharmacies.count > 1 {
+                        sectionTitle("orders.detail.pharmacies".localized)
                     }
-                    if order.paymentMethod != nil {
-                        paymentCard(order: order)
+                    ForEach(namedPharmacies) { pharmacy in
+                        OrderPharmacySectionView(
+                            pharmacy: pharmacy,
+                            onSelect: { onSelectPharmacy?(pharmacy.pharmacyId) }
+                        )
                     }
+                    allocatedItemsSection(order: order)
                     summaryCard(order: order)
                 }
                 .padding(MedsySpacing.md)
-                .padding(.bottom, paymentAction == nil ? 96 : 162)
+                .padding(.bottom, bottomInset(for: order))
             }
 
-            bottomActions
-                .padding(.horizontal, MedsySpacing.md)
-                .padding(.bottom, MedsySpacing.lg)
-                .background(
-                    AppColor.bg
-                        .ignoresSafeArea()
-                        .frame(height: paymentAction == nil ? 96 : 162)
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                )
+            if showsBottomActions(for: order) {
+                bottomActions(for: order)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        AppColor.bg
+                            .ignoresSafeArea()
+                            .frame(height: bottomInset(for: order))
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                    )
+            }
         }
+    }
+
+    private func namedPharmacies(for order: OrderDetailPresentationModel) -> [OrderPharmacyPresentationModel] {
+        order.pharmacies.filter {
+            !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
+    private func showsBottomActions(for order: OrderDetailPresentationModel) -> Bool {
+        paymentAction != nil || shouldShowReorder(for: order)
+    }
+
+    private func shouldShowReorder(for order: OrderDetailPresentationModel) -> Bool {
+        order.status == .delivered && !order.items.compactMap(\.productId).isEmpty
+    }
+
+    private func bottomInset(for order: OrderDetailPresentationModel) -> CGFloat {
+        guard showsBottomActions(for: order) else { return MedsySpacing.md }
+        return paymentAction == nil || !shouldShowReorder(for: order) ? 96 : 162
     }
 
     @ViewBuilder
@@ -170,36 +187,31 @@ struct OrderDetailView: View {
     // MARK: - Status Header
 
     private func statusHeader(order: OrderDetailPresentationModel) -> some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.xs) {
+        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
             HStack(alignment: .center) {
                 Text(order.status.labelKey.localized)
                     .font(AppColor.sans(18, .bold))
-                    .foregroundStyle(order.status.color)
+                    .foregroundStyle(statusHeaderColor(for: order.status))
 
                 Spacer(minLength: 0)
 
                 fulfillmentBadge(for: order.fulfillmentType)
             }
 
-            Text(dateLabel(for: order.date))
-                .font(AppColor.sans(13))
-                .foregroundStyle(AppColor.textSec)
+            Divider()
+                .background(AppColor.outlineVariant.opacity(0.4))
+                .padding(.vertical, MedsySpacing.sm)
 
-            if let requestID = order.requestID {
-                Text(String(format: "orders.detail.request_number".localized, requestID))
-                    .font(AppColor.sans(13))
-                    .foregroundStyle(AppColor.textSec)
-            }
+            OrderStatusProgressView(order: order)
         }
         .padding(MedsySpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(AppColor.outline.opacity(0.15), lineWidth: 1)
         )
-        .medsyCardShadow()
     }
 
     private func fulfillmentBadge(for type: OrderFulfillmentType) -> some View {
@@ -207,12 +219,12 @@ struct OrderDetailView: View {
             Image(systemName: fulfillmentIcon(for: type))
                 .font(.system(size: 13))
             Text(fulfillmentLabel(for: type))
-            .font(AppColor.sans(13, .medium))
+                .font(AppColor.sans(13, .bold))
         }
-        .foregroundStyle(AppColor.onPrimaryContainer)
+        .foregroundStyle(AppColor.onSecondaryContainer)
         .padding(.horizontal, MedsySpacing.sm)
         .padding(.vertical, MedsySpacing.xxs + 2)
-        .background(AppColor.lightGreen)
+        .background(AppColor.secondaryContainer)
         .clipShape(Capsule())
     }
 
@@ -229,25 +241,43 @@ struct OrderDetailView: View {
 
     private func fulfillmentIcon(for type: OrderFulfillmentType) -> String {
         switch type {
-        case .delivery: return "shippingbox.fill"
-        case .pickup: return "bag.fill"
+        case .delivery: return "truck.box.fill"
+        case .pickup: return "storefront.fill"
         case .notSelected: return "clock.fill"
         }
     }
 
-    private func itemsSection(order: OrderDetailPresentationModel) -> some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.xs) {
-            Text("orders.detail.items_label".localized)
-                .font(AppColor.sans(15, .semibold))
-                .foregroundStyle(AppColor.textPrim)
+    private func statusHeaderColor(for status: OrderStatusPresentation) -> Color {
+        if status.isCancelled {
+            return AppColor.error
+        }
+        if status.isCompleted {
+            return AppColor.success
+        }
+        return AppColor.green
+    }
+
+    private func allocatedItemsSection(order: OrderDetailPresentationModel) -> some View {
+        let displayedItems = displayedItems(for: order)
+
+        return VStack(alignment: .leading, spacing: MedsySpacing.xs) {
+            sectionTitle("orders.detail.items_label".localized)
 
             VStack(spacing: 0) {
-                ForEach(Array(order.items.enumerated()), id: \.element.id) { index, item in
-                    itemRow(item: item)
-                    if index < order.items.count - 1 {
-                        Divider()
-                            .background(AppColor.border)
-                            .padding(.leading, 56 + MedsySpacing.md)
+                if displayedItems.isEmpty {
+                    Text("orders.detail.items_unavailable".localized)
+                        .font(AppColor.sans(13))
+                        .foregroundStyle(AppColor.textSec)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(MedsySpacing.md)
+                } else {
+                    ForEach(Array(displayedItems.enumerated()), id: \.offset) { index, allocation in
+                        itemRow(item: allocation.item, suppliedBy: allocation.pharmacyName)
+                        if index < displayedItems.count - 1 {
+                            Divider()
+                                .background(AppColor.outlineVariant.opacity(0.4))
+                                .padding(.horizontal, MedsySpacing.md)
+                        }
                     }
                 }
             }
@@ -255,51 +285,59 @@ struct OrderDetailView: View {
             .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                    .stroke(AppColor.border, lineWidth: 1)
+                    .stroke(AppColor.outline.opacity(0.15), lineWidth: 1)
             )
-            .medsyCardShadow()
         }
     }
 
-    private func itemRow(item: OrderDetailItemModel) -> some View {
+    private func displayedItems(
+        for order: OrderDetailPresentationModel
+    ) -> [(pharmacyName: String?, item: OrderDetailItemModel)] {
+        let allocatedItems: [(pharmacyName: String?, item: OrderDetailItemModel)] = order.pharmacies.flatMap { pharmacy in
+            pharmacy.items.map { (pharmacy.name, $0) }
+        }
+        return allocatedItems.isEmpty
+            ? order.items.map { (pharmacyName: nil, item: $0) }
+            : allocatedItems
+    }
+
+    private func itemRow(item: OrderDetailItemModel, suppliedBy pharmacyName: String?) -> some View {
         Button {
             if let productId = item.productId {
                 onSelectProduct?(productId)
             }
         } label: {
             HStack(alignment: .center, spacing: MedsySpacing.sm) {
-                OrderProductImageView(imageURL: item.imageURL, size: 48)
+                OrderProductImageView(
+                    imageURL: item.imageURL,
+                    size: 48,
+                    containerColor: AppColor.surfaceVariant
+                )
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.productName)
-                        .font(AppColor.sans(14, .semibold))
+                        .font(AppColor.sans(16, .bold))
                         .foregroundStyle(AppColor.textPrim)
                         .lineLimit(2)
 
-                    if let originalName = item.originalProductName {
-                        Text(String(format: "orders.detail.alternative_to".localized, originalName))
+                    Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
+                        .font(AppColor.sans(14))
+                        .foregroundStyle(AppColor.textSec)
+
+                    if let pharmacyName, !pharmacyName.isEmpty {
+                        Text(String(format: "orders.detail.supplied_by".localized, pharmacyName))
                             .font(AppColor.sans(12, .medium))
                             .foregroundStyle(AppColor.green)
-                            .lineLimit(2)
+                            .lineLimit(1)
                     }
-
-                    Text(String(format: "orders.detail.item_qty_price".localized, item.quantity, item.unitPrice))
-                        .font(AppColor.sans(12))
-                        .foregroundStyle(AppColor.textSec)
                 }
 
                 Spacer(minLength: 0)
 
                 VStack(alignment: .trailing, spacing: MedsySpacing.xxs) {
                     Text(String(format: "orders.price_format".localized, item.unitPrice * Double(item.quantity)))
-                        .font(AppColor.sans(14, .semibold))
+                        .font(AppColor.sans(16, .bold))
                         .foregroundStyle(AppColor.textPrim)
-
-                    if item.productId != nil {
-                        Image(systemName: "chevron.forward")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(AppColor.textSec)
-                    }
                 }
             }
         }
@@ -309,13 +347,18 @@ struct OrderDetailView: View {
         .padding(.vertical, MedsySpacing.sm)
     }
 
+    private func sectionTitle(_ title: String) -> some View {
+        Text(title)
+            .font(AppColor.sans(17, .bold))
+            .foregroundStyle(AppColor.textPrim)
+    }
+
     private func summaryCard(order: OrderDetailPresentationModel) -> some View {
-        return VStack(spacing: 0) {
+        return VStack(spacing: 10) {
             Text("orders.detail.order_summary".localized)
-                .font(AppColor.sans(15, .semibold))
+                .font(AppColor.sans(17, .bold))
                 .foregroundStyle(AppColor.textPrim)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, MedsySpacing.sm)
 
             summaryRow(
                 label: "orders.detail.items_subtotal".localized,
@@ -323,16 +366,16 @@ struct OrderDetailView: View {
                 isTotal: false
             )
 
-            if order.fulfillmentType == .delivery, let fee = order.deliveryFee {
-                Divider().background(AppColor.border).padding(.vertical, MedsySpacing.xs)
+            if order.fulfillmentType == .delivery,
+               let deliveryFee = order.deliveryFee {
                 summaryRow(
                     label: "orders.detail.delivery_fee".localized,
-                    amount: fee,
+                    amount: deliveryFee,
                     isTotal: false
                 )
             }
 
-            Divider().background(AppColor.border).padding(.vertical, MedsySpacing.xs)
+            Divider().background(AppColor.outlineVariant.opacity(0.4))
 
             HStack {
                 Text("orders.detail.total".localized)
@@ -349,9 +392,8 @@ struct OrderDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
+                .stroke(AppColor.outline.opacity(0.15), lineWidth: 1)
         )
-        .medsyCardShadow()
     }
 
     private func paymentCard(order: OrderDetailPresentationModel) -> some View {
@@ -394,9 +436,8 @@ struct OrderDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
+                .stroke(AppColor.outline.opacity(0.15), lineWidth: 1)
         )
-        .medsyCardShadow()
     }
 
     private func detailTextRow(label: String, value: String) -> some View {
@@ -435,7 +476,7 @@ struct OrderDetailView: View {
         }
     }
 
-    private var bottomActions: some View {
+    private func bottomActions(for order: OrderDetailPresentationModel) -> some View {
         VStack(spacing: MedsySpacing.sm) {
             if let paymentAction {
                 PaymentOrderActionView(
@@ -444,7 +485,9 @@ struct OrderDetailView: View {
                 )
             }
 
-            reorderButton
+            if shouldShowReorder(for: order) {
+                reorderButton
+            }
         }
     }
 
@@ -464,134 +507,171 @@ struct OrderDetailView: View {
 private struct OrderStatusProgressView: View {
     let order: OrderDetailPresentationModel
 
-    private var stages: [String] {
-        let firstStage = usesPaymentStage
-            ? "orders.status.pending_payment"
-            : "orders.status.pending"
-
-        switch order.fulfillmentType {
-        case .delivery:
-            return [
-                firstStage,
-                "orders.status.preparing",
-                "orders.status.ready_for_delivery",
-                "orders.status.out_for_delivery",
-                "orders.status.delivered"
-            ]
-        case .pickup:
-            return [
-                firstStage,
-                "orders.status.preparing",
-                "orders.status.ready_for_pickup",
-                "orders.status.delivered"
-            ]
-        case .notSelected:
-            return [
-                firstStage,
-                "orders.status.preparing",
-                "orders.status.delivered"
-            ]
-        }
+    private struct Stage {
+        let labelKey: String
+        let systemImage: String
     }
 
-    private var usesPaymentStage: Bool {
-        guard order.paymentMethod == .card else { return false }
-        if case .notSelected = order.fulfillmentType {
-            if case .pendingPayment = order.status { return true }
-            return false
-        }
-        return true
+    private var isDelivery: Bool {
+        order.fulfillmentType == .delivery
+            || order.status == .readyForDelivery
+            || order.status == .outForDelivery
     }
 
-    private var currentIndex: Int {
+    private var stages: [Stage] {
+        if order.status.isCancelled {
+            return [
+                Stage(labelKey: "orders.timeline.preparing", systemImage: "shippingbox"),
+                Stage(labelKey: "orders.status.cancelled", systemImage: "xmark")
+            ]
+        }
+
+        if isDelivery {
+            return [
+                Stage(labelKey: "orders.timeline.preparing", systemImage: "shippingbox"),
+                Stage(labelKey: "orders.timeline.ready", systemImage: "truck.box"),
+                Stage(labelKey: "orders.timeline.on_the_way", systemImage: "bicycle"),
+                Stage(labelKey: "orders.timeline.delivered", systemImage: "checkmark")
+            ]
+        }
+
+        return [
+            Stage(labelKey: "orders.timeline.preparing", systemImage: "shippingbox"),
+            Stage(labelKey: "orders.timeline.ready", systemImage: "storefront"),
+            Stage(labelKey: "orders.timeline.delivered", systemImage: "checkmark")
+        ]
+    }
+
+    private var currentIndex: Int? {
         switch order.status {
-        case .pending, .pendingPayment, .confirmed, .unknown:
-            return 0
+        case .pending, .pendingPayment, .confirmed, .unknown, .delivered:
+            return nil
         case .preparing:
-            return min(1, stages.count - 1)
-        case .readyForPickup, .readyForDelivery:
-            return min(2, stages.count - 1)
-        case .outForDelivery:
-            return order.fulfillmentType == .delivery
-                ? min(3, stages.count - 1)
-                : min(2, stages.count - 1)
-        case .delivered:
-            return stages.count - 1
-        case .cancelled:
             return 0
+        case .readyForPickup, .readyForDelivery:
+            return min(1, stages.count - 1)
+        case .outForDelivery:
+            return isDelivery ? min(2, stages.count - 1) : min(1, stages.count - 1)
+        case .cancelled:
+            return min(1, stages.count - 1)
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: MedsySpacing.sm) {
-            Text("orders.detail.delivery_status".localized)
-                .font(AppColor.sans(15, .semibold))
-                .foregroundStyle(AppColor.textPrim)
+        HStack(alignment: .top, spacing: 0) {
+            ForEach(Array(stages.enumerated()), id: \.offset) { index, stage in
+                progressNode(stage: stage, index: index)
 
-            if order.status.isCancelled {
-                Label("orders.status.cancelled".localized, systemImage: "xmark.circle.fill")
-                    .font(AppColor.sans(14, .semibold))
-                    .foregroundStyle(AppColor.errorRed)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, MedsySpacing.xs)
-            } else {
-                HStack(alignment: .top, spacing: 0) {
-                    ForEach(Array(stages.enumerated()), id: \.offset) { index, labelKey in
-                        progressNode(labelKey: labelKey, index: index)
-
-                        if index < stages.count - 1 {
-                            Rectangle()
-                                .fill(index < currentIndex ? AppColor.green : AppColor.border)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 2)
-                                .padding(.top, 13)
-                                .accessibilityHidden(true)
-                        }
-                    }
+                if index < stages.count - 1 {
+                    Rectangle()
+                        .fill(connectorColor(destinationIndex: index + 1))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 2)
+                        .padding(.top, 13)
+                        .accessibilityHidden(true)
                 }
             }
         }
-        .padding(MedsySpacing.md)
-        .background(AppColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
-                .stroke(AppColor.border, lineWidth: 1)
-        )
-        .medsyCardShadow()
     }
 
-    private func progressNode(labelKey: String, index: Int) -> some View {
-        let isReached = index <= currentIndex
-        let isCurrent = index == currentIndex
+    private func progressNode(stage: Stage, index: Int) -> some View {
+        let appearance = appearance(for: index)
 
-        return VStack(spacing: MedsySpacing.xxs) {
+        return VStack(spacing: MedsySpacing.xs) {
             ZStack {
                 Circle()
-                    .fill(isReached ? AppColor.green : AppColor.card)
+                    .fill(appearance.backgroundColor)
                     .frame(width: 28, height: 28)
                     .overlay(
                         Circle()
-                            .stroke(isReached ? AppColor.green : AppColor.border, lineWidth: isCurrent ? 3 : 2)
+                            .stroke(appearance.color, lineWidth: 2)
                     )
 
-                if isReached {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(.white)
-                }
+                Image(systemName: stage.systemImage)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(appearance.color)
             }
 
-            Text(labelKey.localized)
-                .font(AppColor.sans(10, isCurrent ? .semibold : .regular))
-                .foregroundStyle(isReached ? AppColor.textPrim : AppColor.textSec)
+            Text(stage.labelKey.localized)
+                .font(AppColor.sans(10, appearance.isEmphasized ? .bold : .medium))
+                .foregroundStyle(appearance.color)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
         }
-        .frame(maxWidth: 64)
+        .frame(maxWidth: 72)
         .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(isCurrent ? .isSelected : [])
+        .accessibilityAddTraits(appearance.isCurrent ? .isSelected : [])
+    }
+
+    private func appearance(for index: Int) -> StageAppearance {
+        if order.status.isCancelled, index == stages.count - 1 {
+            return StageAppearance(
+                color: AppColor.error,
+                backgroundColor: AppColor.errorContainer,
+                isCurrent: true,
+                isEmphasized: true
+            )
+        }
+
+        if order.status.isCompleted {
+            return StageAppearance(
+                color: AppColor.success,
+                backgroundColor: AppColor.successContainer,
+                isCurrent: false,
+                isEmphasized: true
+            )
+        }
+
+        if let currentIndex {
+            if index < currentIndex {
+                return StageAppearance(
+                    color: AppColor.success,
+                    backgroundColor: AppColor.successContainer,
+                    isCurrent: false,
+                    isEmphasized: true
+                )
+            }
+
+            if index == currentIndex {
+                return StageAppearance(
+                    color: AppColor.warning,
+                    backgroundColor: AppColor.warningContainer,
+                    isCurrent: true,
+                    isEmphasized: true
+                )
+            }
+        }
+
+        return StageAppearance(
+            color: AppColor.textSec.opacity(0.35),
+            backgroundColor: AppColor.card,
+            isCurrent: false,
+            isEmphasized: false
+        )
+    }
+
+    private func connectorColor(destinationIndex: Int) -> Color {
+        if order.status.isCancelled, destinationIndex == stages.count - 1 {
+            return AppColor.error
+        }
+
+        if order.status.isCompleted {
+            return AppColor.success
+        }
+
+        if let currentIndex, destinationIndex <= currentIndex {
+            return AppColor.success
+        }
+
+        return AppColor.outlineVariant.opacity(0.5)
+    }
+
+    private struct StageAppearance {
+        let color: Color
+        let backgroundColor: Color
+        let isCurrent: Bool
+        let isEmphasized: Bool
     }
 }
 
