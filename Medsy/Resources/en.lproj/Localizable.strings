@@ -247,6 +247,9 @@
 "favorites.persistence_error.subtitle" = "Your favorites change couldn't be saved. Please try again.";
 "favorites.offline.title" = "No Internet Connection";
 "favorites.offline.subtitle" = "Connect to the internet to open medicine details.";
+"favorites.remove_confirmation.title" = "Remove Favorite?";
+"favorites.remove_confirmation.message" = "Are you sure you want to remove %@ from your favorites?";
+"favorites.remove_confirmation.action" = "Remove";
 
 /* Tab bar */
 "tab.home" = "Home";
@@ -382,6 +385,8 @@
 "profile.language.english.subtitle" = "English layout, left to right";
 "profile.theme.title" = "Choose appearance";
 "profile.theme.message" = "Pick how Medsy should look on this device.";
+"profile.theme.system" = "System default";
+"profile.theme.system.subtitle" = "Match this device";
 "profile.theme.light" = "Light";
 "profile.theme.light.subtitle" = "Bright interface";
 "profile.theme.dark" = "Dark";

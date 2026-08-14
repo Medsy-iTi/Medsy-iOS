@@ -37,7 +37,12 @@ struct PharmacyOrdersFilterButton: View {
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
+        .shadow(
+            color: isSelected ? PharmacyColor.primary.opacity(0.16) : .clear,
+            radius: 7,
+            y: 3
+        )
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

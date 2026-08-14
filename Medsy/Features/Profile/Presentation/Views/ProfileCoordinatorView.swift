@@ -158,12 +158,14 @@ struct ProfileCoordinatorView: View {
                 messageKey: "profile.theme.message",
                 options: themeOptions,
                 onSelect: { option in
-                    withAnimation(.easeInOut(duration: 0.25)) { appSettings.isDarkMode = option.id == "dark" }
+                    if let mode = AppThemeMode(rawValue: option.id) {
+                        withAnimation(.easeInOut(duration: 0.25)) { appSettings.setThemeMode(mode) }
+                    }
                     coordinator.dismissPresentation()
                 }
             )
             .environment(languageManager)
-            .presentationDetents([.height(308)])
+            .presentationDetents([.height(380)])
             .presentationDragIndicator(.hidden)
             .presentationCornerRadius(28)
         }
@@ -178,8 +180,9 @@ struct ProfileCoordinatorView: View {
 
     private var themeOptions: [ProfileSelectionOption] {
         [
-            ProfileSelectionOption(id: "light", titleKey: "profile.theme.light", subtitleKey: "profile.theme.light.subtitle", iconName: "sun.max", iconColor: Color(hex: "#F59E0B"), isSelected: !appSettings.isDarkMode),
-            ProfileSelectionOption(id: "dark", titleKey: "profile.theme.dark", subtitleKey: "profile.theme.dark.subtitle", iconName: "moon", iconColor: Color(hex: "#A855F7"), isSelected: appSettings.isDarkMode)
+            ProfileSelectionOption(id: AppThemeMode.system.rawValue, titleKey: "profile.theme.system", subtitleKey: "profile.theme.system.subtitle", iconName: "circle.lefthalf.filled", iconColor: ProfileStyle.green, isSelected: appSettings.themeMode == .system),
+            ProfileSelectionOption(id: AppThemeMode.light.rawValue, titleKey: "profile.theme.light", subtitleKey: "profile.theme.light.subtitle", iconName: "sun.max", iconColor: Color(hex: "#F59E0B"), isSelected: appSettings.themeMode == .light),
+            ProfileSelectionOption(id: AppThemeMode.dark.rawValue, titleKey: "profile.theme.dark", subtitleKey: "profile.theme.dark.subtitle", iconName: "moon", iconColor: Color(hex: "#A855F7"), isSelected: appSettings.themeMode == .dark)
         ]
     }
 }

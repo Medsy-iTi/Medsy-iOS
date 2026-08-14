@@ -58,6 +58,16 @@ struct PharmacyMapPickerView: View {
             }
             .padding(PharmacySpacing.md)
             .background(PharmacyColor.surface)
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(PharmacyColor.border)
+                    .frame(height: 1)
+            }
+            .shadow(
+                color: .black.opacity(PharmacyAppSettings.shared.isDarkMode ? 0.28 : 0.08),
+                radius: 16,
+                y: -4
+            )
         }
         .background(PharmacyColor.bg)
         .navigationTitle("pharmacy.setup.location.map".localized)

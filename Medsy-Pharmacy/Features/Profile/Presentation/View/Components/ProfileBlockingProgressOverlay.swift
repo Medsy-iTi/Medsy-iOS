@@ -12,11 +12,8 @@ struct ProfileBlockingProgressOverlay: View {
                 .ignoresSafeArea()
 
             ProgressView()
-                .padding(PharmacySpacing.md)
-                .background(
-                    PharmacyColor.surface,
-                    in: RoundedRectangle(cornerRadius: PharmacyRadius.md)
-                )
+                .tint(PharmacyColor.primary)
+                .pharmacyCard(elevation: .raised)
         }
     }
 }

@@ -52,7 +52,6 @@ final class PharmacyDashboardContractTests: XCTestCase {
               "pharmacistName": "Pharmacist",
               "offerId": 19,
               "subTotal": 100,
-              "deliveryFee": 10,
               "total": 110,
               "deliveryLatitude": 30.1,
               "deliveryLongitude": 31.2,
@@ -60,8 +59,11 @@ final class PharmacyDashboardContractTests: XCTestCase {
               "items": [{
                 "id": 1,
                 "productId": 4,
-                "productName": "Pain Relief",
-                "imageUrl": "https://cdn.example.com/product.png",
+                "product": {
+                  "name": "Pain Relief",
+                  "productName": "Pain Relief Brand",
+                  "imageUrl": "https://cdn.example.com/product.png"
+                },
                 "quantity": 2,
                 "unitPrice": 50,
                 "totalPrice": 100
@@ -97,7 +99,7 @@ final class PharmacyDashboardContractTests: XCTestCase {
         XCTAssertEqual(order.id, 88)
         XCTAssertEqual(order.customerId, 7)
         XCTAssertEqual(order.customerNotes, "Leave at reception")
-        XCTAssertEqual(order.deliveryFee, 10)
+        XCTAssertEqual(order.deliveryFee, 0)
         XCTAssertEqual(order.total, 110)
         XCTAssertNotNil(order.createdAt)
         XCTAssertEqual(order.items.first?.productName, "Pain Relief")

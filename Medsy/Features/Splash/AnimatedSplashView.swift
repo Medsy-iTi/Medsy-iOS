@@ -53,7 +53,7 @@ struct AnimatedSplashView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("splash.accessibility_label".localized)
         }
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .onAppear(perform: startAnimations)
         .task {
             try? await Task.sleep(for: .seconds(2.8))

@@ -28,53 +28,43 @@ struct PharmacyLoginView: View {
                 subtitle: "pharmacy.auth.login.subtitle".localized
             )
 
-            VStack(spacing: PharmacySpacing.sm) {
-                PharmacyAuthTextField(
-                    title: "pharmacy.auth.email".localized,
-                    kind: .email,
-                    text: $viewModel.email
-                )
+            VStack(spacing: PharmacySpacing.md) {
+                VStack(spacing: PharmacySpacing.sm) {
+                    PharmacyAuthTextField(
+                        title: "pharmacy.auth.email".localized,
+                        kind: .email,
+                        text: $viewModel.email
+                    )
 
-                PharmacyAuthTextField(
-                    title: "pharmacy.auth.password".localized,
-                    kind: .password,
-                    text: $viewModel.password
-                )
-            }
+                    PharmacyAuthTextField(
+                        title: "pharmacy.auth.password".localized,
+                        kind: .password,
+                        text: $viewModel.password
+                    )
+                }
 
-            HStack {
-                Spacer()
-                Button("pharmacy.auth.forgot_password".localized) {}
-                    .font(PharmacyColor.sans(13, .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
-            }
+                HStack {
+                    Spacer()
+                    Button("pharmacy.auth.forgot_password".localized) {}
+                        .font(PharmacyColor.sans(13, .semibold))
+                        .foregroundStyle(PharmacyColor.primary)
+                        .frame(minHeight: 44)
+                        .buttonStyle(PharmacyPressableButtonStyle())
+                }
 
-            PharmacyAuthValidationMessage(message: viewModel.validationMessage)
+                PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 
-            PharmacyPrimaryButton(
-                title: "pharmacy.auth.login.action".localized,
-                isLoading: viewModel.isLoading,
-                isDisabled: viewModel.isLoading
-            ) {
-                Task {
-                    if await viewModel.submit() {
-                        onAuthenticated()
+                PharmacyPrimaryButton(
+                    title: "pharmacy.auth.login.action".localized,
+                    isLoading: viewModel.isLoading,
+                    isDisabled: viewModel.isLoading
+                ) {
+                    Task {
+                        if await viewModel.submit() {
+                            onAuthenticated()
+                        }
                     }
                 }
-            }
-
-            PharmacyAuthDivider()
-
-            VStack(spacing: PharmacySpacing.sm) {
-                PharmacyAuthSecondaryButton(
-                    title: "pharmacy.auth.continue_google".localized,
-                    imageName: "google"
-                ) {}
-
-                PharmacyAuthSecondaryButton(
-                    title: "pharmacy.auth.continue_apple".localized,
-                    imageName: "apple"
-                ) {}
             }
 
             PharmacyAuthPrompt(
@@ -82,6 +72,7 @@ struct PharmacyLoginView: View {
                 actionTitle: "pharmacy.auth.signup.link".localized,
                 action: onSignupTapped
             )
+            .padding(.top, PharmacySpacing.xs)
         }
         .navigationBarBackButtonHidden()
         .alert(

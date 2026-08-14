@@ -35,7 +35,7 @@ struct InviteSuccessView: View {
                             .foregroundStyle(PharmacyColor.primary)
                             .frame(maxWidth: .infinity, minHeight: 50)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PharmacyPressableButtonStyle())
                     .background(PharmacyColor.primarySoft)
                     .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
 
@@ -45,7 +45,7 @@ struct InviteSuccessView: View {
                             .foregroundStyle(PharmacyColor.primary)
                             .frame(maxWidth: .infinity, minHeight: 48)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PharmacyPressableButtonStyle())
                 }
             }
             .padding(.horizontal, PharmacySpacing.md)
@@ -84,13 +84,7 @@ struct InviteSuccessView: View {
             .foregroundStyle(PharmacyColor.textSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(PharmacySpacing.lg)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(elevation: .raised)
     }
 }
 

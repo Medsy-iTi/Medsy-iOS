@@ -33,8 +33,8 @@ struct PharmacyAuthenticationCoordinatorView: View {
                 ZStack {
                     Color.black.opacity(0.2).ignoresSafeArea()
                     ProgressView("pharmacy.setup.checking_membership".localized)
-                        .padding(PharmacySpacing.lg)
-                        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
+                        .tint(PharmacyColor.primary)
+                        .pharmacyCard(elevation: .raised)
                 }
             }
         }

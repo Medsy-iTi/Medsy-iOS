@@ -43,7 +43,7 @@ struct MedsyChatPreviewWrapper: View {
                 .preferredColorScheme(isDark ? .dark : .light)
         }
         .onAppear {
-            AppSettings.shared.isDarkMode = isDark
+            AppSettings.shared.setThemeMode(isDark ? .dark : .light)
             if isArabic {
                 lang.set(.arabic)
             } else {
