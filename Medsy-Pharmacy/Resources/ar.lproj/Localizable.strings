@@ -207,6 +207,7 @@
 "english" = "الإنجليزية";
 
 "theme_title" = "المظهر";
+"theme_system" = "النظام";
 "theme_light" = "فاتح";
 "theme_dark" = "داكن";
 
@@ -323,6 +324,11 @@
 "pharmacy.request.reject" = "رفض الطلب";
 "pharmacy.request.add_alternative" = "غير متوفر / إضافة بديل";
 "pharmacy.request.select_alternative" = "اختيار بديل";
+"pharmacy.request.product_search.title" = "البحث عن بديل";
+"pharmacy.request.product_search.placeholder" = "البحث عن المنتجات...";
+"pharmacy.request.product_search.prompt" = "اكتب للبحث عن بديل";
+"pharmacy.request.product_search.empty" = "لا توجد نتائج بحث";
+"pharmacy.request.product_search.select" = "اختر";
 /* Pharmacist Invitations */
 "common.error" = "حدث خطأ";
 "common.ok" = "حسنًا";
@@ -473,6 +479,8 @@
 "pharmacy.chatbot.title" = "المساعد الذكي Medsy";
 "pharmacy.chatbot.status.online" = "متصل";
 "pharmacy.chatbot.menu.new_chat" = "محادثة جديدة";
+"pharmacy.chatbot.new_chat.title" = "محادثة جديدة";
+"pharmacy.chatbot.new_chat.confirm" = "هل أنت متأكد من مسح المحادثة والبدء من جديد؟";
 "pharmacy.chatbot.input.placeholder" = "اسأل عن عمليات الصيدلية...";
 "pharmacy.chatbot.state.loading_history" = "جاري تحميل المحادثة...";
 "pharmacy.chatbot.state.error_loading" = "فشل في تحميل سجل المحادثة.";

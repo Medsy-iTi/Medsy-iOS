@@ -20,20 +20,30 @@ struct PharmacyOrderTotalCard: View {
                 Divider()
             }
 
-            HStack(alignment: .center) {
+            HStack(alignment: .center, spacing: PharmacySpacing.sm) {
+                PharmacyIconTile(
+                    systemImage: "banknote.fill",
+                    tint: PharmacyColor.success,
+                    background: PharmacyColor.successSoft,
+                    size: 44,
+                    iconSize: 18
+                )
+
                 VStack(alignment: .leading, spacing: 6) {
                     Text("pharmacy.request.order_total_header".localized)
                         .font(PharmacyColor.sans(14, .medium))
                         .foregroundStyle(PharmacyColor.textPrimary)
 
-                    Button(action: {
-                        onViewPaymentSummary?()
-                    }) {
-                        Text("pharmacy.request.view_payment_summary".localized)
-                            .font(PharmacyColor.sans(12, .semibold))
-                            .foregroundStyle(PharmacyColor.primary)
+                    if onViewPaymentSummary != nil {
+                        Button(action: {
+                            onViewPaymentSummary?()
+                        }) {
+                            Text("pharmacy.request.view_payment_summary".localized)
+                                .font(PharmacyColor.sans(12, .semibold))
+                                .foregroundStyle(PharmacyColor.primary)
+                        }
+                        .buttonStyle(PharmacyPressableButtonStyle())
                     }
-                    .buttonStyle(.plain)
                 }
 
                 Spacer()
@@ -43,12 +53,7 @@ struct PharmacyOrderTotalCard: View {
                     .foregroundStyle(PharmacyColor.primary)
             }
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .raised)
     }
 
     private func paymentMethodText(_ raw: String) -> String {

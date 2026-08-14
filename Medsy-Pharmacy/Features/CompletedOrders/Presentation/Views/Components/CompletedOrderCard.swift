@@ -29,7 +29,7 @@ struct CompletedOrderCard: View {
                 EmptyView()
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
     }
 
     private var pillTitle: String {

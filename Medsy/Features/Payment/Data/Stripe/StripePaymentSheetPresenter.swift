@@ -42,12 +42,21 @@ final class StripePaymentSheetPresenter: PaymentSheetPresentingProtocol {
                 let navigationController = UINavigationController(
                     rootViewController: cardPaymentViewController
                 )
-                navigationController.overrideUserInterfaceStyle = AppSettings.shared.isDarkMode
-                    ? .dark
-                    : .light
+                navigationController.overrideUserInterfaceStyle = Self.interfaceStyle
                 navigationController.modalPresentationStyle = .fullScreen
                 viewController.present(navigationController, animated: true)
             }
+        }
+    }
+
+    private static var interfaceStyle: UIUserInterfaceStyle {
+        switch AppSettings.shared.themeMode {
+        case .system:
+            return .unspecified
+        case .light:
+            return .light
+        case .dark:
+            return .dark
         }
     }
 }
@@ -60,11 +69,18 @@ private final class CardPaymentViewController: UIViewController {
     private var scrollBottomConstraint: NSLayoutConstraint?
     private var isRTL: Bool { LanguageManager.shared.isRTL }
     private var interfaceStyle: UIUserInterfaceStyle {
-        AppSettings.shared.isDarkMode ? .dark : .light
+        switch AppSettings.shared.themeMode {
+        case .system:
+            return .unspecified
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        }
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        interfaceStyle == .dark ? .lightContent : .darkContent
+        AppSettings.shared.isDarkMode ? .lightContent : .darkContent
     }
 
     private lazy var scrollView: UIScrollView = {

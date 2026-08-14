@@ -38,7 +38,7 @@ struct PharmacyRecentOrdersView: View {
                                 PharmacyRecentOrderItem(order: order)
                                     .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PharmacyPressableButtonStyle())
 
                             if index < orders.count - 1 {
                                 Divider()
@@ -49,11 +49,7 @@ struct PharmacyRecentOrdersView: View {
                     }
                 }
             }
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(cornerRadius: PharmacyRadius.md, padding: nil, elevation: .subtle)
         }
     }
 }

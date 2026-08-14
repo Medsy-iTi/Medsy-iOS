@@ -52,10 +52,12 @@ struct CompletedOrdersView: View {
                 title: "orders_error_title".localized,
                 message: message
             )
-            Button("orders_retry".localized) {
-                Task { await viewModel.reload() }
-            }
-            .buttonStyle(.borderedProminent)
+            PharmacyPrimaryButton(
+                title: "orders_retry".localized,
+                style: .soft,
+                action: { Task { await viewModel.reload() } }
+            )
+            .frame(maxWidth: 260)
             Spacer()
 				Spacer()
 				Spacer()

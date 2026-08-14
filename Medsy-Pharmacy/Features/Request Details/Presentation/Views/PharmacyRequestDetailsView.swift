@@ -97,14 +97,18 @@ struct PharmacyRequestDetailsView: View {
             } else {
                 VStack(spacing: 12) {
                     Spacer()
-                    Image(systemName: "tray")
-                        .font(.system(size: 44))
-                        .foregroundStyle(PharmacyColor.textSecondary)
-                    Text("pharmacy.request.no_data".localized)
-                        .font(PharmacyColor.sans(14, .semibold))
-                        .foregroundStyle(PharmacyColor.textSecondary)
+
+                    VStack(spacing: PharmacySpacing.sm) {
+                        PharmacyIconTile(systemImage: "tray", size: 64, iconSize: 26)
+                        Text("pharmacy.request.no_data".localized)
+                            .font(PharmacyColor.sans(14, .semibold))
+                            .foregroundStyle(PharmacyColor.textSecondary)
+                    }
+                    .pharmacyCard(elevation: .subtle)
+
                     Spacer()
                 }
+                .padding(PharmacySpacing.md)
             }
 
             if viewModel?.showBottomBar == true {

@@ -20,49 +20,68 @@ struct PharmacyHeroCard: View {
                 .frame(maxWidth: .infinity)
                 .background(PharmacyColor.primarySoft)
 
-            VStack(spacing: PharmacySpacing.xs) {
-                HStack(spacing: PharmacySpacing.xs) {
+            VStack(alignment: .leading, spacing: PharmacySpacing.sm) {
+                HStack(alignment: .firstTextBaseline, spacing: PharmacySpacing.xs) {
                     Text(pharmacyName)
-                        .font(PharmacyColor.sans(17, .bold))
+                        .font(PharmacyColor.sans(19, .bold))
                         .foregroundStyle(PharmacyColor.textPrimary)
+                        .lineLimit(2)
+
+                    Spacer(minLength: PharmacySpacing.xs)
+
                     Text((isOpen ? "pharmacy.home.online" : "pharmacy.home.closed").localized)
-                        .font(PharmacyColor.sans(10, .semibold))
+                        .font(PharmacyColor.sans(11, .semibold))
                         .foregroundStyle(isOpen ? PharmacyColor.success : PharmacyColor.danger)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
                         .background(
                             (isOpen ? PharmacyColor.success : PharmacyColor.danger).opacity(0.12),
                             in: Capsule()
                         )
                 }
 
-                Label(address, systemImage: "location.fill")
-                    .font(PharmacyColor.sans(12, .medium))
-                    .foregroundStyle(PharmacyColor.textSecondary)
+                HStack(alignment: .center, spacing: PharmacySpacing.sm) {
+                    PharmacyIconTile(
+                        systemImage: "location.fill",
+                        size: 38,
+                        iconSize: 15
+                    )
 
-                Divider().overlay(PharmacyColor.border)
-                    .padding(.vertical, PharmacySpacing.xxs)
+                    Text(address)
+                        .font(PharmacyColor.sans(13, .medium))
+                        .foregroundStyle(PharmacyColor.textSecondary)
+                        .lineLimit(2)
 
-                HStack {
-                    Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
+                    Spacer(minLength: 0)
+                }
+
+                HStack(alignment: .center, spacing: PharmacySpacing.sm) {
+                    PharmacyIconTile(
+                        systemImage: "number",
+                        tint: PharmacyColor.secondary,
+                        background: PharmacyColor.secondarySoft,
+                        size: 38,
+                        iconSize: 15
+                    )
+
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("pharmacy.home.pharmacy_number".localized)
-                            .font(PharmacyColor.sans(10, .medium))
+                            .font(PharmacyColor.sans(11, .medium))
                             .foregroundStyle(PharmacyColor.textSecondary)
                         Text(pharmacyId.map { "#\($0)" } ?? "—")
-                            .font(PharmacyColor.sans(12, .bold))
+                            .font(PharmacyColor.sans(14, .bold))
                             .foregroundStyle(PharmacyColor.textPrimary)
+                            .environment(\.layoutDirection, .leftToRight)
                     }
+
+                    Spacer(minLength: 0)
                 }
-                .font(PharmacyColor.sans(12, .semibold))
-                .foregroundStyle(PharmacyColor.textPrimary)
             }
             .padding(PharmacySpacing.md)
             .background(PharmacyColor.card)
         }
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.xl, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.xl, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
-        .shadow(color: .black.opacity(0.05), radius: 14, y: 6)
+        .pharmacyCard(cornerRadius: PharmacyRadius.xl, padding: nil, elevation: .raised)
+        .accessibilityElement(children: .contain)
     }
 }
 
@@ -118,3 +137,31 @@ private struct PharmacyStoreWindow: View {
             .overlay(RoundedRectangle(cornerRadius: 1).stroke(PharmacyColor.primaryDark, lineWidth: 3))
     }
 }
+
+#if DEBUG
+#Preview("Pharmacy Details · Light · English") {
+    PharmacyPreviewHost(isDarkMode: false, language: .english) {
+        PharmacyHeroCard(
+            pharmacyName: "Medsy Community Pharmacy",
+            address: "12 Tahrir Street, Downtown, Cairo",
+            pharmacyId: 1024,
+            isOpen: true
+        )
+        .padding(PharmacySpacing.md)
+        .background(PharmacyColor.bg)
+    }
+}
+
+#Preview("Pharmacy Details · Dark · Arabic") {
+    PharmacyPreviewHost(isDarkMode: true, language: .arabic) {
+        PharmacyHeroCard(
+            pharmacyName: "صيدلية ميدسي المجتمعية",
+            address: "١٢ شارع التحرير، وسط البلد، القاهرة",
+            pharmacyId: 1024,
+            isOpen: false
+        )
+        .padding(PharmacySpacing.md)
+        .background(PharmacyColor.bg)
+    }
+}
+#endif

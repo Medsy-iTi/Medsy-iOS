@@ -38,11 +38,6 @@ struct ProfileHeaderCard: View {
                 trailing
             }
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .subtle)
     }
 }

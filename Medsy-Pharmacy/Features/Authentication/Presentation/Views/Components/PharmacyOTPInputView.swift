@@ -33,6 +33,13 @@ struct PharmacyOTPInputView: View {
                                     lineWidth: isFocused && index == min(code.count, 5) ? 2 : 1
                                 )
                         }
+                        .shadow(
+                            color: isFocused && index == min(code.count, 5)
+                                ? PharmacyColor.primary.opacity(0.12)
+                                : .clear,
+                            radius: 7,
+                            y: 3
+                        )
                 }
             }
 

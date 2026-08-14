@@ -100,6 +100,8 @@ struct PharmacyInvitationsView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(PharmacySpacing.xl)
+        .pharmacyCard(padding: nil, elevation: .subtle)
+        .padding(PharmacySpacing.md)
     }
 
     private func errorView(message: String) -> some View {
@@ -125,5 +127,7 @@ struct PharmacyInvitationsView: View {
             .frame(maxWidth: 260)
         }
         .padding(PharmacySpacing.xl)
+        .pharmacyCard(padding: nil, elevation: .subtle)
+        .padding(PharmacySpacing.md)
     }
 }

@@ -114,7 +114,7 @@ struct PharmacyProfileView: View {
                             .background(PharmacyColor.primary.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PharmacyPressableButtonStyle())
                     }
                     
                     if let onDelete {
@@ -131,7 +131,7 @@ struct PharmacyProfileView: View {
                             .background(PharmacyColor.danger.opacity(0.08))
                             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PharmacyPressableButtonStyle())
                     }
                 }
                 .padding(.horizontal, PharmacySpacing.md)
@@ -154,7 +154,7 @@ struct PharmacyProfileView: View {
                     .background(PharmacyColor.danger.opacity(0.08))
                     .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.sm, style: .continuous))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
                 .padding(.horizontal, PharmacySpacing.md)
                 .padding(.bottom, PharmacySpacing.md)
             } else {
@@ -162,12 +162,7 @@ struct PharmacyProfileView: View {
                     .frame(height: PharmacySpacing.md)
             }
         }
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(padding: nil, elevation: .subtle)
     }
     
     private func pharmacyDetailRow(icon: String, title: String, value: String) -> some View {

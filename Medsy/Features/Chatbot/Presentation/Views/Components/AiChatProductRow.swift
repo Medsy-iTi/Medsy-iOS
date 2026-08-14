@@ -9,30 +9,22 @@ struct AiChatProductRow: View {
         VStack(alignment: .leading, spacing: MedsySpacing.md) {
             HStack(spacing: MedsySpacing.md) {
                 // Product Image
-                AsyncImage(url: product.imageURL.flatMap(URL.init(string:))) { phase in
-                    switch phase {
-                    case .empty:
+                MedsyRemoteImage(
+                    urlString: product.imageURL,
+                    contentMode: .fill
+                ) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: MedsyRadius.md)
+                            .fill(AppColor.green.opacity(0.08))
                         ProgressView()
-                            .frame(width: 60, height: 60)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 60, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
-                    case .failure:
-                        ZStack {
-                            RoundedRectangle(cornerRadius: MedsyRadius.md)
-                                .fill(AppColor.green.opacity(0.12))
-                            Image(systemName: "cross.case.fill")
-                                .foregroundColor(AppColor.green)
-                        }
-                        .frame(width: 60, height: 60)
-                    @unknown default:
-                        EmptyView()
+                            .scaleEffect(0.7)
                     }
+                } failure: {
+                    imagePlaceholder
                 }
-                
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.md))
+
                 // Product Info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(product.productName ?? product.name)
@@ -92,6 +84,23 @@ struct AiChatProductRow: View {
         }
     }
 }
+
+// MARK: - Views
+
+private extension AiChatProductRow {
+    var imagePlaceholder: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: MedsyRadius.md)
+                .fill(AppColor.green.opacity(0.12))
+            Image(systemName: "cross.case.fill")
+                .foregroundColor(AppColor.green)
+        }
+        .frame(width: 64, height: 64)
+    }
+}
+
+// MARK: - Previews
+
 
 #Preview {
     AiChatProductRow(

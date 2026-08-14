@@ -40,9 +40,13 @@ extension MedsyChatView {
 
             Spacer()
 
-            // New chat button
+            // New chat button — only confirm if there are messages to clear
             Button {
-                showNewChatConfirmation = true
+                if viewModel.messages.isEmpty {
+                    viewModel.startNewChat()
+                } else {
+                    showNewChatConfirmation = true
+                }
             } label: {
                 Image(systemName: "square.and.pencil")
                     .foregroundColor(AppColor.textSec)
@@ -55,7 +59,7 @@ extension MedsyChatView {
             // Dark mode toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                    appSettings.isDarkMode.toggle()
+                    appSettings.toggleResolvedTheme()
                 }
             } label: {
                 Image(systemName: appSettings.isDarkMode ? "sun.max.fill" : "moon.fill")

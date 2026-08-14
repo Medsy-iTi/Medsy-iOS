@@ -8,8 +8,7 @@ import SwiftUI
 struct MedsyProductCard: View {
     var eyebrow: String? = nil
     var iconName: String = "cross.case.fill"
-    var imageURL: String? = nil   // ← new: real product image URL
-
+    var imageURL: String? = nil
     var name: String
     var subtitle: String
     var price: String
@@ -111,18 +110,12 @@ struct MedsyProductCard: View {
 
     @ViewBuilder
     private var productImage: some View {
-        if let urlString = imageURL, let url = URL(string: urlString) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill()
-                case .failure, .empty:
-                    fallbackIcon
-                @unknown default:
-                    fallbackIcon
-                }
-            }
-        } else {
+        MedsyRemoteImage(
+            urlString: imageURL,
+            contentMode: .fill
+        ) {
+            fallbackIcon
+        } failure: {
             fallbackIcon
         }
     }

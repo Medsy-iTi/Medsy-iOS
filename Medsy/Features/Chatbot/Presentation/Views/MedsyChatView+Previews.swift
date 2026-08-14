@@ -43,7 +43,7 @@ struct MedsyChatPreviewWrapper: View {
                 .preferredColorScheme(isDark ? .dark : .light)
         }
         .onAppear {
-            AppSettings.shared.isDarkMode = isDark
+            AppSettings.shared.setThemeMode(isDark ? .dark : .light)
             if isArabic {
                 lang.set(.arabic)
             } else {
@@ -62,7 +62,7 @@ struct PreviewSendTextUseCase: SendAiChatTextMessageUseCaseProtocol {
             conversationID: 1, messageID: 1, intent: .other,
             answer: "This is a preview response.", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil
         )
     }
 }
@@ -73,7 +73,7 @@ struct PreviewSendImageUseCase: SendAiChatImageMessageUseCaseProtocol {
             conversationID: 1, messageID: 1, intent: .other,
             answer: "Image received.", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil
+            categories: [], pharmacistRankings: [], disclaimer: nil, action: nil, reminder: nil
         )
     }
 }

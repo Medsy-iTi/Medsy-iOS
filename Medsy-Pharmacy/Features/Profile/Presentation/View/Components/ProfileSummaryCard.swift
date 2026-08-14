@@ -40,15 +40,9 @@ struct ProfileSummaryCard: View {
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(PharmacyColor.textSecondary)
             }
-            .padding(PharmacySpacing.md)
             .frame(maxWidth: .infinity)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.xl, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.xl, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            }
+            .pharmacyCard(cornerRadius: PharmacyRadius.xl, elevation: .raised)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
     }
 }

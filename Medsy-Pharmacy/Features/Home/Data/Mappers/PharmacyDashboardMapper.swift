@@ -61,7 +61,7 @@ enum PharmacyDashboardMapper {
             pharmacistName: nonEmpty(dto.pharmacistName),
             offerId: dto.offerId,
             subTotal: dto.subTotal,
-            deliveryFee: dto.deliveryFee,
+            deliveryFee: dto.deliveryFee ?? 0,
             total: dto.total,
             deliveryLatitude: dto.deliveryLatitude,
             deliveryLongitude: dto.deliveryLongitude,
@@ -74,8 +74,10 @@ enum PharmacyDashboardMapper {
         PharmacyDashboardRecentOrderItem(
             id: dto.id,
             productId: dto.productId,
-            productName: nonEmpty(dto.productName),
-            imageUrl: normalizedImageURL(dto.imageUrl),
+            productName: nonEmpty(dto.product?.name)
+                ?? nonEmpty(dto.product?.productName)
+                ?? nonEmpty(dto.productName),
+            imageUrl: normalizedImageURL(dto.product?.imageUrl ?? dto.imageUrl),
             quantity: dto.quantity,
             unitPrice: dto.unitPrice,
             totalPrice: dto.totalPrice

@@ -19,8 +19,23 @@ extension PharmacyChatView {
             Spacer(minLength: 40)
 
             VStack(alignment: .trailing, spacing: 4) {
-                if !message.text.isEmpty {
-                    Text(message.text)
+                if let data = message.attachedImageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 180, height: 180)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(PharmacyColor.border, lineWidth: 1)
+                        )
+                        .padding(.bottom, 4)
+                }
+
+                let caption = message.text
+                let isPlaceholder = caption == "pharmacy.chatbot.camera.image_preview".localized || caption == "تم إرفاق صورة" || caption == "Image attached" || caption == "📷 Image" || caption == "📷 صورة"
+                if !caption.isEmpty && !(message.attachedImageData != nil && isPlaceholder) {
+                    Text(caption)
                         .font(PharmacyColor.sans(15))
                         .foregroundColor(.white)
                         .padding(.horizontal, 16)

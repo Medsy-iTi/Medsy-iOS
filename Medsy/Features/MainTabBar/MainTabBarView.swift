@@ -27,6 +27,7 @@ struct MainTabBarView: View {
     @State private var chatbotPromptSequence = 0
     @State private var tabBeforeChatbot: AppTab = .home
     @State private var showsProductChatbotBackButton = false
+    @State private var isKeyboardPresented = false
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -80,9 +81,8 @@ struct MainTabBarView: View {
                 viewModel: chatbotViewModel,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
-                onOpenCompleteRequest: {
-                    isTabBarHidden = false
-                    coordinator.select(.cart)
+                onOpenReminders: {
+                    NotificationCenter.default.post(name: .openRemindersTab, object: nil)
                 },
                 pendingPrompt: $pendingChatbotPrompt,
                 promptSequence: chatbotPromptSequence,
@@ -127,13 +127,16 @@ struct MainTabBarView: View {
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .onAppear(perform: configureTabBarAppearance)
         .onChange(of: appSettings.isDarkMode) { _, _ in
             configureTabBarAppearance()
         }
         .onChange(of: languageManager.currentLanguage) { _, _ in
             configureTabBarAppearance()
+        }
+        .onChange(of: coordinator.selectedTab) { _, selectedTab in
+            refreshCartIfNeeded(for: selectedTab)
         }
         .task(id: coordinator.selectedTab) {
             await refreshTabBarAppearanceAfterTransition()
@@ -142,6 +145,10 @@ struct MainTabBarView: View {
             await refreshTabBarAppearanceAfterTransition()
         }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .onReceive(NotificationCenter.default.publisher(for: .openRemindersTab)) { _ in
+            isTabBarHidden = false
+            coordinator.select(.profile)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openChatbotTab)) { notification in
             isTabBarHidden = false
             coordinator.select(.chatbot)
@@ -159,6 +166,16 @@ struct MainTabBarView: View {
                 chatbotViewModel.sendSuggestion(message)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = false
+            }
+        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()
@@ -170,6 +187,14 @@ struct MainTabBarView: View {
                     .padding(.horizontal, MedsySpacing.md)
                     .padding(.top, MedsySpacing.sm)
                     .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if !isTabBarHidden && !isKeyboardPresented {
+                MedsyAITabOverlay(isSelected: coordinator.selectedTab == .chatbot)
+                    .padding(.bottom, 18)
+                    .allowsHitTesting(false)
+                    .transition(.scale(scale: 0.82).combined(with: .opacity))
             }
         }
         .onChange(of: cartViewModel.feedbackSequence) { _, _ in
@@ -237,6 +262,11 @@ struct MainTabBarView: View {
         coordinator.select(.orders)
     }
 
+    private func refreshCartIfNeeded(for selectedTab: AppTab) {
+        guard selectedTab == .cart else { return }
+        cartViewModel.handle(.load)
+    }
+
     private func scheduleFeedbackDismissal() {
         cartFeedbackTask?.cancel()
         guard case .itemAdded = cartViewModel.feedback else { return }
@@ -277,6 +307,31 @@ struct MainTabBarView: View {
             isDarkMode: appSettings.isDarkMode,
             isRTL: languageManager.isRTL
         )
+    }
+}
+
+private struct MedsyAITabOverlay: View {
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(AppColor.green)
+                .shadow(color: .black.opacity(0.12), radius: 6, y: 3)
+
+            MedsyLottieView(
+                animationName: "ai_sparkles_loop",
+                contentMode: .scaleAspectFit,
+                animationSpeed: 1.1,
+                clipsToBounds: true,
+                tintColor: .white
+            )
+            .frame(width: 32, height: 32)
+            .accessibilityHidden(true)
+        }
+        .frame(width: 50, height: 50)
+        .clipShape(Circle())
+        .scaleEffect(isSelected ? 1.02 : 0.98)
     }
 }
 

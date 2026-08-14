@@ -13,7 +13,7 @@ struct ChatbotRootView: View {
     @Environment(CartViewModel.self) private var cartViewModel
     var onTabBarHiddenChange: (Bool) -> Void
     var onOpenCart: (() -> Void)?
-    var onOpenCompleteRequest: (() -> Void)?
+    var onOpenReminders: (() -> Void)?
     @Binding private var pendingPrompt: String?
     private let promptSequence: Int
     private let onBackToProduct: (() -> Void)?
@@ -22,14 +22,14 @@ struct ChatbotRootView: View {
         viewModel: AiChatViewModel? = nil,
         onTabBarHiddenChange: @escaping (Bool) -> Void,
         onOpenCart: (() -> Void)? = nil,
-        onOpenCompleteRequest: (() -> Void)? = nil,
+        onOpenReminders: (() -> Void)? = nil,
         pendingPrompt: Binding<String?> = .constant(nil),
         promptSequence: Int = 0,
         onBackToProduct: (() -> Void)? = nil
     ) {
         self.onTabBarHiddenChange = onTabBarHiddenChange
         self.onOpenCart = onOpenCart
-        self.onOpenCompleteRequest = onOpenCompleteRequest
+        self.onOpenReminders = onOpenReminders
         self._pendingPrompt = pendingPrompt
         self.promptSequence = promptSequence
         self.onBackToProduct = onBackToProduct
@@ -60,7 +60,14 @@ struct ChatbotRootView: View {
                 coordinator.push(.category(id: id, name: name))
             }
             viewModel.onOpenCart = onOpenCart
-            viewModel.onOpenCompleteRequest = onOpenCompleteRequest
+            viewModel.onOpenCompleteRequest = { products in
+                // Push completeRequest directly onto this coordinator's path!
+                coordinator.push(.completeRequest(products))
+            }
+            viewModel.onOpenReminders = onOpenReminders
+            viewModel.onCartNeedsRefresh = {
+                cartViewModel.handle(.retry) // Silent background sync
+            }
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
@@ -87,8 +94,29 @@ struct ChatbotRootView: View {
             Text("Pharmacy Map")
         case .category(let id, let name):
             ProductsView(category: Category(id: id, name: name))
-        case .completeRequest:
-            Text("Complete Request View Placeholder")
+        case .completeRequest(let products):
+            // Map AIChatProduct to CompleteRequestItem
+            let items = products.map { p in
+                CompleteRequestItem(
+                    id: String(p.id),
+                    name: p.productName ?? p.name,
+                    dosageInfo: p.strength ?? "",
+                    imageURL: p.imageURL,
+                    unitPrice: p.price,
+                    quantity: 1
+                )
+            }
+            let draft = CompleteRequestDraft(items: items, prescriptionCount: 0)
+            CompleteRequestCoordinatorView(
+                draft: draft,
+                clearCart: { return true },
+                onBack: { coordinator.pop() },
+                onCompleted: {
+                    coordinator.pop()
+                    cartViewModel.handle(.load) // optional refresh
+                }
+            )
+            .navigationBarHidden(true)
         }
     }
 }

@@ -13,6 +13,7 @@ enum CartRoute: Hashable {
     case completeRequest
     case search(String)
     case prescription
+    case reminders
 }
 
 @MainActor
@@ -36,6 +37,10 @@ final class CartCoordinator {
 
     func showPrescription() {
         path.append(CartRoute.prescription)
+    }
+
+    func showMyReminders() {
+        path.append(CartRoute.reminders)
     }
 
     func pop() {
@@ -72,7 +77,8 @@ struct CartCoordinatorView: View {
                 onSearch: { coordinator.showSearch() },
                 onScanPrescription: coordinator.showPrescription,
                 onContinue: coordinator.showCompleteRequest,
-                onProductSelected: coordinator.showProductDetail
+                onProductSelected: coordinator.showProductDetail,
+                onReminders: coordinator.showMyReminders
             )
             .navigationDestination(for: CartRoute.self) { route in
                 switch route {
@@ -102,6 +108,8 @@ struct CartCoordinatorView: View {
                         onExit: coordinator.pop,
                         onViewCart: coordinator.pop
                     )
+                case .reminders:
+                    MyRemindersView(onBack: coordinator.pop)
                 }
             }
             .navigationDestination(for: ProductDetailDestination.self) { destination in
@@ -110,9 +118,18 @@ struct CartCoordinatorView: View {
         }
         .onAppear {
             onTabBarHiddenChange(!coordinator.path.isEmpty)
+            refreshCartIfNeeded()
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
+            if isEmpty {
+                refreshCartIfNeeded()
+            }
         }
+    }
+
+    private func refreshCartIfNeeded() {
+        guard coordinator.path.isEmpty else { return }
+        viewModel.handle(.load)
     }
 }
