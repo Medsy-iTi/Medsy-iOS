@@ -24,5 +24,5 @@ enum PharmacyDashboardEndpoint: ApiEndpoint {
 
     var requiresAuthentication: Bool { true }
 
-    var allowsResponseLogging: Bool { false }
+    var allowsResponseLogging: Bool { true }
 }
