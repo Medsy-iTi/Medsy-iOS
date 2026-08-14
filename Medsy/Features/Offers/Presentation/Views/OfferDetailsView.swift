@@ -38,8 +38,8 @@ struct OfferDetailsView: View {
     var body: some View {
         VStack(spacing: 0) {
             OfferDetailsHeaderView(
-                pharmacyName: viewModel.offerDetail.pharmacyName,
-                managerName: viewModel.offerDetail.managerName,
+                pharmacyName: "offers.details.title".localized,
+                managerName: "",
                 onBack: onBack
             )
 
@@ -123,10 +123,10 @@ struct OfferDetailsView: View {
                     .padding(.vertical, 16)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(AppColor.green)
+                            .fill((viewModel.isConfirming || viewModel.isConfirmed || !viewModel.hasSelectedMedicines) ? AppColor.green.opacity(0.5) : AppColor.green)
                     )
                 }
-                .disabled(viewModel.isConfirming || viewModel.isConfirmed)
+                .disabled(viewModel.isConfirming || viewModel.isConfirmed || !viewModel.hasSelectedMedicines)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }

@@ -1,17 +1,10 @@
-//
-//  OrderDTOs.swift
-//  Medsy
-//
-//  Created by Ahmed Elkady on 21/07/2026.
-//
-
 import Foundation
 
 typealias OrdersPageResponseDTO = APIResponseDTO<PageDTO<MasterOrderDTO>>
 typealias OrderDetailResponseDTO = APIResponseDTO<MasterOrderDTO>
 typealias OrderRequestDetailResponseDTO = APIResponseDTO<OrderRequestDetailDTO>
 
-struct MasterOrderDTO: Decodable {
+struct MasterOrderDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int
     let requestId: Int
     let orderResponses: [MasterOrderPharmacyDTO]
@@ -25,7 +18,7 @@ struct MasterOrderDTO: Decodable {
     let paidAt: String?
 }
 
-struct MasterOrderPharmacyDTO: Decodable {
+struct MasterOrderPharmacyDTO: Codable, Equatable, Hashable, Sendable {
     let offerId: Int
     let pharmacyId: Int
     let pharmacyName: String
@@ -34,7 +27,7 @@ struct MasterOrderPharmacyDTO: Decodable {
     let items: [MasterOrderItemDTO]
 }
 
-struct MasterOrderItemDTO: Decodable {
+struct MasterOrderItemDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int
     let productId: Int?
     let quantity: Int
@@ -43,7 +36,7 @@ struct MasterOrderItemDTO: Decodable {
     let product: MasterOrderProductDTO?
 }
 
-struct MasterOrderProductDTO: Decodable {
+struct MasterOrderProductDTO: Codable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String?
     let productName: String?
@@ -58,8 +51,27 @@ struct MasterOrderProductDTO: Decodable {
     let imageUrl: String?
 }
 
-struct OrderRequestDetailDTO: Decodable {
-    let id: Int
+struct OrderRequestDetailDTO: Codable, Equatable, Hashable, Sendable {
+    let requestId: Int
+    let pharmacyName: String
+    let address: String
+    let deliveryAddress: String
     let deliveryLatitude: Double?
     let deliveryLongitude: Double?
+    let deliveryFee: Double
+    let paymentMethod: String
+    let medicines: [OrderRequestMedicineDTO]
+    let pharmacistComment: String?
+    let totalPrice: Double
+}
+
+struct OrderRequestMedicineDTO: Codable, Equatable, Hashable, Sendable {
+    let id: Int
+    let name: String
+    let dosage: String
+    let price: Double
+    let isAvailable: Bool
+    let isAlternative: Bool
+    let image: String?
+    let isSelected: Bool
 }

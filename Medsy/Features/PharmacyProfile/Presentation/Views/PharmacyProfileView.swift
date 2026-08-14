@@ -1,10 +1,3 @@
-//
-//  PharmacyProfileView.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 21/07/2026.
-//
-
 import SwiftUI
 
 struct PharmacyProfileView: View {
@@ -20,8 +13,13 @@ struct PharmacyProfileView: View {
         self.onBack = onBack
     }
 
+    init(pharmacyId: Int, onBack: (() -> Void)? = nil) {
+        _viewModel = State(initialValue: PharmacyProfileViewModel(pharmacyId: pharmacyId))
+        self.onBack = onBack
+    }
+
     init(pharmacyID: Int, onBack: (() -> Void)? = nil) {
-        _viewModel = State(initialValue: PharmacyProfileViewModel(initialPharmacyID: pharmacyID))
+        _viewModel = State(initialValue: PharmacyProfileViewModel(pharmacyId: pharmacyID))
         self.onBack = onBack
     }
 

@@ -1,10 +1,3 @@
-//
-//  PharmacyProfileViewModel.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 21/07/2026.
-//
-
 import Foundation
 import Observation
 import UIKit
@@ -16,23 +9,23 @@ final class PharmacyProfileViewModel {
     private(set) var state: PharmacyProfileState = .idle
     private(set) var orderNumber: String = "#1024"
 
-    private let initialPharmacyID: Int
+    private let pharmacyId: Int
     private let fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol
 
     nonisolated init(
-        initialPharmacyID: Int = 2,
+        pharmacyId: Int = 2,
         fetchPharmacyProfileUseCase: FetchPharmacyProfileUseCaseProtocol = DIContainer.shared.resolve(FetchPharmacyProfileUseCaseProtocol.self)
     ) {
-        self.initialPharmacyID = initialPharmacyID
+        self.pharmacyId = pharmacyId
         self.fetchPharmacyProfileUseCase = fetchPharmacyProfileUseCase
     }
 
     func loadPharmacy(id: Int? = nil) {
-        let pharmacyID = id ?? initialPharmacyID
+        let targetId = id ?? pharmacyId
         state = .loading
         Task {
             do {
-                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: pharmacyID)
+                let pharmacy = try await fetchPharmacyProfileUseCase.execute(id: targetId)
                 state = .loaded(pharmacy)
             } catch {
                 state = .error(error.localizedDescription)

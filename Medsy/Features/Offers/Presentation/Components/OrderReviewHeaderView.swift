@@ -10,13 +10,16 @@ struct OrderReviewHeaderView: View {
     let onBack: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        ZStack {
             Text("orderReview.title".localized)
                 .font(AppColor.sans(20, .bold))
                 .foregroundStyle(AppColor.textPrim)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity)
 
-            MedsyNavBarBackButton(action: onBack)
+            HStack {
+                MedsyNavBarBackButton(action: onBack)
+                Spacer()
+            }
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)

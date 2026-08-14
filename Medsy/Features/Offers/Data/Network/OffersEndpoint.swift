@@ -1,10 +1,3 @@
-//
-//  OffersEndpoint.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Alamofire
 import Foundation
 
@@ -13,6 +6,10 @@ enum OffersEndpoint: ApiEndpoint {
     case getStream(requestId: Int)
     case selectPharmacy(requestId: Int, body: ConfirmOfferRequestDTO)
     case confirmOffer(requestId: Int, body: ConfirmOfferFulfillmentRequestDTO)
+    case getMasterOrders(page: Int, size: Int)
+    case getMasterOrder(id: Int)
+    case getRequest(requestId: Int)
+    case getRequests(page: Int, size: Int)
 
     var path: String {
         switch self {
@@ -24,15 +21,36 @@ enum OffersEndpoint: ApiEndpoint {
             return "requests/\(requestId)/select"
         case let .confirmOffer(requestId, _):
             return "requests/\(requestId)/confirm"
+        case .getMasterOrders:
+            return "masterorders"
+        case let .getMasterOrder(id):
+            return "masterorders/\(id)"
+        case let .getRequest(requestId):
+            return "requests/\(requestId)"
+        case .getRequests:
+            return "requests"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .getResult, .getStream:
+        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest, .getRequests:
             return .get
         case .selectPharmacy, .confirmOffer:
             return .post
+        }
+    }
+
+    var queryParameters: Parameters? {
+        switch self {
+        case let .getMasterOrders(page, size), let .getRequests(page, size):
+            return [
+                "page": page,
+                "size": size,
+                "sort": "id,desc"
+            ]
+        default:
+            return nil
         }
     }
 
@@ -47,7 +65,7 @@ enum OffersEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .getResult, .getStream:
+        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest, .getRequests:
             return nil
         case let .selectPharmacy(_, body):
             return try? JSONEncoder().encode(body)

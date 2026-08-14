@@ -57,7 +57,7 @@ struct OfferMedicineItemRow: View {
                             .clipShape(Capsule())
                     }
 
-                    Text(item.name)
+                    Text(item.name.isEmpty ? "offers.details.unavailableItem".localized : item.name)
                         .font(AppColor.sans(15, .bold))
                         .foregroundStyle(AppColor.textPrim)
                         .multilineTextAlignment(.trailing)
@@ -79,22 +79,16 @@ struct OfferMedicineItemRow: View {
                             .stroke(AppColor.border, lineWidth: 1)
                     )
 
-                if let imageUrl = item.imageUrl, let url = URL(string: imageUrl) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .padding(6)
-                    } placeholder: {
-                        Image(systemName: item.imageName)
-                            .font(.system(size: 22))
-                            .foregroundStyle(AppColor.green)
-                    }
-                } else {
+                MedsyRemoteImage(urlString: item.imageUrl, contentMode: .fit) {
+                    Image(systemName: item.imageName)
+                        .font(.system(size: 22))
+                        .foregroundStyle(AppColor.green)
+                } failure: {
                     Image(systemName: item.imageName)
                         .font(.system(size: 22))
                         .foregroundStyle(AppColor.green)
                 }
+                .padding(6)
             }
             .frame(width: 52, height: 52)
         }
