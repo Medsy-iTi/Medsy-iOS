@@ -143,7 +143,7 @@ private struct FavoriteEmptyStateView: View {
 
             VStack(spacing: MedsySpacing.xs) {
                 Text("favorites.empty.title".localized)
-                    .font(MedsyFotitle(22))
+                    .font(MedsyFont.title(22))		
                     .foregroundStyle(AppColor.textPrim)
                     .multilineTextAlignment(.center)
 
