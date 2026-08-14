@@ -325,6 +325,11 @@
 "pharmacy.request.reject" = "Reject Request";
 "pharmacy.request.add_alternative" = "Unavailable / Add Substitute";
 "pharmacy.request.select_alternative" = "Select an Alternative";
+"pharmacy.request.product_search.title" = "Select an Alternative";
+"pharmacy.request.product_search.placeholder" = "Search products...";
+"pharmacy.request.product_search.prompt" = "Search for an alternative product";
+"pharmacy.request.product_search.empty" = "No matching products found";
+"pharmacy.request.product_search.select" = "Select";
 /* Pharmacist Invitations */
 "common.error" = "Something went wrong";
 "common.ok" = "OK";
