@@ -76,6 +76,7 @@ struct HomeSearchingStatusView: View {
     var createdAt: Date? = nil
     var onTimerExpired: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -84,9 +85,9 @@ struct HomeSearchingStatusView: View {
     }
 
     private var currentStage: Int {
-        if secondsElapsed < 20 {
+        if secondsElapsed < 300 {
             return 1
-        } else if secondsElapsed < 45 {
+        } else if secondsElapsed < 600 {
             return 2
         } else {
             return 3
@@ -195,13 +196,25 @@ struct HomeSearchingStatusView: View {
                 }
                 
                 ZStack {
-                    HStack(spacing: 0) {
-                        AppColor.green
-                            .frame(height: 3)
-                        
-                        Color.gray.opacity(0.2)
-                            .frame(height: 3)
+                    GeometryReader { geo in
+                        let fillWidth: CGFloat = {
+                            switch currentStage {
+                            case 1: return 0
+                            case 2: return geo.size.width * 0.5
+                            default: return geo.size.width
+                            }
+                        }()
+                        ZStack(alignment: languageManager.isRTL ? .trailing : .leading) {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 3)
+                            
+                            Rectangle()
+                                .fill(AppColor.green)
+                                .frame(width: fillWidth, height: 3)
+                        }
                     }
+                    .frame(height: 3)
                     
                     HStack(spacing: 0) {
                         Circle()
@@ -254,6 +267,7 @@ struct HomeSearchingStatusView: View {
             }
         }
         .onChange(of: createdAt) { _, _ in
+            hasExpired = false
             updateTime()
         }
     }
@@ -263,7 +277,12 @@ struct HomeSearchingStatusView: View {
             let age = Int(Date().timeIntervalSince(created))
             secondsElapsed = max(0, age)
             if age >= 900 {
-                onTimerExpired?()
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
             }
         } else {
             secondsElapsed += 1
@@ -285,6 +304,7 @@ struct HomeFirstOfferStatusView: View {
 
     @State private var showingDeleteAlert = false
     @State private var secondsElapsed: Int = 0
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -446,6 +466,7 @@ struct HomeFirstOfferStatusView: View {
             }
         }
         .onChange(of: createdAt) { _, _ in
+            hasExpired = false
             updateTime()
         }
         .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
@@ -463,7 +484,12 @@ struct HomeFirstOfferStatusView: View {
             let age = Int(Date().timeIntervalSince(created))
             secondsElapsed = max(0, age)
             if age >= 900 {
-                onTimerExpired?()
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
             }
         } else {
             secondsElapsed += 1
@@ -486,6 +512,7 @@ struct HomeMultipleOffersStatusView: View {
     var onDelete: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
     @State private var showingDeleteAlert = false
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -660,6 +687,7 @@ struct HomeMultipleOffersStatusView: View {
             }
         }
         .onChange(of: createdAt) { _, _ in
+            hasExpired = false
             updateTime()
         }
         .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
@@ -677,7 +705,12 @@ struct HomeMultipleOffersStatusView: View {
             let age = Int(Date().timeIntervalSince(created))
             secondsElapsed = max(0, age)
             if age >= 900 {
-                onTimerExpired?()
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
             }
         } else {
             secondsElapsed += 1

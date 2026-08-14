@@ -13,6 +13,7 @@ final class HomeViewModel {
     private let getOfferResultUseCase: GetOfferResultUseCaseProtocol
     private let offersRemoteDataSource: OffersRemoteDataSourceProtocol
     private var pollingTask: Task<Void, Never>?
+    private var isCheckingPolling = false
 
     init(
         getOfferResultUseCase: GetOfferResultUseCaseProtocol = DIContainer.shared.resolve(GetOfferResultUseCaseProtocol.self),
@@ -55,9 +56,12 @@ final class HomeViewModel {
     }
 
     func checkAndStartPolling() {
+        guard !isCheckingPolling else { return }
+        isCheckingPolling = true
         Task {
-            async let fetchedRequests = (try? await self.offersRemoteDataSource.fetchRequests(page: 0, size: 3)) ?? []
-            async let fetchedOrders = (try? await self.offersRemoteDataSource.fetchMasterOrders(page: 0, size: 3)) ?? []
+            defer { self.isCheckingPolling = false }
+            async let fetchedRequests = (try? await self.offersRemoteDataSource.fetchRequests(page: 0, size: 10)) ?? []
+            async let fetchedOrders = (try? await self.offersRemoteDataSource.fetchMasterOrders(page: 0, size: 10)) ?? []
 
             let recentRequests = await fetchedRequests
             let recentOrders = await fetchedOrders

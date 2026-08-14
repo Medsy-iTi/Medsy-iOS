@@ -12,22 +12,24 @@ struct OfferDetailsHeaderView: View {
     let onBack: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .trailing, spacing: 4) {
+        ZStack {
+            VStack(spacing: 2) {
                 Text(pharmacyName)
                     .font(AppColor.sans(20, .bold))
                     .foregroundStyle(AppColor.textPrim)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
 
                 if !managerName.isEmpty {
                     Text(managerName)
                         .font(AppColor.sans(13))
                         .foregroundStyle(AppColor.textSec)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
+            .frame(maxWidth: .infinity)
 
-            MedsyNavBarBackButton(action: onBack)
+            HStack {
+                MedsyNavBarBackButton(action: onBack)
+                Spacer()
+            }
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)
