@@ -16,8 +16,23 @@ final class AIChatSessionDataSource {
     func hydrateHistory(_ history: AIChatHistory) {
         guard !isHistoryLoaded else { return }
         isHistoryLoaded = true
-        messages = history.messages.map { msg in
-            AiChatMessage(
+        var hydrated: [AiChatMessage] = []
+        
+        for (index, msg) in history.messages.enumerated() {
+            var imageData: Data? = nil
+            
+            // Check if this user message has a locally cached image upload
+            if msg.role == .user, let convID = history.conversationID {
+                // Peek at the next message to get the assistant's ID
+                if index + 1 < history.messages.count {
+                    let nextMsg = history.messages[index + 1]
+                    if nextMsg.role == .assistant {
+                        imageData = AIChatImageStore.loadImage(conversationID: convID, messageID: nextMsg.id)
+                    }
+                }
+            }
+            
+            hydrated.append(AiChatMessage(
                 id: msg.id,
                 role: msg.role,
                 text: msg.content,
@@ -27,9 +42,10 @@ final class AIChatSessionDataSource {
                 isTyping: false,
                 isRetryable: false,
                 localGeneration: generation,
-                attachedImageData: nil
-            )
+                attachedImageData: imageData
+            ))
         }
+        messages = hydrated
     }
 
     func markHistoryFailed() {

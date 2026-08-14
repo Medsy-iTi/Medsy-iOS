@@ -280,6 +280,12 @@ final class AiChatViewModel: AiChatViewModelProtocol {
                 }
 
                 guard !Task.isCancelled else { return }
+                
+                // Save image locally if we got a valid response with IDs
+                if let image = image, let convID = response.conversationID, let msgID = response.messageID {
+                    AIChatImageStore.saveImage(image, conversationID: convID, messageID: msgID)
+                }
+                
                 session.resolveResponse(response, typingID: typingID, sentGeneration: capturedGeneration)
                 syncMessages()
                 handleAction(response.action)
