@@ -80,6 +80,9 @@ struct MainTabBarView: View {
                 viewModel: chatbotViewModel,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
+                onOpenReminders: {
+                    NotificationCenter.default.post(name: .openRemindersTab, object: nil)
+                },
                 pendingPrompt: $pendingChatbotPrompt,
                 promptSequence: chatbotPromptSequence,
                 onBackToProduct: chatbotBackAction
@@ -138,6 +141,10 @@ struct MainTabBarView: View {
             await refreshTabBarAppearanceAfterTransition()
         }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
+        .onReceive(NotificationCenter.default.publisher(for: .openRemindersTab)) { _ in
+            isTabBarHidden = false
+            coordinator.select(.profile)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openChatbotTab)) { notification in
             isTabBarHidden = false
             coordinator.select(.chatbot)

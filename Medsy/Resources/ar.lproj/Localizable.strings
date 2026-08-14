@@ -1037,3 +1037,18 @@
 // MARK: - Profile — Reminders row
 "profile.reminders"                   = "تذكيراتي";
 "profile.reminders.subtitle"          = "إدارة جداول دوائك";
+
+/* Reminders */
+"reminders.add.medicine_name" = "اسم الدواء";
+"reminders.add.medicine_section" = "الدواء";
+"reminders.add.time_label" = "الوقت";
+"reminders.add.add_time" = "إضافة وقت";
+"reminders.add.times_section" = "أوقات التنبيه";
+"reminders.add.days" = "%d أيام";
+"reminders.add.duration_section" = "المدة";
+"reminders.add.title" = "إضافة تنبيه";
+"reminders.row.active" = "نشط";
+"reminders.row.duration_ends" = "%d أيام · ينتهي في %@";
+"reminders.add_button" = "إضافة تنبيه";
+"reminders.delete.title" = "حذف التنبيه";
+"reminders.delete.message" = "هل أنت متأكد أنك تريد حذف هذا التنبيه؟";

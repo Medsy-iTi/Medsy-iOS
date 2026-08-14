@@ -98,6 +98,13 @@ struct ProfileCoordinatorView: View {
         } message: {
             Text("profile.logout.message".localized)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .openRemindersTab)) { _ in
+            // Small delay to allow tab switch animation before pushing
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                coordinator.path = NavigationPath()
+                coordinator.showMyReminders()
+            }
+        }
         .onAppear {
             onTabBarHiddenChange(!coordinator.path.isEmpty)
         }

@@ -10,6 +10,12 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 
+extension Notification.Name {
+    /// Posted when the user taps a medication reminder push notification.
+    /// MainTabBarView listens for this to navigate to My Reminders.
+    static let openRemindersTab = Notification.Name("medsy.openRemindersTab")
+}
+
 @main
 struct MedsyApp: App {
 
@@ -58,13 +64,16 @@ struct MedsyApp: App {
         onboardingFactory = AppAssembler.shared.container.resolve(OnboardingFactory.self)
         authenticationFactory = AppAssembler.shared.container.resolve(AuthenticationFactory.self)
         logoutUseCase = AppAssembler.shared.container.resolve(LogoutUseCaseProtocol.self)
-      
-//        heartbeatService = AppAssembler.shared.container.resolve(HeartbeatService.self)
+
         appCoordinator = AppCoordinator(
             shouldShowOnboarding: onboardingFactory.shouldShow(),
             authenticationStatusStore: AppAssembler.shared.container.resolve(UserDefaultsStatusStoreProtocol.self),
             logoutUseCase: logoutUseCase
         )
+
+        // Register self as the notification delegate so foreground banners are shown
+        // and notification taps navigate to My Reminders.
+        UNUserNotificationCenter.current().delegate = AppNotificationDelegate.shared
     }
 
     var body: some Scene {
@@ -74,11 +83,7 @@ struct MedsyApp: App {
                 authenticationFactory: authenticationFactory,
                 coordinator: appCoordinator
             )
-//            .task {
-//                heartbeatService.startHeartbeat()
-//                print("[MedsyApp] 🚀 Customer App launched — heartbeat started")
-//            }
-                     .localizedEnvironment()
+            .localizedEnvironment()
             .environment(languageManager)
             .modelContainer(reminderContainer)
             .onOpenURL { url in
@@ -92,3 +97,38 @@ struct MedsyApp: App {
         }
     }
 }
+
+// MARK: - Notification Delegate
+
+/// Singleton delegate that handles foreground notification presentation
+/// and notification tap navigation.
+final class AppNotificationDelegate: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
+    static let shared = AppNotificationDelegate()
+    private override init() {}
+
+    /// Show the notification banner even when the app is in the foreground.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    /// When the user taps the notification, navigate to the Reminders screen.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let identifier = response.notification.request.identifier
+        let categoryID  = response.notification.request.content.categoryIdentifier
+        if categoryID == "MEDICATION_REMINDER" || identifier.hasPrefix("medsy.reminder.") {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .openRemindersTab, object: nil)
+            }
+        }
+        completionHandler()
+    }
+}
+

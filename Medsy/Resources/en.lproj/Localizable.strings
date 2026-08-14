@@ -1043,3 +1043,18 @@
 // MARK: - Profile — Reminders row
 "profile.reminders"                  = "My Reminders";
 "profile.reminders.subtitle"         = "Manage your medication schedules";
+
+/* Reminders */
+"reminders.add.medicine_name" = "Medicine name";
+"reminders.add.medicine_section" = "Medicine";
+"reminders.add.time_label" = "Time";
+"reminders.add.add_time" = "Add time";
+"reminders.add.times_section" = "Alarm times";
+"reminders.add.days" = "%d days";
+"reminders.add.duration_section" = "Duration";
+"reminders.add.title" = "Add Reminder";
+"reminders.row.active" = "Active";
+"reminders.row.duration_ends" = "%d days · ends %@";
+"reminders.add_button" = "Add reminder";
+"reminders.delete.title" = "Delete Reminder";
+"reminders.delete.message" = "Are you sure you want to delete this reminder?";
