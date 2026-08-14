@@ -198,7 +198,7 @@ struct PharmacyPreviewHost<Content: View>: View {
             .pharmacyLocalizedEnvironment()
             .preferredColorScheme(isDarkMode ? .dark : .light)
             .onAppear {
-                appSettings.isDarkMode = isDarkMode
+                appSettings.themePreference = isDarkMode ? .dark : .light
                 languageManager.set(language)
             }
     }

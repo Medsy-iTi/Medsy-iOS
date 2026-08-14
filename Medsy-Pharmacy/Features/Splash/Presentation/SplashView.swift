@@ -107,7 +107,7 @@ struct SplashView: View {
                 Spacer()
             }
         }
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .onAppear(perform: startAnimations)
         .task {
             try? await Task.sleep(for: .seconds(reduceMotion ? 1.5 : 2.8))
