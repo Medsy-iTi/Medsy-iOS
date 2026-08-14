@@ -33,7 +33,7 @@ extension PharmacyChatView {
             Spacer()
 
             // New chat
-            Button(action: { viewModel.startNewChat() }) {
+            Button(action: { showingNewChatAlert = true }) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 17))
                     .foregroundColor(PharmacyColor.textSecondary)

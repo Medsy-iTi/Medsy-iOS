@@ -16,8 +16,23 @@ final class AIChatSessionDataSource {
     func hydrateHistory(_ history: AIChatHistory) {
         guard !isHistoryLoaded else { return }
         isHistoryLoaded = true
-        messages = history.messages.map { msg in
-            AiChatMessage(
+        var hydrated: [AiChatMessage] = []
+        
+        for (index, msg) in history.messages.enumerated() {
+            var imageData: Data? = nil
+            
+            // Check if this user message has a locally cached image upload
+            if msg.role == .user, let convID = history.conversationID {
+                // Peek at the next message to get the assistant's ID
+                if index + 1 < history.messages.count {
+                    let nextMsg = history.messages[index + 1]
+                    if nextMsg.role == .assistant {
+                        imageData = AIChatImageStore.loadImage(conversationID: convID, messageID: nextMsg.id)
+                    }
+                }
+            }
+            
+            hydrated.append(AiChatMessage(
                 id: msg.id,
                 role: msg.role,
                 text: msg.content,
@@ -26,9 +41,11 @@ final class AIChatSessionDataSource {
                 historyMessage: msg,
                 isTyping: false,
                 isRetryable: false,
-                localGeneration: generation
-            )
+                localGeneration: generation,
+                attachedImageData: imageData
+            ))
         }
+        messages = hydrated
     }
 
     func markHistoryFailed() {
@@ -36,7 +53,7 @@ final class AIChatSessionDataSource {
     }
 
 
-    func appendOptimisticUserMessage(text: String) -> Int {
+    func appendOptimisticUserMessage(text: String, imageData: Data? = nil) -> Int {
         let id = nextLocalID
         nextLocalID -= 1
         let msg = AiChatMessage(
@@ -48,7 +65,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: false,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: imageData
         )
         messages.append(msg)
         return id
@@ -67,7 +85,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: true,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: nil
         )
         messages.append(msg)
         return id
@@ -88,7 +107,8 @@ final class AIChatSessionDataSource {
             historyMessage: nil,
             isTyping: false,
             isRetryable: false,
-            localGeneration: generation
+            localGeneration: generation,
+            attachedImageData: nil
         )
         messages.append(msg)
     }

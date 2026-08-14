@@ -29,6 +29,7 @@ struct ProfileScreen: View {
     let onHowMedsyWorks: () -> Void
     let onHelpCenter: () -> Void
     let onReportProblem: () -> Void
+    let onReminders: () -> Void
     let onLogout: () -> Void
 
     private var profileDetails: [ProfileDetailItem] {
@@ -62,6 +63,13 @@ struct ProfileScreen: View {
                 subtitleKey: "profile.order_history.subtitle",
                 iconName: "shippingbox",
                 iconColor: Color(hex: "#38BDF8")
+            ),
+            ProfileRowItem(
+                id: "reminders",
+                titleKey: "profile.reminders",
+                subtitleKey: "profile.reminders.subtitle",
+                iconName: "bell.fill",
+                iconColor: Color(hex: "#F59E0B")
             )
         ]
     }
@@ -272,6 +280,8 @@ struct ProfileScreen: View {
             onOrders()
         case "favorites":
             onFavorites()
+        case "reminders":
+            onReminders()
         case "how":
             onHowMedsyWorks()
         case "help":
@@ -295,7 +305,7 @@ struct ProfileScreen: View {
         state: .loaded,
         onRetry: {},
         onEditProfile: {}, onAddDeliveryLocation: {}, onLanguage: {}, onTheme: {}, onOrders: {}, onFavorites: {},
-        onHowMedsyWorks: {}, onHelpCenter: {}, onReportProblem: {}, onLogout: {}
+        onHowMedsyWorks: {}, onHelpCenter: {}, onReportProblem: {}, onReminders: {}, onLogout: {}
     )
         .environment(LanguageManager.shared)
 }

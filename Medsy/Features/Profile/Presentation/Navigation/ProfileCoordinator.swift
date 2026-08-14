@@ -14,6 +14,7 @@ enum ProfileRoute: Hashable {
     case howMedsyWorks
     case helpCenter
     case reportProblem
+    case myReminders
 }
 
 enum ProfilePresentation: Identifiable {
@@ -148,6 +149,7 @@ final class ProfileCoordinator {
     func showHowMedsyWorks() { path.append(ProfileRoute.howMedsyWorks) }
     func showHelpCenter() { path.append(ProfileRoute.helpCenter) }
     func showReportProblem() { path.append(ProfileRoute.reportProblem) }
+    func showMyReminders() { path.append(ProfileRoute.myReminders) }
     func goBack() {
         guard !path.isEmpty else { return }
         path.removeLast()

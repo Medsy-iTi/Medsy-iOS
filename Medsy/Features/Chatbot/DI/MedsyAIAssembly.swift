@@ -6,6 +6,12 @@
 import Foundation
 
 struct ChatbotAssembly: ModuleAssembly {
+    let reminderStore: ReminderStore?
+
+    init(reminderStore: ReminderStore? = nil) {
+        self.reminderStore = reminderStore
+    }
+
     func register(in container: DIContainer) {
 
         // ── Legacy catalog chatbot (kept for build compatibility) ──
@@ -80,15 +86,17 @@ struct ChatbotAssembly: ModuleAssembly {
             )
         }
 
-        container.register(AiChatViewModel.self) { c in
+        container.register(AiChatViewModel.self) { [reminderStore] c in
             MainActor.assumeIsolated {
                 AiChatViewModel(
-                    sendTextUseCase:    c.resolve(SendAiChatTextMessageUseCaseProtocol.self),
-                    sendImageUseCase:   c.resolve(SendAiChatImageMessageUseCaseProtocol.self),
-                    loadHistoryUseCase: c.resolve(LoadAiChatHistoryUseCaseProtocol.self),
+                    sendTextUseCase:     c.resolve(SendAiChatTextMessageUseCaseProtocol.self),
+                    sendImageUseCase:    c.resolve(SendAiChatImageMessageUseCaseProtocol.self),
+                    loadHistoryUseCase:  c.resolve(LoadAiChatHistoryUseCaseProtocol.self),
                     startNewChatUseCase: c.resolve(StartNewAiChatUseCaseProtocol.self),
-                    session:            AIChatSessionDataSource(),
-                    speechRecognizer:   AiChatSpeechRecognizer()
+                    session:             AIChatSessionDataSource(),
+                    speechRecognizer:    AiChatSpeechRecognizer(),
+                    reminderStore:       reminderStore,
+                    reminderScheduler:   .shared
                 )
             }
         }

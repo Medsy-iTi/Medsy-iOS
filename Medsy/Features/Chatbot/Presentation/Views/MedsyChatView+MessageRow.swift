@@ -12,7 +12,7 @@ extension MedsyChatView {
         switch message.role {
         case .user:
             VStack(alignment: .trailing, spacing: MedsySpacing.xs) {
-                userBubble(message.text)
+                userBubble(message)
                 if message.isRetryable {
                     Button("common.retry".localized) {
                         viewModel.retryMessage(id: message.id)
@@ -21,6 +21,7 @@ extension MedsyChatView {
                     .foregroundColor(theme.danger)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
 
         case .assistant:
             if message.isTyping { EmptyView() } // shown via typingIndicator state
@@ -54,7 +55,7 @@ extension MedsyChatView {
 
     @ViewBuilder
     private func answerBubble(_ text: String, intent: AIChatIntent) -> some View {
-        let isReminder = [AIChatIntent.setReminder, .deleteReminder, .listReminders].contains(intent)
+        let isReminder = intent == .setReminder
         if isReminder {
             AiChatReminderBubble(text: text)
         } else {
@@ -83,7 +84,12 @@ extension MedsyChatView {
                 AiChatCartSuccessCard(
                     quantity: action.quantity ?? 1,
                     cartItemCount: action.cartItemCount ?? 0,
-                    onViewCart: { viewModel.onOpenCart?() }
+                    onViewCart: {
+                        // Force the CartViewModel to reload from the server before
+                        // navigating so the cart screen shows the backend-added item.
+                        cartViewModel.handle(.retry)
+                        viewModel.onOpenCart?()
+                    }
                 )
                 .padding(.top, MedsySpacing.xs)
                 .padding(.bottom, 12)
@@ -133,9 +139,24 @@ extension MedsyChatView {
 
         case .createRequest:
             // Always show the confirm card when intent is createRequest
-            AiChatConfirmRequestCard(onConfirm: { viewModel.onOpenCompleteRequest?() })
+            if let action = message.action, action.type == .createRequest {
+                AiChatConfirmRequestCard(onConfirm: {
+                    viewModel.confirmRequest(action: action, fallbackProducts: message.products)
+                })
                 .padding(.top, MedsySpacing.xs)
                 .padding(.bottom, 12)
+            }
+
+        case .setReminder:
+            // Show a confirmation chip with the scheduled times when available
+            if let reminder = message.reminder {
+                AiChatReminderConfirmCard(
+                    reminder: reminder,
+                    onViewReminders: { viewModel.onOpenReminders?() }
+                )
+                .padding(.top, MedsySpacing.xs)
+                .padding(.bottom, 12)
+            }
 
         default:
             EmptyView()
@@ -171,15 +192,35 @@ extension MedsyChatView {
         .padding(.bottom, 12)
     }
 
-    private func userBubble(_ text: String) -> some View {
-        MedsyChatBubble(
-            text: text,
-            isUser: true,
-            userBubbleColor: theme.primary,
-            userTextColor: .white,
-            assistantBubbleColor: AppColor.surface,
-            assistantTextColor: AppColor.textPrim
-        )
+    private func userBubble(_ message: AiChatMessage) -> some View {
+        VStack(alignment: .trailing, spacing: MedsySpacing.xs) {
+            // If this message has an attached image, render a real thumbnail
+            if let data = message.attachedImageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 180, height: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: MedsyRadius.lg, style: .continuous)
+                            .stroke(theme.primary.opacity(0.2), lineWidth: 1)
+                    )
+                    .medsyCardShadow()
+            }
+            // Show text caption only when there's actual text (not the placeholder label)
+            let caption = message.text
+            let isPlaceholder = caption == "📷 Image" || caption == "📷 صورة"
+            if !caption.isEmpty && !(message.attachedImageData != nil && isPlaceholder) {
+                MedsyChatBubble(
+                    text: caption,
+                    isUser: true,
+                    userBubbleColor: theme.primary,
+                    userTextColor: .white,
+                    assistantBubbleColor: AppColor.surface,
+                    assistantTextColor: AppColor.textPrim
+                )
+            }
+        }
     }
 
     var aiAvatar: some View {

@@ -40,9 +40,13 @@ extension MedsyChatView {
 
             Spacer()
 
-            // New chat button
+            // New chat button — only confirm if there are messages to clear
             Button {
-                showNewChatConfirmation = true
+                if viewModel.messages.isEmpty {
+                    viewModel.startNewChat()
+                } else {
+                    showNewChatConfirmation = true
+                }
             } label: {
                 Image(systemName: "square.and.pencil")
                     .foregroundColor(AppColor.textSec)

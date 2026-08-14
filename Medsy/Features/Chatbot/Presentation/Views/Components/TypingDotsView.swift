@@ -31,6 +31,7 @@ struct TypingDotsView: View {
                     )
             }
         }
+        .environment(\.layoutDirection, .leftToRight)
         .onReceive(timer) { _ in
             phase = (phase + 1) % 3
         }
