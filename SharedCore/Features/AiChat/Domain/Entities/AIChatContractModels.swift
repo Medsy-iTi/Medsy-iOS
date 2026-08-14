@@ -26,7 +26,7 @@ enum AIChatMessageRole: Equatable, Sendable {
     case unknown(String)
 }
 
-struct AIChatProduct: Identifiable, Equatable, Sendable {
+struct AIChatProduct: Identifiable, Equatable, Sendable, Hashable {
     let id: Int
     let name: String
     let productName: String?

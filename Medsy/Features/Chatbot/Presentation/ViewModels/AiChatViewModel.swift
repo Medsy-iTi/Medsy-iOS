@@ -34,7 +34,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     func clearDraftPrompt()
     var onOpenCategory: ((Int, String) -> Void)? { get set }
     var onOpenCart: (() -> Void)? { get set }
-    var onOpenCompleteRequest: (() -> Void)? { get set }
+    var onOpenCompleteRequest: (([AIChatProduct]) -> Void)? { get set }
     var onOpenProductDetails: ((Int) -> Void)? { get set }
     var onOpenReminders: (() -> Void)? { get set }
     var onCartNeedsRefresh: (() -> Void)? { get set }
@@ -64,7 +64,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     // MARK: - Navigation callbacks
     var onOpenCategory: ((Int, String) -> Void)?
     var onOpenCart: (() -> Void)?
-    var onOpenCompleteRequest: (() -> Void)?
+    var onOpenCompleteRequest: (([AIChatProduct]) -> Void)?
     var onOpenProductDetails: ((Int) -> Void)?
     var onOpenReminders: (() -> Void)?
     var onCartNeedsRefresh: (() -> Void)?
@@ -198,6 +198,43 @@ final class AiChatViewModel: AiChatViewModelProtocol {
             return
         }
         retryMessage(id: message.id)
+    }
+    
+    // MARK: - Make Order / Complete Request
+    
+    func confirmRequest(action: AIChatAction?, fallbackProducts: [AIChatProduct]) {
+        var resolvedProducts: [AIChatProduct] = []
+        let ids = action?.addedProductIDs ?? []
+        
+        if !ids.isEmpty {
+            // Find products with these IDs from chat history
+            let allProducts = messages.flatMap { $0.products }
+            var uniqueProducts = [Int: AIChatProduct]()
+            for p in allProducts {
+                uniqueProducts[p.id] = p
+            }
+            resolvedProducts = ids.compactMap { uniqueProducts[$0] }
+        } else {
+            // If the backend didn't specify IDs, but sent products in the current message
+            resolvedProducts = fallbackProducts
+        }
+        
+        // If still empty, grab the most recently discussed products in the chat
+        if resolvedProducts.isEmpty {
+            let recentProducts = messages.reversed().flatMap { $0.products }
+            var uniqueProducts = [Int: AIChatProduct]()
+            var orderedProducts: [AIChatProduct] = []
+            for p in recentProducts {
+                if uniqueProducts[p.id] == nil {
+                    uniqueProducts[p.id] = p
+                    orderedProducts.append(p)
+                }
+            }
+            // Just grab the most recent product(s) if we had to fallback this far
+            resolvedProducts = orderedProducts
+        }
+        
+        onOpenCompleteRequest?(resolvedProducts)
     }
 
     // MARK: - New chat

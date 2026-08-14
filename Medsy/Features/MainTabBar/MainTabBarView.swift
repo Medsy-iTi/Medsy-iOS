@@ -80,10 +80,6 @@ struct MainTabBarView: View {
                 viewModel: chatbotViewModel,
                 onTabBarHiddenChange: { isTabBarHidden = $0 },
                 onOpenCart: { coordinator.select(.cart) },
-                onOpenCompleteRequest: {
-                    isTabBarHidden = false
-                    coordinator.select(.cart)
-                },
                 pendingPrompt: $pendingChatbotPrompt,
                 promptSequence: chatbotPromptSequence,
                 onBackToProduct: chatbotBackAction

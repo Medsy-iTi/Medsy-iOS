@@ -19,7 +19,7 @@ struct MedsyChatInputBar: View {
     @State private var micPulse: Bool = false
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .bottom, spacing: 10) {
             // Camera button
             Button(action: onCamera) {
                 Image(systemName: "camera")
@@ -31,8 +31,9 @@ struct MedsyChatInputBar: View {
             .buttonStyle(.plain)
 
             // Text field + mic
-            HStack {
-                TextField(placeholder, text: $text)
+            HStack(alignment: .bottom) {
+                TextField(placeholder, text: $text, axis: .vertical)
+                    .lineLimit(1...5)
                     .foregroundStyle(AppColor.textPrim)
                     .localizedTextInput()
                     .submitLabel(.send)
@@ -50,6 +51,7 @@ struct MedsyChatInputBar: View {
                         )
                 }
                 .buttonStyle(.plain)
+                .padding(.bottom, 2)
                 .onChange(of: isRecording) { _, recording in
                     micPulse = recording
                 }
@@ -57,7 +59,7 @@ struct MedsyChatInputBar: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(fieldBackground)
-            .clipShape(Capsule())
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
             // Send button
             Button(action: { if !disabled { onSend() } }) {

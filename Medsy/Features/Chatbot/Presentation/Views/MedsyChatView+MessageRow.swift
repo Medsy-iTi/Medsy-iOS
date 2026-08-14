@@ -139,9 +139,13 @@ extension MedsyChatView {
 
         case .createRequest:
             // Always show the confirm card when intent is createRequest
-            AiChatConfirmRequestCard(onConfirm: { viewModel.onOpenCompleteRequest?() })
+            if let action = message.action, action.type == .createRequest {
+                AiChatConfirmRequestCard(onConfirm: {
+                    viewModel.confirmRequest(action: action, fallbackProducts: message.products)
+                })
                 .padding(.top, MedsySpacing.xs)
                 .padding(.bottom, 12)
+            }
 
         case .setReminder:
             // Show a confirmation chip with the scheduled times when available

@@ -8,5 +8,5 @@ enum ChatbotRoute: Hashable {
     case medicineDetails(medicineId: String)
     case pharmacyMap
     case category(id: Int, name: String)
-    case completeRequest
+    case completeRequest([AIChatProduct])
 }
