@@ -27,6 +27,7 @@ struct MainTabBarView: View {
     @State private var chatbotPromptSequence = 0
     @State private var tabBeforeChatbot: AppTab = .home
     @State private var showsProductChatbotBackButton = false
+    @State private var isKeyboardPresented = false
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -165,6 +166,16 @@ struct MainTabBarView: View {
                 chatbotViewModel.sendSuggestion(message)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = false
+            }
+        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()
@@ -179,11 +190,11 @@ struct MainTabBarView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            if !isTabBarHidden {
+            if !isTabBarHidden && !isKeyboardPresented {
                 MedsyAITabOverlay(isSelected: coordinator.selectedTab == .chatbot)
                     .padding(.bottom, 18)
                     .allowsHitTesting(false)
-                    .transition(.opacity)
+                    .transition(.scale(scale: 0.82).combined(with: .opacity))
             }
         }
         .onChange(of: cartViewModel.feedbackSequence) { _, _ in
