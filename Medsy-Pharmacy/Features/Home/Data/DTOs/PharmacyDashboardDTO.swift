@@ -44,7 +44,7 @@ struct PharmacyDashboardRecentOrderDTO: Decodable {
     let pharmacistName: String?
     let offerId: Int
     let subTotal: Double
-    let deliveryFee: Double
+    let deliveryFee: Double?
     let total: Double
     let deliveryLatitude: Double
     let deliveryLongitude: Double
@@ -52,9 +52,16 @@ struct PharmacyDashboardRecentOrderDTO: Decodable {
     let items: [PharmacyDashboardRecentOrderItemDTO]
 }
 
+struct PharmacyDashboardRecentOrderProductDTO: Decodable {
+    let name: String?
+    let productName: String?
+    let imageUrl: String?
+}
+
 struct PharmacyDashboardRecentOrderItemDTO: Decodable {
     let id: Int
     let productId: Int
+    let product: PharmacyDashboardRecentOrderProductDTO?
     let productName: String?
     let imageUrl: String?
     let quantity: Int
