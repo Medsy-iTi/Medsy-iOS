@@ -25,6 +25,8 @@ struct ProfileLoadingView: View {
         RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
 			.fill(PharmacyColor.card)
             .frame(height: height)
+            .pharmacyCard(padding: nil, elevation: .subtle)
+            .shimmering()
     }
 }
 
