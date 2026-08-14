@@ -37,6 +37,7 @@ protocol AiChatViewModelProtocol: AnyObject {
     var onOpenCompleteRequest: (() -> Void)? { get set }
     var onOpenProductDetails: ((Int) -> Void)? { get set }
     var onOpenReminders: (() -> Void)? { get set }
+    var onCartNeedsRefresh: (() -> Void)? { get set }
 }
 
 // MARK: - Implementation
@@ -66,6 +67,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
     var onOpenCompleteRequest: (() -> Void)?
     var onOpenProductDetails: ((Int) -> Void)?
     var onOpenReminders: (() -> Void)?
+    var onCartNeedsRefresh: (() -> Void)?
 
     // MARK: - Dependencies
     private let sendTextUseCase: SendAiChatTextMessageUseCaseProtocol
@@ -313,10 +315,8 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         guard let action else { return }
         switch action.type {
         case .addedToCart:
-            // Backend already added the product to the cart.
-            // Do NOT auto-navigate — the success card has a "View Cart" button
-            // so the user controls when to open the cart, ensuring the CartViewModel
-            // has time to reload before they see it.
+            // Tell the UI to immediately refresh the cart state in the background
+            onCartNeedsRefresh?()
             break
         case .createRequest:
             // Do NOT auto-navigate — just signal availability via the card

@@ -65,6 +65,9 @@ struct ChatbotRootView: View {
             viewModel.onOpenCart = onOpenCart
             viewModel.onOpenCompleteRequest = onOpenCompleteRequest
             viewModel.onOpenReminders = onOpenReminders
+            viewModel.onCartNeedsRefresh = {
+                cartViewModel.handle(.retry) // Silent background sync
+            }
         }
         .onChange(of: coordinator.path.isEmpty) { _, isEmpty in
             onTabBarHiddenChange(!isEmpty)
