@@ -138,17 +138,27 @@ private struct FavoriteEmptyStateView: View {
             MedsyLottieView(
                 animationName: "favorites_empty"
             )
-            .frame(width: 240, height: 240)
-            .scaleEffect(0.48)
+            .frame(width: 220, height: 220)
             .accessibilityHidden(true)
 
-            Spacer(minLength: MedsySpacing.xl)
+            VStack(spacing: MedsySpacing.xs) {
+                Text("favorites.empty.title".localized)
+                    .font(MedsyFotitle(22))
+                    .foregroundStyle(AppColor.textPrim)
+                    .multilineTextAlignment(.center)
+
+                Text("favorites.empty.subtitle".localized)
+                    .font(MedsyFont.body(16))
+                    .foregroundStyle(AppColor.textSec)
+                    .multilineTextAlignment(.center)
+            }
 
             PrimaryButton(
                 title: "favorites.empty.action".localized,
                 systemImage: "magnifyingglass",
                 action: onBrowse
             )
+            .padding(.top, MedsySpacing.md)
 
             Spacer(minLength: MedsySpacing.lg)
         }
