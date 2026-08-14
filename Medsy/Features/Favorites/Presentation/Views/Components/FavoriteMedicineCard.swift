@@ -16,7 +16,7 @@ struct FavoriteMedicineCard: View {
     let onDecrement: () -> Void
     let onTap: () -> Void
 
-    @State private var showsRemovalConfirmation = false
+    @State private var productPendingCartRemoval: FavoriteMedicineDisplayModel? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: MedsySpacing.xs) {
@@ -57,12 +57,17 @@ struct FavoriteMedicineCard: View {
         .medsyCardShadow()
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
-        .alert("cart.remove_confirmation.title".localized, isPresented: $showsRemovalConfirmation) {
-            Button("common.cancel".localized, role: .cancel) {}
-            Button("cart.remove_confirmation.action".localized, role: .destructive) { onDecrement() }
-        } message: {
-            Text("cart.remove_confirmation.message".localized(product.title))
-        }
+        .confirmationAlert(
+            item: $productPendingCartRemoval,
+            configuration: ConfirmationAlert(
+                title: "cart.remove_confirmation.title".localized,
+                message: { "cart.remove_confirmation.message".localized($0.title) },
+                confirmButtonTitle: "cart.remove_confirmation.action".localized,
+                cancelButtonTitle: "common.cancel".localized,
+                confirmRole: .destructive,
+                onConfirm: { _ in onDecrement() }
+            )
+        )
     }
 
     private var displayTitle: String {
@@ -122,7 +127,7 @@ struct FavoriteMedicineCard: View {
         } else {
             HStack(spacing: MedsySpacing.xs) {
                 quantityButton(systemName: "minus") {
-                    if quantity == 1 { showsRemovalConfirmation = true } else { onDecrement() }
+                    if quantity == 1 { productPendingCartRemoval = product } else { onDecrement() }
                 }
                 Text("\(quantity)")
                     .font(MedsyFont.button(14))
