@@ -10,11 +10,7 @@ struct PharmacyInvitationCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.md) {
             HStack(alignment: .top, spacing: PharmacySpacing.sm) {
-                Image(systemName: "cross.case.fill")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(PharmacyColor.primary)
-                    .frame(width: 48, height: 48)
-                    .background(PharmacyColor.primarySoft, in: RoundedRectangle(cornerRadius: PharmacyRadius.md))
+                PharmacyIconTile(systemImage: "cross.case.fill", size: 48, iconSize: 20)
 
                 VStack(alignment: .leading, spacing: PharmacySpacing.xxs) {
                     Text(invitation.pharmacyName)
@@ -61,7 +57,7 @@ struct PharmacyInvitationCard: View {
                                 .stroke(PharmacyColor.danger.opacity(0.45), lineWidth: 1)
                         )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
                 .disabled(actionsDisabled)
 
                 PharmacyPrimaryButton(
@@ -73,12 +69,7 @@ struct PharmacyInvitationCard: View {
                 )
             }
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .subtle)
         .accessibilityElement(children: .contain)
     }
 }

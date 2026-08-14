@@ -8,7 +8,6 @@ import SwiftUI
 
 struct OnboardingView: View {
     @State var viewModel: OnboardingViewModel
-    @State private var buttonPressed = false
 
     var body: some View {
         ZStack {
@@ -29,7 +28,9 @@ struct OnboardingView: View {
                             Text("pharmacy.onboarding.skip".localized)
                                 .font(PharmacyColor.sans(15, .semibold))
                                 .foregroundStyle(PharmacyColor.primary)
+                                .frame(minWidth: 44, minHeight: 44)
                         }
+                        .buttonStyle(PharmacyPressableButtonStyle())
                     }
                 }
                 .padding(.horizontal, PharmacySpacing.lg)
@@ -49,21 +50,11 @@ struct OnboardingView: View {
                 PageIndicatorView(pageCount: viewModel.pages.count, currentIndex: viewModel.currentIndex)
                     .padding(.bottom, PharmacySpacing.lg)
 
-                Button {
-                    withAnimation(.easeOut(duration: 0.15)) { buttonPressed = true }
-                    viewModel.advance()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        withAnimation(.easeOut(duration: 0.15)) { buttonPressed = false }
-                    }
-                } label: {
-                    Text(currentActionTitle)
-                        .font(PharmacyColor.sans(16, .semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, PharmacySpacing.sm + 2)
-                        .background(PharmacyColor.primary, in: Capsule())
-                        .scaleEffect(buttonPressed ? 0.97 : 1)
-                }
+                PharmacyPrimaryButton(
+                    title: currentActionTitle,
+                    systemImage: viewModel.isLastPage ? "checkmark" : "arrow.forward",
+                    action: viewModel.advance
+                )
                 .padding(.horizontal, PharmacySpacing.lg)
                 .padding(.bottom, PharmacySpacing.lg)
             }

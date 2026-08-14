@@ -76,7 +76,7 @@ private struct PharmacyTeamMemberRow: View {
                     .background(PharmacyColor.primary.opacity(0.1))
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .accessibilityLabel("pharmacy_team.edit".localized)
 
             Button(action: onRemove) {
@@ -87,7 +87,7 @@ private struct PharmacyTeamMemberRow: View {
                     .background(PharmacyColor.danger.opacity(0.1))
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .accessibilityLabel("pharmacy_team.remove".localized)
         }
         .padding(.horizontal, PharmacySpacing.md)

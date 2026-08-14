@@ -25,7 +25,8 @@ struct PharmacyInvitationBadgeButton: View {
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
+        .shadow(color: .black.opacity(0.06), radius: 8, y: 3)
         .accessibilityLabel("pharmacy.invitations.notifications".localized)
         .accessibilityValue("pharmacy.invitations.badge_count".localized(count))
     }

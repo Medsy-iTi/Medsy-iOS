@@ -51,7 +51,6 @@ struct MenuRow: View {
             .padding(.vertical, PharmacySpacing.sm)
             .padding(.horizontal, PharmacySpacing.md)
         }
-        .buttonStyle(.plain)
-        .background(PharmacyColor.card)
+        .buttonStyle(PharmacyPressableButtonStyle())
     }
 }

@@ -122,12 +122,7 @@ struct PharmacyDetailView: View {
                 
                 Spacer(minLength: 0)
             }
-            .padding(PharmacySpacing.md)
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(elevation: .raised)
             
             infoRow(
                 icon: "phone.fill",
@@ -159,12 +154,7 @@ struct PharmacyDetailView: View {
             
             Spacer(minLength: 0)
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .subtle)
     }
     
     @ViewBuilder
@@ -185,7 +175,7 @@ struct PharmacyDetailView: View {
                 .background(PharmacyColor.primary.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             
             Button {
                 showDeleteConfirmation = true
@@ -206,7 +196,7 @@ struct PharmacyDetailView: View {
                 .background(isDeleting ? PharmacyColor.danger.opacity(0.72) : PharmacyColor.danger.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .disabled(isDeleting)
         }
     }
@@ -232,7 +222,7 @@ struct PharmacyDetailView: View {
             .background(isLeaving ? PharmacyColor.danger.opacity(0.72) : PharmacyColor.danger.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .disabled(isLeaving)
     }
     

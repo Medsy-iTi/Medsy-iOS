@@ -6,22 +6,97 @@
 //
 
 import SwiftUI
+import UIKit
+
+enum PharmacyThemePreference: String, CaseIterable, Identifiable {
+    case system
+    case light
+    case dark
+
+    var id: String { rawValue }
+
+    var localizationKey: String {
+        switch self {
+        case .system: "theme_system"
+        case .light: "theme_light"
+        case .dark: "theme_dark"
+        }
+    }
+
+    var preferredColorScheme: ColorScheme? {
+        switch self {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
+        }
+    }
+}
 
 final class PharmacyAppSettings: ObservableObject {
     static let shared = PharmacyAppSettings()
 
     private enum Keys {
+        static let themePreference = "pharmacy_theme_preference"
         static let isDarkMode = "pharmacy_is_dark_mode"
     }
 
-    @Published var isDarkMode: Bool {
+    private let defaults: UserDefaults
+
+    @Published var themePreference: PharmacyThemePreference {
         didSet {
-            UserDefaults.standard.set(isDarkMode, forKey: Keys.isDarkMode)
+            defaults.set(themePreference.rawValue, forKey: Keys.themePreference)
         }
     }
 
-    private init() {
-        isDarkMode = UserDefaults.standard.bool(forKey: Keys.isDarkMode)
+    @Published private(set) var systemColorScheme: ColorScheme
+
+    var preferredColorScheme: ColorScheme? {
+        themePreference.preferredColorScheme
+    }
+
+    var isDarkMode: Bool {
+        get {
+            switch themePreference {
+            case .system: systemColorScheme == .dark
+            case .light: false
+            case .dark: true
+            }
+        }
+        set {
+            themePreference = newValue ? .dark : .light
+        }
+    }
+
+    init(
+        defaults: UserDefaults = .standard,
+        initialColorScheme: ColorScheme? = nil
+    ) {
+        self.defaults = defaults
+        systemColorScheme = initialColorScheme ?? Self.currentSystemColorScheme
+
+        if let rawValue = defaults.string(forKey: Keys.themePreference),
+           let savedPreference = PharmacyThemePreference(rawValue: rawValue) {
+            themePreference = savedPreference
+        } else if defaults.object(forKey: Keys.isDarkMode) != nil {
+            themePreference = defaults.bool(forKey: Keys.isDarkMode) ? .dark : .light
+        } else {
+            themePreference = .system
+        }
+
+        defaults.set(themePreference.rawValue, forKey: Keys.themePreference)
+    }
+
+    func updateSystemColorScheme(_ colorScheme: ColorScheme) {
+        guard systemColorScheme != colorScheme else { return }
+        systemColorScheme = colorScheme
+    }
+
+    func toggleLightAndDark() {
+        themePreference = isDarkMode ? .light : .dark
+    }
+
+    private static var currentSystemColorScheme: ColorScheme {
+        UITraitCollection.current.userInterfaceStyle == .dark ? .dark : .light
     }
 }
 
