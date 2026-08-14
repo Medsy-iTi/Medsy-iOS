@@ -73,6 +73,8 @@ struct HomeSearchingStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
 
     private var formattedTime: String {
@@ -251,12 +253,18 @@ struct HomeSearchingStatusView: View {
                 updateTime()
             }
         }
+        .onChange(of: createdAt) { _, _ in
+            updateTime()
+        }
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                onTimerExpired?()
+            }
         } else {
             secondsElapsed += 1
         }
@@ -270,12 +278,13 @@ struct HomeFirstOfferStatusView: View {
     var offerAvailableMedsCount: Int = 0
     var offerTotalMedsCount: Int = 0
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
     var onCompareOffers: (() -> Void)? = nil
     var onDelete: (() -> Void)? = nil
 
-    @State private var secondsElapsed: Int = 0
     @State private var showingDeleteAlert = false
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var secondsElapsed: Int = 0
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -323,12 +332,6 @@ struct HomeFirstOfferStatusView: View {
                 Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
-                    .onAppear {
-                        updateTime()
-                    }
-                    .onReceive(timer) { _ in
-                        updateTime()
-                    }
                 
                 Spacer()
                 
@@ -434,6 +437,17 @@ struct HomeFirstOfferStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            updateTime()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                updateTime()
+            }
+        }
+        .onChange(of: createdAt) { _, _ in
+            updateTime()
+        }
         .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
             Button("home.deleteOffer.cancel".localized, role: .cancel) { }
             Button("home.deleteOffer.confirm".localized, role: .destructive) {
@@ -445,9 +459,14 @@ struct HomeFirstOfferStatusView: View {
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                onTimerExpired?()
+            }
+        } else {
+            secondsElapsed += 1
         }
     }
 }
@@ -455,21 +474,30 @@ struct HomeFirstOfferStatusView: View {
 struct HomeMultipleOffersStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var offersAvailableCount: Int = 2
+    var offerTotalPrice: Double = 0
+    var offerAvailableMedsCount: Int = 0
+    var offerTotalMedsCount: Int = 0
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
+    var onShowOffer: (() -> Void)? = nil
     var onCompareOffers: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
+    @State private var showingDeleteAlert = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
         let seconds = secondsElapsed % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
                 Button {
-                    selectedStatus = .home
+                    showingDeleteAlert = true
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
@@ -527,7 +555,7 @@ struct HomeMultipleOffersStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
-                    onCompareOffers?()
+                    onShowOffer?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
@@ -545,7 +573,7 @@ struct HomeMultipleOffersStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.multipleOffers.priceValue".localized)
+                    Text("\(Int(offerTotalPrice)) " + "home.status.firstOffer.currency".localized)
                         .font(AppColor.sans(15, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
@@ -559,7 +587,7 @@ struct HomeMultipleOffersStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.multipleOffers.medsCount".localized)
+                    Text("\(offerAvailableMedsCount) / \(offerTotalMedsCount) " + "home.status.firstOffer.medsUnit".localized)
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.green)
                 }
@@ -574,7 +602,7 @@ struct HomeMultipleOffersStatusView: View {
                     )
             )
             
-            Text("home.status.multipleOffers.offersAvailableCount".localized)
+            Text(String(format: "home.status.multipleOffers.offersAvailableCount".localized, offersAvailableCount))
                 .font(AppColor.sans(12, .bold))
                 .foregroundStyle(AppColor.green)
                 .padding(.horizontal, 16)
@@ -631,12 +659,26 @@ struct HomeMultipleOffersStatusView: View {
                 updateTime()
             }
         }
+        .onChange(of: createdAt) { _, _ in
+            updateTime()
+        }
+        .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
+            Button("home.deleteOffer.cancel".localized, role: .cancel) { }
+            Button("home.deleteOffer.confirm".localized, role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("home.deleteOffer.message".localized)
+        }
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                onTimerExpired?()
+            }
         } else {
             secondsElapsed += 1
         }

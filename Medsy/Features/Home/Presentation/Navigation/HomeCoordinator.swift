@@ -127,7 +127,9 @@ struct HomeCoordinatorView: View {
                 case .offersList:
                     OffersListView(
                         onBack: coordinator.goBack,
-                        onOfferSelected: coordinator.openOfferDetails
+                        onOfferSelected: { result, reqId in
+                            coordinator.openOfferResult(result, requestId: reqId)
+                        }
                     )
                 case let .offerDetails(offer):
                     OfferDetailsView(

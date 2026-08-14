@@ -135,7 +135,7 @@
 "home.status.multipleOffers.subtitle" = "You can now compare available offers";
 "home.status.multipleOffers.medsCount" = "3 / 3 medicines";
 "home.status.multipleOffers.priceValue" = "36 EGP";
-"home.status.multipleOffers.offersAvailableCount" = "3 offers available — you can compare";
+"home.status.multipleOffers.offersAvailableCount" = "%d offers available — you can compare";
 "home.status.multipleOffers.compareOffers" = "Compare Offers";
 "home.status.multipleOffers.stopSearchDesc" = "Search will automatically stop when you select an offer";
 "home.status.expired.title" = "Search time ended";

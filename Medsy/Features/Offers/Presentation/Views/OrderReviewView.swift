@@ -68,7 +68,7 @@ struct OrderReviewView: View {
                             viewModel.selectedReceiveMethod = .delivery
                         } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "truck.fill")
+                                Image(systemName: "box.truck.fill")
                                     .font(.system(size: 20))
                                     .foregroundStyle(AppColor.green)
                                     .frame(width: 40, height: 40)

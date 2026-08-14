@@ -277,6 +277,8 @@ struct MasterOrderDTO: Codable, Equatable, Hashable, Sendable {
     let deliveryFee: Double?
     let totalPrice: Double?
     let orderStatus: String?
+    let paymentExpiresAt: String?
+    let paidAt: String?
     let orderResponses: [SelectPharmacyOfferDTO]?
 }
 
@@ -304,5 +306,69 @@ struct MasterOrdersListResponseDTO: Decodable {
             return
         }
         content = []
+    }
+}
+
+struct RequestsListResponseDTO: Decodable {
+    let content: [CompleteRequestResponseDTO]?
+
+    private enum CodingKeys: String, CodingKey {
+        case content
+        case data
+    }
+
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.container(keyedBy: CodingKeys.self) {
+            if let items = try? container.decodeIfPresent([CompleteRequestResponseDTO].self, forKey: .content) {
+                content = items
+                return
+            }
+            if let items = try? container.decodeIfPresent([CompleteRequestResponseDTO].self, forKey: .data) {
+                content = items
+                return
+            }
+        }
+        if let singleContainer = try? decoder.singleValueContainer(), let items = try? singleContainer.decode([CompleteRequestResponseDTO].self) {
+            content = items
+            return
+        }
+        content = []
+    }
+}
+
+extension String {
+    func toBackendDate() -> Date? {
+        let formatters: [DateFormatter] = [
+            {
+                let df = DateFormatter()
+                df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+                df.locale = Locale(identifier: "en_US_POSIX")
+                df.timeZone = TimeZone(secondsFromGMT: 0)
+                return df
+            }(),
+            {
+                let df = DateFormatter()
+                df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+                df.locale = Locale(identifier: "en_US_POSIX")
+                df.timeZone = TimeZone(secondsFromGMT: 0)
+                return df
+            }(),
+            {
+                let df = DateFormatter()
+                df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                df.locale = Locale(identifier: "en_US_POSIX")
+                df.timeZone = TimeZone(secondsFromGMT: 0)
+                return df
+            }()
+        ]
+        for formatter in formatters {
+            if let date = formatter.date(from: self) {
+                return date
+            }
+        }
+        if let iso = ISO8601DateFormatter().date(from: self) {
+            return iso
+        }
+        return nil
     }
 }

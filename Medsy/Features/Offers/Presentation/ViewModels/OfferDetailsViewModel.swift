@@ -112,11 +112,6 @@ final class OfferDetailsViewModel {
 
         do {
             let result = try await confirmOfferUseCase.selectPharmacy(requestId: requestId, selectedItems: selectedItems)
-            if let data = try? JSONEncoder().encode(result) {
-                UserDefaults.standard.set(data, forKey: "request.selectResult.\(requestId)")
-            }
-            UserDefaults.standard.set(true, forKey: "request.isSelected.\(requestId)")
-            UserDefaults.standard.set(false, forKey: "request.isConfirmed.\(requestId)")
             isConfirmed = true
             return result
         } catch {

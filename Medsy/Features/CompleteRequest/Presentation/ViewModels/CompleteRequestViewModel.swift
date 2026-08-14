@@ -202,7 +202,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
                     )
                 )
                 submittedRequest = result
-                statusStore?.savePendingRequestId(result.id)
             } catch {
                 submissionErrorMessage = error.localizedDescription
                 return false

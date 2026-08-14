@@ -135,7 +135,7 @@
 "home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
 "home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
 "home.status.multipleOffers.priceValue" = "٣٦ جنيه";
-"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
+"home.status.multipleOffers.offersAvailableCount" = "%d عروض متاحة — يمكنك المقارنة";
 "home.status.multipleOffers.compareOffers" = "مقارنة العروض";
 "home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
 "home.status.expired.title" = "انتهى وقت البحث";

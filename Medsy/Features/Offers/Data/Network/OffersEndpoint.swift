@@ -9,6 +9,7 @@ enum OffersEndpoint: ApiEndpoint {
     case getMasterOrders(page: Int, size: Int)
     case getMasterOrder(id: Int)
     case getRequest(requestId: Int)
+    case getRequests(page: Int, size: Int)
 
     var path: String {
         switch self {
@@ -26,12 +27,14 @@ enum OffersEndpoint: ApiEndpoint {
             return "masterorders/\(id)"
         case let .getRequest(requestId):
             return "requests/\(requestId)"
+        case .getRequests:
+            return "requests"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest:
+        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest, .getRequests:
             return .get
         case .selectPharmacy, .confirmOffer:
             return .post
@@ -40,7 +43,7 @@ enum OffersEndpoint: ApiEndpoint {
 
     var queryParameters: Parameters? {
         switch self {
-        case let .getMasterOrders(page, size):
+        case let .getMasterOrders(page, size), let .getRequests(page, size):
             return [
                 "page": page,
                 "size": size,
@@ -62,7 +65,7 @@ enum OffersEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest:
+        case .getResult, .getStream, .getMasterOrders, .getMasterOrder, .getRequest, .getRequests:
             return nil
         case let .selectPharmacy(_, body):
             return try? JSONEncoder().encode(body)

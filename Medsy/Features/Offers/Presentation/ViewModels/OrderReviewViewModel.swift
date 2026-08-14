@@ -63,7 +63,18 @@ final class OrderReviewViewModel {
             }
             return updated
         }
-        let subtotal = selectResult?.totalPrice ?? medicines.reduce(0.0) { $0 + ($1.price * Double($1.quantity)) }
+        let deliveryFeeAmount = selectResult?.deliveryFees ?? 0.0
+        let medicinesCalculatedSubtotal = medicines.reduce(0.0) { $0 + ($1.price * Double($1.quantity)) }
+        
+        let subtotal: Double
+        if let backendTotal = selectResult?.totalPrice, backendTotal > 0 {
+            subtotal = max(0, backendTotal - deliveryFeeAmount)
+        } else if medicinesCalculatedSubtotal > 0 {
+            subtotal = medicinesCalculatedSubtotal
+        } else {
+            subtotal = 0.0
+        }
+
         let deliveryFee = 0.0
         let total = subtotal + deliveryFee
 
@@ -142,8 +153,19 @@ final class OrderReviewViewModel {
     }
 
     private func updateTotals() {
-        let subtotal = selectResult?.totalPrice ?? orderReview.medicines.reduce(0.0) { $0 + $1.price }
-        let deliveryFee = selectedReceiveMethod == .delivery ? (selectResult?.deliveryFees ?? 0.0) : 0.0
+        let deliveryFeeAmount = selectResult?.deliveryFees ?? 0.0
+        let medicinesCalculatedSubtotal = orderReview.medicines.reduce(0.0) { $0 + ($1.price * Double($1.quantity)) }
+        
+        let subtotal: Double
+        if let backendTotal = selectResult?.totalPrice, backendTotal > 0 {
+            subtotal = max(0, backendTotal - deliveryFeeAmount)
+        } else if medicinesCalculatedSubtotal > 0 {
+            subtotal = medicinesCalculatedSubtotal
+        } else {
+            subtotal = 0.0
+        }
+
+        let deliveryFee = selectedReceiveMethod == .delivery ? deliveryFeeAmount : 0.0
         let total = subtotal + deliveryFee
 
         self.orderReview = OrderReviewPresentationModel(
@@ -180,10 +202,6 @@ final class OrderReviewViewModel {
             let methodStr = selectedReceiveMethod == .delivery ? "DELIVERY" : "PICKUP"
             let result = try await confirmOfferUseCase.confirmOffer(requestId: requestId, fulfillmentMethod: methodStr)
             self.confirmOfferResult = result
-            UserDefaults.standard.removeObject(forKey: "request.isSelected.\(requestId)")
-            UserDefaults.standard.removeObject(forKey: "request.selectResult.\(requestId)")
-            UserDefaults.standard.set(true, forKey: "request.isConfirmed.\(requestId)")
-            statusStore?.clearPendingRequestId(requestId)
             isConfirmed = true
             return true
         } catch {

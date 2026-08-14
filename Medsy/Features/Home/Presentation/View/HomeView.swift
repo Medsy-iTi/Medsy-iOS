@@ -35,7 +35,11 @@ struct HomeView: View {
                 case .searching:
                     HomeSearchingStatusView(
                         selectedStatus: $vm.selectedStatus,
-                        requestId: viewModel.activeRequestIds.first ?? 0
+                        requestId: viewModel.activeRequestIds.first ?? 0,
+                        createdAt: viewModel.activeRequestCreatedAt,
+                        onTimerExpired: {
+                            viewModel.checkAndStartPolling()
+                        }
                     )
                 case .firstOffer:
                     HomeFirstOfferStatusView(
@@ -44,6 +48,10 @@ struct HomeView: View {
                         offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
                         offerTotalMedsCount: viewModel.offerTotalMedsCount,
                         requestId: viewModel.firstAvailableRequestId ?? 0,
+                        createdAt: viewModel.activeRequestCreatedAt,
+                        onTimerExpired: {
+                            viewModel.checkAndStartPolling()
+                        },
                         onCompareOffers: {
                             if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)
@@ -60,12 +68,26 @@ struct HomeView: View {
                 case .multipleOffers:
                     HomeMultipleOffersStatusView(
                         selectedStatus: $vm.selectedStatus,
+                        offersAvailableCount: viewModel.availableOffersCount,
+                        offerTotalPrice: viewModel.offerTotalPrice,
+                        offerAvailableMedsCount: viewModel.offerAvailableMedsCount,
+                        offerTotalMedsCount: viewModel.offerTotalMedsCount,
                         requestId: viewModel.firstAvailableRequestId ?? 0,
-                        onCompareOffers: {
+                        createdAt: viewModel.activeRequestCreatedAt,
+                        onTimerExpired: {
+                            viewModel.checkAndStartPolling()
+                        },
+                        onShowOffer: {
                             if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
                                 onOpenOfferResult?(result, reqId)
-                            } else {
-                                onCompareOffers?()
+                            }
+                        },
+                        onCompareOffers: {
+                            onCompareOffers?()
+                        },
+                        onDelete: {
+                            if let reqId = viewModel.firstAvailableRequestId {
+                                viewModel.clearCompletedRequest(requestId: reqId)
                             }
                         }
                     )
