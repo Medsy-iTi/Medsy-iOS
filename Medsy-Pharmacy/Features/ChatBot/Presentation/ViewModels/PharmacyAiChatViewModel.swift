@@ -52,6 +52,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
     private(set) var errorMessage: String? = nil
     var selectedImage: UIImage? = nil
     private(set) var isRecording: Bool = false
+    private(set) var quickActions: [AiAnalyticsPreset] = []
 
     var isSendEnabled: Bool {
         !isSending &&
@@ -68,6 +69,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
     private let sendImageUseCase: SendAiChatImageMessageUseCaseProtocol
     private let loadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol
     private let startNewChatUseCase: StartNewAiChatUseCaseProtocol
+    private let getMembershipUseCase: GetPharmacyMembershipUseCaseProtocol
     let session: AIChatSessionDataSource
     private let speechRecognizer: PharmacySpeechRecognizer
 
@@ -83,6 +85,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         loadHistoryUseCase: LoadAiChatHistoryUseCaseProtocol,
         startNewChatUseCase: StartNewAiChatUseCaseProtocol,
         session: AIChatSessionDataSource,
+        getMembershipUseCase: GetPharmacyMembershipUseCaseProtocol,
         speechRecognizer: PharmacySpeechRecognizer = PharmacySpeechRecognizer()
     ) {
         self.sendTextUseCase = sendTextUseCase
@@ -90,12 +93,16 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         self.loadHistoryUseCase = loadHistoryUseCase
         self.startNewChatUseCase = startNewChatUseCase
         self.session = session
+        self.getMembershipUseCase = getMembershipUseCase
         self.speechRecognizer = speechRecognizer
     }
 
     // MARK: Lifecycle
 
     func onAppear() {
+        Task {
+            await updateQuickActions()
+        }
         guard !session.isHistoryLoaded else { return }
         loadHistory()
     }
@@ -140,6 +147,42 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         }
         inputText = ""
         performSend(text: text, image: nil, existingUserID: nil)
+    }
+
+    // MARK: - Analytics Presets
+    
+    private func updateQuickActions() async {
+        let isAdmin = (try? await getMembershipUseCase.execute())?.isAdmin == true
+        if isAdmin {
+            quickActions = [
+                .pharmacyMonthOverview,
+                .pharmacyMonthAcceptance,
+                .pharmacyMonthTopEmployee,
+                .pharmacyMonthLargestOrder
+            ]
+        } else {
+            quickActions = [
+                .selfMonthOverview,
+                .selfMonthOrders
+            ]
+        }
+    }
+    
+    func sendPreset(_ preset: AiAnalyticsPreset) {
+        let label = presetLabel(for: preset)
+        inputText = ""
+        performSend(text: label, image: nil, existingUserID: nil, analyticsPreset: preset.rawValue)
+    }
+    
+    private func presetLabel(for preset: AiAnalyticsPreset) -> String {
+        switch preset {
+        case .pharmacyMonthOverview: return "pharmacy.chatbot.analytics.preset.month_overview".localized
+        case .pharmacyMonthAcceptance: return "pharmacy.chatbot.analytics.preset.month_acceptance".localized
+        case .pharmacyMonthTopEmployee: return "pharmacy.chatbot.analytics.preset.top_employee".localized
+        case .pharmacyMonthLargestOrder: return "pharmacy.chatbot.analytics.preset.largest_order".localized
+        case .selfMonthOverview: return "pharmacy.chatbot.analytics.preset.self_overview".localized
+        case .selfMonthOrders: return "pharmacy.chatbot.analytics.preset.self_orders".localized
+        }
     }
 
     // MARK: Send image
@@ -208,7 +251,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
 
     // MARK: Core send logic
 
-    private func performSend(text: String?, image: Data?, existingUserID: Int?) {
+    private func performSend(text: String?, image: Data?, existingUserID: Int?, analyticsPreset: String? = nil) {
         let capturedGeneration = session.generation
 
         let userID: Int
@@ -219,7 +262,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
                 let label = text ?? "pharmacy.chatbot.camera.image_preview".localized
                 userID = session.appendOptimisticUserMessage(text: label, imageData: image)
             } else {
-                userID = session.appendOptimisticUserMessage(text: text ?? "", imageData: nil)
+                userID = session.appendOptimisticUserMessage(text: text ?? "", imageData: nil, analyticsPreset: analyticsPreset)
             }
         }
         let typingID = session.appendTypingIndicator()
@@ -237,7 +280,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
                         message: text
                     )
                 } else {
-                    response = try await sendTextUseCase.execute(text: text ?? "")
+                    response = try await sendTextUseCase.execute(text: text ?? "", analyticsPreset: analyticsPreset)
                 }
 
                 guard !Task.isCancelled else { return }

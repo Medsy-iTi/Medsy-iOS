@@ -84,7 +84,11 @@ extension PharmacyChatView {
                         title: suggestion.title,
                         subtitle: suggestion.subtitle
                     ) {
-                        viewModel.sendSuggestion(suggestion.prompt)
+                        if let preset = suggestion.preset {
+                            viewModel.sendPreset(preset)
+                        } else {
+                            viewModel.sendSuggestion(suggestion.prompt)
+                        }
                     }
                     .frame(height: 110)
                 }
@@ -102,7 +106,8 @@ extension PharmacyChatView {
                 iconName: "chart.bar.fill",
                 title: "pharmacy.chatbot.suggestion.performance.title".localized,
                 subtitle: "pharmacy.chatbot.suggestion.performance.subtitle".localized,
-                prompt: "pharmacy.chatbot.suggestion.performance".localized
+                prompt: "pharmacy.chatbot.suggestion.performance".localized,
+                preset: .pharmacyMonthOverview
             ),
             PharmacyAiSuggestion(
                 id: 1,
@@ -214,6 +219,7 @@ struct PharmacyAiSuggestion: Identifiable {
     let title: String
     let subtitle: String
     let prompt: String
+    var preset: AiAnalyticsPreset? = nil
 }
 
 // MARK: - Suggestion chip card

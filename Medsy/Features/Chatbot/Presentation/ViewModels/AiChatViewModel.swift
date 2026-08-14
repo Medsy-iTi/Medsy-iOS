@@ -315,7 +315,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
                         message: text
                     )
                 } else {
-                    response = try await sendTextUseCase.execute(text: text ?? "")
+                    response = try await sendTextUseCase.execute(text: text ?? "", analyticsPreset: nil)
                 }
 
                 guard !Task.isCancelled else { return }

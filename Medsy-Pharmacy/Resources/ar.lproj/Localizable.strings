@@ -548,3 +548,32 @@
 "completed_orders.empty.delivered.message" = "لم تقم بتسليم أي طلبات حتى الآن.";
 
 "pharmacy.status.collected" = "تم الاستلام";
+
+/* AI Chatbot Analytics */
+"pharmacy.chatbot.analytics.preset.month_overview" = "نظرة عامة شهرية";
+"pharmacy.chatbot.analytics.preset.month_acceptance" = "معدل القبول";
+"pharmacy.chatbot.analytics.preset.top_employee" = "أفضل موظف";
+"pharmacy.chatbot.analytics.preset.largest_order" = "أكبر طلب";
+"pharmacy.chatbot.analytics.preset.self_overview" = "نظرة عامة لشهرية الخاصة بي";
+"pharmacy.chatbot.analytics.preset.self_orders" = "طلباتي المكتملة";
+"pharmacy.chatbot.analytics.date.range" = "%@ - %@";
+"pharmacy.chatbot.analytics.title" = "تقرير التحليلات";
+"pharmacy.chatbot.analytics.empty" = "لا تتوفر بيانات للفترة المحددة.";
+"pharmacy.chatbot.analytics.metric.total_revenue" = "إجمالي الإيرادات";
+"pharmacy.chatbot.analytics.metric.completed_orders" = "الطلبات المكتملة";
+"pharmacy.chatbot.analytics.metric.acceptance_rate" = "معدل القبول";
+"pharmacy.chatbot.analytics.metric.average_rating" = "متوسط التقييم";
+"pharmacy.chatbot.analytics.metric.rejected_orders" = "الطلبات المرفوضة";
+"pharmacy.chatbot.analytics.metric.average_fulfillment_time" = "متوسط وقت التنفيذ";
+"pharmacy.chatbot.analytics.breakdowns" = "تفصيل الطلبات";
+"pharmacy.chatbot.analytics.status.completed" = "مكتمل";
+"pharmacy.chatbot.analytics.status.cancelled" = "ملغى";
+"pharmacy.chatbot.analytics.status.rejected" = "مرفوض";
+"pharmacy.chatbot.analytics.status.expired" = "منتهي الصلاحية";
+"pharmacy.chatbot.analytics.team_ranking" = "ترتيب الفريق";
+"pharmacy.chatbot.analytics.orders" = "أهم الطلبات";
+"pharmacy.chatbot.analytics.order_id" = "طلب رقم %lld";
+"pharmacy.chatbot.analytics.top_products" = "المنتجات الأكثر مبيعاً";
+"pharmacy.chatbot.analytics.product_qty" = "الكمية: %lld";
+"pharmacy.chatbot.analytics.product_orders" = "في %lld طلبات";
+

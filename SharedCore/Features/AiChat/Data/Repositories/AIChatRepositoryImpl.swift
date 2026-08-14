@@ -11,8 +11,8 @@ final class AIChatRepositoryImpl: AIChatRepositoryProtocol, @unchecked Sendable 
         self.remoteDataSource = remoteDataSource
     }
 
-    func sendTextMessage(_ text: String) async throws -> AIChatAssistantResponse {
-        let dto = try await remoteDataSource.sendTextMessage(text: text)
+    func sendTextMessage(text: String, analyticsPreset: String?) async throws -> AIChatAssistantResponse {
+        let dto = try await remoteDataSource.sendTextMessage(text: text, analyticsPreset: analyticsPreset)
         return AIChatContractMapper.map(dto)
     }
 

@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Send text
 
 protocol SendAiChatTextMessageUseCaseProtocol: Sendable {
-    func execute(text: String) async throws -> AIChatAssistantResponse
+    func execute(text: String, analyticsPreset: String?) async throws -> AIChatAssistantResponse
 }
 
 final class SendAiChatTextMessageUseCase: SendAiChatTextMessageUseCaseProtocol, @unchecked Sendable {
@@ -20,8 +20,8 @@ final class SendAiChatTextMessageUseCase: SendAiChatTextMessageUseCaseProtocol, 
         self.repository = repository
     }
 
-    func execute(text: String) async throws -> AIChatAssistantResponse {
-        try await repository.sendTextMessage(text)
+    func execute(text: String, analyticsPreset: String?) async throws -> AIChatAssistantResponse {
+        try await repository.sendTextMessage(text: text, analyticsPreset: analyticsPreset)
     }
 }
 

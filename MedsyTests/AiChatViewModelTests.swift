@@ -6,7 +6,7 @@ import XCTest
 final class MockSendTextUseCase: SendAiChatTextMessageUseCaseProtocol, @unchecked Sendable {
     var result: Result<AIChatAssistantResponse, Error> = .success(makeDefaultResponse())
     var callCount = 0
-    func execute(text: String) async throws -> AIChatAssistantResponse {
+    func execute(text: String, analyticsPreset: String?) async throws -> AIChatAssistantResponse {
         callCount += 1
         return try result.get()
     }

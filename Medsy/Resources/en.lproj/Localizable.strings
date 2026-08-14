@@ -1063,3 +1063,32 @@
 "reminders.add_button" = "Add reminder";
 "reminders.delete.title" = "Delete Reminder";
 "reminders.delete.message" = "Are you sure you want to delete this reminder?";
+
+/* AI Chatbot Analytics */
+"pharmacy.chatbot.analytics.preset.month_overview" = "Monthly Overview";
+"pharmacy.chatbot.analytics.preset.month_acceptance" = "Acceptance Rate";
+"pharmacy.chatbot.analytics.preset.top_employee" = "Top Employee";
+"pharmacy.chatbot.analytics.preset.largest_order" = "Largest Order";
+"pharmacy.chatbot.analytics.preset.self_overview" = "My Monthly Overview";
+"pharmacy.chatbot.analytics.preset.self_orders" = "My Completed Orders";
+"pharmacy.chatbot.analytics.date.range" = "%@ - %@";
+"pharmacy.chatbot.analytics.title" = "Analytics Report";
+"pharmacy.chatbot.analytics.empty" = "No data available for the selected period.";
+"pharmacy.chatbot.analytics.metric.total_revenue" = "Total Revenue";
+"pharmacy.chatbot.analytics.metric.completed_orders" = "Completed Orders";
+"pharmacy.chatbot.analytics.metric.acceptance_rate" = "Acceptance Rate";
+"pharmacy.chatbot.analytics.metric.average_rating" = "Average Rating";
+"pharmacy.chatbot.analytics.metric.rejected_orders" = "Rejected Orders";
+"pharmacy.chatbot.analytics.metric.average_fulfillment_time" = "Avg Fulfillment Time";
+"pharmacy.chatbot.analytics.breakdowns" = "Order Breakdown";
+"pharmacy.chatbot.analytics.status.completed" = "Completed";
+"pharmacy.chatbot.analytics.status.cancelled" = "Cancelled";
+"pharmacy.chatbot.analytics.status.rejected" = "Rejected";
+"pharmacy.chatbot.analytics.status.expired" = "Expired";
+"pharmacy.chatbot.analytics.team_ranking" = "Team Ranking";
+"pharmacy.chatbot.analytics.orders" = "Key Orders";
+"pharmacy.chatbot.analytics.order_id" = "Order #%lld";
+"pharmacy.chatbot.analytics.top_products" = "Top Products";
+"pharmacy.chatbot.analytics.product_qty" = "Quantity: %lld";
+"pharmacy.chatbot.analytics.product_orders" = "In %lld orders";
+

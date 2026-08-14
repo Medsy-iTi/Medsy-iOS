@@ -16,15 +16,41 @@ struct PharmacyChatInputBar: View {
     var onSend: () -> Void = {}
     var onCamera: () -> Void = {}
     var onMic: () -> Void = {}
+    var quickActions: [AiAnalyticsPreset] = []
+    var onQuickAction: (AiAnalyticsPreset) -> Void = { _ in }
     var disabled: Bool = false
 
     @FocusState private var isFocused: Bool
     @State private var micPulse: Bool = false
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 10) {
-            // Camera button
-            Button(action: onCamera) {
+        VStack(spacing: 8) {
+            // Quick Actions Scroll
+            if !quickActions.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(quickActions, id: \.self) { preset in
+                            Button(action: { onQuickAction(preset) }) {
+                                Text(presetLabel(for: preset))
+                                    .font(PharmacyColor.sans(13, .medium))
+                                    .foregroundColor(PharmacyColor.primary)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(PharmacyColor.primarySoft)
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule().stroke(PharmacyColor.primary.opacity(0.3), lineWidth: 1)
+                                    )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                }
+            }
+            
+            HStack(alignment: .bottom, spacing: 10) {
+                // Camera button
+                Button(action: onCamera) {
                 Image(systemName: "camera")
                     .font(.system(size: 16))
                     .foregroundColor(PharmacyColor.textSecondary)
@@ -81,6 +107,18 @@ struct PharmacyChatInputBar: View {
             }
             .buttonStyle(.plain)
             .disabled(!isSendEnabled)
+        }
+    }
+    }
+    
+    private func presetLabel(for preset: AiAnalyticsPreset) -> String {
+        switch preset {
+        case .pharmacyMonthOverview: return "pharmacy.chatbot.analytics.preset.month_overview".localized
+        case .pharmacyMonthAcceptance: return "pharmacy.chatbot.analytics.preset.month_acceptance".localized
+        case .pharmacyMonthTopEmployee: return "pharmacy.chatbot.analytics.preset.top_employee".localized
+        case .pharmacyMonthLargestOrder: return "pharmacy.chatbot.analytics.preset.largest_order".localized
+        case .selfMonthOverview: return "pharmacy.chatbot.analytics.preset.self_overview".localized
+        case .selfMonthOrders: return "pharmacy.chatbot.analytics.preset.self_orders".localized
         }
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 enum AIChatEndpoint: ApiEndpoint {
-    case sendTextMessage(text: String)
+    case sendTextMessage(text: String, analyticsPreset: String?)
     case sendImageMessage(imageData: Data, mimeType: String, message: String?, aiKey: String)
     case loadHistory
     case deleteHistory
@@ -46,8 +46,14 @@ enum AIChatEndpoint: ApiEndpoint {
 
     var body: Data? {
         switch self {
-        case .sendTextMessage(let text):
-            return try? JSONEncoder().encode(["message": text])
+        case .sendTextMessage(let text, let preset):
+            var payload: [String: String?] = ["message": text]
+            if let preset {
+                payload["analyticsPreset"] = preset
+            } else {
+                payload["analyticsPreset"] = nil
+            }
+            return try? JSONEncoder().encode(payload)
         default:
             return nil
         }

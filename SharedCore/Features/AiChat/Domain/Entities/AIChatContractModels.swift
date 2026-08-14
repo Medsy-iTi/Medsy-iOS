@@ -17,6 +17,7 @@ enum AIChatIntent: Equatable, Sendable {
     case createRequest
     case setReminder
     case pharmacistPerformance
+    case pharmacyAnalytics
     case other
 }
 
@@ -131,6 +132,7 @@ struct AIChatAssistantResponse: Equatable, Sendable {
     let action: AIChatAction?
     /// One-shot scheduling instruction; never replayed from history.
     let reminder: AIChatReminder?
+    let analytics: AIChatAnalytics?
 }
 
 struct AIChatHistory: Equatable, Sendable {
@@ -149,6 +151,7 @@ struct AIChatHistoryMessage: Identifiable, Equatable, Sendable {
     let emergencyNumbers: [AIChatEmergencyNumber]
     let categories: [AIChatCategory]
     let pharmacistRankings: [AIChatPharmacistRanking]
+    let analytics: AIChatAnalytics?
     let createdAt: Date?
 }
 
@@ -168,4 +171,57 @@ struct AIChatInteractionWarning: Equatable, Sendable {
     let title: String
     let advice: String
     let involvedProducts: [AIChatInteractionProduct]
+}
+
+// MARK: - Analytics
+
+enum AiAnalyticsPreset: String, Equatable, Sendable {
+    case pharmacyMonthOverview = "PHARMACY_MONTH_OVERVIEW"
+    case pharmacyMonthAcceptance = "PHARMACY_MONTH_ACCEPTANCE"
+    case pharmacyMonthTopEmployee = "PHARMACY_MONTH_TOP_EMPLOYEE"
+    case pharmacyMonthLargestOrder = "PHARMACY_MONTH_LARGEST_ORDER"
+    case selfMonthOverview = "SELF_MONTH_OVERVIEW"
+    case selfMonthOrders = "SELF_MONTH_ORDERS"
+}
+
+struct AIChatAnalytics: Equatable, Sendable {
+    let schemaVersion: Int
+    let scope: String
+    let period: String
+    let start: Date?
+    let end: Date?
+    let metrics: [AIChatAnalyticsMetric]
+    let breakdowns: [AIChatAnalyticsBreakdown]
+    let rankings: [AIChatPharmacistPerformanceEntry]
+    let orderHighlights: [AIChatAnalyticsOrderHighlight]
+    let topProducts: [AIChatAnalyticsTopProduct]
+}
+
+struct AIChatAnalyticsMetric: Equatable, Sendable {
+    let key: String
+    let value: Double
+    let unit: String
+    let previousValue: Double?
+    let deltaPercent: Double?
+}
+
+struct AIChatAnalyticsBreakdown: Equatable, Sendable {
+    let group: String
+    let key: String
+    let count: Int
+}
+
+struct AIChatAnalyticsOrderHighlight: Equatable, Sendable {
+    let orderId: Int
+    let status: String
+    let totalPrice: Double
+    let date: Date?
+}
+
+struct AIChatAnalyticsTopProduct: Equatable, Sendable {
+    let productId: Int
+    let productName: String
+    let quantity: Int
+    let orderCount: Int
+    let revenue: Double
 }

@@ -110,6 +110,10 @@ struct PharmacyChatView: View {
                     },
                     onCamera: { showingImagePicker = true },
                     onMic: { viewModel.toggleRecording() },
+                    quickActions: viewModel.quickActions,
+                    onQuickAction: { preset in
+                        viewModel.sendPreset(preset)
+                    },
                     disabled: !viewModel.session.isHistoryLoaded
                 )
                 .padding(.horizontal, PharmacySpacing.sm)

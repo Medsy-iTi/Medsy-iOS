@@ -5,7 +5,7 @@
 import Foundation
 
 protocol AIChatRemoteDataSourceProtocol: Sendable {
-    func sendTextMessage(text: String) async throws -> AIChatMessageResponseDTO
+    func sendTextMessage(text: String, analyticsPreset: String?) async throws -> AIChatMessageResponseDTO
     func sendImageMessage(imageData: Data, mimeType: String, message: String?) async throws -> AIChatMessageResponseDTO
     func loadHistory() async throws -> AIChatHistoryResponseDTO
     func deleteHistory() async throws
@@ -22,9 +22,9 @@ final class AIChatRemoteDataSource: AIChatRemoteDataSourceProtocol, @unchecked S
         self.aiKey = aiKey
     }
 
-    func sendTextMessage(text: String) async throws -> AIChatMessageResponseDTO {
+    func sendTextMessage(text: String, analyticsPreset: String?) async throws -> AIChatMessageResponseDTO {
         let envelope: APIResponseDTO<AIChatMessageResponseDTO> = try await networkService.request(
-            endpoint: AIChatEndpoint.sendTextMessage(text: text)
+            endpoint: AIChatEndpoint.sendTextMessage(text: text, analyticsPreset: analyticsPreset)
         )
         guard envelope.success, let data = envelope.data else {
             throw NetworkError.validationError(envelope.message)
