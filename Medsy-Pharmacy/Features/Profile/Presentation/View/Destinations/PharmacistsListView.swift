@@ -33,7 +33,7 @@ struct PharmacistsListView: View {
                             } label: {
                                 PharmacistRow(member: member, showsOptions: isAdmin && !member.isAdmin)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PharmacyPressableButtonStyle())
                         }
                     }
                 }
@@ -73,13 +73,7 @@ struct PharmacistsListView: View {
 
             Spacer()
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(elevation: .raised)
     }
 
     private var emptyState: some View {
@@ -106,7 +100,7 @@ struct PharmacistsListView: View {
             .frame(maxWidth: .infinity, minHeight: 52)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .disabled(isInviting)
         .background(PharmacyColor.primarySoft.opacity(0.4))
         .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
@@ -178,13 +172,7 @@ private struct PharmacistRow: View {
                 .foregroundStyle(PharmacyColor.textSecondary)
                 .frame(width: 28, height: 28)
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(elevation: .subtle)
     }
 }
 
