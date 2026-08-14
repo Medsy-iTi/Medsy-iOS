@@ -578,3 +578,4 @@
 "pharmacy.chatbot.analytics.product_qty" = "Quantity: %lld";
 "pharmacy.chatbot.analytics.product_orders" = "In %lld orders";
 
+"pharmacy.chatbot.analytics.metric.average_order_value" = "Average Order Value";

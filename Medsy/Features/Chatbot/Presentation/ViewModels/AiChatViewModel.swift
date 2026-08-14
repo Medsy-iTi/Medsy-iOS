@@ -249,6 +249,7 @@ final class AiChatViewModel: AiChatViewModelProtocol {
         clearDraftPrompt()
         syncMessages()
         isSending = false
+        isLoadingHistory = false
         errorMessage = nil
     }
 

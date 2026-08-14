@@ -5,6 +5,50 @@
 
 import SwiftUI
 
+extension String {
+    private var snakeCased: String {
+        if self.contains("_") {
+            return self.lowercased()
+        }
+        var result = ""
+        for (index, char) in self.enumerated() {
+            if char.isUppercase && index > 0 {
+                result += "_" + char.lowercased()
+            } else {
+                result += char.lowercased()
+            }
+        }
+        return result
+    }
+
+    var localizedPharmacyAnalyticsStatus: String {
+        switch self.snakeCased {
+        case "completed": return "pharmacy.chatbot.analytics.status.completed".localized
+        case "cancelled": return "pharmacy.chatbot.analytics.status.cancelled".localized
+        case "rejected":  return "pharmacy.chatbot.analytics.status.rejected".localized
+        case "expired":   return "pharmacy.chatbot.analytics.status.expired".localized
+        case "pending", "pending_approval": return "pharmacy.orders.status.pending".localized
+        case "approved":  return "pharmacy.orders.status.approved".localized
+        case "new":       return "pharmacy.orders.filter.new".localized
+        default:          return ("pharmacy.chatbot.analytics.status." + self.snakeCased).localized
+        }
+    }
+
+    var localizedPharmacyAnalyticsMetric: String {
+        switch self.snakeCased {
+        case "total_revenue": return "pharmacy.chatbot.analytics.metric.total_revenue".localized
+        case "completed_orders": return "pharmacy.chatbot.analytics.metric.completed_orders".localized
+        case "acceptance_rate": return "pharmacy.chatbot.analytics.metric.acceptance_rate".localized
+        case "average_rating": return "pharmacy.chatbot.analytics.metric.average_rating".localized
+        case "rejected_orders": return "pharmacy.chatbot.analytics.metric.rejected_orders".localized
+        case "average_fulfillment_time": return "pharmacy.chatbot.analytics.metric.average_fulfillment_time".localized
+        case "average_order_value": return "pharmacy.chatbot.analytics.metric.average_order_value".localized
+        default: return ("pharmacy.chatbot.analytics.metric." + self.snakeCased).localized
+        }
+    }
+}
+
+
 struct PharmacyAiChatAnalyticsCard: View {
     let analytics: AIChatAnalytics
     var onSelectPharmacist: ((Int) -> Void)? = nil
@@ -32,7 +76,7 @@ struct PharmacyAiChatAnalyticsCard: View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
             VStack(alignment: .leading, spacing: 4) {
-                Text("pharmacy.chatbot.analytics.title".localized)
+                Text("pharmacy.chatbot.analytics.title_new".localized)
                     .font(PharmacyColor.sans(18, .bold))
                     .foregroundColor(PharmacyColor.textPrimary)
                 
@@ -86,7 +130,6 @@ struct PharmacyAiChatAnalyticsCard: View {
                 .stroke(PharmacyColor.border.opacity(0.5), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.04), radius: 8, y: 4)
-        .environment(\.layoutDirection, .rightToLeft) // Explicit RTL support can be dynamic based on locale
     }
     
     private var isEmpty: Bool {
@@ -110,10 +153,10 @@ struct PharmacyAiChatAnalyticsCard: View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             ForEach(analytics.metrics, id: \.key) { metric in
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(("pharmacy.chatbot.analytics.metric." + metric.key.lowercased()).localized)
+                    Text(metric.key.localizedPharmacyAnalyticsMetric)
                         .font(PharmacyColor.sans(12))
                         .foregroundColor(PharmacyColor.textSecondary)
-                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                     
                     Text(formatValue(metric.value, unit: metric.unit))
                         .font(PharmacyColor.sans(16, .bold))
@@ -139,14 +182,14 @@ struct PharmacyAiChatAnalyticsCard: View {
     
     private var breakdownsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("pharmacy.chatbot.analytics.breakdowns".localized)
+            Text("pharmacy.chatbot.analytics.breakdowns_new".localized)
                 .font(PharmacyColor.sans(14, .bold))
                 .foregroundColor(PharmacyColor.textPrimary)
             
             ForEach(analytics.breakdowns, id: \.key) { breakdown in
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(("pharmacy.chatbot.analytics.status." + breakdown.key.lowercased()).localized)
+                        Text(breakdown.key.localizedPharmacyAnalyticsStatus)
                             .font(PharmacyColor.sans(13))
                             .foregroundColor(PharmacyColor.textSecondary)
                         Spacer()
@@ -156,11 +199,13 @@ struct PharmacyAiChatAnalyticsCard: View {
                     }
                     
                     GeometryReader { proxy in
+                        let total = Double(analytics.breakdowns.reduce(0) { $0 + $1.count })
+                        let fraction = total > 0 ? min(Double(breakdown.count) / total, 1.0) : 0
                         ZStack(alignment: .leading) {
                             Capsule().fill(PharmacyColor.border.opacity(0.3))
                                 .frame(height: 6)
                             Capsule().fill(PharmacyColor.primary)
-                                .frame(width: proxy.size.width * 0.7, height: 6) // Dummy width for now, normally calculate percentage
+                                .frame(width: proxy.size.width * fraction, height: 6)
                         }
                     }
                     .frame(height: 6)
@@ -227,7 +272,7 @@ struct PharmacyAiChatAnalyticsCard: View {
                         Text(String(format: "pharmacy.chatbot.analytics.order_id".localized, highlight.orderId))
                             .font(PharmacyColor.sans(14, .bold))
                             .foregroundColor(PharmacyColor.textPrimary)
-                        Text(("pharmacy.chatbot.analytics.status." + highlight.status.lowercased()).localized)
+                        Text(highlight.status.localizedPharmacyAnalyticsStatus)
                             .font(PharmacyColor.sans(12))
                             .foregroundColor(PharmacyColor.textSecondary)
                     }

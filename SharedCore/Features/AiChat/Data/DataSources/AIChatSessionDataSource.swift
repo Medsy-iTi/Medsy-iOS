@@ -130,7 +130,7 @@ final class AIChatSessionDataSource {
 
     func reset() {
         messages = []
-        isHistoryLoaded = false
+        isHistoryLoaded = true
         generation += 1
         nextLocalID = -1
     }

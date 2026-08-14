@@ -577,3 +577,4 @@
 "pharmacy.chatbot.analytics.product_qty" = "الكمية: %lld";
 "pharmacy.chatbot.analytics.product_orders" = "في %lld طلبات";
 
+"pharmacy.chatbot.analytics.metric.average_order_value" = "متوسط قيمة الطلب";

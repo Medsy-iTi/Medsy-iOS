@@ -215,6 +215,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         session.reset()
         syncMessages()
         isSending = false
+        isLoadingHistory = false
         errorMessage = nil
     }
 
