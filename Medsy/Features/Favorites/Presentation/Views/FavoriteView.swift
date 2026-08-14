@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FavoriteView: View {
     @State private var viewModel: FavoriteViewModel
+    @State private var medicinePendingRemoval: FavoriteMedicineDisplayModel?
     @Environment(CartViewModel.self) private var cartViewModel
 
     private let onBack: () -> Void
@@ -23,6 +24,7 @@ struct FavoriteView: View {
         onSelectMedicine: @escaping (String) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
+        _medicinePendingRemoval = State(initialValue: nil)
         self.onBack = onBack
         self.onBrowse = onBrowse
         self.onSelectMedicine = onSelectMedicine
@@ -37,6 +39,19 @@ struct FavoriteView: View {
         }
         .background(AppColor.bg.ignoresSafeArea())
         .onAppear { Task { await viewModel.load() } }
+        .confirmationAlert(
+            item: $medicinePendingRemoval,
+            configuration: ConfirmationAlert(
+                title: "favorites.remove_confirmation.title".localized,
+                message: { "favorites.remove_confirmation.message".localized($0.title) },
+                confirmButtonTitle: "favorites.remove_confirmation.action".localized,
+                cancelButtonTitle: "common.cancel".localized,
+                confirmRole: .destructive,
+                onConfirm: { product in
+                    Task { await viewModel.remove(product) }
+                }
+            )
+        )
         .alert("favorites.offline.title".localized, isPresented: $viewModel.isShowingOfflineAlert) {
             Button("common.ok".localized, role: .cancel) {}
         } message: {
@@ -72,7 +87,7 @@ struct FavoriteView: View {
                         FavoriteMedicineCard(
                             product: product,
                             quantity: cartQuantity(for: product),
-                            onToggleFavorite: { Task { await viewModel.remove(product) } },
+                            onToggleFavorite: { medicinePendingRemoval = product },
                             onAdd: { addOneToCart(product) },
                             onIncrement: { addOneToCart(product) },
                             onDecrement: {
@@ -90,15 +105,7 @@ struct FavoriteView: View {
             }
             .refreshable { await viewModel.load() }
         case .empty:
-            MedsyStatusView(config: MedsyStatusConfig(
-                systemIcon: "heart.slash",
-                iconColor: { AppColor.green },
-                iconBackground: { AppColor.green.opacity(0.12) },
-                title: "favorites.empty.title".localized,
-                subtitle: "favorites.empty.subtitle".localized,
-                primaryButtonTitle: "favorites.empty.action".localized,
-                primaryAction: onBrowse
-            ))
+            FavoriteEmptyStateView(onBrowse: onBrowse)
         case let .failed(message):
             MedsyStatusView(config: MedsyStatusConfig(
                 systemIcon: "exclamationmark.triangle",
@@ -118,5 +125,43 @@ struct FavoriteView: View {
 
     private func cartQuantity(for product: FavoriteMedicineDisplayModel) -> Int {
         cartViewModel.quantity(forProductID: Int64(product.id))
+    }
+}
+
+private struct FavoriteEmptyStateView: View {
+    let onBrowse: () -> Void
+
+    var body: some View {
+        VStack(spacing: MedsySpacing.md) {
+            Spacer(minLength: MedsySpacing.xxl)
+
+            MedsyLottieView(
+                animationName: "favorites_empty"
+            )
+            .frame(width: 220, height: 220)
+            .accessibilityHidden(true)
+
+            VStack(spacing: MedsySpacing.xs) {
+                Text("favorites.empty.title".localized)
+                    .font(MedsyFont.title(22))		
+                    .foregroundStyle(AppColor.textPrim)
+                    .multilineTextAlignment(.center)
+
+                Text("favorites.empty.subtitle".localized)
+                    .font(MedsyFont.body(16))
+                    .foregroundStyle(AppColor.textSec)
+                    .multilineTextAlignment(.center)
+            }
+
+            PrimaryButton(
+                title: "favorites.empty.action".localized,
+                systemImage: "magnifyingglass",
+                action: onBrowse
+            )
+            .padding(.top, MedsySpacing.md)
+
+            Spacer(minLength: MedsySpacing.lg)
+        }
+        .padding(.horizontal, MedsySpacing.md)
     }
 }

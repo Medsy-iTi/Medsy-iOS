@@ -16,9 +16,7 @@ struct ProfileErrorView: View {
         VStack(spacing: PharmacySpacing.md) {
             Spacer(minLength: 40)
 
-            Image(systemName: "wifi.exclamationmark")
-                .font(.system(size: 36, weight: .medium))
-                .foregroundStyle(PharmacyColor.textSecondary)
+            PharmacyIconTile(systemImage: "wifi.exclamationmark", size: 64, iconSize: 26)
 
             Text(message)
                 .font(PharmacyColor.sans(15, .medium))
@@ -31,6 +29,7 @@ struct ProfileErrorView: View {
 
             Spacer(minLength: 40)
         }
+        .pharmacyCard(elevation: .raised)
         .frame(maxWidth: .infinity)
     }
 }

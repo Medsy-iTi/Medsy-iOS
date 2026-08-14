@@ -30,13 +30,7 @@ struct PendingInvitationsSectionView: View {
                 invitationRows
             }
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(elevation: .subtle)
         .confirmationDialog(
             "pharmacy_pending_invitations.delete_confirm_title".localized,
             isPresented: pendingInvitationDeleteBinding,
@@ -104,7 +98,7 @@ struct PendingInvitationsSectionView: View {
                     .background(PharmacyColor.primary.opacity(0.1))
                     .clipShape(Circle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .accessibilityLabel("refresh".localized)
         }
     }
@@ -183,7 +177,7 @@ private struct PendingInvitationRow: View {
                 .contentShape(Rectangle())
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
 
             Button(role: .destructive, action: onDelete) {
                 if isDeleting {
@@ -195,7 +189,7 @@ private struct PendingInvitationRow: View {
                         .foregroundStyle(PharmacyColor.danger)
                 }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             .frame(width: 36, height: 36)
         }
         .padding(PharmacySpacing.sm)
@@ -279,7 +273,7 @@ struct PendingInvitationDetailView: View {
                     .background(PharmacyColor.danger.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PharmacyPressableButtonStyle())
                 .disabled(isDeleting)
 
                 if let errorMessage {
@@ -366,13 +360,7 @@ struct PendingInvitationDetailView: View {
                 .clipShape(Capsule())
         }
         .frame(maxWidth: .infinity)
-        .padding(PharmacySpacing.lg)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(elevation: .raised)
     }
 
     private var detailCard: some View {
@@ -387,12 +375,7 @@ struct PendingInvitationDetailView: View {
             }
         }
         .padding(.horizontal, PharmacySpacing.md)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(padding: nil, elevation: .subtle)
     }
 
     private func detailRow(title: String, value: String) -> some View {

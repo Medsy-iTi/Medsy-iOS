@@ -12,6 +12,7 @@ struct PharmacyChatView: View {
     @State private var scrollProxy: ScrollViewProxy?
     @State private var showingImagePicker = false
     @State private var photosPickerItem: PhotosPickerItem?
+    @State var showingNewChatAlert = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -131,6 +132,14 @@ struct PharmacyChatView: View {
                 }
                 photosPickerItem = nil
             }
+        }
+        .alert("pharmacy.chatbot.new_chat.title".localized, isPresented: $showingNewChatAlert) {
+            Button("cancel".localized, role: .cancel) { }
+            Button("pharmacy.chatbot.menu.new_chat".localized, role: .destructive) {
+                viewModel.startNewChat()
+            }
+        } message: {
+            Text("pharmacy.chatbot.new_chat.confirm".localized)
         }
     }
 }

@@ -7,9 +7,9 @@ import SwiftUI
 
 struct ProfilePreferencesSection: View {
     let currentLanguage: PharmacyAppLanguage
-    let isDarkMode: Bool
+    let themePreference: PharmacyThemePreference
     let onLanguageChange: (PharmacyAppLanguage) -> Void
-    let onThemeChange: (Bool) -> Void
+    let onThemeChange: (PharmacyThemePreference) -> Void
 
     var body: some View {
         ProfileSectionContainer {
@@ -38,16 +38,15 @@ struct ProfilePreferencesSection: View {
 
     private var themeMenu: some View {
         Menu {
-            themeButton(isDark: false, titleKey: "theme_light")
-            themeButton(isDark: true, titleKey: "theme_dark")
+            ForEach(PharmacyThemePreference.allCases) { preference in
+                themeButton(preference)
+            }
         } label: {
             ProfileMenuRow(
                 icon: "moon.stars.fill",
                 iconTint: PharmacyColor.secondary,
                 title: "theme_title".localized,
-                subtitle: isDarkMode
-                    ? "theme_dark".localized
-                    : "theme_light".localized
+                subtitle: themePreference.localizationKey.localized
             )
         }
     }
@@ -68,13 +67,13 @@ struct ProfilePreferencesSection: View {
         }
     }
 
-    private func themeButton(isDark: Bool, titleKey: String) -> some View {
+    private func themeButton(_ preference: PharmacyThemePreference) -> some View {
         Button {
-            onThemeChange(isDark)
+            onThemeChange(preference)
         } label: {
             HStack {
-                Text(titleKey.localized)
-                if isDarkMode == isDark {
+                Text(preference.localizationKey.localized)
+                if themePreference == preference {
                     Image(systemName: "checkmark")
                 }
             }

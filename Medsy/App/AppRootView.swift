@@ -10,6 +10,7 @@ import SwiftUI
 struct AppRootView: View {
     private let onboardingFactory: OnboardingFactory
     private let authenticationFactory: AuthenticationFactory
+    @Environment(\.colorScheme) private var systemColorScheme
     @ObservedObject private var appSettings = AppSettings.shared
     @State private var coordinator: AppCoordinator
 
@@ -53,6 +54,12 @@ struct AppRootView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: coordinator.route)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
+        .onAppear {
+            appSettings.updateSystemColorScheme(systemColorScheme)
+        }
+        .onChange(of: systemColorScheme) { _, colorScheme in
+            appSettings.updateSystemColorScheme(colorScheme)
+        }
     }
 }

@@ -16,6 +16,17 @@ struct AIChatMessageResponseDTO: Decodable {
     let pharmacistRankings: [AIChatPharmacistRankingDTO]?
     let disclaimer: String?
     let action: AIChatActionDTO?
+    // Nullable one-shot instruction — never present in GET /history
+    let reminder: AIChatReminderDTO?
+}
+
+struct AIChatReminderDTO: Decodable {
+    /// The resolved medicine display name.
+    let medicineName: String?
+    /// 24-hour "HH:mm" strings already resolved server-side.
+    let times: [String]?
+    /// Number of days the schedule runs.
+    let durationDays: Int?
 }
 
 struct AIChatProductDTO: Decodable {

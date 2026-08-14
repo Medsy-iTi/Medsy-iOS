@@ -246,6 +246,9 @@
 "favorites.persistence_error.subtitle" = "تعذر حفظ التغيير في المفضلة. حاول مرة أخرى.";
 "favorites.offline.title" = "لا يوجد اتصال بالإنترنت";
 "favorites.offline.subtitle" = "اتصل بالإنترنت لفتح تفاصيل الدواء.";
+"favorites.remove_confirmation.title" = "إزالة من المفضلة؟";
+"favorites.remove_confirmation.message" = "هل أنت متأكد من إزالة %@ من المفضلة؟";
+"favorites.remove_confirmation.action" = "إزالة";
 
 /* Tab bar */
 "tab.home" = "الرئيسية";
@@ -381,6 +384,8 @@
 "profile.language.english.subtitle" = "واجهة إنجليزية من اليسار لليمين";
 "profile.theme.title" = "اختر المظهر";
 "profile.theme.message" = "اختر شكل Medsy على هذا الجهاز.";
+"profile.theme.system" = "إعدادات النظام";
+"profile.theme.system.subtitle" = "مطابقة مظهر الجهاز";
 "profile.theme.light" = "فاتح";
 "profile.theme.light.subtitle" = "واجهة مضيئة";
 "profile.theme.dark" = "داكن";
@@ -1030,3 +1035,38 @@
 "chatbot.product.details"             = "تفاصيل";
 "chatbot.product.rx_only"             = "بوصفة طبية فقط";
 "chatbot.consult_product_prompt"      = "أخبرني عن %@";
+
+// MARK: - My Reminders
+"reminders.title"                     = "تذكيراتي";
+"reminders.section.active"            = "نشطة";
+"reminders.section.past"              = "منتهية";
+"reminders.row.days"                  = "دورة %d يوم";
+"reminders.row.completed"             = "تمّت";
+"reminders.empty.title"               = "لا توجد تذكيرات بعد";
+"reminders.empty.subtitle"            = "اطلب من Medsy AI تذكيرك بتناول دواء وسيظهر هنا.";
+"reminders.card.title"                = "تم ضبط التذكير ✓";
+"reminders.card.duration"             = "دورة %d يوم مجدولة";
+"reminders.card.view_all"             = "عرض تذكيراتي";
+
+// MARK: - Reminder notification
+"reminder.notification.title"         = "حان وقت الدواء 💊";
+"reminder.notification.body"          = "تناول %@ الآن (%@)";
+
+// MARK: - Profile — Reminders row
+"profile.reminders"                   = "تذكيراتي";
+"profile.reminders.subtitle"          = "إدارة جداول دوائك";
+
+/* Reminders */
+"reminders.add.medicine_name" = "اسم الدواء";
+"reminders.add.medicine_section" = "الدواء";
+"reminders.add.time_label" = "الوقت";
+"reminders.add.add_time" = "إضافة وقت";
+"reminders.add.times_section" = "أوقات التنبيه";
+"reminders.add.days" = "%d أيام";
+"reminders.add.duration_section" = "المدة";
+"reminders.add.title" = "إضافة تنبيه";
+"reminders.row.active" = "نشط";
+"reminders.row.duration_ends" = "%d أيام · ينتهي في %@";
+"reminders.add_button" = "إضافة تنبيه";
+"reminders.delete.title" = "حذف التنبيه";
+"reminders.delete.message" = "هل أنت متأكد أنك تريد حذف هذا التنبيه؟";

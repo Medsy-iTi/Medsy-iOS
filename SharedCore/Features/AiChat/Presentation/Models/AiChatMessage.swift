@@ -11,6 +11,8 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
     let isTyping: Bool
     let isRetryable: Bool
     let localGeneration: Int
+    /// Compressed JPEG data for outgoing user image messages. Stored locally only — never persisted.
+    let attachedImageData: Data?
 
     // MARK: - Derived helpers
 
@@ -46,13 +48,18 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
         assistantResponse?.action   // never replay actions from history
     }
 
+    var reminder: AIChatReminder? {
+        assistantResponse?.reminder  // one-shot; never replayed from history
+    }
+
     // MARK: - Mutation helpers (create new value)
 
     func retryable() -> AiChatMessage {
         AiChatMessage(
             id: id, role: role, text: text, intent: intent,
             assistantResponse: assistantResponse, historyMessage: historyMessage,
-            isTyping: isTyping, isRetryable: true, localGeneration: localGeneration
+            isTyping: isTyping, isRetryable: true, localGeneration: localGeneration,
+            attachedImageData: attachedImageData
         )
     }
 
@@ -60,7 +67,8 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
         AiChatMessage(
             id: id, role: role, text: text, intent: intent,
             assistantResponse: assistantResponse, historyMessage: historyMessage,
-            isTyping: isTyping, isRetryable: false, localGeneration: localGeneration
+            isTyping: isTyping, isRetryable: false, localGeneration: localGeneration,
+            attachedImageData: attachedImageData
         )
     }
 }

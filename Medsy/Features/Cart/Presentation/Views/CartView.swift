@@ -20,35 +20,49 @@ struct CartView: View {
     let onScanPrescription: () -> Void
     let onContinue: (CartRequestDraft) -> Void
     let onProductSelected: (String) -> Void
+    let onReminders: (() -> Void)?
 
     init(
         viewModel: CartViewModel,
         onSearch: @escaping () -> Void = {},
         onScanPrescription: @escaping () -> Void = {},
         onContinue: @escaping (CartRequestDraft) -> Void = { _ in },
-        onProductSelected: @escaping (String) -> Void = { _ in }
+        onProductSelected: @escaping (String) -> Void = { _ in },
+        onReminders: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.onSearch = onSearch
         self.onScanPrescription = onScanPrescription
         self.onContinue = onContinue
         self.onProductSelected = onProductSelected
+        self.onReminders = onReminders
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 MedsyNavBar(title: "cart.title".localized, trailing: {
-                    Button {
-                        showsClearConfirmation = true
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundStyle(AppColor.danger)
+                    HStack(spacing: MedsySpacing.md) {
+                        Button {
+                            onReminders?()
+                        } label: {
+                            Image(systemName: "bell.fill")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(AppColor.green)
+                        }
+                        .accessibilityLabel("reminders.title".localized)
+
+                        Button {
+                            showsClearConfirmation = true
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(AppColor.danger)
+                        }
+                        .accessibilityLabel("cart.clear.accessibility".localized)
+                        .disabled(!viewModel.hasContent)
+                        .opacity(viewModel.hasContent ? 1 : 0.35)
                     }
-                    .accessibilityLabel("cart.clear.accessibility".localized)
-                    .disabled(!viewModel.hasContent)
-                    .opacity(viewModel.hasContent ? 1 : 0.35)
                 })
 
                 content
@@ -68,7 +82,7 @@ struct CartView: View {
         }
         .localizedEnvironment()
         .id(languageManager.currentLanguage)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .alert("cart.clear_confirmation.title".localized, isPresented: $showsClearConfirmation) {
             Button("common.cancel".localized, role: .cancel) {}
             Button("cart.clear_confirmation.action".localized, role: .destructive) {

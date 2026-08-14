@@ -14,10 +14,10 @@ struct PharmacyMoneyDetailsCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Text("completed_order.order_summary".localized)
-                .font(PharmacyColor.sans(15, .semibold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            PharmacySectionHeader(
+                title: "completed_order.order_summary".localized,
+                systemImage: "banknote.fill"
+            )
                 .padding(.bottom, PharmacySpacing.sm)
 
             summaryRow(
@@ -47,12 +47,7 @@ struct PharmacyMoneyDetailsCard: View {
                     .foregroundStyle(PharmacyColor.primary)
             }
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(elevation: .raised)
     }
 
     private func summaryRow(label: String, amount: Double, isTotal: Bool) -> some View {

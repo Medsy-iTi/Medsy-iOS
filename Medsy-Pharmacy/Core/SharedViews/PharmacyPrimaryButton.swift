@@ -49,9 +49,16 @@ struct PharmacyPrimaryButton: View {
                 in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .disabled(isDisabled || isLoading)
         .opacity(isDisabled ? 0.45 : 1)
+        .shadow(
+            color: style == .filled && !isDisabled
+                ? PharmacyColor.primary.opacity(0.18)
+                : .clear,
+            radius: 9,
+            y: 4
+        )
         .accessibilityLabel(title)
     }
 }

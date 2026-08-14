@@ -13,6 +13,7 @@ struct PharmacyMainTabView: View {
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
     @State private var homeViewModel: PharmacyHomeViewModel?
+    @State private var chatViewModel: PharmacyAiChatViewModel?
     @State private var selectedCompletedOrder: SelectedCompletedOrder?
 	private let completedOrdersFactory: PharmacyCompletedOrdersFactory
     private let chatFactory: PharmacyAiChatViewModelFactory
@@ -61,11 +62,17 @@ struct PharmacyMainTabView: View {
                 }
                 .tag(PharmacyTab.orders)
 
-            PharmacyChatRootView(factory: chatFactory)
-                .tabItem {
-                    tabLabel(for: .chatBot)
+            Group {
+                if let chatViewModel = chatViewModel {
+                    PharmacyChatView(viewModel: chatViewModel)
+                } else {
+                    ProgressView()
                 }
-                .tag(PharmacyTab.chatBot)
+            }
+            .tabItem {
+                tabLabel(for: .chatBot)
+            }
+            .tag(PharmacyTab.chatBot)
 
 			completedOrdersFactory.makeView()
 				.tabItem {
@@ -87,7 +94,7 @@ struct PharmacyMainTabView: View {
         .tint(PharmacyColor.primary)
         .toolbarBackground(PharmacyColor.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
         .fullScreenCover(item: $selectedCompletedOrder) { selection in
             CompletedOrderDetailsCoordinatorView.Embedded(orderId: selection.id)
         }
@@ -98,6 +105,9 @@ struct PharmacyMainTabView: View {
         .task {
             if homeViewModel == nil {
                 homeViewModel = homeFactory.makeViewModel()
+            }
+            if chatViewModel == nil {
+                chatViewModel = chatFactory.makeViewModel()
             }
         }
     }

@@ -15,12 +15,7 @@ struct ProfileSectionContainer<Content: View>: View {
         VStack(spacing: 0) {
             content
         }
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(padding: nil, elevation: .subtle)
     }
 }
 

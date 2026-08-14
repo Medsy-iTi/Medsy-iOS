@@ -12,9 +12,7 @@ struct PharmacyHomeSectionMessage: View {
 
     var body: some View {
         VStack(spacing: PharmacySpacing.xs) {
-            Image(systemName: icon)
-                .font(.system(size: 30, weight: .medium))
-                .foregroundStyle(PharmacyColor.textSecondary)
+            PharmacyIconTile(systemImage: icon, size: 48, iconSize: 20)
             Text(title)
                 .font(PharmacyColor.sans(14, .bold))
                 .foregroundStyle(PharmacyColor.textPrimary)
@@ -25,5 +23,6 @@ struct PharmacyHomeSectionMessage: View {
         }
         .frame(maxWidth: .infinity)
         .padding(PharmacySpacing.lg)
+        .accessibilityElement(children: .combine)
     }
 }

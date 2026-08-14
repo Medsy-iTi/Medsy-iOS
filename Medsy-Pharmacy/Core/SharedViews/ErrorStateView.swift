@@ -40,6 +40,7 @@ struct ErrorStateView: View {
             PharmacyPrimaryButton(title: retryTitle, style: .soft, height: 40, action: onRetry)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, PharmacySpacing.xl)
+        .padding(.vertical, PharmacySpacing.lg)
+        .pharmacyCard(elevation: .subtle)
     }
 }

@@ -215,8 +215,12 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         if let existingID = existingUserID {
             userID = existingID
         } else {
-            let label = text ?? "pharmacy.chatbot.camera.image_preview".localized
-            userID = session.appendOptimisticUserMessage(text: label)
+            if let image = image {
+                let label = text ?? "pharmacy.chatbot.camera.image_preview".localized
+                userID = session.appendOptimisticUserMessage(text: label, imageData: image)
+            } else {
+                userID = session.appendOptimisticUserMessage(text: text ?? "", imageData: nil)
+            }
         }
         let typingID = session.appendTypingIndicator()
         syncMessages()
@@ -237,6 +241,11 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
                 }
 
                 guard !Task.isCancelled else { return }
+                
+                if let image = image, let convID = response.conversationID, let msgID = response.messageID {
+                    AIChatImageStore.saveImage(image, conversationID: convID, messageID: msgID)
+                }
+
                 session.resolveResponse(response, typingID: typingID, sentGeneration: capturedGeneration)
                 syncMessages()
                 // Pharmacy: no cart or request-confirm side effects

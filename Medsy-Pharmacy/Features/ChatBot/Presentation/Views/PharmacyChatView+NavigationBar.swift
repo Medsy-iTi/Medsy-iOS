@@ -33,7 +33,7 @@ extension PharmacyChatView {
             Spacer()
 
             // New chat
-            Button(action: { viewModel.startNewChat() }) {
+            Button(action: { showingNewChatAlert = true }) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 17))
                     .foregroundColor(PharmacyColor.textSecondary)
@@ -46,7 +46,7 @@ extension PharmacyChatView {
             // Dark mode toggle
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                    appSettings.isDarkMode.toggle()
+                    appSettings.toggleLightAndDark()
                 }
             } label: {
                 Image(systemName: appSettings.isDarkMode ? "sun.max.fill" : "moon.fill")

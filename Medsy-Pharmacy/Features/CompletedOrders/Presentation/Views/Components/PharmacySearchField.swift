@@ -12,6 +12,7 @@ struct PharmacySearchField: View {
     @Binding var text: String
     var placeholder: String
     var onFilterTap: (() -> Void)? = nil
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: PharmacySpacing.sm) {
@@ -28,18 +29,15 @@ struct PharmacySearchField: View {
             TextField(placeholder, text: $text)
                 .font(PharmacyColor.sans(15))
                 .multilineTextAlignment(.trailing)
+                .foregroundStyle(PharmacyColor.textPrimary)
+                .focused($isFocused)
 
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(PharmacyColor.primary)
         }
         .padding(.horizontal, PharmacySpacing.md)
-        .padding(.vertical, PharmacySpacing.sm)
-        .background(PharmacyColor.surface)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .frame(minHeight: 50)
+        .pharmacyInputSurface(isFocused: isFocused)
     }
 }
 

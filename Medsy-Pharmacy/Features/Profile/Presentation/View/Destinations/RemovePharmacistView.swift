@@ -55,11 +55,12 @@ struct RemovePharmacistView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .background(PharmacyColor.surface)
                     .clipShape(Circle())
+                    .overlay(Circle().stroke(PharmacyColor.border, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
             
             Text("pharmacy_team.remove_header".localized)
                 .font(PharmacyColor.sans(17, .bold))
@@ -110,13 +111,7 @@ struct RemovePharmacistView: View {
             
             Spacer()
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyCard(cornerRadius: PharmacyRadius.md, elevation: .subtle)
     }
     
     private var warningBlock: some View {
@@ -166,7 +161,8 @@ struct RemovePharmacistView: View {
             .background(isRemoving ? PharmacyColor.danger.opacity(0.72) : PharmacyColor.danger)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
+        .shadow(color: PharmacyColor.danger.opacity(0.16), radius: 8, y: 4)
         .disabled(isRemoving)
         .padding(.top, 8)
     }

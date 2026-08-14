@@ -15,11 +15,14 @@ struct PharmacyRequestDetailsHeaderView: View {
     var body: some View {
         HStack(alignment: .center) {
             Button(action: onBack) {
-                Image(systemName: "arrow.left")
+                Image(systemName: "arrow.backward")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(PharmacyColor.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(PharmacyColor.card, in: Circle())
+                    .overlay(Circle().stroke(PharmacyColor.border, lineWidth: 1))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PharmacyPressableButtonStyle())
 
             Spacer()
 
