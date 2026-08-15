@@ -325,9 +325,10 @@ private struct PrescriptionFullScreenView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white)
-                    .padding(10)
+                    .frame(width: 44, height: 44)
                     .background(Circle().fill(.white.opacity(0.2)))
             }
+            .buttonStyle(PharmacyPressableButtonStyle())
             .padding(.top, 56)
             .padding(.trailing, 20)
         }
@@ -351,29 +352,13 @@ private struct PharmacyOrderActionButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.white)
-                        .scaleEffect(0.85)
-                } else {
-                    Image(systemName: systemImage)
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                Text(isLoading ? loadingLabelKey.localized : labelKey.localized)
-                    .font(.system(size: 15, weight: .semibold))
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .fill(isLoading ? PharmacyColor.primary.opacity(0.6) : PharmacyColor.primary)
-            )
-        }
-        .disabled(isLoading)
+        PharmacyPrimaryButton(
+            title: isLoading ? loadingLabelKey.localized : labelKey.localized,
+            systemImage: systemImage,
+            isLoading: isLoading,
+            isDisabled: isLoading,
+            action: action
+        )
         .animation(.easeInOut(duration: 0.2), value: isLoading)
     }
 }
@@ -411,7 +396,7 @@ private struct PharmacyOrderStatusTrackerView: View {
             return 1
         case .delivered, .completed:
             return 2
-        case .cancelled, .expired, .unknown:
+        case .cancelled, .expired, .searching, .unknown:
             return -1
         }
     }
@@ -426,13 +411,7 @@ private struct PharmacyOrderStatusTrackerView: View {
                     }
                 }
             }
-            .padding(PharmacySpacing.md)
-            .background(PharmacyColor.card)
-            .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            )
+            .pharmacyCard(elevation: .raised)
             .onAppear { startPulse() }
             .onChange(of: activeStep) { _, _ in startPulse() }
         }

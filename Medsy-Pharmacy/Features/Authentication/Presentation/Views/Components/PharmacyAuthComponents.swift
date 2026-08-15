@@ -145,6 +145,7 @@ struct PharmacyAuthTextField: View {
     let kind: PharmacyAuthFieldKind
     @Binding var text: String
     @State private var isPasswordVisible = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: PharmacySpacing.sm) {
@@ -172,11 +173,7 @@ struct PharmacyAuthTextField: View {
         .font(PharmacyColor.sans(15))
         .padding(.horizontal, PharmacySpacing.md)
         .frame(height: 56)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyInputSurface(isFocused: isFocused)
     }
 
     @ViewBuilder
@@ -189,6 +186,7 @@ struct PharmacyAuthTextField: View {
             )
             .textContentType(kind.contentType)
             .foregroundStyle(PharmacyColor.textPrimary)
+            .focused($isFocused)
         } else {
             TextField(
                 "",
@@ -200,6 +198,7 @@ struct PharmacyAuthTextField: View {
             .textInputAutocapitalization(kind == .name ? .words : kind == .address ? .sentences : .never)
             .autocorrectionDisabled(kind == .email)
             .foregroundStyle(PharmacyColor.textPrimary)
+            .focused($isFocused)
         }
     }
 }
@@ -219,11 +218,7 @@ struct PharmacyAuthDatePicker: View {
         .tint(PharmacyColor.primary)
         .padding(.horizontal, PharmacySpacing.md)
         .frame(height: 56)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        }
+        .pharmacyInputSurface()
     }
 }
 
@@ -234,10 +229,15 @@ struct PharmacyAuthValidationMessage: View {
 
     var body: some View {
         if let message {
-            Text(message)
-                .font(PharmacyColor.sans(13))
+            Label(message, systemImage: "exclamationmark.circle.fill")
+                .font(PharmacyColor.sans(13, .medium))
                 .foregroundStyle(PharmacyColor.danger)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(PharmacySpacing.sm)
+                .background(
+                    PharmacyColor.danger.opacity(0.08),
+                    in: RoundedRectangle(cornerRadius: PharmacyRadius.md, style: .continuous)
+                )
         }
     }
 }
@@ -322,13 +322,9 @@ struct PharmacyAuthSecondaryButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 54)
-            .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                    .stroke(PharmacyColor.border, lineWidth: 1)
-            }
+            .pharmacyInputSurface()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PharmacyPressableButtonStyle())
         .accessibilityLabel(title)
     }
 }

@@ -1,14 +1,9 @@
-//  OffersListView.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 22/07/2026.
-
 import SwiftUI
 
 struct OffersListView: View {
     @State private var viewModel = OffersListViewModel()
     let onBack: () -> Void
-    var onOfferSelected: ((OfferPresentationModel) -> Void)? = nil
+    var onOfferSelected: ((OfferResult, Int) -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -17,24 +12,33 @@ struct OffersListView: View {
                 onBack: onBack
             )
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
-                    ForEach(viewModel.offers) { offer in
-                        OfferCardView(
-                            offer: offer,
-                            onTap: {
-                                onOfferSelected?(offer)
-                            }
-                        )
+            if viewModel.isLoading && viewModel.offers.isEmpty {
+                Spacer()
+                ProgressView()
+                    .tint(AppColor.green)
+                Spacer()
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.offers) { offer in
+                            OfferCardView(
+                                offer: offer,
+                                onTap: {
+                                    if let reqId = Int(offer.id), let result = viewModel.offerResultsMap[reqId] {
+                                        onOfferSelected?(result, reqId)
+                                    }
+                                }
+                            )
+                        }
+
+                        Spacer().frame(height: 8)
+
+                        OffersInfoBannerView()
                     }
-
-                    Spacer().frame(height: 8)
-
-                    OffersInfoBannerView()
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 24)
             }
         }
         .background(AppColor.bg.ignoresSafeArea())

@@ -14,11 +14,10 @@ struct PharmacyPrescriptionCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: PharmacySpacing.xs) {
-            Text("pharmacy.request.customer_prescription".localized)
-                .font(PharmacyColor.sans(16, .bold))
-                .foregroundStyle(PharmacyColor.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 2)
+            PharmacySectionHeader(
+                title: "pharmacy.request.customer_prescription".localized,
+                systemImage: "doc.text.image.fill"
+            )
 
             ZStack {
                 RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
@@ -59,9 +58,12 @@ struct PharmacyPrescriptionCard: View {
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
+            .pharmacyCard(padding: nil, elevation: .subtle)
+            .contentShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
             .onTapGesture {
                 onEnlarge()
             }
+            .accessibilityAddTraits(.isButton)
         }
     }
 }

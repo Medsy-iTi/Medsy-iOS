@@ -43,16 +43,21 @@ struct PharmacyRequestDetailsView: View {
                             name: model.wrappedValue.customer.name,
                             phone: model.wrappedValue.customer.phone,
                             onContact: {
-                                if let url = URL(string: "tel://\(model.wrappedValue.customer.phone.replacingOccurrences(of: " ", with: ""))") {
+                                let cleanPhone = model.wrappedValue.customer.phone.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+                                if let url = URL(string: "tel://\(cleanPhone)") {
                                     UIApplication.shared.open(url)
                                 }
                             },
                             address: model.wrappedValue.customer.address,
                             onLocationTap: {
-                                if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude {
-                                    if let url = URL(string: "maps://?q=\(lat),\(lon)") {
+                                if let lat = model.wrappedValue.deliveryLatitude, let lon = model.wrappedValue.deliveryLongitude, lat != 0, lon != 0 {
+                                    if let url = URL(string: "maps://?q=\(lat),\(lon)"), UIApplication.shared.canOpenURL(url) {
+                                        UIApplication.shared.open(url)
+                                    } else if let url = URL(string: "https://maps.apple.com/?q=\(lat),\(lon)") {
                                         UIApplication.shared.open(url)
                                     }
+                                } else if let encoded = model.wrappedValue.customer.address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed), let url = URL(string: "https://maps.apple.com/?q=\(encoded)") {
+                                    UIApplication.shared.open(url)
                                 }
                             }
                         )
@@ -80,9 +85,9 @@ struct PharmacyRequestDetailsView: View {
                             notes: model.wrappedValue.notes
                         )
 
-
                         PharmacyOrderTotalCard(
-                            total: model.wrappedValue.total
+                            total: model.wrappedValue.total,
+                            paymentMethod: model.wrappedValue.paymentMethod
                         )
                     }
                     .padding(.horizontal, PharmacySpacing.md)
@@ -92,14 +97,18 @@ struct PharmacyRequestDetailsView: View {
             } else {
                 VStack(spacing: 12) {
                     Spacer()
-                    Image(systemName: "tray")
-                        .font(.system(size: 44))
-                        .foregroundStyle(PharmacyColor.textSecondary)
-                    Text("pharmacy.request.no_data".localized)
-                        .font(PharmacyColor.sans(14, .semibold))
-                        .foregroundStyle(PharmacyColor.textSecondary)
+
+                    VStack(spacing: PharmacySpacing.sm) {
+                        PharmacyIconTile(systemImage: "tray", size: 64, iconSize: 26)
+                        Text("pharmacy.request.no_data".localized)
+                            .font(PharmacyColor.sans(14, .semibold))
+                            .foregroundStyle(PharmacyColor.textSecondary)
+                    }
+                    .pharmacyCard(elevation: .subtle)
+
                     Spacer()
                 }
+                .padding(PharmacySpacing.md)
             }
 
             if viewModel?.showBottomBar == true {

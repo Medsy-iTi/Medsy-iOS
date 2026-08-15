@@ -79,10 +79,7 @@ struct PharmacyOrderSummaryCardView<ActionButton: View>: View {
             
             actionButton()
         }
-        .padding(PharmacySpacing.md)
-        .background(PharmacyColor.card, in: RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous).stroke(PharmacyColor.border, lineWidth: 1))
-        .shadow(color: .black.opacity(0.04), radius: 10, y: 4)
+        .pharmacyCard(elevation: .subtle)
         .accessibilityElement(children: .contain)
     }
 }

@@ -58,7 +58,28 @@ final class PharmacyOrdersViewModel {
 	}
 
 	var visibleOrders: [PharmacyOrderListItem] {
-		orders.filter { matchesSelectedFilter($0) && matchesSearchText($0) }
+		let filtered = orders.filter { matchesSelectedFilter($0) && matchesSearchText($0) }
+		return sortOrders(filtered)
+	}
+
+	private func sortOrders(_ list: [PharmacyOrderListItem]) -> [PharmacyOrderListItem] {
+		list.sorted { lhs, rhs in
+			if lhs.status != rhs.status {
+				return statusPriority(lhs.status) < statusPriority(rhs.status)
+			}
+			return lhs.createdAt > rhs.createdAt
+		}
+	}
+
+	private func statusPriority(_ status: PharmacyOrderListStatus) -> Int {
+		switch status {
+		case .new: return 0
+		case .pendingApproval: return 1
+		case .preparing: return 2
+		case .delivered: return 3
+		case .completed: return 4
+		case .expired: return 5
+		}
 	}
 
 	var allOrdersCount: Int {
@@ -93,6 +114,12 @@ final class PharmacyOrdersViewModel {
 			orders = page.orders.map(PharmacyOrderMapper.mapToListItem)
 			isLastPage = page.isLastPage
 			loadState = .loaded
+			
+			if !isLastPage {
+				Task { [weak self] in
+					await self?.loadRemainingPages(pharmacyId: pharmacyId)
+				}
+			}
 		} catch let error as PharmacyOrdersResolutionError {
 			loadState = .failed(error.errorDescription ?? "common.somethingWentWrong".localized)
 		} catch {
@@ -106,24 +133,45 @@ final class PharmacyOrdersViewModel {
 	}
 
 	func loadNextPageIfNeeded(currentItem: PharmacyOrderListItem) async {
-		guard currentItem.id == visibleOrders.last?.id,
-			  !isLastPage,
+		guard !isLastPage,
 			  !isLoadingNextPage,
 			  loadState == .loaded,
+			  let index = visibleOrders.firstIndex(where: { $0.id == currentItem.id }),
+			  index >= visibleOrders.count - 5,
 			  let pharmacyId = identityProvider.currentPharmacyId else { return }
 
-		isLoadingNextPage = true
-		defer { isLoadingNextPage = false }
+		await loadNextPage(pharmacyId: pharmacyId)
+	}
 
-		let nextPage = currentPage + 1
+	private func loadNextPage(pharmacyId: Int) async {
+		guard !isLastPage, !isLoadingNextPage, loadState == .loaded else { return }
+
+		isLoadingNextPage = true
 		do {
+			let nextPage = currentPage + 1
 			let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: nextPage, size: pageSize)
 			originalOrders.append(contentsOf: page.orders)
 			orders.append(contentsOf: page.orders.map(PharmacyOrderMapper.mapToListItem))
 			currentPage = nextPage
 			isLastPage = page.isLastPage
 		} catch {
+			// Fail silently
+		}
+		isLoadingNextPage = false
+	}
 
+	private func loadRemainingPages(pharmacyId: Int) async {
+		while !isLastPage && !Task.isCancelled {
+			let nextPage = currentPage + 1
+			do {
+				let page = try await fetchOrdersUseCase.execute(pharmacyId: pharmacyId, page: nextPage, size: pageSize)
+				originalOrders.append(contentsOf: page.orders)
+				orders.append(contentsOf: page.orders.map(PharmacyOrderMapper.mapToListItem))
+				currentPage = nextPage
+				isLastPage = page.isLastPage
+			} catch {
+				break
+			}
 		}
 	}
 

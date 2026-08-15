@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.colorScheme) private var systemColorScheme
+
     let onboardingFactory: PharmacyOnboardingFactory
     let authenticationFactory: PharmacyAuthenticationFactory
     let homeFactory: PharmacyHomeFactory
@@ -74,7 +76,13 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.45), value: coordinator.flow)
-        .preferredColorScheme(appSettings.isDarkMode ? .dark : .light)
+        .preferredColorScheme(appSettings.preferredColorScheme)
+        .onAppear {
+            appSettings.updateSystemColorScheme(systemColorScheme)
+        }
+        .onChange(of: systemColorScheme) { _, newColorScheme in
+            appSettings.updateSystemColorScheme(newColorScheme)
+        }
     }
 }
 

@@ -1,10 +1,3 @@
-//
-//  OfferResultMapper.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 25/07/2026.
-//
-
 import Foundation
 
 enum OfferResultMapper {
@@ -26,7 +19,8 @@ enum OfferResultMapper {
         return OfferResult(
             items: items,
             totalPrice: total,
-            prescriptionUrl: dto.prescriptionUrl
+            prescriptionUrl: dto.prescriptionUrl,
+            paymentMethod: dto.paymentMethod
         )
     }
 

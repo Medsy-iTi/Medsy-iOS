@@ -164,7 +164,6 @@ final class CompleteRequestViewModel: CompleteRequestViewModelProtocol {
                     )
                 )
                 submittedRequest = result
-                statusStore?.savePendingRequestId(result.id)
             } catch {
                 if shouldRecoverAlreadySubmittedRequest(from: error) {
                     guard await onRequestCreated(submission) else {

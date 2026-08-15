@@ -93,12 +93,7 @@ struct UserProfileView: View {
             .padding(.horizontal, PharmacySpacing.md)
             .padding(.bottom, PharmacySpacing.md)
         }
-        .background(PharmacyColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: PharmacyRadius.lg, style: .continuous)
-                .stroke(PharmacyColor.border, lineWidth: 1)
-        )
+        .pharmacyCard(padding: nil, elevation: .subtle)
     }
     
     private func profileDetailRow(icon: String, title: String, value: String) -> some View {

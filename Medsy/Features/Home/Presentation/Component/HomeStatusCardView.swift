@@ -1,10 +1,3 @@
-//
-//  HomeStatusCardView.swift
-//  Medsy
-//
-//  Created by Ehab Salah on 16/07/2026.
-//
-
 import SwiftUI
 
 enum HomeSearchStatus: String, CaseIterable, Identifiable {
@@ -13,6 +6,7 @@ enum HomeSearchStatus: String, CaseIterable, Identifiable {
     case firstOffer
     case multipleOffers
     case expired
+    case continueOrder
     
     var id: String { rawValue }
     
@@ -28,6 +22,8 @@ enum HomeSearchStatus: String, CaseIterable, Identifiable {
             return "home.status.multipleOffers".localized
         case .expired:
             return "home.status.expired".localized
+        case .continueOrder:
+            return "home.status.continueOrder".localized
         }
     }
 }
@@ -77,7 +73,10 @@ struct HomeSearchingStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -86,9 +85,9 @@ struct HomeSearchingStatusView: View {
     }
 
     private var currentStage: Int {
-        if secondsElapsed < 20 {
+        if secondsElapsed < 300 {
             return 1
-        } else if secondsElapsed < 45 {
+        } else if secondsElapsed < 600 {
             return 2
         } else {
             return 3
@@ -197,13 +196,25 @@ struct HomeSearchingStatusView: View {
                 }
                 
                 ZStack {
-                    HStack(spacing: 0) {
-                        AppColor.green
-                            .frame(height: 3)
-                        
-                        Color.gray.opacity(0.2)
-                            .frame(height: 3)
+                    GeometryReader { geo in
+                        let fillWidth: CGFloat = {
+                            switch currentStage {
+                            case 1: return 0
+                            case 2: return geo.size.width * 0.5
+                            default: return geo.size.width
+                            }
+                        }()
+                        ZStack(alignment: languageManager.isRTL ? .trailing : .leading) {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 3)
+                            
+                            Rectangle()
+                                .fill(AppColor.green)
+                                .frame(width: fillWidth, height: 3)
+                        }
                     }
+                    .frame(height: 3)
                     
                     HStack(spacing: 0) {
                         Circle()
@@ -255,12 +266,24 @@ struct HomeSearchingStatusView: View {
                 updateTime()
             }
         }
+        .onChange(of: createdAt) { _, _ in
+            hasExpired = false
+            updateTime()
+        }
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
+            }
         } else {
             secondsElapsed += 1
         }
@@ -274,12 +297,14 @@ struct HomeFirstOfferStatusView: View {
     var offerAvailableMedsCount: Int = 0
     var offerTotalMedsCount: Int = 0
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
     var onCompareOffers: (() -> Void)? = nil
     var onDelete: (() -> Void)? = nil
 
-    @State private var secondsElapsed: Int = 0
     @State private var showingDeleteAlert = false
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var secondsElapsed: Int = 0
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
@@ -327,12 +352,6 @@ struct HomeFirstOfferStatusView: View {
                 Text(formattedTime)
                     .font(AppColor.sans(16, .bold))
                     .foregroundStyle(AppColor.green)
-                    .onAppear {
-                        updateTime()
-                    }
-                    .onReceive(timer) { _ in
-                        updateTime()
-                    }
                 
                 Spacer()
                 
@@ -438,6 +457,18 @@ struct HomeFirstOfferStatusView: View {
                 )
         )
         .padding(.horizontal)
+        .task {
+            updateTime()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { break }
+                updateTime()
+            }
+        }
+        .onChange(of: createdAt) { _, _ in
+            hasExpired = false
+            updateTime()
+        }
         .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
             Button("home.deleteOffer.cancel".localized, role: .cancel) { }
             Button("home.deleteOffer.confirm".localized, role: .destructive) {
@@ -449,9 +480,19 @@ struct HomeFirstOfferStatusView: View {
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
+            }
+        } else {
+            secondsElapsed += 1
         }
     }
 }
@@ -459,21 +500,31 @@ struct HomeFirstOfferStatusView: View {
 struct HomeMultipleOffersStatusView: View {
     @Environment(LanguageManager.self) private var languageManager
     @Binding var selectedStatus: HomeSearchStatus
+    var offersAvailableCount: Int = 2
+    var offerTotalPrice: Double = 0
+    var offerAvailableMedsCount: Int = 0
+    var offerTotalMedsCount: Int = 0
     var requestId: Int = 0
+    var createdAt: Date? = nil
+    var onTimerExpired: (() -> Void)? = nil
+    var onShowOffer: (() -> Void)? = nil
     var onCompareOffers: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
     @State private var secondsElapsed: Int = 0
+    @State private var showingDeleteAlert = false
+    @State private var hasExpired: Bool = false
 
     private var formattedTime: String {
         let minutes = secondsElapsed / 60
         let seconds = secondsElapsed % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-    
+
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
                 Button {
-                    selectedStatus = .home
+                    showingDeleteAlert = true
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .bold))
@@ -531,7 +582,7 @@ struct HomeMultipleOffersStatusView: View {
             
             HStack(spacing: 12) {
                 Button {
-                    onCompareOffers?()
+                    onShowOffer?()
                 } label: {
                     Text("home.status.firstOffer.showOffer".localized)
                         .font(AppColor.sans(12, .bold))
@@ -549,7 +600,7 @@ struct HomeMultipleOffersStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.multipleOffers.priceValue".localized)
+                    Text("\(Int(offerTotalPrice)) " + "home.status.firstOffer.currency".localized)
                         .font(AppColor.sans(15, .bold))
                         .foregroundStyle(AppColor.textPrim)
                 }
@@ -563,7 +614,7 @@ struct HomeMultipleOffersStatusView: View {
                         .font(AppColor.sans(11))
                         .foregroundStyle(AppColor.textSec)
                     
-                    Text("home.status.multipleOffers.medsCount".localized)
+                    Text("\(offerAvailableMedsCount) / \(offerTotalMedsCount) " + "home.status.firstOffer.medsUnit".localized)
                         .font(AppColor.sans(14, .bold))
                         .foregroundStyle(AppColor.green)
                 }
@@ -578,7 +629,7 @@ struct HomeMultipleOffersStatusView: View {
                     )
             )
             
-            Text("home.status.multipleOffers.offersAvailableCount".localized)
+            Text(String(format: "home.status.multipleOffers.offersAvailableCount".localized, offersAvailableCount))
                 .font(AppColor.sans(12, .bold))
                 .foregroundStyle(AppColor.green)
                 .padding(.horizontal, 16)
@@ -635,12 +686,32 @@ struct HomeMultipleOffersStatusView: View {
                 updateTime()
             }
         }
+        .onChange(of: createdAt) { _, _ in
+            hasExpired = false
+            updateTime()
+        }
+        .alert("home.deleteOffer.title".localized, isPresented: $showingDeleteAlert) {
+            Button("home.deleteOffer.cancel".localized, role: .cancel) { }
+            Button("home.deleteOffer.confirm".localized, role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("home.deleteOffer.message".localized)
+        }
     }
 
     private func updateTime() {
-        let store = UserDefaultsStatusStore()
-        if let age = store.getRequestAgeInSeconds(requestId) {
-            secondsElapsed = Int(age)
+        if let created = createdAt {
+            let age = Int(Date().timeIntervalSince(created))
+            secondsElapsed = max(0, age)
+            if age >= 900 {
+                if !hasExpired {
+                    hasExpired = true
+                    onTimerExpired?()
+                }
+            } else {
+                hasExpired = false
+            }
         } else {
             secondsElapsed += 1
         }
@@ -726,6 +797,50 @@ struct HomeExpiredStatusView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
                         .stroke(Color.gray.opacity(0.12), lineWidth: 1)
+                )
+        )
+        .padding(.horizontal)
+    }
+}
+
+struct HomeContinueOrderStatusView: View {
+    @Environment(LanguageManager.self) private var languageManager
+    var onContinue: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("home.status.continueOrder.title".localized)
+                .font(AppColor.sans(18, .bold))
+                .foregroundStyle(AppColor.textPrim)
+
+            Text("home.status.continueOrder.description".localized)
+                .font(AppColor.sans(14))
+                .foregroundStyle(AppColor.textSec)
+                .lineSpacing(3)
+
+            Button {
+                onContinue?()
+            } label: {
+                Text("home.status.continueOrder.button".localized)
+                    .font(AppColor.sans(16, .bold))
+                    .foregroundStyle(AppColor.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(AppColor.green)
+                    )
+            }
+            .padding(.top, 4)
+        }
+        .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(AppColor.card)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(AppColor.green.opacity(0.4), lineWidth: 1.5)
                 )
         )
         .padding(.horizontal)

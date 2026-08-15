@@ -38,6 +38,14 @@ struct OnboardingPageView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, PharmacySpacing.lg)
             }
+            .padding(.vertical, PharmacySpacing.md)
+            .frame(maxWidth: 420)
+            .pharmacyCard(
+                cornerRadius: PharmacyRadius.xl,
+                padding: nil,
+                elevation: .subtle
+            )
+            .padding(.horizontal, PharmacySpacing.lg)
             .opacity(textOpacity)
 
             Spacer(minLength: PharmacySpacing.md)

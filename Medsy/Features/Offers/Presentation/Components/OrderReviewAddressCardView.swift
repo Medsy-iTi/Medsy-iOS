@@ -18,18 +18,20 @@ struct OrderReviewAddressCardView: View {
                 .padding(.horizontal, 4)
 
             HStack(alignment: .center, spacing: 12) {
-                Button {
-                    onEdit?()
-                } label: {
-                    Text("orderReview.address.edit".localized)
-                        .font(AppColor.sans(13, .bold))
-                        .foregroundStyle(AppColor.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(AppColor.green)
-                        )
+                if let onEdit {
+                    Button {
+                        onEdit()
+                    } label: {
+                        Text("orderReview.address.edit".localized)
+                            .font(AppColor.sans(13, .bold))
+                            .foregroundStyle(AppColor.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(AppColor.green)
+                            )
+                    }
                 }
 
                 Spacer()
