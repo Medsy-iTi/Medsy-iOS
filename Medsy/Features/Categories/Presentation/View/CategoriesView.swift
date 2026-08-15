@@ -33,7 +33,7 @@ struct CategoriesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(title: "categories.title".localized, onBack: {dismiss()})
+            MedsyNavBar(title: "categories.title".localized)
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(AppColor.textSec)

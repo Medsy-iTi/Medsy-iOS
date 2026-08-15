@@ -23,7 +23,7 @@ struct AddressPickerScreen: View {
 				.ignoresSafeArea()
 
 			VStack(spacing: 0) {
-				MedsyNavBar(title: "address.title".localized, onBack: viewModel.onCancel)
+				MedsyNavBar(title: "address.title".localized)
 
 				searchField
 				locationPermissionBanner

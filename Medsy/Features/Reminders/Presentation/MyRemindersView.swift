@@ -76,12 +76,6 @@ struct MyRemindersView: View {
         }
         .navigationTitle("reminders.title".localized)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                MedsyNavBarBackButton(action: onBack)
-            }
-        }
         .sheet(isPresented: $showAddSheet) {
             AddReminderSheet { medicineName, times, days in
                 let store = ReminderStore(context: modelContext)

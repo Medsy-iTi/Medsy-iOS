@@ -34,7 +34,7 @@ struct FavoriteView: View {
         @Bindable var viewModel = viewModel
 
         VStack(spacing: 0) {
-            MedsyNavBar(title: "favorites.title".localized, onBack: onBack)
+            MedsyNavBar(title: "favorites.title".localized)
             content
         }
         .background(AppColor.bg.ignoresSafeArea())

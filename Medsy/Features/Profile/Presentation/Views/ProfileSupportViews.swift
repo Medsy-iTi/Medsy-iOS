@@ -20,7 +20,7 @@ struct HowMedsyWorksView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(title: "profile.how_it_works".localized, onBack: onBack)
+            MedsyNavBar(title: "profile.how_it_works".localized)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -111,7 +111,7 @@ struct ProfileHelpCenterView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(title: "profile.help_center".localized, onBack: onBack)
+            MedsyNavBar(title: "profile.help_center".localized)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -244,7 +244,7 @@ struct ReportProblemView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(title: "profile.report_issue".localized, onBack: onBack)
+            MedsyNavBar(title: "profile.report_issue".localized)
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
@@ -487,4 +487,3 @@ private func supportHero(icon: String, titleKey: String, bodyKey: String) -> som
             .stroke(ProfileStyle.border, lineWidth: 1)
     }
 }
-

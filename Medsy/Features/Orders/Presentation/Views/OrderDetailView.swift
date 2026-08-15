@@ -27,12 +27,11 @@ struct OrderDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            navBar
-            Divider().background(AppColor.border)
             detailContent
         }
         .background(AppColor.bg)
-        .navigationBarHidden(true)
+        .navigationTitle(navTitle)
+        .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
             if reorderState.showsFeedback {
                 ReorderToastView(
@@ -51,24 +50,6 @@ struct OrderDetailView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: reorderState)
-    }
-
-    // MARK: - Nav Bar
-
-    private var navBar: some View {
-        ZStack {
-            Text(navTitle)
-                .font(AppColor.sans(17, .bold))
-                .foregroundStyle(AppColor.textPrim)
-                .frame(maxWidth: .infinity)
-
-            HStack {
-                MedsyNavBarBackButton(action: onBack)
-                .padding(.leading, MedsySpacing.md)
-                Spacer()
-            }
-        }
-        .frame(height: 52)
     }
 
     private var navTitle: String {

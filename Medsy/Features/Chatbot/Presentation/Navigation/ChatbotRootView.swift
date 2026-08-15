@@ -87,7 +87,6 @@ struct ChatbotRootView: View {
         switch route {
         case .chatDetail:
             MedsyChatView(viewModel: viewModel)
-                .navigationBarHidden(true)
         case .medicineDetails(let medicineId):
             ProductDetailView(productId: medicineId)
         case .pharmacyMap:
@@ -116,7 +115,6 @@ struct ChatbotRootView: View {
                     cartViewModel.handle(.load) // optional refresh
                 }
             )
-            .navigationBarHidden(true)
         }
     }
 }

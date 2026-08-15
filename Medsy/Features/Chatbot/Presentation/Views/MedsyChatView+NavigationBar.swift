@@ -10,10 +10,6 @@ import SwiftUI
 extension MedsyChatView {
     var navigationBar: some View {
         HStack(spacing: MedsySpacing.xs) {
-            if let onBack {
-                MedsyNavBarBackButton(action: onBack)
-            }
-
             // AI avatar
             ZStack {
                 RoundedRectangle(cornerRadius: MedsyRadius.sm, style: .continuous)

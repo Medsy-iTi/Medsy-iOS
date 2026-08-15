@@ -7,10 +7,14 @@ struct OffersListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            OffersHeaderView(
-                subtitleText: viewModel.subtitleText,
-                onBack: onBack
-            )
+            if !viewModel.subtitleText.isEmpty {
+                Text(viewModel.subtitleText)
+                    .font(AppColor.sans(13))
+                    .foregroundStyle(AppColor.textSec)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, MedsySpacing.md)
+                    .padding(.vertical, MedsySpacing.xs)
+            }
 
             if viewModel.isLoading && viewModel.offers.isEmpty {
                 Spacer()
@@ -42,6 +46,7 @@ struct OffersListView: View {
             }
         }
         .background(AppColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
+        .navigationTitle("offers.list.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

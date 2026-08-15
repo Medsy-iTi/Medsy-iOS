@@ -25,11 +25,6 @@ struct PharmacyProfileView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            navigationBar
-
-            Divider()
-                .background(AppColor.border)
-
             ZStack {
                 AppColor.bg
                     .ignoresSafeArea()
@@ -92,34 +87,12 @@ struct PharmacyProfileView: View {
             }
         }
         .background(AppColor.bg)
-        .navigationBarHidden(true)
+        .navigationTitle("pharmacyProfile.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             guard case .idle = viewModel.state else { return }
             viewModel.loadPharmacy()
         }
     }
 
-    private var navigationBar: some View {
-        ZStack {
-            Text("pharmacyProfile.title".localized)
-                .font(AppColor.sans(17, .bold))
-                .foregroundStyle(AppColor.textPrim)
-                .frame(maxWidth: .infinity)
-
-            HStack {
-                MedsyNavBarBackButton(action: navigateBack)
-                    .padding(.leading, MedsySpacing.md)
-                Spacer()
-            }
-        }
-        .frame(height: 52)
-    }
-
-    private func navigateBack() {
-        if let onBack {
-            onBack()
-        } else {
-            dismiss()
-        }
-    }
 }

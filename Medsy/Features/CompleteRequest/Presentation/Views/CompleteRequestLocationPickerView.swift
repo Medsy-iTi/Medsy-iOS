@@ -27,10 +27,7 @@ struct CompleteRequestLocationPickerView: View {
         @Bindable var viewModel = viewModel
 
         VStack(spacing: 0) {
-            MedsyNavBar(
-                title: "complete_request.location.title".localized,
-                onBack: onCancel
-            )
+            MedsyNavBar(title: "complete_request.location.title".localized)
 
             VStack(spacing: MedsySpacing.sm) {
                 searchField
