@@ -1,17 +1,12 @@
 import Foundation
 
-
 @MainActor
 final class AIChatSessionDataSource {
-
-
 
     private(set) var messages: [AiChatMessage] = []
     private(set) var isHistoryLoaded: Bool = false
     private(set) var generation: Int = 0
     private var nextLocalID: Int = -1
-
-
 
     func hydrateHistory(_ history: AIChatHistory) {
         guard !isHistoryLoaded else { return }
@@ -42,7 +37,8 @@ final class AIChatSessionDataSource {
                 isTyping: false,
                 isRetryable: false,
                 localGeneration: generation,
-                attachedImageData: imageData
+                attachedImageData: imageData,
+                analyticsPreset: nil
             ))
         }
         messages = hydrated
@@ -52,8 +48,7 @@ final class AIChatSessionDataSource {
         isHistoryLoaded = true
     }
 
-
-    func appendOptimisticUserMessage(text: String, imageData: Data? = nil) -> Int {
+    func appendOptimisticUserMessage(text: String, imageData: Data? = nil, analyticsPreset: String? = nil) -> Int {
         let id = nextLocalID
         nextLocalID -= 1
         let msg = AiChatMessage(
@@ -66,7 +61,8 @@ final class AIChatSessionDataSource {
             isTyping: false,
             isRetryable: false,
             localGeneration: generation,
-            attachedImageData: imageData
+            attachedImageData: imageData,
+            analyticsPreset: analyticsPreset
         )
         messages.append(msg)
         return id
@@ -86,12 +82,12 @@ final class AIChatSessionDataSource {
             isTyping: true,
             isRetryable: false,
             localGeneration: generation,
-            attachedImageData: nil
+            attachedImageData: nil,
+            analyticsPreset: nil
         )
         messages.append(msg)
         return id
     }
-
 
     func resolveResponse(_ response: AIChatAssistantResponse, typingID: Int, sentGeneration: Int) {
         guard sentGeneration == generation else { return }
@@ -108,11 +104,11 @@ final class AIChatSessionDataSource {
             isTyping: false,
             isRetryable: false,
             localGeneration: generation,
-            attachedImageData: nil
+            attachedImageData: nil,
+            analyticsPreset: nil
         )
         messages.append(msg)
     }
-
 
     func markRetryable(userMessageID: Int) {
         if let idx = messages.firstIndex(where: { $0.id == userMessageID }) {
@@ -125,7 +121,6 @@ final class AIChatSessionDataSource {
             messages[idx] = messages[idx].clearRetryable()
         }
     }
-
   
     func removeTypingIndicator(id: Int) {
         messages.removeAll { $0.id == id }
@@ -135,7 +130,7 @@ final class AIChatSessionDataSource {
 
     func reset() {
         messages = []
-        isHistoryLoaded = false
+        isHistoryLoaded = true
         generation += 1
         nextLocalID = -1
     }

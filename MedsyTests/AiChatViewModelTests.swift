@@ -6,7 +6,7 @@ import XCTest
 final class MockSendTextUseCase: SendAiChatTextMessageUseCaseProtocol, @unchecked Sendable {
     var result: Result<AIChatAssistantResponse, Error> = .success(makeDefaultResponse())
     var callCount = 0
-    func execute(text: String) async throws -> AIChatAssistantResponse {
+    func execute(text: String, analyticsPreset: String?) async throws -> AIChatAssistantResponse {
         callCount += 1
         return try result.get()
     }
@@ -36,8 +36,8 @@ private func makeDefaultResponse() -> AIChatAssistantResponse {
         conversationID: nil, messageID: 1, intent: .other,
         answer: "Response text", products: [], alternatives: [],
         doctorSpecializations: [], emergencyNumbers: [],
-        categories: [], pharmacistRankings: [],
-        disclaimer: nil, action: nil
+        categories: [], pharmacistRankings: [], disclaimer: nil,
+        action: nil, reminder: nil, analytics: nil
     )
 }
 
@@ -165,8 +165,8 @@ final class AiChatViewModelTests: XCTestCase {
             conversationID: nil, messageID: 1, intent: .addToCart,
             answer: "Added!", products: [], alternatives: [],
             doctorSpecializations: [], emergencyNumbers: [],
-            categories: [], pharmacistRankings: [],
-            disclaimer: nil, action: action
+            categories: [], pharmacistRankings: [], disclaimer: nil,
+            action: action, reminder: nil, analytics: nil
         )
         sendTextUseCase.result = .success(responseWithAction)
         sut.inputText = "add to cart"

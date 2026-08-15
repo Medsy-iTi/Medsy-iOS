@@ -13,6 +13,8 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
     let localGeneration: Int
     /// Compressed JPEG data for outgoing user image messages. Stored locally only — never persisted.
     let attachedImageData: Data?
+    /// Preset used for this request, if any. Used to replay the same preset on retry.
+    let analyticsPreset: String?
 
     // MARK: - Derived helpers
 
@@ -52,6 +54,10 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
         assistantResponse?.reminder  // one-shot; never replayed from history
     }
 
+    var analytics: AIChatAnalytics? {
+        assistantResponse?.analytics ?? historyMessage?.analytics
+    }
+
     // MARK: - Mutation helpers (create new value)
 
     func retryable() -> AiChatMessage {
@@ -59,7 +65,7 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
             id: id, role: role, text: text, intent: intent,
             assistantResponse: assistantResponse, historyMessage: historyMessage,
             isTyping: isTyping, isRetryable: true, localGeneration: localGeneration,
-            attachedImageData: attachedImageData
+            attachedImageData: attachedImageData, analyticsPreset: analyticsPreset
         )
     }
 
@@ -68,7 +74,7 @@ struct AiChatMessage: Identifiable, Equatable, Sendable {
             id: id, role: role, text: text, intent: intent,
             assistantResponse: assistantResponse, historyMessage: historyMessage,
             isTyping: isTyping, isRetryable: false, localGeneration: localGeneration,
-            attachedImageData: attachedImageData
+            attachedImageData: attachedImageData, analyticsPreset: analyticsPreset
         )
     }
 }

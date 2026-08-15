@@ -117,6 +117,10 @@ extension PharmacyChatView {
                             }
                         }
 
+                        if let analytics = message.analytics {
+                            PharmacyAiChatAnalyticsCard(analytics: analytics)
+                        }
+
                         if let disclaimer = message.disclaimer {
                             PharmacyAiChatDisclaimerRow(text: disclaimer)
                         }

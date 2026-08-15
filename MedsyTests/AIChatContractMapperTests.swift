@@ -139,6 +139,62 @@ final class AIChatContractMapperTests: XCTestCase {
         XCTAssertEqual(rankings.first?.direction, .top)
         XCTAssertEqual(rankings.last?.direction, .unknown("FUTURE_DIRECTION"))
     }
+    
+    func testAnalyticsMapsCorrectly() throws {
+        let json = """
+        {
+          "intent": "PHARMACY_ANALYTICS",
+          "answer": "Here are the analytics",
+          "analytics": {
+            "schemaVersion": 1,
+            "scope": "PHARMACY",
+            "period": "THIS_MONTH",
+            "start": "2026-08-01T00:00:00",
+            "end": "2026-08-15T00:00:00",
+            "metrics": [ {
+              "key": "OFFER_ACCEPTANCE_RATE", "value": 66.7, "unit": "PERCENT",
+              "previousValue": null, "deltaPercent": null
+            } ],
+            "breakdowns": [ {"group":"OFFERS", "key":"ACCEPTED", "count":4} ],
+            "rankings": [ {
+              "rank":1, "pharmacistId":17, "firstName":"Ahmed", "lastName":"Ali", "count":12
+            } ],
+            "orderHighlights": [ {
+              "orderId":91, "status":"DELIVERED", "totalPrice":840.00,
+              "date":"2026-08-10T14:30:00"
+            } ],
+            "topProducts": [ {
+              "productId":142, "productName":"BRUFEN", "quantity":20,
+              "orderCount":8, "revenue":960.00
+            } ]
+          }
+        }
+        """
+        let dto = try JSONDecoder().decode(
+            AIChatMessageResponseDTO.self,
+            from: Data(json.utf8)
+        )
+
+        let response = AIChatContractMapper.map(dto)
+
+        XCTAssertEqual(response.intent, .pharmacyAnalytics)
+        XCTAssertNotNil(response.analytics)
+        
+        let analytics = response.analytics!
+        XCTAssertEqual(analytics.scope, "PHARMACY")
+        XCTAssertEqual(analytics.period, "THIS_MONTH")
+        XCTAssertEqual(analytics.metrics.count, 1)
+        XCTAssertEqual(analytics.metrics.first?.key, "OFFER_ACCEPTANCE_RATE")
+        XCTAssertEqual(analytics.metrics.first?.value, 66.7)
+        XCTAssertEqual(analytics.breakdowns.count, 1)
+        XCTAssertEqual(analytics.breakdowns.first?.key, "ACCEPTED")
+        XCTAssertEqual(analytics.rankings.count, 1)
+        XCTAssertEqual(analytics.rankings.first?.pharmacistID, 17)
+        XCTAssertEqual(analytics.orderHighlights.count, 1)
+        XCTAssertEqual(analytics.orderHighlights.first?.orderId, 91)
+        XCTAssertEqual(analytics.topProducts.count, 1)
+        XCTAssertEqual(analytics.topProducts.first?.productId, 142)
+    }
 
     func testCartItemDecodesNestedBackendProductAndLegacyFlatFields() throws {
         let nested = """

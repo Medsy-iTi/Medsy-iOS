@@ -20,7 +20,8 @@ enum AIChatContractMapper {
             pharmacistRankings: (dto.pharmacistRankings ?? []).compactMap(mapRanking),
             disclaimer: dto.disclaimer,
             action: mapAction(dto.action),
-            reminder: mapReminder(dto.reminder)
+            reminder: mapReminder(dto.reminder),
+            analytics: mapAnalytics(dto.analytics)
         )
     }
 
@@ -47,6 +48,7 @@ enum AIChatContractMapper {
             emergencyNumbers: (dto.emergencyNumbers ?? []).compactMap(mapEmergencyNumber),
             categories: (dto.categories ?? []).compactMap(mapCategory),
             pharmacistRankings: (dto.pharmacistRankings ?? []).compactMap(mapRanking),
+            analytics: mapAnalytics(dto.analytics),
             createdAt: parseDate(dto.createdAt)
         )
     }
@@ -65,6 +67,7 @@ enum AIChatContractMapper {
         case "SET_REMINDER": return .setReminder
         // DELETE_REMINDER / LIST_REMINDERS removed — backend no longer sends them
         case "PHARMACIST_PERFORMANCE": return .pharmacistPerformance
+        case "PHARMACY_ANALYTICS": return .pharmacyAnalytics
         default: return .other
         }
     }
@@ -290,6 +293,76 @@ enum AIChatContractMapper {
             medicineName: medicineName,
             times: times,
             durationDays: durationDays
+        )
+    }
+    
+    private static func mapAnalytics(_ dto: AIChatAnalyticsDTO?) -> AIChatAnalytics? {
+        guard let dto = dto,
+              let schemaVersion = dto.schemaVersion,
+              let scope = dto.scope,
+              let period = dto.period else {
+            return nil
+        }
+        return AIChatAnalytics(
+            schemaVersion: schemaVersion,
+            scope: scope,
+            period: period,
+            start: parseDate(dto.start),
+            end: parseDate(dto.end),
+            metrics: (dto.metrics ?? []).compactMap(mapAnalyticsMetric),
+            breakdowns: (dto.breakdowns ?? []).compactMap(mapAnalyticsBreakdown),
+            rankings: (dto.rankings ?? []).compactMap(mapPerformanceEntry),
+            orderHighlights: (dto.orderHighlights ?? []).compactMap(mapAnalyticsOrderHighlight),
+            topProducts: (dto.topProducts ?? []).compactMap(mapAnalyticsTopProduct)
+        )
+    }
+    
+    private static func mapAnalyticsMetric(_ dto: AIChatAnalyticsMetricDTO) -> AIChatAnalyticsMetric? {
+        guard let key = dto.key, let value = dto.value, let unit = dto.unit else {
+            return nil
+        }
+        return AIChatAnalyticsMetric(
+            key: key,
+            value: value,
+            unit: unit,
+            previousValue: dto.previousValue,
+            deltaPercent: dto.deltaPercent
+        )
+    }
+    
+    private static func mapAnalyticsBreakdown(_ dto: AIChatAnalyticsBreakdownDTO) -> AIChatAnalyticsBreakdown? {
+        guard let group = dto.group, let key = dto.key, let count = dto.count else {
+            return nil
+        }
+        return AIChatAnalyticsBreakdown(group: group, key: key, count: count)
+    }
+    
+    private static func mapAnalyticsOrderHighlight(_ dto: AIChatAnalyticsOrderHighlightDTO) -> AIChatAnalyticsOrderHighlight? {
+        guard let orderId = dto.orderId, let status = dto.status, let totalPrice = dto.totalPrice else {
+            return nil
+        }
+        return AIChatAnalyticsOrderHighlight(
+            orderId: orderId,
+            status: status,
+            totalPrice: totalPrice,
+            date: parseDate(dto.date)
+        )
+    }
+    
+    private static func mapAnalyticsTopProduct(_ dto: AIChatAnalyticsTopProductDTO) -> AIChatAnalyticsTopProduct? {
+        guard let productId = dto.productId,
+              let productName = dto.productName,
+              let quantity = dto.quantity,
+              let orderCount = dto.orderCount,
+              let revenue = dto.revenue else {
+            return nil
+        }
+        return AIChatAnalyticsTopProduct(
+            productId: productId,
+            productName: productName,
+            quantity: quantity,
+            orderCount: orderCount,
+            revenue: revenue
         )
     }
 }

@@ -18,6 +18,7 @@ struct AIChatMessageResponseDTO: Decodable {
     let action: AIChatActionDTO?
     // Nullable one-shot instruction — never present in GET /history
     let reminder: AIChatReminderDTO?
+    let analytics: AIChatAnalyticsDTO?
 }
 
 struct AIChatReminderDTO: Decodable {
@@ -95,6 +96,7 @@ struct AIChatHistoryMessageDTO: Decodable {
     let emergencyNumbers: [AIChatEmergencyNumberDTO]?
     let categories: [AIChatCategoryDTO]?
     let pharmacistRankings: [AIChatPharmacistRankingDTO]?
+    let analytics: AIChatAnalyticsDTO?
     let createdAt: String?
 }
 
@@ -113,4 +115,48 @@ struct AIChatInteractionProductDTO: Decodable {
     let productId: Int?
     let productName: String?
     let ingredient: String?
+}
+
+// MARK: - Analytics
+
+struct AIChatAnalyticsDTO: Decodable {
+    let schemaVersion: Int?
+    let scope: String?
+    let period: String?
+    let start: String?
+    let end: String?
+    let metrics: [AIChatAnalyticsMetricDTO]?
+    let breakdowns: [AIChatAnalyticsBreakdownDTO]?
+    let rankings: [AIChatPharmacistPerformanceEntryDTO]?
+    let orderHighlights: [AIChatAnalyticsOrderHighlightDTO]?
+    let topProducts: [AIChatAnalyticsTopProductDTO]?
+}
+
+struct AIChatAnalyticsMetricDTO: Decodable {
+    let key: String?
+    let value: Double?
+    let unit: String?
+    let previousValue: Double?
+    let deltaPercent: Double?
+}
+
+struct AIChatAnalyticsBreakdownDTO: Decodable {
+    let group: String?
+    let key: String?
+    let count: Int?
+}
+
+struct AIChatAnalyticsOrderHighlightDTO: Decodable {
+    let orderId: Int?
+    let status: String?
+    let totalPrice: Double?
+    let date: String?
+}
+
+struct AIChatAnalyticsTopProductDTO: Decodable {
+    let productId: Int?
+    let productName: String?
+    let quantity: Int?
+    let orderCount: Int?
+    let revenue: Double?
 }

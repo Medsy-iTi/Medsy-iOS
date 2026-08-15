@@ -56,7 +56,8 @@ private struct DefaultPharmacyAiChatViewModelFactory: PharmacyAiChatViewModelFac
             sendImageUseCase: container.resolve(SendAiChatImageMessageUseCaseProtocol.self),
             loadHistoryUseCase: container.resolve(LoadAiChatHistoryUseCaseProtocol.self),
             startNewChatUseCase: container.resolve(StartNewAiChatUseCaseProtocol.self),
-            session: AIChatSessionDataSource()
+            session: AIChatSessionDataSource(),
+            getMembershipUseCase: container.resolve(GetPharmacyMembershipUseCaseProtocol.self)
         )
     }
 }
