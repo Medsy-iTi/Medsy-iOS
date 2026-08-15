@@ -77,6 +77,7 @@ struct PharmacyRequestDetailsModel {
     let deliveryLatitude: Double?
     let deliveryLongitude: Double?
     let createdAt: Date
+    let paymentMethod: String?
 
     init(
         id: String,
@@ -89,7 +90,8 @@ struct PharmacyRequestDetailsModel {
         prescriptionImageUrl: String? = nil,
         deliveryLatitude: Double? = nil,
         deliveryLongitude: Double? = nil,
-        createdAt: Date? = nil
+        createdAt: Date? = nil,
+        paymentMethod: String? = nil
     ) {
         self.id = id
         self.minutesAgo = minutesAgo
@@ -105,12 +107,13 @@ struct PharmacyRequestDetailsModel {
         self.deliveryLatitude = deliveryLatitude
         self.deliveryLongitude = deliveryLongitude
         self.createdAt = createdAt ?? Date(timeIntervalSinceNow: -Double(minutesAgo * 60))
+        self.paymentMethod = paymentMethod
     }
-    
+
     var subtotal: Double {
         items.filter { $0.isAvailable }.reduce(0) { $0 + ($1.price * Double($1.quantity)) }
     }
-    
+
     var total: Double {
         subtotal + deliveryFee
     }
@@ -135,7 +138,8 @@ extension PharmacyRequestDetailsModel {
             notes: "",
             deliveryLatitude: nil,
             deliveryLongitude: nil,
-            createdAt: order.createdAt
+            createdAt: order.createdAt,
+            paymentMethod: order.paymentMethod.localizedTitle
         )
     }
 
@@ -171,8 +175,8 @@ extension PharmacyRequestDetailsModel {
             notes: order.notes ?? "",
             deliveryLatitude: order.deliveryCoordinate.latitude,
             deliveryLongitude: order.deliveryCoordinate.longitude,
-            createdAt: order.date
+            createdAt: order.date,
+            paymentMethod: order.paymentMethod
         )
     }
-
 }

@@ -599,3 +599,7 @@
 
 "pharmacy.chatbot.analytics.metric.request_coverage_rate" = "نسبة التغطية";
 "pharmacy.chatbot.analytics.status.ready_for_pickup" = "جاهز للاستلام";
+"pharmacy.payment.cash" = "كاش";
+"pharmacy.payment.card" = "بطاقة";
+"pharmacy.request.payment_method_label" = "طريقة الدفع";
+

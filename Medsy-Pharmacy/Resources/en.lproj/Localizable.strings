@@ -600,3 +600,7 @@
 
 "pharmacy.chatbot.analytics.metric.request_coverage_rate" = "Coverage Rate";
 "pharmacy.chatbot.analytics.status.ready_for_pickup" = "Ready for Pickup";
+"pharmacy.payment.cash" = "Cash";
+"pharmacy.payment.card" = "Card";
+"pharmacy.request.payment_method_label" = "Payment method";
+

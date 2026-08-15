@@ -27,8 +27,10 @@ enum PharmacyOrdersEndpoint: ApiEndpoint {
         switch self {
         case .fetchOrders(_, let page, let size, let sort):
             var params: Parameters = ["page": page, "size": size]
-            if let sort, !sort.isEmpty {
-                params["sort"] = sort
+            if let firstSort = sort?.first {
+                params["sort"] = firstSort
+            } else {
+                params["sort"] = "id,desc"
             }
             return params
         }

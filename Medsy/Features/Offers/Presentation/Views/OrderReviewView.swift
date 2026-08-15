@@ -1,25 +1,29 @@
-//  OrderReviewView.swift
-//  Medsy
-//
-//  Created by Antoneos Philip on 22/07/2026.
-
 import SwiftUI
 
 struct OrderReviewView: View {
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: OrderReviewViewModel
     let onBack: () -> Void
+    var onPharmacyTap: ((Int) -> Void)? = nil
     var onConfirmOrder: ((ConfirmOfferResult) -> Void)? = nil
 
     init(
         offerDetail: OfferDetailPresentationModel? = nil,
         requestId: Int? = nil,
         selectResult: SelectPharmacyResponseDTO? = nil,
+        paymentMethod: String? = nil,
         onBack: @escaping () -> Void,
+        onPharmacyTap: ((Int) -> Void)? = nil,
         onConfirmOrder: ((ConfirmOfferResult) -> Void)? = nil
     ) {
-        _viewModel = State(initialValue: OrderReviewViewModel(offerDetail: offerDetail, requestId: requestId, selectResult: selectResult))
+        _viewModel = State(initialValue: OrderReviewViewModel(
+            offerDetail: offerDetail,
+            requestId: requestId,
+            selectResult: selectResult,
+            paymentMethod: paymentMethod
+        ))
         self.onBack = onBack
+        self.onPharmacyTap = onPharmacyTap
         self.onConfirmOrder = onConfirmOrder
     }
 
@@ -36,26 +40,35 @@ struct OrderReviewView: View {
                             .padding(.horizontal, 16)
                     }
 
-                    OrderReviewPharmacyCardView(
-                        pharmacyName: viewModel.orderReview.pharmacyName,
-                        managerName: viewModel.orderReview.managerName
-                    )
-
                     OrderReviewMedicinesCardView(medicines: viewModel.orderReview.medicines)
 
-                    // Choose how to receive your order section
+                    OrderReviewPharmacyCardView(
+                        pharmacyName: viewModel.orderReview.pharmacyName,
+                        managerName: viewModel.orderReview.managerName,
+                        onTap: {
+                            if let id = viewModel.pharmacyId {
+                                onPharmacyTap?(id)
+                            }
+                        }
+                    )
+
+                    OrderReviewPaymentMethodCardView(paymentMethod: viewModel.paymentMethod)
+
+                    if viewModel.selectedReceiveMethod == .delivery {
+                        OrderReviewAddressCardView(address: viewModel.orderReview.deliveryAddress)
+                    }
+
                     VStack(alignment: .trailing, spacing: 12) {
                         Text("complete_request.receive.title".localized)
                             .font(AppColor.sans(16, .bold))
                             .foregroundStyle(AppColor.textPrim)
                             .padding(.horizontal, 4)
 
-                        // Delivery Option
                         Button {
                             viewModel.selectedReceiveMethod = .delivery
                         } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "truck.fill")
+                                Image(systemName: "box.truck.fill")
                                     .font(.system(size: 20))
                                     .foregroundStyle(AppColor.green)
                                     .frame(width: 40, height: 40)
@@ -89,7 +102,6 @@ struct OrderReviewView: View {
                             )
                         }
 
-                        // Pickup Option
                         Button {
                             viewModel.selectedReceiveMethod = .pickup
                         } label: {
@@ -154,10 +166,7 @@ struct OrderReviewView: View {
                             ProgressView()
                                 .tint(.white)
                         } else {
-                            // OLD:
-                            // Text("orderReview.confirmOrder".localized)
-
-                            Text("تأكيد الطلب")
+                            Text("orderReview.confirmOrder".localized)
                                 .font(AppColor.sans(16, .bold))
                                 .foregroundStyle(AppColor.white)
                         }
@@ -178,5 +187,8 @@ struct OrderReviewView: View {
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
         .navigationBarHidden(true)
+        .task {
+            await viewModel.loadRequestDetails()
+        }
     }
 }

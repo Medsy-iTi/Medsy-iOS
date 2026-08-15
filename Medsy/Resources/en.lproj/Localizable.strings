@@ -137,7 +137,7 @@
 "home.status.multipleOffers.subtitle" = "You can now compare available offers";
 "home.status.multipleOffers.medsCount" = "3 / 3 medicines";
 "home.status.multipleOffers.priceValue" = "36 EGP";
-"home.status.multipleOffers.offersAvailableCount" = "3 offers available — you can compare";
+"home.status.multipleOffers.offersAvailableCount" = "%d offers available — you can compare";
 "home.status.multipleOffers.compareOffers" = "Compare Offers";
 "home.status.multipleOffers.stopSearchDesc" = "Search will automatically stop when you select an offer";
 "home.status.expired.title" = "Search time ended";
@@ -811,6 +811,7 @@
 "offers.list.subtitle.fullCoverage" = "Full Order Coverage";
 
 "offers.details.requestedMeds" = "Requested Medicines";
+"offers.details.title" = "Offer Details";
 "offers.details.available" = "Available";
 "offers.details.unavailable" = "Unavailable";
 "offers.details.pharmacistComment" = "Pharmacist Comment";
@@ -818,6 +819,8 @@
 "offers.details.selectOffer" = "Select This Offer";
 "offers.details.managerSuffix" = " (Manager)";
 "offers.details.defaultComment" = "Hello, all medicines are available and ready for preparation. Please adhere to the indicated dosages. We wish you a speedy recovery 🌿";
+"offers.details.partialComment" = "Hello, some medicines are currently unavailable at the pharmacy. Please review the list above. We wish you a speedy recovery 🌿";
+"offers.details.unavailableItem" = "Unavailable Medicine";
 "offers.details.med.panadol" = "Panadol Extra";
 "offers.details.dosage.panadol" = "20 tablets";
 "offers.details.med.amoxicillin" = "Amoxicillin 500mg";
@@ -840,6 +843,16 @@
 "orderReview.summary.deliveryFee" = "Delivery Fee";
 "orderReview.summary.total" = "Total";
 "orderReview.confirmOrder" = "Confirm Order";
+"orderReview.section.fulfillingPharmacies" = "Fulfilling pharmacies";
+"orderReview.section.paymentMethod" = "Payment Method";
+"orderReview.payment.cash" = "Cash payment";
+"orderReview.payment.card" = "Card payment";
+"orderReview.medicine.quantity" = "Quantity: %d";
+"orderReview.medicine.suppliedBy" = "Supplied by %@";
+"home.status.continueOrder" = "Continue order";
+"home.status.continueOrder.title" = "Continue your order";
+"home.status.continueOrder.description" = "Your medicine selection is saved. Continue to choose fulfillment or complete payment.";
+"home.status.continueOrder.button" = "Continue order";
 
 
 "tab.medsy_ai"       = "Medsy AI";

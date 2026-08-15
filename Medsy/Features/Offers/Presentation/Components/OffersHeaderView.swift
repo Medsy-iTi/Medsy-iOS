@@ -11,20 +11,24 @@ struct OffersHeaderView: View {
     let onBack: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .trailing, spacing: 4) {
+        ZStack {
+            VStack(spacing: 2) {
                 Text("offers.list.title".localized)
                     .font(AppColor.sans(20, .bold))
                     .foregroundStyle(AppColor.textPrim)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
 
-                Text(subtitleText)
-                    .font(AppColor.sans(13))
-                    .foregroundStyle(AppColor.textSec)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                if !subtitleText.isEmpty {
+                    Text(subtitleText)
+                        .font(AppColor.sans(13))
+                        .foregroundStyle(AppColor.textSec)
+                }
             }
+            .frame(maxWidth: .infinity)
 
-            MedsyNavBarBackButton(action: onBack)
+            HStack {
+                MedsyNavBarBackButton(action: onBack)
+                Spacer()
+            }
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .padding(.horizontal, 16)

@@ -36,7 +36,8 @@ enum PharmacyRequestsEndpoint: ApiEndpoint {
         case let .fetchRequests(page, size):
             return [
                 "page": page,
-                "size": size
+                "size": size,
+                "sort": "createdAt,desc"
             ]
         case let .searchProducts(keyword, page, size):
             return [

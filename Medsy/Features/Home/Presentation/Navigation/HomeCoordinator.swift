@@ -1,10 +1,3 @@
-//
-//  HomeCoordinator.swift
-//  Medsy
-//
-//  Created by Ehab Salah on 16/07/2026.
-//
-
 import Observation
 import SwiftUI
 
@@ -15,16 +8,21 @@ enum HomeRoute: Hashable {
     case offersList
     case offerDetails(OfferPresentationModel)
     case offerResult(OfferResult, Int)
-    case orderReview(OfferDetailPresentationModel, Int? = nil, SelectPharmacyResponseDTO? = nil)
+    case orderReview(OfferDetailPresentationModel, Int? = nil, SelectPharmacyResponseDTO? = nil, String? = nil)
     case payment(ConfirmOfferResult, OfferDetailPresentationModel)
     case orderComplete(ConfirmOfferResult, OfferDetailPresentationModel)
     case medicineAnalyze
+    case pharmacyProfile(Int)
 }
 
 @MainActor
 @Observable
 final class HomeCoordinator {
     var path = NavigationPath()
+
+    func openPharmacyProfile(_ id: Int) {
+        path.append(HomeRoute.pharmacyProfile(id))
+    }
 
     func openSearch() {
         path.append(HomeRoute.search(""))
@@ -50,8 +48,8 @@ final class HomeCoordinator {
         path.append(HomeRoute.offerResult(result, requestId))
     }
 
-    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil, selectResult: SelectPharmacyResponseDTO? = nil) {
-        path.append(HomeRoute.orderReview(offerDetail, requestId, selectResult))
+    func openOrderReview(_ offerDetail: OfferDetailPresentationModel, requestId: Int? = nil, selectResult: SelectPharmacyResponseDTO? = nil, paymentMethod: String? = nil) {
+        path.append(HomeRoute.orderReview(offerDetail, requestId, selectResult, paymentMethod))
     }
 
     func openOrderComplete(_ result: ConfirmOfferResult, offerDetail: OfferDetailPresentationModel) {
@@ -131,6 +129,9 @@ struct HomeCoordinatorView: View {
                 onFavoritesTap: coordinator.openFavorites,
                 onCompareOffers: coordinator.openOffersList,
                 onOpenOfferResult: coordinator.openOfferResult,
+                onContinueOrder: { order in
+                    coordinator.openOrderReview(order.toOfferDetail(), requestId: order.requestId, selectResult: order.toSelectResult())
+                },
                 homeAddress: homeAddress,
                 onAddressTap: onOpenProfile
             )
@@ -161,7 +162,9 @@ struct HomeCoordinatorView: View {
                 case .offersList:
                     OffersListView(
                         onBack: coordinator.goBack,
-                        onOfferSelected: coordinator.openOfferDetails
+                        onOfferSelected: { result, reqId in
+                            coordinator.openOfferResult(result, requestId: reqId)
+                        }
                     )
                 case let .offerDetails(offer):
                     OfferDetailsView(
@@ -169,7 +172,7 @@ struct HomeCoordinatorView: View {
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
                         onSelectOffer: { updatedDetail, selectResult in
-                            coordinator.openOrderReview(updatedDetail, selectResult: selectResult)
+                            coordinator.openOrderReview(updatedDetail, selectResult: selectResult, paymentMethod: updatedDetail.paymentMethod)
                         }
                     )
                 case let .offerResult(result, requestId):
@@ -179,15 +182,19 @@ struct HomeCoordinatorView: View {
                         onBack: coordinator.goBack,
                         onPrescriptionTap: coordinator.showPrescription,
                         onSelectOffer: { updatedDetail, selectResult in
-                            coordinator.openOrderReview(updatedDetail, requestId: requestId, selectResult: selectResult)
+                            coordinator.openOrderReview(updatedDetail, requestId: requestId, selectResult: selectResult, paymentMethod: result.paymentMethod ?? updatedDetail.paymentMethod)
                         }
                     )
-                case let .orderReview(offerDetail, requestId, selectResult):
+                case let .orderReview(offerDetail, requestId, selectResult, paymentMethod):
                     OrderReviewView(
                         offerDetail: offerDetail,
                         requestId: requestId,
                         selectResult: selectResult,
+                        paymentMethod: paymentMethod,
                         onBack: coordinator.goToHome,
+                        onPharmacyTap: { pharmacyId in
+                            coordinator.openPharmacyProfile(pharmacyId)
+                        },
                         onConfirmOrder: { result in
                             coordinator.openPayment(result, offerDetail: offerDetail)
                         }
@@ -220,6 +227,8 @@ struct HomeCoordinatorView: View {
                             coordinator.path = NavigationPath()
                         }
                     )
+                case let .pharmacyProfile(pharmacyId):
+                    PharmacyProfileView(pharmacyId: pharmacyId)
                 case .medicineAnalyze:
                     MedicineAnalyzeView(
                         onBack: coordinator.goBack,
@@ -255,5 +264,91 @@ struct HomeCoordinatorView: View {
         guard let requestedRoute else { return }
         coordinator.open(requestedRoute)
         self.requestedRoute = nil
+    }
+}
+extension MasterOrderDTO {
+    func toSelectResult() -> SelectPharmacyResponseDTO {
+        var offersList: [SelectPharmacyOfferDTO] = []
+        for offer in orderResponses {
+            var itemsList: [SelectPharmacyItemDTO] = []
+            for item in offer.items {
+                let nestedProduct = ProductNestedDTO(
+                    id: item.product?.id ?? item.productId,
+                    name: item.product?.name ?? item.product?.productName,
+                    productName: item.product?.productName ?? item.product?.name,
+                    price: item.product?.price ?? item.unitPrice,
+                    imageUrl: item.product?.imageUrl,
+                    form: item.product?.form,
+                    strength: item.product?.strength,
+                    company: item.product?.company,
+                    description: item.product?.description
+                )
+                let itemTotal = item.totalPrice ?? (Double(item.quantity) * item.unitPrice)
+                let selectItem = SelectPharmacyItemDTO(
+                    id: item.id,
+                    productId: item.productId ?? item.product?.id,
+                    product: nestedProduct,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    totalPrice: itemTotal
+                )
+                itemsList.append(selectItem)
+            }
+            let selectOffer = SelectPharmacyOfferDTO(
+                offerId: offer.offerId,
+                pharmacyId: offer.pharmacyId,
+                pharmacyName: offer.pharmacyName,
+                latitude: offer.latitude ?? 0,
+                longitude: offer.longitude ?? 0,
+                items: itemsList
+            )
+            offersList.append(selectOffer)
+        }
+
+        return SelectPharmacyResponseDTO(
+            requestId: requestId,
+            offers: offersList,
+            deliveryFees: deliveryFee ?? 0,
+            totalPrice: totalPrice
+        )
+    }
+
+    func toOfferDetail() -> OfferDetailPresentationModel {
+        var items: [OfferMedicineItem] = []
+        for offer in orderResponses {
+            for item in offer.items {
+                let medName = item.product?.name ?? item.product?.productName ?? "Medicine"
+                let medImg = item.product?.imageUrl
+                let medDosage = item.product?.strength ?? item.product?.form ?? ""
+                let itemTotal = item.totalPrice ?? (Double(item.quantity) * item.unitPrice)
+                let medicineItem = OfferMedicineItem(
+                    id: "\(item.id)",
+                    requestItemId: item.id,
+                    productId: item.productId ?? item.product?.id,
+                    name: medName,
+                    dosage: medDosage,
+                    price: itemTotal > 0 ? itemTotal : (Double(item.quantity) * item.unitPrice),
+                    isAvailable: true,
+                    isAlternative: false,
+                    imageName: "pill.fill",
+                    imageUrl: medImg,
+                    isSelected: true,
+                    quantity: item.quantity,
+                    supplierName: offer.pharmacyName
+                )
+                items.append(medicineItem)
+            }
+        }
+
+        return OfferDetailPresentationModel(
+            id: "\(id)",
+            pharmacyName: orderResponses.first?.pharmacyName ?? "offers.details.title".localized,
+            managerName: "",
+            medicines: items,
+            pharmacistComment: "",
+            totalPrice: totalPrice,
+            prescriptionUrl: nil,
+            paymentMethod: paymentMethod
+        )
     }
 }

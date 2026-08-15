@@ -137,7 +137,7 @@
 "home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
 "home.status.multipleOffers.medsCount" = "٣ / ٣ دواء";
 "home.status.multipleOffers.priceValue" = "٣٦ جنيه";
-"home.status.multipleOffers.offersAvailableCount" = "٣ عروض متاحة — يمكنك المقارنة";
+"home.status.multipleOffers.offersAvailableCount" = "%d عروض متاحة — يمكنك المقارنة";
 "home.status.multipleOffers.compareOffers" = "مقارنة العروض";
 "home.status.multipleOffers.stopSearchDesc" = "سيتوقف البحث تلقائياً عند اختيارك عرضاً";
 "home.status.expired.title" = "انتهى وقت البحث";
@@ -808,6 +808,7 @@
 "offers.list.subtitle.fullCoverage" = "تغطية كاملة للطلب";
 
 "offers.details.requestedMeds" = "الأدوية المطلوبة";
+"offers.details.title" = "تفاصيل العرض";
 "offers.details.available" = "متوفر";
 "offers.details.unavailable" = "غير متوفر";
 "offers.details.pharmacistComment" = "تعليق من الصيدلي";
@@ -815,6 +816,8 @@
 "offers.details.selectOffer" = "اختار هذا العرض";
 "offers.details.managerSuffix" = " (المدير)";
 "offers.details.defaultComment" = "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿";
+"offers.details.partialComment" = "مرحباً، بعض الأدوية غير متوفرة حالياً في الصيدلية. يرجى مراجعة القائمة الموضحة. نتمنى لك الشفاء العاجل 🌿";
+"offers.details.unavailableItem" = "دواء غير متوفر";
 "offers.details.med.panadol" = "بانادول اكسترا";
 "offers.details.dosage.panadol" = "20 قرص";
 "offers.details.med.amoxicillin" = "أموكسيسيلين 500 مجم";
@@ -837,6 +840,16 @@
 "orderReview.summary.deliveryFee" = "رسوم التوصيل";
 "orderReview.summary.total" = "الإجمالي";
 "orderReview.confirmOrder" = "تأكيد الطلب";
+"orderReview.section.fulfillingPharmacies" = "الصيدليات المنفذة";
+"orderReview.section.paymentMethod" = "طريقة الدفع";
+"orderReview.payment.cash" = "الدفع عند الاستلام";
+"orderReview.payment.card" = "الدفع بالبطاقة";
+"orderReview.medicine.quantity" = "الكمية: %d";
+"orderReview.medicine.suppliedBy" = "مقدم من %@";
+"home.status.continueOrder" = "متابعة الطلب";
+"home.status.continueOrder.title" = "متابعة طلبك";
+"home.status.continueOrder.description" = "تم حفظ اختيار الأدوية الخاص بك. تابع لاختيار طريقة الاستلام أو إتمام الدفع.";
+"home.status.continueOrder.button" = "متابعة الطلب";
 
 
 "tab.medsy_chatbot" = "شات بوت";
