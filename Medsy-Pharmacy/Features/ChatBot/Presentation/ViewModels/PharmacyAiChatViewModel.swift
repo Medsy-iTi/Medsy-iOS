@@ -24,9 +24,12 @@ protocol PharmacyAiChatViewModelProtocol: AnyObject {
     var selectedImage: UIImage? { get set }
     var isSendEnabled: Bool { get }
     var isRecording: Bool { get }
+    var quickActions: [AiAnalyticsPreset] { get }
     func onAppear()
     func sendText()
     func sendSuggestion(_ text: String)
+    func sendPreset(_ preset: AiAnalyticsPreset)
+    func presetLabel(for preset: AiAnalyticsPreset) -> String
     func sendWithImage()
     func startNewChat()
     func retryMessage(id: Int)
@@ -174,7 +177,7 @@ final class PharmacyAiChatViewModel: PharmacyAiChatViewModelProtocol {
         performSend(text: label, image: nil, existingUserID: nil, analyticsPreset: preset.rawValue)
     }
     
-    private func presetLabel(for preset: AiAnalyticsPreset) -> String {
+    func presetLabel(for preset: AiAnalyticsPreset) -> String {
         switch preset {
         case .pharmacyMonthOverview: return "pharmacy.chatbot.analytics.preset.month_overview".localized
         case .pharmacyMonthAcceptance: return "pharmacy.chatbot.analytics.preset.month_acceptance".localized

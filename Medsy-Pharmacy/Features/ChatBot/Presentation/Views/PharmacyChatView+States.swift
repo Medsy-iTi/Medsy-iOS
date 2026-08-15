@@ -100,37 +100,70 @@ extension PharmacyChatView {
     }
 
     private var pharmacySuggestions: [PharmacyAiSuggestion] {
-        [
-            PharmacyAiSuggestion(
-                id: 0,
-                iconName: "chart.bar.fill",
-                title: "pharmacy.chatbot.suggestion.performance.title".localized,
-                subtitle: "pharmacy.chatbot.suggestion.performance.subtitle".localized,
-                prompt: "pharmacy.chatbot.suggestion.performance".localized,
-                preset: .pharmacyMonthOverview
-            ),
-            PharmacyAiSuggestion(
-                id: 1,
-                iconName: "pills.fill",
-                title: "pharmacy.chatbot.suggestion.drug_info.title".localized,
-                subtitle: "pharmacy.chatbot.suggestion.drug_info.subtitle".localized,
-                prompt: "pharmacy.chatbot.suggestion.drug_info".localized
-            ),
-            PharmacyAiSuggestion(
-                id: 2,
-                iconName: "exclamationmark.triangle.fill",
-                title: "pharmacy.chatbot.suggestion.interactions.title".localized,
-                subtitle: "pharmacy.chatbot.suggestion.interactions.subtitle".localized,
-                prompt: "pharmacy.chatbot.suggestion.interactions".localized
-            ),
-            PharmacyAiSuggestion(
-                id: 3,
-                iconName: "arrow.2.squarepath",
-                title: "pharmacy.chatbot.suggestion.alternative.title".localized,
-                subtitle: "pharmacy.chatbot.suggestion.alternative.subtitle".localized,
-                prompt: "pharmacy.chatbot.suggestion.alternative".localized
-            )
-        ]
+        if viewModel.quickActions.count == 4 {
+            // Admin actions
+            return viewModel.quickActions.enumerated().map { index, preset in
+                let (icon, subtitle) = suggestionAssets(for: preset)
+                return PharmacyAiSuggestion(
+                    id: index,
+                    iconName: icon,
+                    title: viewModel.presetLabel(for: preset),
+                    subtitle: subtitle,
+                    prompt: "",
+                    preset: preset
+                )
+            }
+        } else if viewModel.quickActions.count == 2 {
+            // Staff actions + default 2
+            var suggestions = viewModel.quickActions.enumerated().map { index, preset in
+                let (icon, subtitle) = suggestionAssets(for: preset)
+                return PharmacyAiSuggestion(
+                    id: index,
+                    iconName: icon,
+                    title: viewModel.presetLabel(for: preset),
+                    subtitle: subtitle,
+                    prompt: "",
+                    preset: preset
+                )
+            }
+            suggestions.append(contentsOf: [
+                PharmacyAiSuggestion(
+                    id: 2,
+                    iconName: "pills.fill",
+                    title: "pharmacy.chatbot.suggestion.drug_info.title".localized,
+                    subtitle: "pharmacy.chatbot.suggestion.drug_info.subtitle".localized,
+                    prompt: "pharmacy.chatbot.suggestion.drug_info".localized
+                ),
+                PharmacyAiSuggestion(
+                    id: 3,
+                    iconName: "arrow.2.squarepath",
+                    title: "pharmacy.chatbot.suggestion.alternative.title".localized,
+                    subtitle: "pharmacy.chatbot.suggestion.alternative.subtitle".localized,
+                    prompt: "pharmacy.chatbot.suggestion.alternative".localized
+                )
+            ])
+            return suggestions
+        }
+        
+        // Fallback
+        return []
+    }
+    
+    private func suggestionAssets(for preset: AiAnalyticsPreset) -> (icon: String, subtitle: String) {
+        switch preset {
+        case .pharmacyMonthOverview:
+            return ("chart.bar.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        case .pharmacyMonthAcceptance:
+            return ("checkmark.circle.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        case .pharmacyMonthTopEmployee:
+            return ("star.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        case .pharmacyMonthLargestOrder:
+            return ("arrow.up.circle.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        case .selfMonthOverview:
+            return ("chart.bar.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        case .selfMonthOrders:
+            return ("list.bullet.clipboard.fill", "pharmacy.chatbot.suggestion.performance.subtitle".localized)
+        }
     }
 
     // MARK: - Typing indicator (shown in scroll list)

@@ -568,8 +568,6 @@
 "pharmacy.chatbot.analytics.metric.average_fulfillment_time" = "Avg Fulfillment Time";
 "pharmacy.chatbot.analytics.breakdowns" = "Order Breakdown";
 "pharmacy.chatbot.analytics.status.completed" = "Completed";
-"pharmacy.chatbot.analytics.status.cancelled" = "Cancelled";
-"pharmacy.chatbot.analytics.status.rejected" = "Rejected";
 "pharmacy.chatbot.analytics.status.expired" = "Expired";
 "pharmacy.chatbot.analytics.team_ranking" = "Team Ranking";
 "pharmacy.chatbot.analytics.orders" = "Key Orders";
@@ -578,4 +576,27 @@
 "pharmacy.chatbot.analytics.product_qty" = "Quantity: %lld";
 "pharmacy.chatbot.analytics.product_orders" = "In %lld orders";
 
+
+
+"pharmacy.chatbot.analytics.metric.requests_received" = "Requests Received";
+"pharmacy.chatbot.analytics.metric.requests_covered" = "Requests Covered";
+"pharmacy.chatbot.analytics.metric.total_order_value" = "Total Order Value";
+"pharmacy.chatbot.analytics.metric.delivered_revenue" = "Delivered Revenue";
 "pharmacy.chatbot.analytics.metric.average_order_value" = "Average Order Value";
+"pharmacy.chatbot.analytics.metric.largest_order" = "Largest Order";
+"pharmacy.chatbot.analytics.metric.orders_generated" = "Orders Generated";
+"pharmacy.chatbot.analytics.metric.delivered_orders" = "Delivered Orders";
+"pharmacy.chatbot.analytics.metric.cancelled_orders" = "Cancelled Orders";
+"pharmacy.chatbot.analytics.metric.offers_created" = "Offers Created";
+"pharmacy.chatbot.analytics.metric.accepted_offers" = "Accepted Offers";
+"pharmacy.chatbot.analytics.metric.offer_acceptance_rate" = "Acceptance Rate";
+"pharmacy.chatbot.analytics.status.accepted" = "Accepted";
+"pharmacy.chatbot.analytics.status.partially_accepted" = "Partially Accepted";
+"pharmacy.chatbot.analytics.status.rejected" = "Rejected";
+"pharmacy.chatbot.analytics.status.ignored" = "Ignored";
+"pharmacy.chatbot.analytics.status.pending" = "Pending";
+"pharmacy.chatbot.analytics.status.delivered" = "Delivered";
+"pharmacy.chatbot.analytics.status.cancelled" = "Cancelled";
+
+"pharmacy.chatbot.analytics.metric.request_coverage_rate" = "Coverage Rate";
+"pharmacy.chatbot.analytics.status.ready_for_pickup" = "Ready for Pickup";

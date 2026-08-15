@@ -7,7 +7,7 @@ import SwiftUI
 
 extension String {
     private var snakeCased: String {
-        if self.contains("_") {
+        if self == self.uppercased() {
             return self.lowercased()
         }
         var result = ""
@@ -76,7 +76,7 @@ struct PharmacyAiChatAnalyticsCard: View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
             VStack(alignment: .leading, spacing: 4) {
-                Text("pharmacy.chatbot.analytics.title_new".localized)
+                Text("pharmacy.chatbot.analytics.title".localized)
                     .font(PharmacyColor.sans(18, .bold))
                     .foregroundColor(PharmacyColor.textPrimary)
                 
@@ -182,7 +182,7 @@ struct PharmacyAiChatAnalyticsCard: View {
     
     private var breakdownsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("pharmacy.chatbot.analytics.breakdowns_new".localized)
+            Text("pharmacy.chatbot.analytics.breakdowns".localized)
                 .font(PharmacyColor.sans(14, .bold))
                 .foregroundColor(PharmacyColor.textPrimary)
             

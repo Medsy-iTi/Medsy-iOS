@@ -567,8 +567,6 @@
 "pharmacy.chatbot.analytics.metric.average_fulfillment_time" = "متوسط وقت التنفيذ";
 "pharmacy.chatbot.analytics.breakdowns" = "تفصيل الطلبات";
 "pharmacy.chatbot.analytics.status.completed" = "مكتمل";
-"pharmacy.chatbot.analytics.status.cancelled" = "ملغى";
-"pharmacy.chatbot.analytics.status.rejected" = "مرفوض";
 "pharmacy.chatbot.analytics.status.expired" = "منتهي الصلاحية";
 "pharmacy.chatbot.analytics.team_ranking" = "ترتيب الفريق";
 "pharmacy.chatbot.analytics.orders" = "أهم الطلبات";
@@ -577,4 +575,27 @@
 "pharmacy.chatbot.analytics.product_qty" = "الكمية: %lld";
 "pharmacy.chatbot.analytics.product_orders" = "في %lld طلبات";
 
+
+
+"pharmacy.chatbot.analytics.metric.requests_received" = "الطلبات المستلمة";
+"pharmacy.chatbot.analytics.metric.requests_covered" = "الطلبات المغطاة";
+"pharmacy.chatbot.analytics.metric.total_order_value" = "إجمالي قيمة الطلبات";
+"pharmacy.chatbot.analytics.metric.delivered_revenue" = "الإيرادات المحصلة";
 "pharmacy.chatbot.analytics.metric.average_order_value" = "متوسط قيمة الطلب";
+"pharmacy.chatbot.analytics.metric.largest_order" = "أكبر طلب";
+"pharmacy.chatbot.analytics.metric.orders_generated" = "الطلبات المُنشأة";
+"pharmacy.chatbot.analytics.metric.delivered_orders" = "الطلبات الموصلة";
+"pharmacy.chatbot.analytics.metric.cancelled_orders" = "الطلبات الملغاة";
+"pharmacy.chatbot.analytics.metric.offers_created" = "العروض المُنشأة";
+"pharmacy.chatbot.analytics.metric.accepted_offers" = "العروض المقبولة";
+"pharmacy.chatbot.analytics.metric.offer_acceptance_rate" = "معدل القبول";
+"pharmacy.chatbot.analytics.status.accepted" = "مقبول";
+"pharmacy.chatbot.analytics.status.partially_accepted" = "مقبول جزئياً";
+"pharmacy.chatbot.analytics.status.rejected" = "مرفوض";
+"pharmacy.chatbot.analytics.status.ignored" = "متجاهل";
+"pharmacy.chatbot.analytics.status.pending" = "قيد الانتظار";
+"pharmacy.chatbot.analytics.status.delivered" = "تم التوصيل";
+"pharmacy.chatbot.analytics.status.cancelled" = "ملغى";
+
+"pharmacy.chatbot.analytics.metric.request_coverage_rate" = "نسبة التغطية";
+"pharmacy.chatbot.analytics.status.ready_for_pickup" = "جاهز للاستلام";
