@@ -97,14 +97,6 @@ struct HomeSearchingStatusView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
-                Button {
-                    selectedStatus = .home
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(AppColor.textSec)
-                }
-                
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
@@ -315,14 +307,6 @@ struct HomeFirstOfferStatusView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
-                Button {
-                    showingDeleteAlert = true
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(AppColor.textSec)
-                }
-                
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
@@ -523,14 +507,6 @@ struct HomeMultipleOffersStatusView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
-                Button {
-                    showingDeleteAlert = true
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(AppColor.textSec)
-                }
-                
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
@@ -725,14 +701,6 @@ struct HomeExpiredStatusView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .top, spacing: 12) {
-                Button {
-                    selectedStatus = .home
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(AppColor.textSec)
-                }
-                
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
