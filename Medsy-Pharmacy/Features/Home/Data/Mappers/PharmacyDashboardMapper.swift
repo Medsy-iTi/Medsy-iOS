@@ -34,6 +34,16 @@ enum PharmacyDashboardMapper {
         )
     }
 
+    static func map(_ dto: AIDashboardSummaryDTO) -> AIDashboardSummary {
+        AIDashboardSummary(
+            period: dto.period.flatMap(PharmacyDashboardPeriod.init(rawValue:)) ?? .lastMonth,
+            language: dto.language ?? "en",
+            summary: dto.summary,
+            generatedAt: dto.generatedAt.flatMap(parseDate),
+            cached: dto.cached ?? false
+        )
+    }
+
     static func map(_ dto: PharmacyDashboardTopSellingProductDTO) -> PharmacyDashboardTopSellingProduct {
         PharmacyDashboardTopSellingProduct(
             productId: dto.productId,
