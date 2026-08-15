@@ -20,7 +20,7 @@ struct PrescriptionPage<Content: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(title: title, onBack: onBack) {
+            MedsyNavBar(title: title) {
                 EmptyView()
             }
             content

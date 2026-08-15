@@ -108,16 +108,8 @@ struct ProductsView: View {
         .background(AppColor.bg)
         .navigationTitle(viewModel.category.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
         .navigationDestination(item: $selectedProductID) { productID in
             ProductDetailView(productId: productID)
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                MedsyNavBarBackButton {
-                    dismiss()
-                }
-            }
         }
         .onAppear {
             Task { await viewModel.loadProducts() }

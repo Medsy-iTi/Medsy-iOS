@@ -29,8 +29,6 @@ struct OrderReviewView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            OrderReviewHeaderView(onBack: onBack)
-
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
                     if let errorMessage = viewModel.confirmErrorMessage {
@@ -186,7 +184,8 @@ struct OrderReviewView: View {
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
+        .navigationTitle("orderReview.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadRequestDetails()
         }

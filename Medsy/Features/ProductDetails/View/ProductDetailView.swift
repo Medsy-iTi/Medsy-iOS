@@ -20,7 +20,7 @@ struct ProductDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MedsyNavBar(onBack: { dismiss() }) {
+            MedsyNavBar {
                 if viewModel.product != nil {
                     FavoriteButton(
                         isFavorite: viewModel.isFavorite,

@@ -37,12 +37,6 @@ struct OfferDetailsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            OfferDetailsHeaderView(
-                pharmacyName: "offers.details.title".localized,
-                managerName: "",
-                onBack: onBack
-            )
-
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
                     if let errorMessage = viewModel.confirmErrorMessage {
@@ -102,7 +96,8 @@ struct OfferDetailsView: View {
         }
         .environment(\.layoutDirection, languageManager.isRTL ? .rightToLeft : .leftToRight)
         .background(AppColor.bg.ignoresSafeArea())
-        .navigationBarHidden(true)
+        .navigationTitle("offers.details.title".localized)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if !hasRedirected, let reqId = viewModel.requestId {
                 if let savedData = UserDefaults.standard.data(forKey: "request.selectResult.\(reqId)"),

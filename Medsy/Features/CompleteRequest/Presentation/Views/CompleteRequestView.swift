@@ -29,11 +29,7 @@ struct CompleteRequestView: View {
     var body: some View {
 
         VStack(spacing: 0) {
-            MedsyNavBar(
-                title: "complete_request.title".localized,
-                onBack: onBack,
-                isBackEnabled: !viewModel.isSubmitting
-            )
+            MedsyNavBar(title: "complete_request.title".localized)
 
             ScrollView {
                 VStack(spacing: MedsySpacing.md) {

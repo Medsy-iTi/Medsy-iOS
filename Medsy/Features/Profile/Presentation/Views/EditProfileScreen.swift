@@ -80,7 +80,7 @@ struct EditProfileScreen: View {
 
             VStack(spacing: 0) {
 
-                MedsyNavBar(title: "profile.edit.title".localized, onBack: onCancel)
+                MedsyNavBar(title: "profile.edit.title".localized)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {

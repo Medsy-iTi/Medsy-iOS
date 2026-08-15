@@ -33,10 +33,7 @@ struct SearchResultsView: View {
 
 	var body: some View {
 		VStack(spacing: 0) {
-			MedsyNavBar(
-				title: "search.title".localized,
-				onBack: onBack
-			)
+			MedsyNavBar(title: "search.title".localized)
 
 			VStack(spacing: MedsySpacing.sm) {
 				SearchBar(
