@@ -9,6 +9,7 @@ import SwiftUI
 
 @MainActor
 struct PharmacyMainTabView: View {
+    @Environment(LanguageManager.self) private var languageManager
     var coordinator: PharmacyMainTabCoordinator
     private let homeFactory: PharmacyHomeFactory
     private let ordersFactory: PharmacyOrdersFactory
@@ -90,6 +91,7 @@ struct PharmacyMainTabView: View {
             }
             .tag(PharmacyTab.more)
         }
+        .id(languageManager.currentLanguage)
         .background(PharmacyColor.bg.ignoresSafeArea())
         .tint(PharmacyColor.primary)
         .toolbarBackground(PharmacyColor.surface, for: .tabBar)

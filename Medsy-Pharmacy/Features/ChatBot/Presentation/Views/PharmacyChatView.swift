@@ -4,6 +4,7 @@
 
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct PharmacyChatView: View {
     @State var viewModel: PharmacyAiChatViewModel
@@ -47,6 +48,9 @@ struct PharmacyChatView: View {
                         .padding(.horizontal, PharmacySpacing.md)
                         .padding(.bottom, PharmacySpacing.lg)
                     }
+                    .contentShape(Rectangle())
+                    .scrollDismissesKeyboard(.interactively)
+                    .onTapGesture(perform: dismissKeyboard)
                     .background(PharmacyColor.bg)
                     .onAppear { scrollProxy = proxy }
                     .onChange(of: viewModel.messages.count) { _, _ in
@@ -145,5 +149,15 @@ struct PharmacyChatView: View {
         } message: {
             Text("pharmacy.chatbot.new_chat.confirm".localized)
         }
+    }
+
+    @MainActor
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
