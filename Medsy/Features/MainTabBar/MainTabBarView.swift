@@ -7,7 +7,6 @@
 
 import Observation
 import SwiftUI
-import UIKit
 
 @MainActor
 struct MainTabBarView: View {
@@ -27,7 +26,6 @@ struct MainTabBarView: View {
     @State private var chatbotPromptSequence = 0
     @State private var tabBeforeChatbot: AppTab = .home
     @State private var showsProductChatbotBackButton = false
-    @State private var isKeyboardPresented = false
     @ObservedObject private var appSettings = AppSettings.shared
 
     init(coordinator: MainTabCoordinator) {
@@ -127,22 +125,10 @@ struct MainTabBarView: View {
         .environment(cartViewModel)
         .tint(AppColor.green)
         .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
+        .id(languageManager.currentLanguage)
         .preferredColorScheme(appSettings.preferredColorScheme)
-        .onAppear(perform: configureTabBarAppearance)
-        .onChange(of: appSettings.isDarkMode) { _, _ in
-            configureTabBarAppearance()
-        }
-        .onChange(of: languageManager.currentLanguage) { _, _ in
-            configureTabBarAppearance()
-        }
         .onChange(of: coordinator.selectedTab) { _, selectedTab in
             refreshCartIfNeeded(for: selectedTab)
-        }
-        .task(id: coordinator.selectedTab) {
-            await refreshTabBarAppearanceAfterTransition()
-        }
-        .task(id: isTabBarHidden) {
-            await refreshTabBarAppearanceAfterTransition()
         }
         .animation(.easeInOut(duration: 0.2), value: isTabBarHidden)
         .onReceive(NotificationCenter.default.publisher(for: .openRemindersTab)) { _ in
@@ -166,16 +152,6 @@ struct MainTabBarView: View {
                 chatbotViewModel.sendSuggestion(message)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            withAnimation(.easeOut(duration: 0.2)) {
-                isKeyboardPresented = true
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            withAnimation(.easeOut(duration: 0.2)) {
-                isKeyboardPresented = false
-            }
-        }
         .overlay(alignment: .top) {
             if isShowingRequestSuccess {
                 RequestSentBanner()
@@ -187,14 +163,6 @@ struct MainTabBarView: View {
                     .padding(.horizontal, MedsySpacing.md)
                     .padding(.top, MedsySpacing.sm)
                     .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
-        .overlay(alignment: .bottom) {
-            if !isTabBarHidden && !isKeyboardPresented {
-                MedsyAITabOverlay(isSelected: coordinator.selectedTab == .chatbot)
-                    .padding(.bottom, 18)
-                    .allowsHitTesting(false)
-                    .transition(.scale(scale: 0.82).combined(with: .opacity))
             }
         }
         .onChange(of: cartViewModel.feedbackSequence) { _, _ in
@@ -209,12 +177,6 @@ struct MainTabBarView: View {
             await profileViewModel.loadProfile()
         }
         .animation(.easeInOut(duration: 0.25), value: cartViewModel.feedback)
-        .background(
-            TabBarAppearanceUpdater(
-                palette: tabBarPalette
-            )
-            .frame(width: 0, height: 0)
-        )
     }
 
     private var selectedTabBinding: Binding<AppTab> {
@@ -293,140 +255,6 @@ struct MainTabBarView: View {
         }
     }
 
-    private func configureTabBarAppearance() {
-        TabBarAppearanceUpdater.apply(palette: tabBarPalette)
-    }
-
-    private func refreshTabBarAppearanceAfterTransition() async {
-        await Task.yield()
-        configureTabBarAppearance()
-    }
-
-    private var tabBarPalette: TabBarPalette {
-        TabBarPalette(
-            isDarkMode: appSettings.isDarkMode,
-            isRTL: languageManager.isRTL
-        )
-    }
-}
-
-private struct MedsyAITabOverlay: View {
-    let isSelected: Bool
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(AppColor.green)
-                .shadow(color: .black.opacity(0.12), radius: 6, y: 3)
-
-            MedsyLottieView(
-                animationName: "ai_sparkles_loop",
-                contentMode: .scaleAspectFit,
-                animationSpeed: 1.1,
-                clipsToBounds: true,
-                tintColor: .white
-            )
-            .frame(width: 32, height: 32)
-            .accessibilityHidden(true)
-        }
-        .frame(width: 50, height: 50)
-        .clipShape(Circle())
-        .scaleEffect(isSelected ? 1.02 : 0.98)
-    }
-}
-
-private struct TabBarPalette {
-    let backgroundColor: UIColor
-    let borderColor: UIColor
-    let selectedColor: UIColor
-    let normalColor: UIColor
-    let semanticContentAttribute: UISemanticContentAttribute
-
-    init(isDarkMode: Bool, isRTL: Bool) {
-        backgroundColor = UIColor(isDarkMode ? AppColor.background : AppColor.surface)
-        borderColor = UIColor(AppColor.border)
-        selectedColor = UIColor(AppColor.green)
-        normalColor = UIColor(AppColor.textSec)
-        semanticContentAttribute = isRTL ? .forceRightToLeft : .forceLeftToRight
-    }
-}
-
-private struct TabBarAppearanceUpdater: UIViewControllerRepresentable {
-    let palette: TabBarPalette
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        UIViewController()
-    }
-
-    func updateUIViewController(_ viewController: UIViewController, context: Context) {
-        Self.apply(palette: palette)
-    }
-
-    static func apply(palette: TabBarPalette) {
-        let appearance = UITabBarAppearance.medsyAppearance(palette: palette)
-
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-        UITabBar.appearance().backgroundColor = palette.backgroundColor
-        UITabBar.appearance().barTintColor = palette.backgroundColor
-        UITabBar.appearance().tintColor = palette.selectedColor
-        UITabBar.appearance().unselectedItemTintColor = palette.normalColor
-        UITabBar.appearance().semanticContentAttribute = palette.semanticContentAttribute
-
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap(\.windows)
-            .forEach { window in
-                apply(appearance: appearance, palette: palette, to: window.rootViewController)
-            }
-    }
-
-    private static func apply(
-        appearance: UITabBarAppearance,
-        palette: TabBarPalette,
-        to viewController: UIViewController?
-    ) {
-        guard let viewController else { return }
-
-        if let tabBarController = viewController as? UITabBarController {
-            tabBarController.tabBar.standardAppearance = appearance
-            tabBarController.tabBar.scrollEdgeAppearance = appearance
-            tabBarController.tabBar.backgroundColor = palette.backgroundColor
-            tabBarController.tabBar.barTintColor = palette.backgroundColor
-            tabBarController.tabBar.tintColor = palette.selectedColor
-            tabBarController.tabBar.unselectedItemTintColor = palette.normalColor
-            tabBarController.tabBar.semanticContentAttribute = palette.semanticContentAttribute
-            tabBarController.tabBar.setNeedsLayout()
-            tabBarController.tabBar.layoutIfNeeded()
-        }
-
-        viewController.children.forEach {
-            apply(appearance: appearance, palette: palette, to: $0)
-        }
-
-        if let presentedViewController = viewController.presentedViewController {
-            apply(appearance: appearance, palette: palette, to: presentedViewController)
-        }
-    }
-}
-
-private extension UITabBarAppearance {
-    static func medsyAppearance(palette: TabBarPalette) -> UITabBarAppearance {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = palette.backgroundColor
-        appearance.shadowColor = palette.borderColor
-
-        [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance]
-            .forEach { itemAppearance in
-                itemAppearance.selected.iconColor = palette.selectedColor
-                itemAppearance.selected.titleTextAttributes = [.foregroundColor: palette.selectedColor]
-                itemAppearance.normal.iconColor = palette.normalColor
-                itemAppearance.normal.titleTextAttributes = [.foregroundColor: palette.normalColor]
-            }
-
-        return appearance
-    }
 }
 
 private struct RequestSentBanner: View {
