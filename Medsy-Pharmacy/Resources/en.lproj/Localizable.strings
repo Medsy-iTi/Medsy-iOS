@@ -19,6 +19,10 @@
 "pharmacy.home.dashboard_load_error" = "The pharmacy dashboard could not be loaded.";
 "pharmacy.home.admin_only_title" = "Admin access required";
 "pharmacy.home.admin_only_message" = "Dashboard analytics are available to pharmacy administrators only.";
+"pharmacy.home.ai_summary_title" = "AI Dashboard Summary";
+"pharmacy.home.ai_summary_error" = "AI summary is currently unavailable.";
+"pharmacy.home.ai_summary_cached" = "Cached";
+"pharmacy.home.ai_badge" = "AI";
 "pharmacy.home.orders_empty_title" = "No recent orders";
 "pharmacy.home.orders_empty_message" = "No completed orders were found for the selected period.";
 "pharmacy.home.pharmacy_number" = "Pharmacy no.";

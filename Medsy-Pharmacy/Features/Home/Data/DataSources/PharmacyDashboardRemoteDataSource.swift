@@ -5,6 +5,7 @@
 
 protocol PharmacyDashboardRemoteDataSourceProtocol {
     func fetchDashboard(period: PharmacyDashboardPeriod) async throws -> PharmacyDashboardDTO
+    func fetchAIDashboardSummary(period: PharmacyDashboardPeriod) async throws -> AIDashboardSummaryDTO
 }
 
 struct PharmacyDashboardRemoteDataSource: PharmacyDashboardRemoteDataSourceProtocol {
@@ -23,5 +24,16 @@ struct PharmacyDashboardRemoteDataSource: PharmacyDashboardRemoteDataSourceProto
             throw NetworkError.validationError(envelope.message)
         }
         return dashboard
+    }
+
+    func fetchAIDashboardSummary(period: PharmacyDashboardPeriod) async throws -> AIDashboardSummaryDTO {
+        let envelope: AIDashboardSummaryEnvelopeDTO = try await networkService.request(
+            endpoint: PharmacyDashboardEndpoint.fetchAISummary(period: period)
+        )
+
+        guard envelope.success, let summary = envelope.data else {
+            throw NetworkError.validationError(envelope.message)
+        }
+        return summary
     }
 }

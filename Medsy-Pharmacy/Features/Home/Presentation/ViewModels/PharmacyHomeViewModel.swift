@@ -24,13 +24,23 @@ final class PharmacyHomeViewModel {
         case failed(String)
     }
 
+    enum AISummaryState: Equatable {
+        case idle
+        case loading
+        case loaded(AIDashboardSummary)
+        case restricted
+        case failed(String)
+    }
+
     private(set) var profileState: ProfileState = .idle
     private(set) var dashboardState: DashboardState = .idle
+    private(set) var aiSummaryState: AISummaryState = .idle
     private(set) var dashboard: PharmacyDashboard?
     private(set) var selectedPeriod: PharmacyDashboardPeriod = .lastMonth
 
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
     private let fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol
+    private let fetchAIDashboardSummaryUseCase: FetchAIDashboardSummaryUseCaseProtocol
     private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
     private let sessionSettings: PharmacySessionSettings
 
@@ -40,11 +50,13 @@ final class PharmacyHomeViewModel {
     init(
         getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
         fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol,
+        fetchAIDashboardSummaryUseCase: FetchAIDashboardSummaryUseCaseProtocol,
         sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
         sessionSettings: PharmacySessionSettings
     ) {
         self.getProfileUseCase = getProfileUseCase
         self.fetchDashboardUseCase = fetchDashboardUseCase
+        self.fetchAIDashboardSummaryUseCase = fetchAIDashboardSummaryUseCase
         self.sendHeartbeatUseCase = sendHeartbeatUseCase
         self.sessionSettings = sessionSettings
     }
@@ -99,6 +111,7 @@ final class PharmacyHomeViewModel {
             invalidateDashboardRequests()
             dashboard = nil
             dashboardState = .restricted
+            aiSummaryState = .restricted
             return
         }
         await loadDashboard(period: selectedPeriod)
@@ -111,6 +124,7 @@ final class PharmacyHomeViewModel {
             invalidateDashboardRequests()
             dashboard = nil
             dashboardState = .restricted
+            aiSummaryState = .restricted
             return
         }
         if dashboard == nil || dashboardState == .restricted {
@@ -121,6 +135,7 @@ final class PharmacyHomeViewModel {
     func retryDashboard() async {
         guard isPharmacyAdmin != false else {
             dashboardState = .restricted
+            aiSummaryState = .restricted
             return
         }
         await loadDashboard(period: selectedPeriod)
@@ -131,6 +146,7 @@ final class PharmacyHomeViewModel {
         selectedPeriod = period
         guard isPharmacyAdmin != false else {
             dashboardState = .restricted
+            aiSummaryState = .restricted
             return
         }
         await loadDashboard(period: period)
@@ -161,18 +177,36 @@ final class PharmacyHomeViewModel {
         dashboardRequestID += 1
         let requestID = dashboardRequestID
         dashboardState = .loading
+        aiSummaryState = .loading
 
-        do {
-            let response = try await fetchDashboardUseCase.execute(period: period)
-            guard requestID == dashboardRequestID, period == selectedPeriod else { return }
-            dashboard = response
-            dashboardState = .loaded
-        } catch is CancellationError {
-            return
-        } catch {
-            guard requestID == dashboardRequestID, period == selectedPeriod else { return }
-            dashboard = nil
-            dashboardState = .failed("pharmacy.home.dashboard_load_error".localized)
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { @MainActor in
+                do {
+                    let response = try await self.fetchDashboardUseCase.execute(period: period)
+                    guard requestID == self.dashboardRequestID, period == self.selectedPeriod else { return }
+                    self.dashboard = response
+                    self.dashboardState = .loaded
+                } catch is CancellationError {
+                    return
+                } catch {
+                    guard requestID == self.dashboardRequestID, period == self.selectedPeriod else { return }
+                    self.dashboard = nil
+                    self.dashboardState = .failed("pharmacy.home.dashboard_load_error".localized)
+                }
+            }
+
+            group.addTask { @MainActor in
+                do {
+                    let summary = try await self.fetchAIDashboardSummaryUseCase.execute(period: period)
+                    guard requestID == self.dashboardRequestID, period == self.selectedPeriod else { return }
+                    self.aiSummaryState = .loaded(summary)
+                } catch is CancellationError {
+                    return
+                } catch {
+                    guard requestID == self.dashboardRequestID, period == self.selectedPeriod else { return }
+                    self.aiSummaryState = .failed("pharmacy.home.ai_summary_error".localized)
+                }
+            }
         }
     }
 

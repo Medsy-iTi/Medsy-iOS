@@ -25,10 +25,17 @@ struct PharmacyHomeAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(FetchAIDashboardSummaryUseCaseProtocol.self) { container in
+            FetchAIDashboardSummaryUseCase(
+                repository: container.resolve(PharmacyDashboardRepositoryProtocol.self)
+            )
+        }
+
         container.register(PharmacyHomeFactory.self) { container in
             PharmacyHomeFactory(
                 getProfileUseCase: container.resolve(GetPharmacyProfileUseCaseProtocol.self),
                 fetchDashboardUseCase: container.resolve(FetchPharmacyDashboardUseCaseProtocol.self),
+                fetchAIDashboardSummaryUseCase: container.resolve(FetchAIDashboardSummaryUseCaseProtocol.self),
                 sendHeartbeatUseCase: container.resolve(SendHeartbeatUseCaseProtocol.self),
                 sessionSettings: container.resolve(PharmacySessionSettings.self)
             )

@@ -21,6 +21,8 @@ struct PharmacyMainTabView: View {
     @ObservedObject private var appSettings = PharmacyAppSettings.shared
     private let onLoggedOut: () -> Void
 
+    @State private var isKeyboardPresented = false
+
     init(
         coordinator: PharmacyMainTabCoordinator,
         homeFactory: PharmacyHomeFactory,
@@ -97,6 +99,25 @@ struct PharmacyMainTabView: View {
         .toolbarBackground(PharmacyColor.surface, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
         .preferredColorScheme(appSettings.preferredColorScheme)
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isKeyboardPresented = false
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if !isKeyboardPresented {
+                PharmacyAITabOverlay(isSelected: coordinator.selectedTab == .chatBot)
+                    .padding(.bottom, 18)
+                    .allowsHitTesting(false)
+                    .transition(.scale(scale: 0.82).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: isKeyboardPresented)
         .fullScreenCover(item: $selectedCompletedOrder) { selection in
             CompletedOrderDetailsCoordinatorView.Embedded(orderId: selection.id)
         }
@@ -166,5 +187,26 @@ private struct PharmacySetupPlaceholderView: View {
         tab == .home
             ? "pharmacy.dashboard.placeholder"
             : "pharmacy.setup.placeholder"
+    }
+}
+
+private struct PharmacyAITabOverlay: View {
+    let isSelected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(PharmacyColor.primary)
+                .shadow(color: .black.opacity(0.12), radius: 6, y: 3)
+
+            PharmacyLottieView(
+                animationName: "ai_sparkles_loop"
+            )
+            .frame(width: 32, height: 32)
+            .accessibilityHidden(true)
+        }
+        .frame(width: 50, height: 50)
+        .clipShape(Circle())
+        .scaleEffect(isSelected ? 1.02 : 0.98)
     }
 }

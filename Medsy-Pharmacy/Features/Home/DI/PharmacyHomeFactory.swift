@@ -10,17 +10,20 @@ import SwiftUI
 struct PharmacyHomeFactory {
     private let getProfileUseCase: GetPharmacyProfileUseCaseProtocol
     private let fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol
+    private let fetchAIDashboardSummaryUseCase: FetchAIDashboardSummaryUseCaseProtocol
     private let sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol
     let sessionSettings: PharmacySessionSettings
 
     init(
         getProfileUseCase: GetPharmacyProfileUseCaseProtocol,
         fetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtocol,
+        fetchAIDashboardSummaryUseCase: FetchAIDashboardSummaryUseCaseProtocol,
         sendHeartbeatUseCase: SendHeartbeatUseCaseProtocol,
         sessionSettings: PharmacySessionSettings
     ) {
         self.getProfileUseCase = getProfileUseCase
         self.fetchDashboardUseCase = fetchDashboardUseCase
+        self.fetchAIDashboardSummaryUseCase = fetchAIDashboardSummaryUseCase
         self.sendHeartbeatUseCase = sendHeartbeatUseCase
         self.sessionSettings = sessionSettings
     }
@@ -30,6 +33,7 @@ struct PharmacyHomeFactory {
         PharmacyHomeViewModel(
             getProfileUseCase: getProfileUseCase,
             fetchDashboardUseCase: fetchDashboardUseCase,
+            fetchAIDashboardSummaryUseCase: fetchAIDashboardSummaryUseCase,
             sendHeartbeatUseCase: sendHeartbeatUseCase,
             sessionSettings: sessionSettings
         )

@@ -19,6 +19,10 @@
 "pharmacy.home.dashboard_load_error" = "تعذر تحميل لوحة تحكم الصيدلية.";
 "pharmacy.home.admin_only_title" = "يتطلب صلاحية المسؤول";
 "pharmacy.home.admin_only_message" = "تحليلات لوحة التحكم متاحة لمسؤولي الصيدلية فقط.";
+"pharmacy.home.ai_summary_title" = "ملخص الذكاء الاصطناعي";
+"pharmacy.home.ai_summary_error" = "ملخص الذكاء الاصطناعي غير متوفر حاليًا.";
+"pharmacy.home.ai_summary_cached" = "مؤقت";
+"pharmacy.home.ai_badge" = "ذكاء اصطناعي";
 "pharmacy.home.orders_empty_title" = "لا توجد طلبات حديثة";
 "pharmacy.home.orders_empty_message" = "لا توجد طلبات مكتملة خلال الفترة المحددة.";
 "pharmacy.home.pharmacy_number" = "رقم الصيدلية";

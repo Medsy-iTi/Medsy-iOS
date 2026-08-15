@@ -14,4 +14,9 @@ struct PharmacyDashboardRepository: PharmacyDashboardRepositoryProtocol {
         let dto = try await remoteDataSource.fetchDashboard(period: period)
         return PharmacyDashboardMapper.map(dto)
     }
+
+    func fetchAIDashboardSummary(period: PharmacyDashboardPeriod) async throws -> AIDashboardSummary {
+        let dto = try await remoteDataSource.fetchAIDashboardSummary(period: period)
+        return PharmacyDashboardMapper.map(dto)
+    }
 }

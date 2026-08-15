@@ -127,6 +127,7 @@ private struct PharmacyAuthenticationRootView: View {
 		homeFactory: PharmacyHomeFactory(
 			getProfileUseCase: PreviewGetProfileUseCase(),
 			fetchDashboardUseCase: PreviewFetchDashboardUseCase(),
+			fetchAIDashboardSummaryUseCase: PreviewFetchAIDashboardSummaryUseCase(),
 			sendHeartbeatUseCase: PreviewSendHeartbeatUseCase(),
 			sessionSettings: PharmacySessionSettings()
 		),
@@ -162,6 +163,18 @@ private struct PreviewFetchDashboardUseCase: FetchPharmacyDashboardUseCaseProtoc
 			offersCreated: 0,
 			topSellingProducts: [],
 			recentOrders: []
+		)
+	}
+}
+
+private struct PreviewFetchAIDashboardSummaryUseCase: FetchAIDashboardSummaryUseCaseProtocol {
+	func execute(period: PharmacyDashboardPeriod) async throws -> AIDashboardSummary {
+		AIDashboardSummary(
+			period: period,
+			language: "en",
+			summary: "Overall sales have increased by 15% this period with 24 completed orders and strong performance in vitamins.",
+			generatedAt: Date(),
+			cached: false
 		)
 	}
 }

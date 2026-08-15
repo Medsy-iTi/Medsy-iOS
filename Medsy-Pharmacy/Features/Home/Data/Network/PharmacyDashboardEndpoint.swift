@@ -8,15 +8,26 @@ import Foundation
 
 enum PharmacyDashboardEndpoint: ApiEndpoint {
     case fetch(period: PharmacyDashboardPeriod)
+    case fetchAISummary(period: PharmacyDashboardPeriod)
 
-    var path: String { "pharmacies/dashboard" }
+    var path: String {
+        switch self {
+        case .fetch:
+            "pharmacies/dashboard"
+        case .fetchAISummary:
+            "ai/dashboard/summary"
+        }
+    }
 
     var method: HTTPMethod { .get }
 
     var queryParameters: Parameters? {
         switch self {
-        case .fetch(let period):
-            ["period": period.rawValue]
+        case .fetch(let period), .fetchAISummary(let period):
+            [
+                "period": period.rawValue,
+                "lang": LanguageManager.shared.languageCode
+            ]
         }
     }
 

@@ -88,6 +88,7 @@ struct PharmacyHomeView: View {
 
         case .loaded:
             PharmacyMetricsGrid(metrics: viewModel.metrics)
+            PharmacyAIDashboardSummaryCard(state: viewModel.aiSummaryState)
             PharmacyTopSellingProductsView(products: viewModel.topSellingProducts)
             PharmacyRecentOrdersView(
                 orders: viewModel.recentOrders,
