@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum PharmacyAuthFieldKind: Equatable {
     case name
@@ -93,7 +94,21 @@ struct PharmacyAuthScreenContainer<Content: View>: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .scrollIndicators(.hidden)
-        .background(PharmacyColor.bg.ignoresSafeArea())
+        .background {
+            PharmacyColor.bg
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture(perform: dismissKeyboard)
+        }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
 

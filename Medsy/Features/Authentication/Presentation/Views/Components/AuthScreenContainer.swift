@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct AuthScreenContainer<Content: View>: View {
     @ViewBuilder let content: Content
@@ -20,7 +21,22 @@ struct AuthScreenContainer<Content: View>: View {
             .frame(maxWidth: 560)
             .frame(maxWidth: .infinity)
         }
+        .scrollDismissesKeyboard(.interactively)
         .scrollIndicators(.hidden)
-        .background(AppColor.bg.ignoresSafeArea())
+        .background {
+            AppColor.bg
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture(perform: dismissKeyboard)
+        }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
