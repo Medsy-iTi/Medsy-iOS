@@ -41,14 +41,11 @@ final class PharmacyLoginViewModel {
     func submit() async -> Bool {
         guard !isLoading else { return false }
 
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedEmail.isEmpty, !password.isEmpty else {
-            validationMessage = "pharmacy.auth.validation.required".localized
-            return false
-        }
-
-        guard trimmedEmail.range(of: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$", options: [.regularExpression, .caseInsensitive]) != nil else {
-            validationMessage = "pharmacy.auth.validation.email".localized
+        if let validationError = PharmacyAuthenticationInputValidator.validateLogin(
+            email: email,
+            password: password
+        ) {
+            validationMessage = validationError.message
             return false
         }
 
@@ -57,7 +54,10 @@ final class PharmacyLoginViewModel {
 
         do {
             _ = try await loginAction(
-                PharmacyLoginInput(email: trimmedEmail.lowercased(), password: password)
+                PharmacyLoginInput(
+                    email: PharmacyAuthenticationInputValidator.normalizedEmail(email),
+                    password: password
+                )
             )
             state = .success
             return true

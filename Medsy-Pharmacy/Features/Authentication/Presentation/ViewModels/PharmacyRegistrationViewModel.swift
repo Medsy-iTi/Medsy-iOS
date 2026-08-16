@@ -58,19 +58,14 @@ final class PharmacyRegistrationViewModel {
     }
 
     private func validateDetails() -> Bool {
-        let fields = [firstName, lastName, phoneNumber, email]
-        guard fields.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
-            validationMessage = "pharmacy.auth.validation.required".localized
-            return false
-        }
-
-        guard email.range(of: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$", options: [.regularExpression, .caseInsensitive]) != nil else {
-            validationMessage = "pharmacy.auth.validation.email".localized
-            return false
-        }
-
-        guard phoneNumber.range(of: "^01[0125][0-9]{8}$", options: .regularExpression) != nil else {
-            validationMessage = "pharmacy.auth.validation.phone".localized
+        if let validationError = PharmacyAuthenticationInputValidator.validateRegistrationDetails(
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phoneNumber,
+            email: email,
+            dateOfBirth: dateOfBirth
+        ) {
+            validationMessage = validationError.message
             return false
         }
 
@@ -79,14 +74,12 @@ final class PharmacyRegistrationViewModel {
     }
 
     private func validateAccountSetup() -> Bool {
-        let fields = [password, confirmedPassword, homeAddress]
-        guard fields.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) else {
-            validationMessage = "pharmacy.auth.validation.required".localized
-            return false
-        }
-
-        guard password == confirmedPassword else {
-            validationMessage = "pharmacy.auth.validation.password_mismatch".localized
+        if let validationError = PharmacyAuthenticationInputValidator.validateAccountSetup(
+            password: password,
+            confirmedPassword: confirmedPassword,
+            homeAddress: homeAddress
+        ) {
+            validationMessage = validationError.message
             return false
         }
 
@@ -107,7 +100,7 @@ final class PharmacyRegistrationViewModel {
                     firstName: firstName.trimmingCharacters(in: .whitespacesAndNewlines),
                     lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines),
                     phoneNumber: phoneNumber,
-                    email: email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+                    email: PharmacyAuthenticationInputValidator.normalizedEmail(email),
                     password: password,
                     homeAddress: homeAddress.trimmingCharacters(in: .whitespacesAndNewlines),
                     dateOfBirth: dateOfBirth
