@@ -174,7 +174,7 @@ final class SignupAPIIntegrationTests: XCTestCase {
             phoneNumber: "01289166632",
             firstName: "Ehab",
             lastName: "Salah",
-            password: "password",
+            password: "Password@1",
             homeAddress: "Cairo",
             dateOfBirth: dateOfBirth
         )
@@ -187,8 +187,8 @@ final class SignupAPIIntegrationTests: XCTestCase {
         viewModel.phoneNumber = "01289166632"
         viewModel.firstName = "Ehab"
         viewModel.lastName = "Salah"
-        viewModel.password = "password"
-        viewModel.confirmedPassword = "password"
+        viewModel.password = "Password@1"
+        viewModel.confirmedPassword = "Password@1"
         viewModel.homeAddress = "Cairo"
         return viewModel
     }
