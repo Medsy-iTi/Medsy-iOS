@@ -35,6 +35,7 @@ struct PharmacyOrderDTO: Decodable {
 	let deliveryLongitude: Double
 	let status: String
 	let date: String
+	let paymentMethod: String?
 	let items: [PharmacyOrderItemDTO]
 }
 

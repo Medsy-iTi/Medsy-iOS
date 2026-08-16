@@ -1137,3 +1137,5 @@
 
 "pharmacy.chatbot.analytics.metric.request_coverage_rate" = "نسبة التغطية";
 "pharmacy.chatbot.analytics.status.ready_for_pickup" = "جاهز للاستلام";
+
+"common.error.offline" = "لا يوجد اتصال بالإنترنت. يرجى التحقق من الاتصال والمحاولة مرة أخرى.";

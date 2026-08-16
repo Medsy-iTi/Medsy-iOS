@@ -621,3 +621,5 @@
 "pharmacy.payment.cash" = "Cash";
 "pharmacy.payment.card" = "Card";
 "pharmacy.request.payment_method_label" = "Payment method";
+
+"common.error.offline" = "No internet connection. Please check your connection and try again.";

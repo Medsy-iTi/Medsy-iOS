@@ -40,13 +40,6 @@ struct LoginView: View {
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
             }
 
-            HStack {
-                Spacer()
-                Button("auth.forgot_password".localized) {}
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(AppColor.green)
-            }
-
             AuthValidationMessage(message: viewModel.validationMessage)
 
             PrimaryButton(
