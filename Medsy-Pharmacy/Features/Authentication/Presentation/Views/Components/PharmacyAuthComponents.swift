@@ -61,6 +61,21 @@ enum PharmacyAuthFieldKind: Equatable {
     var isSecure: Bool {
         self == .password || self == .confirmPassword
     }
+
+    var maximumLength: Int? {
+        switch self {
+        case .name:
+            PharmacyAuthenticationInputValidator.nameMaximumLength
+        case .phone:
+            PharmacyAuthenticationInputValidator.phoneLength
+        case .email:
+            PharmacyAuthenticationInputValidator.emailMaximumLength
+        case .password, .confirmPassword:
+            PharmacyAuthenticationInputValidator.passwordMaximumLength
+        case .address:
+            nil
+        }
+    }
 }
 
 struct PharmacyAuthScreenContainer<Content: View>: View {
@@ -174,6 +189,11 @@ struct PharmacyAuthTextField: View {
         .padding(.horizontal, PharmacySpacing.md)
         .frame(height: 56)
         .pharmacyInputSurface(isFocused: isFocused)
+        .onChange(of: text) { _, newValue in
+            guard let maximumLength = kind.maximumLength,
+                  newValue.count > maximumLength else { return }
+            text = String(newValue.prefix(maximumLength))
+        }
     }
 
     @ViewBuilder
