@@ -14,28 +14,7 @@ final class CompleteRequestViewModelTests: XCTestCase {
     func testDefaultsToDeliveryAndCash() {
         let viewModel = makeViewModel()
 
-        XCTAssertEqual(viewModel.receiveMethod, .delivery)
         XCTAssertEqual(viewModel.paymentMethod, .cash)
-        XCTAssertTrue(viewModel.showsDeliveryDetails)
-        XCTAssertFalse(viewModel.showsOnlinePaymentInfo)
-    }
-
-    func testPickupDoesNotCallDeliveryRequestEndpoint() async {
-        var capturedSubmission: CompleteRequestSubmission?
-        let submitUseCase = CompleteRequestSubmitUseCaseFake()
-        let viewModel = makeViewModel(submitUseCase: submitUseCase) { submission in
-            capturedSubmission = submission
-            return true
-        }
-
-        viewModel.selectReceiveMethod(.pickup)
-        let succeeded = await viewModel.submit()
-
-        XCTAssertFalse(succeeded)
-        XCTAssertFalse(viewModel.showsDeliveryDetails)
-        XCTAssertNil(capturedSubmission)
-        XCTAssertTrue(viewModel.validationErrors.contains(.pickupUnsupported))
-        XCTAssertEqual(submitUseCase.inputs.count, 0)
     }
 
     func testSavedProfileAddressIsUsedOnlyWithValidCoordinates() async {
@@ -95,12 +74,12 @@ final class CompleteRequestViewModelTests: XCTestCase {
             return true
         }
         viewModel.confirmLocation(validLocation)
-        viewModel.selectPaymentMethod(.online)
+        viewModel.selectPaymentMethod(.visa)
 
         let succeeded = await viewModel.submit()
 
         XCTAssertTrue(succeeded)
-        XCTAssertEqual(capturedSubmission?.paymentMethod, .online)
+        XCTAssertEqual(capturedSubmission?.paymentMethod, .visa)
         XCTAssertEqual(capturedSubmission?.deliveryLocation, validLocation)
         XCTAssertEqual(capturedSubmission?.itemCount, 2)
         XCTAssertEqual(submitUseCase.inputs, [

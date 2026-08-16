@@ -87,7 +87,8 @@ final class AuthenticationInputValidatorTests: XCTestCase {
             viewModel.email, viewModel.password, viewModel.homeAddress
         ]
 
-        XCTAssertFalse(await viewModel.submit())
+        let submitResult = await viewModel.submit()
+        XCTAssertFalse(submitResult)
         XCTAssertEqual(useCase.callCount, 0)
         XCTAssertEqual(
             [viewModel.firstName, viewModel.lastName, viewModel.phoneNumber,
@@ -102,7 +103,8 @@ final class AuthenticationInputValidatorTests: XCTestCase {
         let viewModel = makeViewModel(useCase: useCase)
         viewModel.email = " User@Example.COM "
 
-        XCTAssertTrue(await viewModel.submit())
+        let submitResult = await viewModel.submit()
+        XCTAssertTrue(submitResult)
         XCTAssertEqual(useCase.receivedInput?.email, "user@example.com")
         XCTAssertEqual(useCase.receivedInput?.firstName, "Nour")
     }

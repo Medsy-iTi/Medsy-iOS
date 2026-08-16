@@ -62,6 +62,13 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
 
                 do {
                     if let orig: APIResponseDTO<CompleteRequestResponseDTO> = try? await networkService.request(endpoint: OffersEndpoint.getRequest(requestId: requestId)), let req = orig.data {
+                        let upperStatus = req.status.uppercased()
+                        if upperStatus == "COMPLETED" || upperStatus == "CANCELLED" || upperStatus == "DELIVERED" || upperStatus == "REJECTED" {
+                            print("[Offers Remote Data Source] 🛑 Request \(requestId) is already \(upperStatus), finishing stream immediately.")
+                            continuation.finish()
+                            return
+                        }
+
                         origRequest = req
                         let initialItems = req.items.map { item in
                             OfferResultItemDTO(

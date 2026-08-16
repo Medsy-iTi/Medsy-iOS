@@ -56,6 +56,7 @@ final class NetworkService: NetworkServiceProtocol {
     func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
+                var streamSession: URLSession?
                 do {
                     let request = try requestBuilder.makeRequest(
                         for: endpoint,
@@ -63,7 +64,14 @@ final class NetworkService: NetworkServiceProtocol {
                     )
                     print("[Network SSE] 🚀 Stream starting for endpoint: \(endpoint.method.rawValue) \(request.url?.absoluteString ?? endpoint.path)")
 
-                    let (bytes, response) = try await URLSession.shared.bytes(for: request)
+                    let config = URLSessionConfiguration.default
+                    config.timeoutIntervalForRequest = 45
+                    config.timeoutIntervalForResource = 900
+                    config.waitsForConnectivity = true
+                    let session = URLSession(configuration: config)
+                    streamSession = session
+
+                    let (bytes, response) = try await session.bytes(for: request)
                     if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
                         print("[Network SSE] ❌ HTTP Error status code: \(httpResponse.statusCode)")
                         throw NetworkErrorHandler.map(
@@ -98,7 +106,7 @@ final class NetworkService: NetworkServiceProtocol {
                         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
                         if trimmed.hasPrefix(":") {
-                            flushCurrentEvent()
+                            // Keepalive heartbeat comment from server; ignore without interrupting pending event data
                             continue
                         }
 
@@ -126,9 +134,12 @@ final class NetworkService: NetworkServiceProtocol {
                     print("[Network SSE] Stream finished clean.")
                     continuation.finish()
                 } catch {
-                    print("[Network SSE Error] Stream exception: \(error)")
+                    if !Task.isCancelled {
+                        print("[Network SSE Error] Stream exception: \(error)")
+                    }
                     continuation.finish(throwing: error)
                 }
+                streamSession?.invalidateAndCancel()
             }
 
             continuation.onTermination = { reason in

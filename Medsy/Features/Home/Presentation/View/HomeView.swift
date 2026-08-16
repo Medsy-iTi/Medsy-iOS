@@ -28,6 +28,29 @@ struct HomeView: View {
                         onFavoritesTap: { onFavoritesTap?() },
                         onAddressTap: onAddressTap
                     )
+
+                    if viewModel.isRefreshing {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .tint(AppColor.green)
+                                .scaleEffect(0.85)
+                            Text("home.refreshing".localized)
+                                .font(AppColor.sans(12, .medium))
+                                .foregroundStyle(AppColor.green)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(AppColor.green.opacity(0.1))
+                                .stroke(AppColor.green.opacity(0.2), lineWidth: 1)
+                        )
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                            removal: .opacity
+                        ))
+                    }
+
                     HomeSearchBar(onTap: onSearchTap)
                     HomePromoBanner()
 
@@ -43,7 +66,7 @@ struct HomeView: View {
                             requestId: viewModel.activeRequestIds.first ?? 0,
                             createdAt: viewModel.activeRequestCreatedAt,
                             onTimerExpired: {
-                                viewModel.checkAndStartPolling()
+                                viewModel.checkAndStartPolling(forceRestartStream: true)
                             }
                         )
                     case .firstOffer:
@@ -55,7 +78,7 @@ struct HomeView: View {
                             requestId: viewModel.firstAvailableRequestId ?? 0,
                             createdAt: viewModel.activeRequestCreatedAt,
                             onTimerExpired: {
-                                viewModel.checkAndStartPolling()
+                                viewModel.checkAndStartPolling(forceRestartStream: true)
                             },
                             onCompareOffers: {
                                 if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
@@ -80,7 +103,7 @@ struct HomeView: View {
                             requestId: viewModel.firstAvailableRequestId ?? 0,
                             createdAt: viewModel.activeRequestCreatedAt,
                             onTimerExpired: {
-                                viewModel.checkAndStartPolling()
+                                viewModel.checkAndStartPolling(forceRestartStream: true)
                             },
                             onShowOffer: {
                                 if let result = viewModel.firstAvailableOfferResult, let reqId = viewModel.firstAvailableRequestId {
@@ -112,25 +135,36 @@ struct HomeView: View {
                     HomeQuickDeliveryBanner()
                     Color.clear.frame(height: 20)
                 }
+                .animation(.easeInOut(duration: 0.25), value: viewModel.isRefreshing)
                 .frame(width: geometry.size.width)
+            }
+            .refreshable {
+                await viewModel.refresh()
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             .clipped()
         }
         .background(AppColor.bg)
         .onAppear {
-            viewModel.checkAndStartPolling()
+            viewModel.checkAndStartPolling(forceRestartStream: true)
         }
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active {
-                viewModel.checkAndStartPolling()
-            }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            print("[HomeView] 🔄 scenePhase changed from \(oldPhase) to \(newPhase) (isCaptured=\(UIScreen.main.isCaptured))")
+            viewModel.handleScenePhaseChange(to: newPhase)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIScreen.capturedDidChangeNotification)) { _ in
+            let isCaptured = UIScreen.main.isCaptured
+            print("[HomeView] 🎥 UIScreen.capturedDidChangeNotification: isCaptured=\(isCaptured)")
+            viewModel.handleScreenCaptureChange(isCaptured: isCaptured)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            viewModel.checkAndStartPolling()
+            viewModel.handleAppActive()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            viewModel.handleAppBackground()
         }
         .onChange(of: refreshSignal) { _, _ in
-            viewModel.checkAndStartPolling()
+            viewModel.checkAndStartPolling(forceRestartStream: true)
         }
         .task {
             await favoriteCountViewModel.refresh()
