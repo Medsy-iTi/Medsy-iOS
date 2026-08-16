@@ -54,11 +54,7 @@ struct VerificationView: View {
                 }
             }
 
-            Button("auth.verification.resend".localized) {
-                viewModel.clearValidationMessage()
-            }
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(AppColor.green)
+
         }
         .navigationTitle("auth.verification.title".localized)
         .navigationBarTitleDisplayMode(.inline)
