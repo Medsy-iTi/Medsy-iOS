@@ -33,7 +33,7 @@ enum CompletedOrderMapper {
     static func map(_ dto: CompletedOrderDTO) -> CompletedOrder {
         let paymentMethod: PharmacyOrderPaymentMethod
         switch dto.paymentMethod?.uppercased() {
-        case "VISA": paymentMethod = .visa(lastFourDigits: "")
+        case "VISA", "CARD", "ONLINE": paymentMethod = .visa(lastFourDigits: "")
         default: paymentMethod = .cash
         }
         return CompletedOrder(

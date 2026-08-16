@@ -75,7 +75,7 @@ final class LoginAPIIntegrationTests: XCTestCase {
 
         XCTAssertFalse(succeeded)
         XCTAssertEqual(useCase.callCount, 0)
-        XCTAssertEqual(viewModel.validationMessage, "auth.validation.required".localized)
+        XCTAssertEqual(viewModel.validationMessage, "auth.validation.email_required".localized)
         XCTAssertNil(viewModel.state)
     }
 

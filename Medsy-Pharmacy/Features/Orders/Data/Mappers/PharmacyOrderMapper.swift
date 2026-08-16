@@ -44,7 +44,8 @@ enum PharmacyOrderMapper {
             prescriptionUrl: nil,
             customerName: nil,
             customerPhone: nil,
-            notes: nil
+            notes: nil,
+            paymentMethod: dto.paymentMethod
         )
     }
 

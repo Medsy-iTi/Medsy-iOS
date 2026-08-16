@@ -60,15 +60,17 @@ final class SignupViewModel: SignupViewModelProtocol {
     func submit() async -> Bool {
         guard !isLoading else { return false }
 
-        guard !firstName.isEmpty, !lastName.isEmpty, !phoneNumber.isEmpty,
-              !email.isEmpty, !password.isEmpty, !confirmedPassword.isEmpty,
-              !homeAddress.isEmpty else {
-            validationMessage = "auth.validation.required".localized
-            return false
-        }
-
-        guard password == confirmedPassword else {
-            validationMessage = "auth.validation.password_mismatch".localized
+        if let validationError = AuthenticationInputValidator.validateRegistration(
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phoneNumber,
+            email: email,
+            password: password,
+            confirmedPassword: confirmedPassword,
+            homeAddress: homeAddress,
+            dateOfBirth: dateOfBirth
+        ) {
+            validationMessage = validationError.message
             return false
         }
 
@@ -76,12 +78,12 @@ final class SignupViewModel: SignupViewModelProtocol {
         state = .loading
 
         let input = SignupInput(
-            email: email,
+            email: AuthenticationInputValidator.normalizedEmail(email),
             phoneNumber: phoneNumber,
             firstName: firstName,
             lastName: lastName,
             password: password,
-            homeAddress: homeAddress,
+            homeAddress: homeAddress.trimmingCharacters(in: .whitespacesAndNewlines),
             dateOfBirth: dateOfBirth
         )
 

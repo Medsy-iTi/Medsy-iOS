@@ -5,6 +5,7 @@
 //  Created by Ehab Salah on 16/07/2026.
 //
 
+import Foundation
 import Observation
 
 @MainActor
@@ -46,8 +47,11 @@ final class LoginViewModel: LoginViewModelProtocol {
     func submit() async -> Bool {
         guard !isLoading else { return false }
 
-        guard !email.isEmpty, !password.isEmpty else {
-            validationMessage = "auth.validation.required".localized
+        if let validationError = AuthenticationInputValidator.validateLogin(
+            email: email,
+            password: password
+        ) {
+            validationMessage = validationError.message
             return false
         }
 
@@ -56,7 +60,10 @@ final class LoginViewModel: LoginViewModelProtocol {
 
         do {
             _ = try await loginUseCase.execute(
-                input: LoginInput(email: email, password: password)
+                input: LoginInput(
+                    email: AuthenticationInputValidator.normalizedEmail(email),
+                    password: password
+                )
             )
             state = .success
             return true

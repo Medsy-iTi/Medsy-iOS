@@ -30,12 +30,42 @@ struct SignupView: View {
             )
 
             VStack(spacing: 12) {
-                CustomTextField(title: "auth.first_name".localized, type: .name, text: $viewModel.firstName)
-                CustomTextField(title: "auth.last_name".localized, type: .name, text: $viewModel.lastName)
-                CustomTextField(title: "auth.phone".localized, type: .phone, text: $viewModel.phoneNumber)
-                CustomTextField(title: "auth.email".localized, type: .email, text: $viewModel.email)
-                CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
-                CustomTextField(title: "auth.confirm_password".localized, type: .confirmPassword, text: $viewModel.confirmedPassword)
+                CustomTextField(
+                    title: "auth.first_name".localized,
+                    type: .name,
+                    text: $viewModel.firstName,
+                    maximumLength: AuthenticationInputValidator.nameMaximumLength
+                )
+                CustomTextField(
+                    title: "auth.last_name".localized,
+                    type: .name,
+                    text: $viewModel.lastName,
+                    maximumLength: AuthenticationInputValidator.nameMaximumLength
+                )
+                CustomTextField(
+                    title: "auth.phone".localized,
+                    type: .phone,
+                    text: $viewModel.phoneNumber,
+                    maximumLength: AuthenticationInputValidator.phoneLength
+                )
+                CustomTextField(
+                    title: "auth.email".localized,
+                    type: .email,
+                    text: $viewModel.email,
+                    maximumLength: AuthenticationInputValidator.emailMaximumLength
+                )
+                CustomTextField(
+                    title: "auth.password".localized,
+                    type: .password,
+                    text: $viewModel.password,
+                    maximumLength: AuthenticationInputValidator.passwordMaximumLength
+                )
+                CustomTextField(
+                    title: "auth.confirm_password".localized,
+                    type: .confirmPassword,
+                    text: $viewModel.confirmedPassword,
+                    maximumLength: AuthenticationInputValidator.passwordMaximumLength
+                )
                 CustomTextField(title: "auth.home_address".localized, type: .address, text: $viewModel.homeAddress)
 
                 SignupDatePicker(dateOfBirth: $viewModel.dateOfBirth)

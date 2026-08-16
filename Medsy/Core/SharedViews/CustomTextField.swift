@@ -12,6 +12,7 @@ struct CustomTextField: View {
     let title: String
     let type: TextFieldType
     @Binding var text: String
+    var maximumLength: Int? = nil
 
     @State private var isPasswordVisible = false
     @ObservedObject private var appSettings = AppSettings.shared
@@ -46,6 +47,11 @@ struct CustomTextField: View {
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(AppColor.border, lineWidth: 1)
+        }
+        .onChange(of: text) { _, newValue in
+            guard let maximumLength,
+                  newValue.count > maximumLength else { return }
+            text = String(newValue.prefix(maximumLength))
         }
     }
 

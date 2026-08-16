@@ -31,15 +31,13 @@ struct LoginView: View {
             )
 
             VStack(spacing: 12) {
-                CustomTextField(title: "auth.email".localized, type: .email, text: $viewModel.email)
+                CustomTextField(
+                    title: "auth.email".localized,
+                    type: .email,
+                    text: $viewModel.email,
+                    maximumLength: AuthenticationInputValidator.emailMaximumLength
+                )
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
-            }
-
-            HStack {
-                Spacer()
-                Button("auth.forgot_password".localized) {}
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(AppColor.green)
             }
 
             AuthValidationMessage(message: viewModel.validationMessage)

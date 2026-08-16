@@ -20,6 +20,7 @@ enum NetworkError: Error, LocalizedError {
     case unknown(Int)
     case unacceptableStatusCode(Int)
     case invalidURL
+    case offline
     
     var errorDescription: String? {
         switch self {
@@ -43,6 +44,8 @@ enum NetworkError: Error, LocalizedError {
             return "The server returned an unacceptable status code: \(code)."
         case .invalidURL:
             return "Invalid URL"
+        case .offline:
+            return "common.error.offline".localized
         }
     }
 }

@@ -43,14 +43,7 @@ struct PharmacyLoginView: View {
                     )
                 }
 
-                HStack {
-                    Spacer()
-                    Button("pharmacy.auth.forgot_password".localized) {}
-                        .font(PharmacyColor.sans(13, .semibold))
-                        .foregroundStyle(PharmacyColor.primary)
-                        .frame(minHeight: 44)
-                        .buttonStyle(PharmacyPressableButtonStyle())
-                }
+                Spacer().frame(height: 24)
 
                 PharmacyAuthValidationMessage(message: viewModel.validationMessage)
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum PharmacyAuthFieldKind: Equatable {
     case name
@@ -61,6 +62,21 @@ enum PharmacyAuthFieldKind: Equatable {
     var isSecure: Bool {
         self == .password || self == .confirmPassword
     }
+
+    var maximumLength: Int? {
+        switch self {
+        case .name:
+            PharmacyAuthenticationInputValidator.nameMaximumLength
+        case .phone:
+            PharmacyAuthenticationInputValidator.phoneLength
+        case .email:
+            PharmacyAuthenticationInputValidator.emailMaximumLength
+        case .password, .confirmPassword:
+            PharmacyAuthenticationInputValidator.passwordMaximumLength
+        case .address:
+            nil
+        }
+    }
 }
 
 struct PharmacyAuthScreenContainer<Content: View>: View {
@@ -78,7 +94,21 @@ struct PharmacyAuthScreenContainer<Content: View>: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .scrollIndicators(.hidden)
-        .background(PharmacyColor.bg.ignoresSafeArea())
+        .background {
+            PharmacyColor.bg
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture(perform: dismissKeyboard)
+        }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 }
 
@@ -174,6 +204,11 @@ struct PharmacyAuthTextField: View {
         .padding(.horizontal, PharmacySpacing.md)
         .frame(height: 56)
         .pharmacyInputSurface(isFocused: isFocused)
+        .onChange(of: text) { _, newValue in
+            guard let maximumLength = kind.maximumLength,
+                  newValue.count > maximumLength else { return }
+            text = String(newValue.prefix(maximumLength))
+        }
     }
 
     @ViewBuilder
