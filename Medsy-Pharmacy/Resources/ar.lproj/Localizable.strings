@@ -106,9 +106,23 @@
 "pharmacy.auth.verification.code_accessibility" = "رمز تأكيد مكون من ستة أرقام";
 "pharmacy.auth.verification.action" = "تأكيد الحساب";
 "pharmacy.auth.validation.required" = "أكمل جميع الحقول المطلوبة.";
+"pharmacy.auth.validation.first_name_required" = "الاسم الأول مطلوب.";
+"pharmacy.auth.validation.last_name_required" = "اسم العائلة مطلوب.";
+"pharmacy.auth.validation.phone_required" = "رقم الهاتف مطلوب.";
+"pharmacy.auth.validation.email_required" = "البريد الإلكتروني مطلوب.";
+"pharmacy.auth.validation.password_required" = "كلمة المرور مطلوبة.";
+"pharmacy.auth.validation.confirm_password_required" = "يرجى تأكيد كلمة المرور.";
+"pharmacy.auth.validation.home_address_required" = "عنوان المنزل مطلوب.";
+"pharmacy.auth.validation.first_name" = "أدخل اسمًا أول صالحًا باستخدام الحروف ومن دون مسافات في البداية أو النهاية.";
+"pharmacy.auth.validation.last_name" = "أدخل اسم عائلة صالحًا باستخدام الحروف ومن دون مسافات في البداية أو النهاية.";
+"pharmacy.auth.validation.name_length" = "يجب ألا يتجاوز الاسم الأول واسم العائلة 50 حرفًا.";
 "pharmacy.auth.validation.email" = "أدخل بريدًا إلكترونيًا صالحًا.";
-"pharmacy.auth.validation.phone" = "أدخل رقم هاتف مصري يبدأ بـ 010 أو 011 أو 012 أو 015.";
+"pharmacy.auth.validation.phone" = "أدخل رقم هاتف محمول مصريًا من 11 رقمًا يبدأ بـ 010 أو 011 أو 012 أو 015.";
+"pharmacy.auth.validation.password_length" = "يجب أن تتكون كلمة المرور من 6 إلى 15 حرفًا.";
+"pharmacy.auth.validation.password_whitespace" = "يجب ألا تحتوي كلمة المرور على مسافات.";
+"pharmacy.auth.validation.password_strength" = "يجب أن تتضمن كلمة المرور حرفًا كبيرًا وحرفًا صغيرًا ورقمًا ورمزًا خاصًا.";
 "pharmacy.auth.validation.password_mismatch" = "كلمتا المرور غير متطابقتين.";
+"pharmacy.auth.validation.date_of_birth" = "لا يمكن أن يكون تاريخ الميلاد في المستقبل.";
 "pharmacy.auth.validation.otp" = "أدخل رمز التأكيد الكامل المكون من ستة أرقام.";
 /* Splash */
 "pharmacy.splash.brand" = "ميدسي للصيدليات";
@@ -606,4 +620,3 @@
 "pharmacy.payment.cash" = "كاش";
 "pharmacy.payment.card" = "بطاقة";
 "pharmacy.request.payment_method_label" = "طريقة الدفع";
-

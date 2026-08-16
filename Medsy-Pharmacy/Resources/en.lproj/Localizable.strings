@@ -106,9 +106,23 @@
 "pharmacy.auth.verification.code_accessibility" = "Six-digit verification code";
 "pharmacy.auth.verification.action" = "Verify account";
 "pharmacy.auth.validation.required" = "Complete all required fields.";
+"pharmacy.auth.validation.first_name_required" = "First name is required.";
+"pharmacy.auth.validation.last_name_required" = "Last name is required.";
+"pharmacy.auth.validation.phone_required" = "Phone number is required.";
+"pharmacy.auth.validation.email_required" = "Email address is required.";
+"pharmacy.auth.validation.password_required" = "Password is required.";
+"pharmacy.auth.validation.confirm_password_required" = "Please confirm your password.";
+"pharmacy.auth.validation.home_address_required" = "Home address is required.";
+"pharmacy.auth.validation.first_name" = "Enter a valid first name using letters, with no leading or trailing spaces.";
+"pharmacy.auth.validation.last_name" = "Enter a valid last name using letters, with no leading or trailing spaces.";
+"pharmacy.auth.validation.name_length" = "First and last names cannot exceed 50 characters.";
 "pharmacy.auth.validation.email" = "Enter a valid email address.";
-"pharmacy.auth.validation.phone" = "Enter an Egyptian phone number starting with 010, 011, 012, or 015.";
+"pharmacy.auth.validation.phone" = "Enter an 11-digit Egyptian mobile number starting with 010, 011, 012, or 015.";
+"pharmacy.auth.validation.password_length" = "Password must contain between 6 and 15 characters.";
+"pharmacy.auth.validation.password_whitespace" = "Password cannot contain spaces.";
+"pharmacy.auth.validation.password_strength" = "Password must include uppercase and lowercase letters, a number, and a special character.";
 "pharmacy.auth.validation.password_mismatch" = "The passwords do not match.";
+"pharmacy.auth.validation.date_of_birth" = "Date of birth cannot be in the future.";
 "pharmacy.auth.validation.otp" = "Enter the complete six-digit verification code.";
 /* Splash */
 "pharmacy.splash.brand" = "Medsy Pharmacy";
@@ -607,4 +621,3 @@
 "pharmacy.payment.cash" = "Cash";
 "pharmacy.payment.card" = "Card";
 "pharmacy.request.payment_method_label" = "Payment method";
-
