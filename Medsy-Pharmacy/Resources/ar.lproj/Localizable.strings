@@ -620,3 +620,5 @@
 "pharmacy.payment.cash" = "كاش";
 "pharmacy.payment.card" = "بطاقة";
 "pharmacy.request.payment_method_label" = "طريقة الدفع";
+
+"common.error.offline" = "لا يوجد اتصال بالإنترنت. يرجى التحقق من الاتصال والمحاولة مرة أخرى.";

@@ -1143,3 +1143,5 @@
 
 "pharmacy.chatbot.analytics.metric.request_coverage_rate" = "Coverage Rate";
 "pharmacy.chatbot.analytics.status.ready_for_pickup" = "Ready for Pickup";
+
+"common.error.offline" = "No internet connection. Please check your connection and try again.";

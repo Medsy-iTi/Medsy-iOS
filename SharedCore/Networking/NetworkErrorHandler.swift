@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 enum NetworkErrorHandler {
     
@@ -15,6 +16,14 @@ enum NetworkErrorHandler {
         }
 
         guard let statusCode else {
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNotConnectedToInternet {
+                return .offline
+            }
+            if let afError = error as? AFError, let underlying = afError.underlyingError as? URLError, underlying.code == .notConnectedToInternet {
+                return .offline
+            }
+            
             return .transportError(error.localizedDescription)
         }
         
