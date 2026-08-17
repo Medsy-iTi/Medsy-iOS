@@ -92,7 +92,7 @@ final class AiChatSessionDataSourceTests: XCTestCase {
                 id: i, role: .user, content: "Message \(i)",
                 intent: nil, products: [], alternatives: [],
                 doctorSpecializations: [], emergencyNumbers: [],
-                categories: [], pharmacistRankings: [], createdAt: nil
+                categories: [], pharmacistRankings: [], analytics: nil, createdAt: nil
             )
         }
         return AIChatHistory(conversationID: 1, messages: messages)

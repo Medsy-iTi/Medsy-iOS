@@ -1,3 +1,10 @@
+//
+//  OfferResultDTOs.swift
+//  Medsy
+//
+//  Created by Antoneos Philip on 25/07/2026.
+//
+
 import Foundation
 
 protocol OffersRemoteDataSourceProtocol {
@@ -62,6 +69,13 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
 
                 do {
                     if let orig: APIResponseDTO<CompleteRequestResponseDTO> = try? await networkService.request(endpoint: OffersEndpoint.getRequest(requestId: requestId)), let req = orig.data {
+                        let upperStatus = req.status.uppercased()
+                        if upperStatus == "COMPLETED" || upperStatus == "CANCELLED" || upperStatus == "DELIVERED" || upperStatus == "REJECTED" {
+                            print("[Offers Remote Data Source] 🛑 Request \(requestId) is already \(upperStatus), finishing stream immediately.")
+                            continuation.finish()
+                            return
+                        }
+
                         origRequest = req
                         let initialItems = req.items.map { item in
                             OfferResultItemDTO(
@@ -93,6 +107,12 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
                         if eventName == "stream-closed" {
                             continuation.finish()
                             break
+                        }
+
+                        if eventName == "connected" || eventName == "heartbeat" || eventName == "ping" {
+                            let fallbackDTO = currentResult ?? OfferResultResponseDTO(items: [], totalPrice: 0.0, prescriptionUrl: nil)
+                            continuation.yield(fallbackDTO)
+                            continue
                         }
 
                         var processed = false

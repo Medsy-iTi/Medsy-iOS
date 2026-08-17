@@ -76,7 +76,7 @@ final class AiChatViewModelTests: XCTestCase {
                 id: 100, role: .user, content: "Previous message",
                 intent: nil, products: [], alternatives: [],
                 doctorSpecializations: [], emergencyNumbers: [],
-                categories: [], pharmacistRankings: [], createdAt: nil
+                categories: [], pharmacistRankings: [], analytics: nil, createdAt: nil
             )
         ]
         loadHistoryUseCase.result = .success(AIChatHistory(conversationID: 1, messages: historyMessages))

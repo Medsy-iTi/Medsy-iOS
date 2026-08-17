@@ -48,6 +48,28 @@ struct AuthenticatedUserDTO: Decodable, Equatable {
         case backendLongitude = "Longitude"
     }
 
+    init(
+        id: Int,
+        email: String,
+        firstName: String,
+        lastName: String,
+        role: String,
+        homeAddress: String = "",
+        dob: String = "",
+        latitude: Double? = nil,
+        longitude: Double? = nil
+    ) {
+        self.id = id
+        self.email = email
+        self.firstName = firstName
+        self.lastName = lastName
+        self.role = role
+        self.homeAddress = homeAddress
+        self.dob = dob
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)

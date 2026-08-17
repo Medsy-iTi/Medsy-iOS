@@ -129,7 +129,9 @@ final class LoginAPIIntegrationTests: XCTestCase {
                 lastName: "Salah",
                 role: "CUSTOMER",
                 homeAddress: "Cairo",
-                dateOfBirth: "1995-04-23"
+                dateOfBirth: "1995-04-23",
+                homeLatitude: nil,
+                homeLongitude: nil
             )
         )
     }
@@ -247,7 +249,9 @@ private final class LoginUseCaseSpy: LoginUseCaseProtocol {
                 lastName: "Salah",
                 role: "CUSTOMER",
                 homeAddress: "Cairo",
-                dateOfBirth: "1995-04-23"
+                dateOfBirth: "1995-04-23",
+                homeLatitude: nil,
+                homeLongitude: nil
             )
         )
     }

@@ -185,7 +185,7 @@ final class VerificationSessionIntegrationTests: XCTestCase {
     }
 
     private func makeSession() -> AuthenticatedSession {
-        AuthenticatedSession(accessToken: "access", refreshToken: "refresh", user: .init(id: 1, email: "user@example.com", firstName: "Ehab", lastName: "Salah", role: "CUSTOMER", homeAddress: "Cairo", dateOfBirth: "1995-04-23"))
+        AuthenticatedSession(accessToken: "access", refreshToken: "refresh", user: .init(id: 1, email: "user@example.com", firstName: "Ehab", lastName: "Salah", role: "CUSTOMER", homeAddress: "Cairo", dateOfBirth: "1995-04-23", homeLatitude: nil, homeLongitude: nil))
     }
 
     private func makeSessionDTO() -> AuthSessionDTO {
@@ -241,7 +241,7 @@ private final class VerificationUseCaseSpy: VerificationUseCaseProtocol {
         callCount += 1
         await onExecute?()
         if let error { throw error }
-        return AuthenticatedSession(accessToken: "access", refreshToken: "refresh", user: .init(id: 1, email: input.email, firstName: "", lastName: "", role: "CUSTOMER", homeAddress: "", dateOfBirth: ""))
+        return AuthenticatedSession(accessToken: "access", refreshToken: "refresh", user: .init(id: 1, email: input.email, firstName: "", lastName: "", role: "CUSTOMER", homeAddress: "", dateOfBirth: "", homeLatitude: nil, homeLongitude: nil))
     }
 }
 
