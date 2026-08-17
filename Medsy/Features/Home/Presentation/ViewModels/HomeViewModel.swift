@@ -1,3 +1,10 @@
+//
+//  HomeViewModel.swift
+//  Medsy
+//
+//  Created by Antoneos Philip on 25/07/2026.
+//
+
 import Foundation
 import Observation
 import SwiftUI
@@ -71,7 +78,6 @@ final class HomeViewModel {
         await Task.detached { [weak self] in
             guard let self else { return }
 
-            // 1. Fetch current requests and masterorders
             var maybeRequests: [CompleteRequestResponseDTO]?
             var maybeOrders: [MasterOrderDTO]?
 
@@ -149,7 +155,6 @@ final class HomeViewModel {
 
                 print("[HomeViewModel Refresh] 🚀 Fetching REST offer snapshots for IDs: \(currentIds)")
 
-                // Fetch current REST offer snapshots in parallel to update UI immediately
                 await withTaskGroup(of: (Int, OfferResult?).self) { group in
                     for reqId in currentIds {
                         group.addTask {
@@ -204,7 +209,6 @@ final class HomeViewModel {
         let useCase = self.getOfferResultUseCase
         let existingIds = self.activeRequestIds
 
-        // 1. Fetch current REST offers for known active requests immediately in parallel
         if !existingIds.isEmpty {
             await withTaskGroup(of: (Int, OfferResult?).self) { group in
                 for reqId in existingIds {
@@ -221,7 +225,6 @@ final class HomeViewModel {
             }
         }
 
-        // 2. Fetch requests and orders list in parallel
         async let fetchedRequests = (try? await self.offersRemoteDataSource.fetchRequests(page: 0, size: 10)) ?? []
         async let fetchedOrders = (try? await self.offersRemoteDataSource.fetchMasterOrders(page: 0, size: 10)) ?? []
 
@@ -268,7 +271,6 @@ final class HomeViewModel {
             let idsChanged = self.activeRequestIds != newIds
             self.activeRequestIds = newIds
 
-            // Fetch current REST offer snapshots immediately for all active requests in parallel
             await withTaskGroup(of: (Int, OfferResult?).self) { group in
                 for req in activeSearchRequests {
                     let reqId = req.id
@@ -284,12 +286,10 @@ final class HomeViewModel {
                 }
             }
 
-            // Start or restart stream when forced, when IDs changed, or when task was nil
             if forceRestartStream || idsChanged || self.pollingTask == nil {
                 self.startRequestsStreaming(for: newIds)
             }
         } else if !recentRequests.isEmpty || !recentOrders.isEmpty {
-            // Only clear to home if requests and orders returned successfully and are genuinely empty
             self.stopPolling()
             self.activeRequestIds = []
             self.offerResults = [:]
@@ -320,7 +320,6 @@ final class HomeViewModel {
 
         pollingTask = Task {
             await withTaskGroup(of: Void.self) { group in
-                // 1. Expiration monitor task (15 minutes limit)
                 group.addTask {
                     while !Task.isCancelled {
                         try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -344,11 +343,9 @@ final class HomeViewModel {
                     }
                 }
 
-                // 2. Resilient SSE Stream tasks + 3. 3s Disconnection Fallback for each request ID
                 for reqId in requestIds {
                     let createdAt = requestsList.first(where: { $0.id == reqId })?.createdAt.toBackendDate()
 
-                    // Real-time SSE Stream Task
                     group.addTask {
                         var retryDelayNanoseconds: UInt64 = 1_000_000_000
 
@@ -387,7 +384,6 @@ final class HomeViewModel {
                                             self.applyOfferResult(result, for: reqId)
                                         }
                                     }
-                                    // Reset retry delay on valid connection/data reception
                                     retryDelayNanoseconds = 1_000_000_000
                                 }
                             } catch {
@@ -402,7 +398,6 @@ final class HomeViewModel {
 
                             if Task.isCancelled { break }
 
-                            // If offline or disconnected, try getting fresh REST result without breaking the retry loop on errors
                             if let freshResult = try? await useCase.execute(requestId: reqId) {
                                 await MainActor.run {
                                     self.applyOfferResult(freshResult, for: reqId)
@@ -415,7 +410,6 @@ final class HomeViewModel {
                         }
                     }
 
-                    // 3-second REST Fallback Task: ONLY polls when SSE Stream is down or disconnected!
                     group.addTask {
                         while !Task.isCancelled {
                             try? await Task.sleep(nanoseconds: 3_000_000_000)
@@ -432,12 +426,10 @@ final class HomeViewModel {
                                 self.isStreamConnected[reqId] ?? false
                             }
 
-                            // If stream is active and connected, do NOT poll!
                             if isConnected {
                                 continue
                             }
 
-                            // Stream is disconnected: execute 3s REST fallback
                             do {
                                 let fallbackResult = try await useCase.execute(requestId: reqId)
                                 print("[HomeViewModel] ⏱️ [3s Fallback (Stream Disconnected)] Fetched OfferResult for requestId \(reqId): isAvailable=\(fallbackResult.isAvailable), items=\(fallbackResult.items.count)")
