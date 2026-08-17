@@ -55,8 +55,38 @@ final class NetworkService: NetworkServiceProtocol {
 
     func streamSSE(endpoint: ApiEndpoint) -> AsyncThrowingStream<SSEEvent, Error> {
         AsyncThrowingStream { continuation in
+            final class StreamSessionHolder: @unchecked Sendable {
+                var session: URLSession?
+                func cancel() {
+                    session?.invalidateAndCancel()
+                    session = nil
+                }
+            }
+
+            let sessionHolder = StreamSessionHolder()
+
             let task = Task {
-                var streamSession: URLSession?
+                var lastActivityDate = Date()
+
+                // Watchdog to abort half-open hung TCP sockets if no keep-alive is received within 35s
+                let watchdogTask = Task {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 5_000_000_000)
+                        if Task.isCancelled { break }
+                        let elapsed = Date().timeIntervalSince(lastActivityDate)
+                        if elapsed > 35 {
+                            print("[Network SSE] ⏱️ Inactivity watchdog timeout (>35s), invalidating dead socket...")
+                            sessionHolder.cancel()
+                            break
+                        }
+                    }
+                }
+
+                defer {
+                    watchdogTask.cancel()
+                    sessionHolder.cancel()
+                }
+
                 do {
                     var request = try requestBuilder.makeRequest(
                         for: endpoint,
@@ -70,16 +100,16 @@ final class NetworkService: NetworkServiceProtocol {
                     print("[Network SSE] 🚀 Stream starting for endpoint: \(endpoint.method.rawValue) \(request.url?.absoluteString ?? endpoint.path)")
 
                     let config = URLSessionConfiguration.default
-                    config.timeoutIntervalForRequest = 45
+                    config.timeoutIntervalForRequest = 20
                     config.timeoutIntervalForResource = 900
-                    config.waitsForConnectivity = true
+                    config.waitsForConnectivity = false
                     config.allowsCellularAccess = true
                     config.allowsExpensiveNetworkAccess = true
                     config.allowsConstrainedNetworkAccess = true
                     config.networkServiceType = .responsiveData
 
                     let session = URLSession(configuration: config)
-                    streamSession = session
+                    sessionHolder.session = session
 
                     let (bytes, response) = try await session.bytes(for: request)
                     if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
@@ -92,6 +122,8 @@ final class NetworkService: NetworkServiceProtocol {
                     }
 
                     print("[Network SSE] ✅ Stream HTTP connection established successfully!")
+                    continuation.yield(SSEEvent(event: "connected", data: ""))
+                    lastActivityDate = Date()
 
                     var currentEvent = ""
                     var currentData = ""
@@ -111,12 +143,14 @@ final class NetworkService: NetworkServiceProtocol {
                             print("[Network SSE] ⏹️ Task cancelled, stopping stream loop.")
                             break
                         }
+                        lastActivityDate = Date()
                         print("[Network SSE Line] \(line)")
 
                         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
                         if trimmed.hasPrefix(":") {
-                            // Keepalive heartbeat comment from server; ignore without interrupting pending event data
+                            // Keepalive heartbeat comment from server; yield heartbeat event to refresh liveness
+                            continuation.yield(SSEEvent(event: "heartbeat", data: ""))
                             continue
                         }
 
@@ -149,12 +183,12 @@ final class NetworkService: NetworkServiceProtocol {
                     }
                     continuation.finish(throwing: error)
                 }
-                streamSession?.invalidateAndCancel()
             }
 
             continuation.onTermination = { reason in
                 print("[Network SSE] Stream terminated with reason: \(reason)")
                 task.cancel()
+                sessionHolder.cancel()
             }
         }
     }

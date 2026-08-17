@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @State private var favoriteCountViewModel = DIContainer.shared.resolve(FavoriteCountViewModel.self)
+    @State private var connectivityMonitor = DIContainer.shared.resolve(NetworkConnectivityProviding.self) as? NetworkConnectivityMonitor
     var refreshSignal: Int = 0
     let onSearchTap: () -> Void
     let onMedicineAnalyze: () -> Void
@@ -139,7 +140,9 @@ struct HomeView: View {
                 .frame(width: geometry.size.width)
             }
             .refreshable {
-                await viewModel.refresh()
+                async let r1: Void = viewModel.refresh()
+                async let r2: Void = favoriteCountViewModel.refresh()
+                _ = await (r1, r2)
             }
             .scrollBounceBehavior(.basedOnSize, axes: .vertical)
             .clipped()
@@ -165,6 +168,12 @@ struct HomeView: View {
         }
         .onChange(of: refreshSignal) { _, _ in
             viewModel.checkAndStartPolling(forceRestartStream: true)
+        }
+        .onChange(of: connectivityMonitor?.status) { oldStatus, newStatus in
+            if newStatus == .connected {
+                print("[HomeView] 🌐 Network reconnected! Restarting polling and stream...")
+                viewModel.checkAndStartPolling(forceRestartStream: true)
+            }
         }
         .task {
             await favoriteCountViewModel.refresh()

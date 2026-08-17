@@ -16,7 +16,7 @@ final class HomeViewModel {
     private let offersRemoteDataSource: OffersRemoteDataSourceProtocol
     private var pollingTask: Task<Void, Never>?
     private var isCheckingPolling = false
-    private var activeStreamHealth: [Int: Bool] = [:]
+    private var isStreamConnected: [Int: Bool] = [:]
 
     init(
         getOfferResultUseCase: GetOfferResultUseCaseProtocol = DIContainer.shared.resolve(GetOfferResultUseCaseProtocol.self),
@@ -61,21 +61,44 @@ final class HomeViewModel {
     func refresh() async {
         isRefreshing = true
         defer { isRefreshing = false }
-        await performCheckAndStartPolling(forceRestartStream: false)
+        isCheckingPolling = false
+        stopPolling()
+        await performCheckAndStartPolling(forceRestartStream: true)
     }
 
     func checkAndStartPolling(forceRestartStream: Bool = false) {
-        guard !isCheckingPolling else { return }
+        if !forceRestartStream && isCheckingPolling { return }
         Task {
             await performCheckAndStartPolling(forceRestartStream: forceRestartStream)
         }
     }
 
     private func performCheckAndStartPolling(forceRestartStream: Bool) async {
-        guard !isCheckingPolling else { return }
+        if !forceRestartStream && isCheckingPolling { return }
         isCheckingPolling = true
         defer { self.isCheckingPolling = false }
 
+        let useCase = self.getOfferResultUseCase
+        let existingIds = self.activeRequestIds
+
+        // 1. Fetch current REST offers for known active requests immediately in parallel
+        if !existingIds.isEmpty {
+            await withTaskGroup(of: (Int, OfferResult?).self) { group in
+                for reqId in existingIds {
+                    group.addTask {
+                        let res = try? await useCase.execute(requestId: reqId)
+                        return (reqId, res)
+                    }
+                }
+                for await (reqId, maybeResult) in group {
+                    if let result = maybeResult {
+                        self.applyOfferResult(result, for: reqId)
+                    }
+                }
+            }
+        }
+
+        // 2. Fetch requests and orders list in parallel
         async let fetchedRequests = (try? await self.offersRemoteDataSource.fetchRequests(page: 0, size: 10)) ?? []
         async let fetchedOrders = (try? await self.offersRemoteDataSource.fetchMasterOrders(page: 0, size: 10)) ?? []
 
@@ -123,7 +146,6 @@ final class HomeViewModel {
             self.activeRequestIds = newIds
 
             // Fetch current REST offer snapshots immediately for all active requests in parallel
-            let useCase = self.getOfferResultUseCase
             await withTaskGroup(of: (Int, OfferResult?).self) { group in
                 for req in activeSearchRequests {
                     let reqId = req.id
@@ -134,21 +156,12 @@ final class HomeViewModel {
                 }
                 for await (reqId, maybeResult) in group {
                     if let result = maybeResult {
-                        self.offerResults[reqId] = result
+                        self.applyOfferResult(result, for: reqId)
                     }
                 }
             }
 
-            let availableCount = self.offerResults.values.filter(\.isAvailable).count
-            if availableCount > 1 {
-                self.selectedStatus = .multipleOffers
-            } else if availableCount == 1 {
-                self.selectedStatus = .firstOffer
-            } else {
-                self.selectedStatus = .searching
-            }
-
-            // Only start streaming if it was not running or if request IDs changed, preserving active stream
+            // Start or restart stream when forced, when IDs changed, or when task was nil
             if forceRestartStream || idsChanged || self.pollingTask == nil {
                 self.startRequestsStreaming(for: activeSearchRequests)
             }
@@ -179,7 +192,7 @@ final class HomeViewModel {
         stopPolling()
 
         let requestIds = requests.map(\.id)
-        print("[HomeViewModel] 🟢 Starting resilient SSE stream and 15s REST fallback task group for request IDs: \(requestIds)")
+        print("[HomeViewModel] 🟢 Starting resilient SSE stream and 3s fallback task group for request IDs: \(requestIds)")
         let useCase = self.getOfferResultUseCase
 
         pollingTask = Task {
@@ -208,7 +221,7 @@ final class HomeViewModel {
                     }
                 }
 
-                // 2. Resilient SSE Stream tasks + 3. Conditional 15s REST Polling Fallback
+                // 2. Resilient SSE Stream tasks + 3. 3s Disconnection Fallback for each request ID
                 for req in requests {
                     let reqId = req.id
                     let createdAt = req.createdAt.toBackendDate()
@@ -224,7 +237,7 @@ final class HomeViewModel {
                             guard isStillActive else {
                                 print("[HomeViewModel] 🛑 Request \(reqId) is no longer in activeRequestIds, stopping stream loop.")
                                 await MainActor.run {
-                                    _ = self.activeStreamHealth.removeValue(forKey: reqId)
+                                    _ = self.isStreamConnected.removeValue(forKey: reqId)
                                 }
                                 break
                             }
@@ -234,7 +247,7 @@ final class HomeViewModel {
                                 await MainActor.run {
                                     self.activeRequestIds.removeAll { $0 == reqId }
                                     self.offerResults.removeValue(forKey: reqId)
-                                    self.activeStreamHealth.removeValue(forKey: reqId)
+                                    _ = self.isStreamConnected.removeValue(forKey: reqId)
                                     self.checkAndStartPolling(forceRestartStream: false)
                                 }
                                 break
@@ -245,12 +258,14 @@ final class HomeViewModel {
                                 let stream = useCase.stream(requestId: reqId)
                                 for try await result in stream {
                                     if Task.isCancelled { break }
-                                    print("[HomeViewModel] 📥 [SSE] Received updated OfferResult for requestId \(reqId): isAvailable=\(result.isAvailable), itemsCount=\(result.items.count), totalPrice=\(result.totalPrice)")
                                     await MainActor.run {
-                                        self.activeStreamHealth[reqId] = true
-                                        self.applyOfferResult(result, for: reqId)
+                                        self.isStreamConnected[reqId] = true
+                                        if !result.items.isEmpty {
+                                            print("[HomeViewModel] 📥 [SSE] Received updated OfferResult for requestId \(reqId): isAvailable=\(result.isAvailable), itemsCount=\(result.items.count), totalPrice=\(result.totalPrice)")
+                                            self.applyOfferResult(result, for: reqId)
+                                        }
                                     }
-                                    // Reset retry delay on valid data reception
+                                    // Reset retry delay on valid connection/data reception
                                     retryDelayNanoseconds = 1_000_000_000
                                 }
                             } catch {
@@ -260,26 +275,16 @@ final class HomeViewModel {
                             }
 
                             await MainActor.run {
-                                self.activeStreamHealth[reqId] = false
+                                self.isStreamConnected[reqId] = false
                             }
 
                             if Task.isCancelled { break }
 
-                            // Fetch current REST state on stream disruption to check if request is completed or still active
-                            do {
-                                let freshResult = try await useCase.execute(requestId: reqId)
+                            // If offline or disconnected, try getting fresh REST result without breaking the retry loop on errors
+                            if let freshResult = try? await useCase.execute(requestId: reqId) {
                                 await MainActor.run {
                                     self.applyOfferResult(freshResult, for: reqId)
                                 }
-                            } catch {
-                                print("[HomeViewModel] 🛑 Request \(reqId) cannot view result (e.g. COMPLETED / 400). Terminating stream task.")
-                                await MainActor.run {
-                                    self.activeRequestIds.removeAll { $0 == reqId }
-                                    self.offerResults.removeValue(forKey: reqId)
-                                    self.activeStreamHealth.removeValue(forKey: reqId)
-                                    self.checkAndStartPolling(forceRestartStream: false)
-                                }
-                                break
                             }
 
                             print("[HomeViewModel] 🔄 Reconnecting SSE stream for requestId \(reqId) in \(Double(retryDelayNanoseconds) / 1_000_000_000.0)s...")
@@ -288,7 +293,7 @@ final class HomeViewModel {
                         }
                     }
 
-                    // Conditional 3-second REST Fallback Task: ONLY polls when SSE Stream is down or disconnected!
+                    // 3-second REST Fallback Task: ONLY polls when SSE Stream is down or disconnected!
                     group.addTask {
                         while !Task.isCancelled {
                             try? await Task.sleep(nanoseconds: 3_000_000_000)
@@ -301,16 +306,16 @@ final class HomeViewModel {
 
                             if let created = createdAt, Date().timeIntervalSince(created) >= 900 { break }
 
-                            let isHealthy = await MainActor.run {
-                                self.activeStreamHealth[reqId] ?? false
+                            let isConnected = await MainActor.run {
+                                self.isStreamConnected[reqId] ?? false
                             }
 
-                            // If stream is healthy and active, skip periodic polling (saving network & battery)
-                            if isHealthy {
+                            // If stream is active and connected, do NOT poll!
+                            if isConnected {
                                 continue
                             }
 
-                            // Stream is disconnected or has an issue: execute 3s REST fallback
+                            // Stream is disconnected: execute 3s REST fallback
                             do {
                                 let fallbackResult = try await useCase.execute(requestId: reqId)
                                 print("[HomeViewModel] ⏱️ [3s Fallback (Stream Disconnected)] Fetched OfferResult for requestId \(reqId): isAvailable=\(fallbackResult.isAvailable), items=\(fallbackResult.items.count)")
@@ -331,8 +336,8 @@ final class HomeViewModel {
     func handleScenePhaseChange(to newPhase: ScenePhase) {
         switch newPhase {
         case .active:
-            print("[HomeViewModel] 📱 scenePhase -> .active: fetching REST updates without canceling ongoing stream")
-            checkAndStartPolling(forceRestartStream: false)
+            print("[HomeViewModel] 📱 scenePhase -> .active: refreshing data and ensuring active stream")
+            checkAndStartPolling(forceRestartStream: true)
         case .inactive, .background:
             break
         @unknown default:
@@ -348,8 +353,8 @@ final class HomeViewModel {
     }
 
     func handleAppActive() {
-        print("[HomeViewModel] 📲 App active / willEnterForeground triggered: fetching REST updates")
-        checkAndStartPolling(forceRestartStream: false)
+        print("[HomeViewModel] 📲 App active / willEnterForeground triggered: refreshing data and ensuring active stream")
+        checkAndStartPolling(forceRestartStream: true)
     }
 
     func handleAppBackground() {
@@ -359,7 +364,7 @@ final class HomeViewModel {
     func stopPolling() {
         pollingTask?.cancel()
         pollingTask = nil
-        activeStreamHealth.removeAll()
+        isStreamConnected.removeAll()
     }
 
     func clearActiveRequest() {

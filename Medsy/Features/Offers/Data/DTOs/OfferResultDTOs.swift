@@ -102,6 +102,12 @@ final class OffersRemoteDataSource: OffersRemoteDataSourceProtocol {
                             break
                         }
 
+                        if eventName == "connected" || eventName == "heartbeat" || eventName == "ping" {
+                            let fallbackDTO = currentResult ?? OfferResultResponseDTO(items: [], totalPrice: 0.0, prescriptionUrl: nil)
+                            continuation.yield(fallbackDTO)
+                            continue
+                        }
+
                         var processed = false
 
                         if eventName == "snapshot" || eventName.isEmpty || eventName == "message" {
