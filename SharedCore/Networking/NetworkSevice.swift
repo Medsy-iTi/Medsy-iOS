@@ -58,16 +58,26 @@ final class NetworkService: NetworkServiceProtocol {
             let task = Task {
                 var streamSession: URLSession?
                 do {
-                    let request = try requestBuilder.makeRequest(
+                    var request = try requestBuilder.makeRequest(
                         for: endpoint,
                         accessToken: endpoint.requiresAuthentication ? tokenStore?.accessToken() : nil
                     )
+                    request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+                    request.setValue("no-cache, no-transform", forHTTPHeaderField: "Cache-Control")
+                    request.setValue("keep-alive", forHTTPHeaderField: "Connection")
+                    request.setValue("no", forHTTPHeaderField: "X-Accel-Buffering")
+
                     print("[Network SSE] 🚀 Stream starting for endpoint: \(endpoint.method.rawValue) \(request.url?.absoluteString ?? endpoint.path)")
 
                     let config = URLSessionConfiguration.default
                     config.timeoutIntervalForRequest = 45
                     config.timeoutIntervalForResource = 900
                     config.waitsForConnectivity = true
+                    config.allowsCellularAccess = true
+                    config.allowsExpensiveNetworkAccess = true
+                    config.allowsConstrainedNetworkAccess = true
+                    config.networkServiceType = .responsiveData
+
                     let session = URLSession(configuration: config)
                     streamSession = session
 

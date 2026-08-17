@@ -288,10 +288,10 @@ final class HomeViewModel {
                         }
                     }
 
-                    // Conditional 15-second REST Fallback Task: ONLY polls when SSE Stream is down or disconnected!
+                    // Conditional 3-second REST Fallback Task: ONLY polls when SSE Stream is down or disconnected!
                     group.addTask {
                         while !Task.isCancelled {
-                            try? await Task.sleep(nanoseconds: 15_000_000_000)
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
                             if Task.isCancelled { break }
 
                             let isStillActive = await MainActor.run {
@@ -310,15 +310,15 @@ final class HomeViewModel {
                                 continue
                             }
 
-                            // Stream is disconnected or has an issue: execute 15s REST fallback
+                            // Stream is disconnected or has an issue: execute 3s REST fallback
                             do {
                                 let fallbackResult = try await useCase.execute(requestId: reqId)
-                                print("[HomeViewModel] ⏱️ [15s Fallback (Stream Disconnected)] Fetched OfferResult for requestId \(reqId): isAvailable=\(fallbackResult.isAvailable), items=\(fallbackResult.items.count)")
+                                print("[HomeViewModel] ⏱️ [3s Fallback (Stream Disconnected)] Fetched OfferResult for requestId \(reqId): isAvailable=\(fallbackResult.isAvailable), items=\(fallbackResult.items.count)")
                                 await MainActor.run {
                                     self.applyOfferResult(fallbackResult, for: reqId)
                                 }
                             } catch {
-                                print("[HomeViewModel] ⚠️ [15s Fallback] Request \(reqId) error: \(error)")
+                                print("[HomeViewModel] ⚠️ [3s Fallback] Request \(reqId) error: \(error)")
                             }
                         }
                     }
