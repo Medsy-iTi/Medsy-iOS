@@ -61,9 +61,132 @@ final class HomeViewModel {
     func refresh() async {
         isRefreshing = true
         defer { isRefreshing = false }
-        isCheckingPolling = false
-        stopPolling()
-        await performCheckAndStartPolling(forceRestartStream: true)
+
+        print("[HomeViewModel Refresh] 🔄 Pull-to-Refresh triggered...")
+
+        let useCase = self.getOfferResultUseCase
+        let remoteDS = self.offersRemoteDataSource
+        let knownIds = self.activeRequestIds
+
+        await Task.detached { [weak self] in
+            guard let self else { return }
+
+            // 1. Fetch current requests and masterorders
+            var maybeRequests: [CompleteRequestResponseDTO]?
+            var maybeOrders: [MasterOrderDTO]?
+
+            do {
+                maybeRequests = try await remoteDS.fetchRequests(page: 0, size: 10)
+            } catch {
+                print("[HomeViewModel Refresh] ❌ fetchRequests error: \(error)")
+            }
+
+            do {
+                maybeOrders = try await remoteDS.fetchMasterOrders(page: 0, size: 10)
+            } catch {
+                print("[HomeViewModel Refresh] ❌ fetchMasterOrders error: \(error)")
+            }
+
+            let recentRequests = maybeRequests ?? []
+            let recentOrders = maybeOrders ?? []
+
+            print("[HomeViewModel Refresh] 📥 Fetched \(recentRequests.count) requests, \(recentOrders.count) orders.")
+            for req in recentRequests {
+                print("   ↳ Request #\(req.id): status=\(req.status), createdAt=\(req.createdAt), items=\(req.items.count)")
+            }
+
+            let activeSearchRequests = recentRequests.filter { req in
+                let upperStatus = req.status.uppercased()
+                let isSearchingStatus = (upperStatus == "SEARCHING" || upperStatus == "PENDING" || upperStatus == "OFFERS_READY")
+                guard isSearchingStatus else { return false }
+
+                if let createdDate = req.createdAt.toBackendDate() {
+                    let ageInSeconds = Date().timeIntervalSince(createdDate)
+                    guard ageInSeconds < 900 else { return false }
+                }
+
+                let hasMasterOrder = recentOrders.contains { $0.requestId == req.id }
+                return !hasMasterOrder
+            }
+
+            print("[HomeViewModel Refresh] 🔎 Active search requests: \(activeSearchRequests.map(\.id))")
+
+            let resumableOrder = recentOrders.first(where: { order in
+                let upperStatus = order.orderStatus.uppercased()
+                let isCardAwaitingPayment = (order.paymentMethod?.uppercased() == "CARD" && upperStatus == "PENDING")
+                if isCardAwaitingPayment { return true }
+                let isFulfillmentAwaiting = (upperStatus == "PENDING" && order.fulfillmentMethod == nil)
+                if isFulfillmentAwaiting {
+                    return true
+                }
+                return false
+            })
+
+            if let resumable = resumableOrder {
+                print("[HomeViewModel Refresh] 📋 Found resumable master order #\(resumable.id) (Status: \(resumable.orderStatus))")
+                await MainActor.run {
+                    self.activeRequestIds = []
+                    self.offerResults = [:]
+                    self.activeSearchRequestsList = []
+                    self.activeContinueMasterOrder = resumable
+                    self.selectedStatus = .continueOrder
+                }
+                return
+            }
+
+            let currentIds = !activeSearchRequests.isEmpty ? activeSearchRequests.map(\.id) : knownIds
+            if !activeSearchRequests.isEmpty {
+                await MainActor.run {
+                    self.activeSearchRequestsList = activeSearchRequests
+                }
+            }
+
+            if !currentIds.isEmpty {
+                await MainActor.run {
+                    self.activeContinueMasterOrder = nil
+                    self.activeRequestIds = currentIds
+                }
+
+                print("[HomeViewModel Refresh] 🚀 Fetching REST offer snapshots for IDs: \(currentIds)")
+
+                // Fetch current REST offer snapshots in parallel to update UI immediately
+                await withTaskGroup(of: (Int, OfferResult?).self) { group in
+                    for reqId in currentIds {
+                        group.addTask {
+                            do {
+                                let res = try await useCase.execute(requestId: reqId)
+                                return (reqId, res)
+                            } catch {
+                                print("[HomeViewModel Refresh] ❌ useCase.execute(requestId: \(reqId)) error: \(error)")
+                                return (reqId, nil)
+                            }
+                        }
+                    }
+                    for await (reqId, maybeResult) in group {
+                        if let result = maybeResult {
+                            print("[HomeViewModel Refresh] ✅ Received OfferResult for requestId \(reqId): isAvailable=\(result.isAvailable), itemsCount=\(result.items.count), totalPrice=\(result.totalPrice)")
+                            for item in result.items {
+                                print("      ↳ Item #\(item.requestItemId): available=\(item.isAvailable), price=\(item.unitPrice), alt=\(item.isAlternative)")
+                            }
+                            await MainActor.run {
+                                self.applyOfferResult(result, for: reqId)
+                            }
+                        } else {
+                            print("[HomeViewModel Refresh] ⚠️ Nil or failed OfferResult for requestId \(reqId)")
+                        }
+                    }
+                }
+            } else if maybeRequests != nil || maybeOrders != nil {
+                print("[HomeViewModel Refresh] 🏠 No active requests or orders. Setting status to .home")
+                await MainActor.run {
+                    self.activeRequestIds = []
+                    self.offerResults = [:]
+                    self.activeSearchRequestsList = []
+                    self.activeContinueMasterOrder = nil
+                    self.selectedStatus = .home
+                }
+            }
+        }.value
     }
 
     func checkAndStartPolling(forceRestartStream: Bool = false) {
@@ -163,7 +286,7 @@ final class HomeViewModel {
 
             // Start or restart stream when forced, when IDs changed, or when task was nil
             if forceRestartStream || idsChanged || self.pollingTask == nil {
-                self.startRequestsStreaming(for: activeSearchRequests)
+                self.startRequestsStreaming(for: newIds)
             }
         } else if !recentRequests.isEmpty || !recentOrders.isEmpty {
             // Only clear to home if requests and orders returned successfully and are genuinely empty
@@ -188,12 +311,12 @@ final class HomeViewModel {
         }
     }
 
-    private func startRequestsStreaming(for requests: [CompleteRequestResponseDTO]) {
+    private func startRequestsStreaming(for requestIds: [Int]) {
         stopPolling()
 
-        let requestIds = requests.map(\.id)
         print("[HomeViewModel] 🟢 Starting resilient SSE stream and 3s fallback task group for request IDs: \(requestIds)")
         let useCase = self.getOfferResultUseCase
+        let requestsList = self.activeSearchRequestsList
 
         pollingTask = Task {
             await withTaskGroup(of: Void.self) { group in
@@ -203,7 +326,7 @@ final class HomeViewModel {
                         try? await Task.sleep(nanoseconds: 1_000_000_000)
                         if Task.isCancelled { break }
                         var anyExpired = false
-                        for req in requests {
+                        for req in requestsList {
                             if let created = req.createdAt.toBackendDate() {
                                 let age = Date().timeIntervalSince(created)
                                 if age >= 900 {
@@ -222,9 +345,8 @@ final class HomeViewModel {
                 }
 
                 // 2. Resilient SSE Stream tasks + 3. 3s Disconnection Fallback for each request ID
-                for req in requests {
-                    let reqId = req.id
-                    let createdAt = req.createdAt.toBackendDate()
+                for reqId in requestIds {
+                    let createdAt = requestsList.first(where: { $0.id == reqId })?.createdAt.toBackendDate()
 
                     // Real-time SSE Stream Task
                     group.addTask {
