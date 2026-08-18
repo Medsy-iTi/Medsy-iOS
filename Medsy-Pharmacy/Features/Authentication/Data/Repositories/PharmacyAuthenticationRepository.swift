@@ -38,4 +38,25 @@ final class PharmacyAuthenticationRepository: PharmacyAuthenticationRepositoryPr
         )
         return session.toDomain()
     }
+
+    func requestPasswordReset(input: PharmacyForgotPasswordInput) async throws {
+        try await remoteDataSource.requestPasswordReset(
+            request: PharmacyForgotPasswordRequestDTO(input: input)
+        )
+    }
+
+    func verifyPasswordReset(
+        input: PharmacyVerifyPasswordResetInput
+    ) async throws -> PharmacyPasswordResetAuthorization {
+        let authorization = try await remoteDataSource.verifyPasswordReset(
+            request: PharmacyVerifyPasswordResetRequestDTO(input: input)
+        )
+        return authorization.toDomain()
+    }
+
+    func resetPassword(input: PharmacyResetPasswordInput) async throws {
+        try await remoteDataSource.resetPassword(
+            request: PharmacyResetPasswordRequestDTO(input: input)
+        )
+    }
 }
