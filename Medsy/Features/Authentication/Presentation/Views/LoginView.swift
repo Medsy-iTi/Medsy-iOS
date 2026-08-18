@@ -10,16 +10,25 @@ import SwiftUI
 struct LoginView: View {
     @State private var viewModel: LoginViewModel
     let onSignupTapped: () -> Void
+    let onForgotPasswordTapped: (String) -> Void
     let onAuthenticated: () -> Void
+    let showsPasswordResetSuccess: Bool
+    let onPasswordResetSuccessDismissed: () -> Void
 
     init(
         viewModel: LoginViewModel,
         onSignupTapped: @escaping () -> Void,
-        onAuthenticated: @escaping () -> Void
+        onForgotPasswordTapped: @escaping (String) -> Void,
+        onAuthenticated: @escaping () -> Void,
+        showsPasswordResetSuccess: Bool,
+        onPasswordResetSuccessDismissed: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
         self.onSignupTapped = onSignupTapped
+        self.onForgotPasswordTapped = onForgotPasswordTapped
         self.onAuthenticated = onAuthenticated
+        self.showsPasswordResetSuccess = showsPasswordResetSuccess
+        self.onPasswordResetSuccessDismissed = onPasswordResetSuccessDismissed
     }
 
     var body: some View {
@@ -38,6 +47,10 @@ struct LoginView: View {
                     maximumLength: AuthenticationInputValidator.emailMaximumLength
                 )
                 CustomTextField(title: "auth.password".localized, type: .password, text: $viewModel.password)
+
+                ForgotPasswordButton {
+                    onForgotPasswordTapped(viewModel.email)
+                }
             }
 
             AuthValidationMessage(message: viewModel.validationMessage)
@@ -72,6 +85,17 @@ struct LoginView: View {
                 }
             )
         )
+        .alert(
+            "auth.password_reset.success.title".localized,
+            isPresented: Binding(
+                get: { showsPasswordResetSuccess },
+                set: { if !$0 { onPasswordResetSuccessDismissed() } }
+            )
+        ) {
+            Button("common.ok".localized, action: onPasswordResetSuccessDismissed)
+        } message: {
+            Text("auth.password_reset.success.message".localized)
+        }
     }
 
 }
@@ -80,7 +104,10 @@ struct LoginView: View {
     LoginView(
         viewModel: LoginViewModel(loginUseCase: PreviewLoginUseCase()),
         onSignupTapped: {},
-        onAuthenticated: {}
+        onForgotPasswordTapped: { _ in },
+        onAuthenticated: {},
+        showsPasswordResetSuccess: false,
+        onPasswordResetSuccessDismissed: {}
     )
         .environment(LanguageManager.shared)
 }

@@ -14,6 +14,7 @@ enum PharmacyAuthFieldKind: Equatable {
     case email
     case address
     case password
+    case newPassword
     case confirmPassword
 
     var systemImage: String {
@@ -26,7 +27,7 @@ enum PharmacyAuthFieldKind: Equatable {
             "envelope"
         case .address:
             "location"
-        case .password, .confirmPassword:
+        case .password, .newPassword, .confirmPassword:
             "lock"
         }
     }
@@ -53,14 +54,14 @@ enum PharmacyAuthFieldKind: Equatable {
         case .address:
             .fullStreetAddress
         case .password:
-            .newPassword
-        case .confirmPassword:
+            .password
+        case .newPassword, .confirmPassword:
             .newPassword
         }
     }
 
     var isSecure: Bool {
-        self == .password || self == .confirmPassword
+        self == .password || self == .newPassword || self == .confirmPassword
     }
 
     var maximumLength: Int? {
@@ -71,7 +72,7 @@ enum PharmacyAuthFieldKind: Equatable {
             PharmacyAuthenticationInputValidator.phoneLength
         case .email:
             PharmacyAuthenticationInputValidator.emailMaximumLength
-        case .password, .confirmPassword:
+        case .password, .newPassword, .confirmPassword:
             PharmacyAuthenticationInputValidator.passwordMaximumLength
         case .address:
             nil

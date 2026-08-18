@@ -29,4 +29,25 @@ final class AuthRepository: AuthRepositoryProtocol {
     func logout(refreshToken: String) async throws {
         try await networkDataSource.logout(request: LogoutRequestDTO(refreshToken: refreshToken))
     }
+
+    func requestPasswordReset(input: ForgotPasswordInput) async throws {
+        try await networkDataSource.requestPasswordReset(
+            request: ForgotPasswordRequestDTO(input: input)
+        )
+    }
+
+    func verifyPasswordReset(
+        input: VerifyPasswordResetInput
+    ) async throws -> PasswordResetAuthorization {
+        let authorization = try await networkDataSource.verifyPasswordReset(
+            request: VerifyPasswordResetRequestDTO(input: input)
+        )
+        return authorization.toDomain()
+    }
+
+    func resetPassword(input: ResetPasswordInput) async throws {
+        try await networkDataSource.resetPassword(
+            request: ResetPasswordRequestDTO(input: input)
+        )
+    }
 }

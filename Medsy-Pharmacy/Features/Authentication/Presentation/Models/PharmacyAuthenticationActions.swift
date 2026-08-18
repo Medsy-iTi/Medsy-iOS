@@ -21,6 +21,11 @@ struct PharmacyAuthenticationActions {
     let login: (PharmacyLoginInput) async throws -> PharmacyAuthenticatedSession
     let register: (PharmacyRegistrationSubmission) async throws -> Void
     let verify: (String, String) async throws -> Void
+    let requestPasswordReset: (PharmacyForgotPasswordInput) async throws -> Void
+    let verifyPasswordReset: (
+        PharmacyVerifyPasswordResetInput
+    ) async throws -> PharmacyPasswordResetAuthorization
+    let resetPassword: (PharmacyResetPasswordInput) async throws -> Void
     let membership: () async throws -> PharmacyMembership
     let pendingInvitations: () async throws -> [PendingPharmacyInvitation]
     let acceptInvitation: (Int) async throws -> PendingPharmacyInvitation
@@ -46,6 +51,11 @@ struct PharmacyAuthenticationActions {
         },
         register: { _ in },
         verify: { _, _ in },
+        requestPasswordReset: { _ in },
+        verifyPasswordReset: { _ in
+            PharmacyPasswordResetAuthorization(resetToken: "", expiresInSeconds: 600)
+        },
+        resetPassword: { _ in },
         membership: { PharmacyMembership(pharmacyID: nil, isAdmin: false) },
         pendingInvitations: { [] },
         acceptInvitation: { id in
@@ -89,6 +99,9 @@ struct PharmacyAuthenticationActions {
         loginUseCase: PharmacyLoginUseCaseProtocol,
         registrationUseCase: PharmacyRegistrationUseCaseProtocol,
         verificationUseCase: PharmacyVerificationUseCaseProtocol,
+        forgotPasswordUseCase: PharmacyForgotPasswordUseCaseProtocol,
+        verifyPasswordResetUseCase: PharmacyVerifyPasswordResetUseCaseProtocol,
+        resetPasswordUseCase: PharmacyResetPasswordUseCaseProtocol,
         membershipUseCase: GetPharmacyMembershipUseCaseProtocol,
         invitationUseCase: ManagePharmacyInvitationsUseCaseProtocol,
         createPharmacyUseCase: CreatePharmacyUseCaseProtocol,
@@ -118,6 +131,15 @@ struct PharmacyAuthenticationActions {
                         otpCode: code
                     )
                 )
+            },
+            requestPasswordReset: { input in
+                try await forgotPasswordUseCase.execute(input: input)
+            },
+            verifyPasswordReset: { input in
+                try await verifyPasswordResetUseCase.execute(input: input)
+            },
+            resetPassword: { input in
+                try await resetPasswordUseCase.execute(input: input)
             },
             membership: {
                 try await membershipUseCase.execute()

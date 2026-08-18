@@ -18,6 +18,7 @@ protocol LoginViewModelProtocol: AnyObject {
     var alertMessage: String? { get }
     @discardableResult func submit() async -> Bool
     func dismissError()
+    func prepareAfterPasswordReset(email: String)
 }
 
 @MainActor
@@ -84,6 +85,13 @@ final class LoginViewModel: LoginViewModelProtocol {
 
     func dismissError() {
         guard case .error = state else { return }
+        state = nil
+    }
+
+    func prepareAfterPasswordReset(email: String) {
+        self.email = email
+        password = ""
+        validationMessage = nil
         state = nil
     }
 }

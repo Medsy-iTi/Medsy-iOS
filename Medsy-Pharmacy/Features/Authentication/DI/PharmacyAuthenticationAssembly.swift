@@ -73,6 +73,24 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
             )
         }
 
+        container.register(PharmacyForgotPasswordUseCaseProtocol.self) { container in
+            PharmacyForgotPasswordUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
+            )
+        }
+
+        container.register(PharmacyVerifyPasswordResetUseCaseProtocol.self) { container in
+            PharmacyVerifyPasswordResetUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
+            )
+        }
+
+        container.register(PharmacyResetPasswordUseCaseProtocol.self) { container in
+            PharmacyResetPasswordUseCase(
+                repository: container.resolve(PharmacyAuthenticationRepositoryProtocol.self)
+            )
+        }
+
         container.register(GetPharmacyMembershipUseCaseProtocol.self) { container in
             GetPharmacyMembershipUseCase(
                 repository: container.resolve(PharmacySetupRepositoryProtocol.self)
@@ -100,6 +118,9 @@ struct PharmacyAuthenticationAssembly: PharmacyModuleAssembly {
                 loginUseCase: container.resolve(PharmacyLoginUseCaseProtocol.self),
                 registrationUseCase: container.resolve(PharmacyRegistrationUseCaseProtocol.self),
                 verificationUseCase: container.resolve(PharmacyVerificationUseCaseProtocol.self),
+                forgotPasswordUseCase: container.resolve(PharmacyForgotPasswordUseCaseProtocol.self),
+                verifyPasswordResetUseCase: container.resolve(PharmacyVerifyPasswordResetUseCaseProtocol.self),
+                resetPasswordUseCase: container.resolve(PharmacyResetPasswordUseCaseProtocol.self),
                 membershipUseCase: container.resolve(GetPharmacyMembershipUseCaseProtocol.self),
                 invitationUseCase: container.resolve(ManagePharmacyInvitationsUseCaseProtocol.self),
                 createPharmacyUseCase: container.resolve(CreatePharmacyUseCaseProtocol.self),

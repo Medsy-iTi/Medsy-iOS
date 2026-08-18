@@ -10,10 +10,20 @@ import Observation
 @MainActor
 @Observable
 final class PharmacyAuthenticationCoordinator {
-    var path: [PharmacyAuthenticationRoute] = []
+    var path: [PharmacyAuthenticationRoute] = [] {
+        didSet {
+            if !path.contains(.resetPassword) {
+                resetPasswordViewModel = nil
+            }
+        }
+    }
     let loginViewModel: PharmacyLoginViewModel
     let registrationViewModel: PharmacyRegistrationViewModel
     let invitationsViewModel: PharmacyInvitationsViewModel
+    private(set) var forgotPasswordViewModel: PharmacyForgotPasswordViewModel?
+    private(set) var passwordResetOTPViewModel: PharmacyPasswordResetOTPViewModel?
+    private(set) var resetPasswordViewModel: PharmacyResetPasswordViewModel?
+    private(set) var showsPasswordResetSuccess = false
     private(set) var verificationViewModel: PharmacyVerificationViewModel?
     private(set) var setupViewModel: PharmacySetupViewModel?
     private(set) var destinationError: String?
@@ -22,6 +32,7 @@ final class PharmacyAuthenticationCoordinator {
     private let locationProvider: PharmacyLocationProviding
     private let onAuthenticated: () -> Void
     private let onSignedOut: () -> Void
+    private var passwordResetEmail: String?
 
     init(
         actions: PharmacyAuthenticationActions,
@@ -69,6 +80,53 @@ final class PharmacyAuthenticationCoordinator {
     func showLogin() {
         guard !path.isEmpty else { return }
         path.removeLast()
+    }
+
+    func showForgotPassword(prefilledEmail: String) {
+        showsPasswordResetSuccess = false
+        forgotPasswordViewModel = PharmacyForgotPasswordViewModel(
+            initialEmail: prefilledEmail,
+            requestAction: actions.requestPasswordReset
+        )
+        path.append(.forgotPassword)
+    }
+
+    func showPasswordResetOTP(email: String) {
+        passwordResetEmail = email
+        passwordResetOTPViewModel = PharmacyPasswordResetOTPViewModel(
+            email: email,
+            verifyAction: actions.verifyPasswordReset,
+            resendAction: actions.requestPasswordReset
+        )
+        path.append(.passwordResetOTP)
+    }
+
+    func showResetPassword(authorization: PharmacyPasswordResetAuthorization) {
+        resetPasswordViewModel = PharmacyResetPasswordViewModel(
+            authorization: authorization,
+            resetAction: actions.resetPassword
+        )
+        path.append(.resetPassword)
+    }
+
+    func requestAnotherResetCode() {
+        passwordResetOTPViewModel?.enableImmediateResend()
+        if path.last == .resetPassword {
+            path.removeLast()
+        }
+        resetPasswordViewModel = nil
+    }
+
+    func finishPasswordReset() {
+        guard let email = passwordResetEmail else { return }
+        loginViewModel.prepareAfterPasswordReset(email: email)
+        clearPasswordResetFlow()
+        path.removeAll()
+        showsPasswordResetSuccess = true
+    }
+
+    func dismissPasswordResetSuccess() {
+        showsPasswordResetSuccess = false
     }
 
     func resolveAuthenticatedDestination() {
@@ -151,6 +209,13 @@ final class PharmacyAuthenticationCoordinator {
         )
         path.removeAll()
         path.append(.pharmacySetupDecision)
+    }
+
+    private func clearPasswordResetFlow() {
+        passwordResetEmail = nil
+        forgotPasswordViewModel = nil
+        passwordResetOTPViewModel = nil
+        resetPasswordViewModel = nil
     }
 
 }

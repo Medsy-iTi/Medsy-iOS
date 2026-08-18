@@ -12,6 +12,11 @@ protocol PharmacyAuthenticationRemoteDataSourceProtocol {
     func getCurrentMembership() async throws -> PharmacyMembership
     func createPharmacy(input: CreatePharmacyInput) async throws -> PharmacyResponseDTO
     func refresh(request: PharmacyRefreshTokenRequestDTO) async throws -> PharmacyAuthenticationSessionDTO
+    func requestPasswordReset(request: PharmacyForgotPasswordRequestDTO) async throws
+    func verifyPasswordReset(
+        request: PharmacyVerifyPasswordResetRequestDTO
+    ) async throws -> PharmacyPasswordResetVerificationDataDTO
+    func resetPassword(request: PharmacyResetPasswordRequestDTO) async throws
 }
 
 final class PharmacyAuthenticationRemoteDataSource: PharmacyAuthenticationRemoteDataSourceProtocol {
@@ -109,5 +114,38 @@ final class PharmacyAuthenticationRemoteDataSource: PharmacyAuthenticationRemote
         }
 
         return session
+    }
+
+    func requestPasswordReset(request: PharmacyForgotPasswordRequestDTO) async throws {
+        let response: PharmacyPasswordResetActionResponseDTO = try await networkService.request(
+            endpoint: PharmacyAuthenticationEndpoint.forgotPassword(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+    }
+
+    func verifyPasswordReset(
+        request: PharmacyVerifyPasswordResetRequestDTO
+    ) async throws -> PharmacyPasswordResetVerificationDataDTO {
+        let response: PharmacyPasswordResetVerificationResponseDTO = try await networkService.request(
+            endpoint: PharmacyAuthenticationEndpoint.verifyPasswordReset(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+        guard let authorization = response.data else {
+            throw NetworkError.decodingFailed
+        }
+        return authorization
+    }
+
+    func resetPassword(request: PharmacyResetPasswordRequestDTO) async throws {
+        let response: PharmacyPasswordResetActionResponseDTO = try await networkService.request(
+            endpoint: PharmacyAuthenticationEndpoint.resetPassword(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
     }
 }

@@ -21,7 +21,10 @@ struct PharmacyAuthenticationCoordinatorView: View {
             PharmacyLoginView(
                 viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
-                onAuthenticated: coordinator.resolveAuthenticatedDestination
+                onForgotPasswordTapped: coordinator.showForgotPassword,
+                onAuthenticated: coordinator.resolveAuthenticatedDestination,
+                showsPasswordResetSuccess: coordinator.showsPasswordResetSuccess,
+                onPasswordResetSuccessDismissed: coordinator.dismissPasswordResetSuccess
             )
             .navigationDestination(for: PharmacyAuthenticationRoute.self) { route in
                 destination(for: route)
@@ -58,7 +61,10 @@ struct PharmacyAuthenticationCoordinatorView: View {
             PharmacyLoginView(
                 viewModel: coordinator.loginViewModel,
                 onSignupTapped: coordinator.showSignup,
-                onAuthenticated: coordinator.resolveAuthenticatedDestination
+                onForgotPasswordTapped: coordinator.showForgotPassword,
+                onAuthenticated: coordinator.resolveAuthenticatedDestination,
+                showsPasswordResetSuccess: coordinator.showsPasswordResetSuccess,
+                onPasswordResetSuccessDismissed: coordinator.dismissPasswordResetSuccess
             )
         case .registrationDetails:
             PharmacyRegistrationDetailsView(
@@ -101,6 +107,28 @@ struct PharmacyAuthenticationCoordinatorView: View {
         case .choosePharmacyLocation:
             if let viewModel = coordinator.setupViewModel {
                 PharmacyMapPickerView(viewModel: viewModel)
+            }
+        case .forgotPassword:
+            if let viewModel = coordinator.forgotPasswordViewModel {
+                PharmacyForgotPasswordView(
+                    viewModel: viewModel,
+                    onCodeRequested: coordinator.showPasswordResetOTP
+                )
+            }
+        case .passwordResetOTP:
+            if let viewModel = coordinator.passwordResetOTPViewModel {
+                PharmacyPasswordResetOTPView(
+                    viewModel: viewModel,
+                    onVerified: coordinator.showResetPassword
+                )
+            }
+        case .resetPassword:
+            if let viewModel = coordinator.resetPasswordViewModel {
+                PharmacyResetPasswordView(
+                    viewModel: viewModel,
+                    onReset: coordinator.finishPasswordReset,
+                    onRequestNewCode: coordinator.requestAnotherResetCode
+                )
             }
         }
     }

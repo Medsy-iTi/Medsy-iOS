@@ -15,6 +15,9 @@ enum PharmacyAuthenticationEndpoint {
     case currentPharmacist
     case createPharmacy(PharmacyMultipartFormData)
     case refresh(PharmacyRefreshTokenRequestDTO)
+    case forgotPassword(PharmacyForgotPasswordRequestDTO)
+    case verifyPasswordReset(PharmacyVerifyPasswordResetRequestDTO)
+    case resetPassword(PharmacyResetPasswordRequestDTO)
 }
 
 extension PharmacyAuthenticationEndpoint: ApiEndpoint {
@@ -32,6 +35,12 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             "pharmacies"
         case .refresh:
             "auth/refresh"
+        case .forgotPassword:
+            "auth/forgot-password"
+        case .verifyPasswordReset:
+            "auth/reset-password/verify"
+        case .resetPassword:
+            "auth/reset-password"
         }
     }
 
@@ -58,6 +67,12 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             form.body
         case .refresh(let request):
             try? JSONEncoder().encode(request)
+        case .forgotPassword(let request):
+            try? JSONEncoder().encode(request)
+        case .verifyPasswordReset(let request):
+            try? JSONEncoder().encode(request)
+        case .resetPassword(let request):
+            try? JSONEncoder().encode(request)
         }
     }
 
@@ -76,6 +91,15 @@ extension PharmacyAuthenticationEndpoint: ApiEndpoint {
             true
         default:
             false
+        }
+    }
+
+    var allowsResponseLogging: Bool {
+        switch self {
+        case .forgotPassword, .verifyPasswordReset, .resetPassword:
+            false
+        default:
+            true
         }
     }
 }

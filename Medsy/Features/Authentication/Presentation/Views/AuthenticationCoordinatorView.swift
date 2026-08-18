@@ -22,7 +22,10 @@ struct AuthenticationCoordinatorView: View {
             LoginView(
                 viewModel: coordinator.makeLoginViewModel(),
                 onSignupTapped: coordinator.showSignup,
-                onAuthenticated: coordinator.finishAuthentication
+                onForgotPasswordTapped: coordinator.showForgotPassword,
+                onAuthenticated: coordinator.finishAuthentication,
+                showsPasswordResetSuccess: coordinator.showsPasswordResetSuccess,
+                onPasswordResetSuccessDismissed: coordinator.dismissPasswordResetSuccess
             )
             .navigationDestination(for: AuthenticationRoute.self) { route in
                 switch route {
@@ -30,7 +33,10 @@ struct AuthenticationCoordinatorView: View {
                     LoginView(
                         viewModel: coordinator.makeLoginViewModel(),
                         onSignupTapped: coordinator.showSignup,
-                        onAuthenticated: coordinator.finishAuthentication
+                        onForgotPasswordTapped: coordinator.showForgotPassword,
+                        onAuthenticated: coordinator.finishAuthentication,
+                        showsPasswordResetSuccess: coordinator.showsPasswordResetSuccess,
+                        onPasswordResetSuccessDismissed: coordinator.dismissPasswordResetSuccess
                     )
                 case .signup:
                     SignupView(
@@ -44,6 +50,28 @@ struct AuthenticationCoordinatorView: View {
                         viewModel: coordinator.makeVerificationViewModel(),
                         onAuthenticated: coordinator.finishAuthentication
                     )
+                case .forgotPassword:
+                    if let viewModel = coordinator.forgotPasswordViewModel {
+                        ForgotPasswordView(
+                            viewModel: viewModel,
+                            onCodeRequested: coordinator.showPasswordResetOTP
+                        )
+                    }
+                case .passwordResetOTP:
+                    if let viewModel = coordinator.passwordResetOTPViewModel {
+                        PasswordResetOTPView(
+                            viewModel: viewModel,
+                            onVerified: coordinator.showResetPassword
+                        )
+                    }
+                case .resetPassword:
+                    if let viewModel = coordinator.resetPasswordViewModel {
+                        ResetPasswordView(
+                            viewModel: viewModel,
+                            onReset: coordinator.finishPasswordReset,
+                            onRequestNewCode: coordinator.requestAnotherResetCode
+                        )
+                    }
                 }
             }
         }

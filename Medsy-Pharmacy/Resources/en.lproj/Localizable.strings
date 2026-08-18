@@ -625,3 +625,32 @@
 "pharmacy.request.payment_method_label" = "Payment method";
 
 "common.error.offline" = "No internet connection. Please check your connection and try again.";
+
+/* Password reset */
+"pharmacy.auth.password_reset.forgot.accessibility_hint" = "Opens the password reset flow.";
+"pharmacy.auth.password_reset.email.title" = "Reset your password";
+"pharmacy.auth.password_reset.email.subtitle" = "Enter your email address and we’ll send you a verification code.";
+"pharmacy.auth.password_reset.email.action" = "Send verification code";
+"pharmacy.auth.password_reset.email.navigation_title" = "Forgot password";
+"pharmacy.auth.password_reset.otp.title" = "Check your email";
+"pharmacy.auth.password_reset.otp.subtitle" = "Enter the 6-digit code we sent to reset your password.";
+"pharmacy.auth.password_reset.otp.sent_to" = "Code sent to %@";
+"pharmacy.auth.password_reset.otp.action" = "Verify code";
+"pharmacy.auth.password_reset.otp.navigation_title" = "Verify code";
+"pharmacy.auth.password_reset.otp.resend" = "Resend code";
+"pharmacy.auth.password_reset.otp.resend_in" = "Resend code in %@";
+"pharmacy.auth.password_reset.otp.resend_accessibility" = "You can resend the code in %d seconds.";
+"pharmacy.auth.password_reset.otp.resend_success" = "A new verification code was sent.";
+"pharmacy.auth.password_reset.otp.invalid" = "Please enter the 6-digit verification code.";
+"pharmacy.auth.password_reset.password.title" = "Create a new password";
+"pharmacy.auth.password_reset.password.subtitle" = "Choose a strong password you haven’t used before.";
+"pharmacy.auth.password_reset.password.new" = "New password";
+"pharmacy.auth.password_reset.password.action" = "Reset password";
+"pharmacy.auth.password_reset.password.navigation_title" = "New password";
+"pharmacy.auth.password_reset.requirements" = "Use 6–15 characters with uppercase and lowercase letters, a number, and a special character.";
+"pharmacy.auth.password_reset.expires_in" = "Reset session expires in %@";
+"pharmacy.auth.password_reset.expired.message" = "This reset session has expired. Request a new verification code.";
+"pharmacy.auth.password_reset.expired.action" = "Request a new code";
+"pharmacy.auth.password_reset.success.title" = "Password reset";
+"pharmacy.auth.password_reset.success.message" = "Password reset successfully";
+"pharmacy.auth.password_reset.error.generic" = "We couldn’t complete the password reset. Please try again.";

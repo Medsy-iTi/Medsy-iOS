@@ -1146,3 +1146,32 @@
 "pharmacy.chatbot.analytics.status.ready_for_pickup" = "Ready for Pickup";
 
 "common.error.offline" = "No internet connection. Please check your connection and try again.";
+
+/* Password reset */
+"auth.password_reset.forgot.accessibility_hint" = "Opens the password reset flow.";
+"auth.password_reset.email.title" = "Reset your password";
+"auth.password_reset.email.subtitle" = "Enter your email address and we’ll send you a verification code.";
+"auth.password_reset.email.action" = "Send verification code";
+"auth.password_reset.email.navigation_title" = "Forgot password";
+"auth.password_reset.otp.title" = "Check your email";
+"auth.password_reset.otp.subtitle" = "Enter the 6-digit code we sent to reset your password.";
+"auth.password_reset.otp.sent_to" = "Code sent to %@";
+"auth.password_reset.otp.action" = "Verify code";
+"auth.password_reset.otp.navigation_title" = "Verify code";
+"auth.password_reset.otp.resend" = "Resend code";
+"auth.password_reset.otp.resend_in" = "Resend code in %@";
+"auth.password_reset.otp.resend_accessibility" = "You can resend the code in %d seconds.";
+"auth.password_reset.otp.resend_success" = "A new verification code was sent.";
+"auth.password_reset.otp.invalid" = "Please enter the 6-digit verification code.";
+"auth.password_reset.password.title" = "Create a new password";
+"auth.password_reset.password.subtitle" = "Choose a strong password you haven’t used before.";
+"auth.password_reset.password.new" = "New password";
+"auth.password_reset.password.action" = "Reset password";
+"auth.password_reset.password.navigation_title" = "New password";
+"auth.password_reset.requirements" = "Use 6–15 characters with uppercase and lowercase letters, a number, and a special character.";
+"auth.password_reset.expires_in" = "Reset session expires in %@";
+"auth.password_reset.expired.message" = "This reset session has expired. Request a new verification code.";
+"auth.password_reset.expired.action" = "Request a new code";
+"auth.password_reset.success.title" = "Password reset";
+"auth.password_reset.success.message" = "Password reset successfully";
+"auth.password_reset.error.generic" = "We couldn’t complete the password reset. Please try again.";

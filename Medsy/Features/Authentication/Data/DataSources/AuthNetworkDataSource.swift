@@ -10,6 +10,11 @@ protocol AuthNetworkDataSourceProtocol {
     func register(request: SignupRequestDTO) async throws
     func verify(request: VerificationRequestDTO) async throws -> AuthSessionDTO
     func logout(request: LogoutRequestDTO) async throws
+    func requestPasswordReset(request: ForgotPasswordRequestDTO) async throws
+    func verifyPasswordReset(
+        request: VerifyPasswordResetRequestDTO
+    ) async throws -> PasswordResetVerificationDataDTO
+    func resetPassword(request: ResetPasswordRequestDTO) async throws
 }
 
 final class AuthNetworkDataSource: AuthNetworkDataSourceProtocol {
@@ -50,6 +55,39 @@ final class AuthNetworkDataSource: AuthNetworkDataSourceProtocol {
     func logout(request: LogoutRequestDTO) async throws {
         let response: LogoutResponseDTO = try await networkService.request(
             endpoint: AuthEndpoint.logout(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+    }
+
+    func requestPasswordReset(request: ForgotPasswordRequestDTO) async throws {
+        let response: PasswordResetActionResponseDTO = try await networkService.request(
+            endpoint: AuthEndpoint.forgotPassword(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+    }
+
+    func verifyPasswordReset(
+        request: VerifyPasswordResetRequestDTO
+    ) async throws -> PasswordResetVerificationDataDTO {
+        let response: PasswordResetVerificationResponseDTO = try await networkService.request(
+            endpoint: AuthEndpoint.verifyPasswordReset(request)
+        )
+        guard response.success else {
+            throw NetworkError.validationError(response.message)
+        }
+        guard let authorization = response.data else {
+            throw NetworkError.decodingFailed
+        }
+        return authorization
+    }
+
+    func resetPassword(request: ResetPasswordRequestDTO) async throws {
+        let response: PasswordResetActionResponseDTO = try await networkService.request(
+            endpoint: AuthEndpoint.resetPassword(request)
         )
         guard response.success else {
             throw NetworkError.validationError(response.message)
