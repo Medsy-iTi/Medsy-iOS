@@ -622,3 +622,32 @@
 "pharmacy.request.payment_method_label" = "طريقة الدفع";
 
 "common.error.offline" = "لا يوجد اتصال بالإنترنت. يرجى التحقق من الاتصال والمحاولة مرة أخرى.";
+
+/* إعادة تعيين كلمة المرور */
+"pharmacy.auth.password_reset.forgot.accessibility_hint" = "يفتح خطوات إعادة تعيين كلمة المرور.";
+"pharmacy.auth.password_reset.email.title" = "إعادة تعيين كلمة المرور";
+"pharmacy.auth.password_reset.email.subtitle" = "أدخل بريدك الإلكتروني وسنرسل إليك رمز تحقق.";
+"pharmacy.auth.password_reset.email.action" = "إرسال رمز التحقق";
+"pharmacy.auth.password_reset.email.navigation_title" = "نسيت كلمة المرور";
+"pharmacy.auth.password_reset.otp.title" = "تحقق من بريدك الإلكتروني";
+"pharmacy.auth.password_reset.otp.subtitle" = "أدخل الرمز المكون من ٦ أرقام الذي أرسلناه لإعادة تعيين كلمة المرور.";
+"pharmacy.auth.password_reset.otp.sent_to" = "تم إرسال الرمز إلى %@";
+"pharmacy.auth.password_reset.otp.action" = "تحقق من الرمز";
+"pharmacy.auth.password_reset.otp.navigation_title" = "التحقق من الرمز";
+"pharmacy.auth.password_reset.otp.resend" = "إعادة إرسال الرمز";
+"pharmacy.auth.password_reset.otp.resend_in" = "يمكن إعادة الإرسال خلال %@";
+"pharmacy.auth.password_reset.otp.resend_accessibility" = "يمكنك إعادة إرسال الرمز خلال %d ثانية.";
+"pharmacy.auth.password_reset.otp.resend_success" = "تم إرسال رمز تحقق جديد.";
+"pharmacy.auth.password_reset.otp.invalid" = "يرجى إدخال رمز التحقق المكون من ٦ أرقام.";
+"pharmacy.auth.password_reset.password.title" = "إنشاء كلمة مرور جديدة";
+"pharmacy.auth.password_reset.password.subtitle" = "اختر كلمة مرور قوية لم تستخدمها من قبل.";
+"pharmacy.auth.password_reset.password.new" = "كلمة المرور الجديدة";
+"pharmacy.auth.password_reset.password.action" = "إعادة تعيين كلمة المرور";
+"pharmacy.auth.password_reset.password.navigation_title" = "كلمة مرور جديدة";
+"pharmacy.auth.password_reset.requirements" = "استخدم من ٦ إلى ١٥ حرفًا تتضمن حرفًا كبيرًا وصغيرًا ورقمًا ورمزًا خاصًا.";
+"pharmacy.auth.password_reset.expires_in" = "تنتهي صلاحية جلسة إعادة التعيين خلال %@";
+"pharmacy.auth.password_reset.expired.message" = "انتهت صلاحية جلسة إعادة التعيين. اطلب رمز تحقق جديدًا.";
+"pharmacy.auth.password_reset.expired.action" = "طلب رمز جديد";
+"pharmacy.auth.password_reset.success.title" = "تمت إعادة تعيين كلمة المرور";
+"pharmacy.auth.password_reset.success.message" = "تمت إعادة تعيين كلمة المرور بنجاح";
+"pharmacy.auth.password_reset.error.generic" = "تعذر إكمال إعادة تعيين كلمة المرور. حاول مرة أخرى.";
