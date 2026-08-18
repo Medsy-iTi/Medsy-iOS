@@ -131,6 +131,7 @@ final class HomeViewModel {
             if let resumable = resumableOrder {
                 print("[HomeViewModel Refresh] 📋 Found resumable master order #\(resumable.id) (Status: \(resumable.orderStatus))")
                 await MainActor.run {
+                    self.stopPolling()
                     self.activeRequestIds = []
                     self.offerResults = [:]
                     self.activeSearchRequestsList = []
@@ -148,9 +149,11 @@ final class HomeViewModel {
             }
 
             if !currentIds.isEmpty {
-                await MainActor.run {
+                let idsChanged = await MainActor.run { () -> Bool in
                     self.activeContinueMasterOrder = nil
+                    let changed = (self.activeRequestIds != currentIds)
                     self.activeRequestIds = currentIds
+                    return changed
                 }
 
                 print("[HomeViewModel Refresh] 🚀 Fetching REST offer snapshots for IDs: \(currentIds)")
@@ -181,9 +184,20 @@ final class HomeViewModel {
                         }
                     }
                 }
+
+                await MainActor.run {
+                    let isStreamRunning = (self.pollingTask != nil && !self.pollingTask!.isCancelled)
+                    if !isStreamRunning || idsChanged {
+                        print("[HomeViewModel Refresh] 🟢 Stream is not running or IDs changed (isStreamRunning=\(isStreamRunning), idsChanged=\(idsChanged)). Starting SSE stream for IDs: \(currentIds)")
+                        self.startRequestsStreaming(for: currentIds)
+                    } else {
+                        print("[HomeViewModel Refresh] ⚡ SSE Stream is already active for IDs: \(currentIds). Keeping existing connection.")
+                    }
+                }
             } else if maybeRequests != nil || maybeOrders != nil {
                 print("[HomeViewModel Refresh] 🏠 No active requests or orders. Setting status to .home")
                 await MainActor.run {
+                    self.stopPolling()
                     self.activeRequestIds = []
                     self.offerResults = [:]
                     self.activeSearchRequestsList = []

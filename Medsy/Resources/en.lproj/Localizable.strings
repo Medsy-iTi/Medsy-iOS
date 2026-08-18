@@ -131,7 +131,7 @@
 "home.status.firstOffer.priceFrom" = "From";
 "home.status.firstOffer.priceValue" = "48 EGP";
 "home.status.firstOffer.showOffer" = "View Offer";
-"home.status.firstOffer.continueCompare" = "Continue & Compare Offers";
+"home.status.firstOffer.continueCompare" = "Review available medicines";
 "home.status.firstOffer.orderDetails" = "View Order Details";
 "home.status.multipleOffers.title" = "Multiple offers arrived";
 "home.status.multipleOffers.subtitle" = "You can now compare available offers";
@@ -833,7 +833,7 @@
 "offers.details.unavailable" = "Unavailable";
 "offers.details.pharmacistComment" = "Pharmacist Comment";
 "offers.details.viewPrescription" = "View Prescription";
-"offers.details.selectOffer" = "Proceed with Order";
+"offers.details.selectOffer" = "Select Products";
 "offers.details.managerSuffix" = " (Manager)";
 "offers.details.defaultComment" = "Hello, all medicines are available and ready for preparation. Please adhere to the indicated dosages. We wish you a speedy recovery 🌿";
 "offers.details.partialComment" = "Hello, some medicines are currently unavailable at the pharmacy. Please review the list above. We wish you a speedy recovery 🌿";
