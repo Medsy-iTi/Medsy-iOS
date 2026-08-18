@@ -377,6 +377,8 @@
 "common.somethingWentWrong" = "Something went wrong.";
 "common.close" = "Close";
 "pharmacy.request.alert.title" = "Notice";
+"pharmacy.request.alert.offer_sent_success" = "Offer sent successfully";
+"pharmacy.request.alert.select_item" = "Please select at least one item to submit an offer.";
 "common.ok" = "OK";
 "pharmacy.request.offer_product" = "Offer product: %@";
 "pharmacy.request.pack_size_label" = "%@ tab";

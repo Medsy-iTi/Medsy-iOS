@@ -375,6 +375,8 @@
 "common.somethingWentWrong" = "حدث خطأ ما.";
 "common.close" = "إغلاق";
 "pharmacy.request.alert.title" = "تنبيه";
+"pharmacy.request.alert.offer_sent_success" = "تم إرسال العرض بنجاح";
+"pharmacy.request.alert.select_item" = "يرجى تحديد صنف واحد على الأقل لتقديم العرض";
 "common.ok" = "حسنًا";
 "pharmacy.request.offer_product" = "منتج العرض: %@";
 "pharmacy.request.pack_size_label" = "%@ حبة";

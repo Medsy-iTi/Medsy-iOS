@@ -830,7 +830,7 @@
 "offers.details.unavailable" = "غير متوفر";
 "offers.details.pharmacistComment" = "تعليق من الصيدلي";
 "offers.details.viewPrescription" = "عرض الروشتة";
-"offers.details.selectOffer" = "اختار هذا العرض";
+"offers.details.selectOffer" = "متابعة الطلب";
 "offers.details.managerSuffix" = " (المدير)";
 "offers.details.defaultComment" = "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿";
 "offers.details.partialComment" = "مرحباً، بعض الأدوية غير متوفرة حالياً في الصيدلية. يرجى مراجعة القائمة الموضحة. نتمنى لك الشفاء العاجل 🌿";
