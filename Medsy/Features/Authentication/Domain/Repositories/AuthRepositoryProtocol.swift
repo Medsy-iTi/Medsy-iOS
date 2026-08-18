@@ -10,4 +10,7 @@ protocol AuthRepositoryProtocol {
     func register(input: SignupInput) async throws
     func verify(input: VerificationInput) async throws -> AuthenticatedSession
     func logout(refreshToken: String) async throws
+    func requestPasswordReset(input: ForgotPasswordInput) async throws
+    func verifyPasswordReset(input: VerifyPasswordResetInput) async throws -> PasswordResetAuthorization
+    func resetPassword(input: ResetPasswordInput) async throws
 }
