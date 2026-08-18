@@ -136,11 +136,25 @@ enum PharmacyAuthenticationInputValidator {
         confirmedPassword: String,
         homeAddress: String
     ) -> PharmacyAuthenticationValidationError? {
-        if password.isEmpty { return .passwordRequired }
-        if confirmedPassword.isEmpty { return .confirmedPasswordRequired }
+        if let passwordError = validatePasswordReset(
+            password: password,
+            confirmedPassword: confirmedPassword
+        ) {
+            return passwordError
+        }
         if homeAddress.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .homeAddressRequired
         }
+
+        return nil
+    }
+
+    static func validatePasswordReset(
+        password: String,
+        confirmedPassword: String
+    ) -> PharmacyAuthenticationValidationError? {
+        if password.isEmpty { return .passwordRequired }
+        if confirmedPassword.isEmpty { return .confirmedPasswordRequired }
 
         if !(passwordMinimumLength...passwordMaximumLength).contains(password.count) {
             return .passwordLength
