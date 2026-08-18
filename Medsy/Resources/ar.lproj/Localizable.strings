@@ -131,7 +131,7 @@
 "home.status.firstOffer.priceFrom" = "من";
 "home.status.firstOffer.priceValue" = "٤٨ جنيه";
 "home.status.firstOffer.showOffer" = "عرض العرض";
-"home.status.firstOffer.continueCompare" = "متابعة ومقارنة العروض";
+"home.status.firstOffer.continueCompare" = "مراجعة الأدوية المتاحة";
 "home.status.firstOffer.orderDetails" = "عرض تفاصيل الطلب";
 "home.status.multipleOffers.title" = "وصلت عدة عروض";
 "home.status.multipleOffers.subtitle" = "يمكنك الآن مقارنة العروض المتاحة";
@@ -830,7 +830,7 @@
 "offers.details.unavailable" = "غير متوفر";
 "offers.details.pharmacistComment" = "تعليق من الصيدلي";
 "offers.details.viewPrescription" = "عرض الروشتة";
-"offers.details.selectOffer" = "اختار هذا العرض";
+"offers.details.selectOffer" = "اختيار الأدوية";
 "offers.details.managerSuffix" = " (المدير)";
 "offers.details.defaultComment" = "مرحباً، جميع الأدوية متوفرة وجاهزة للتجهيز. يرجى الالتزام بالجرعات الموضحة. نتمنى لك الشفاء العاجل 🌿";
 "offers.details.partialComment" = "مرحباً، بعض الأدوية غير متوفرة حالياً في الصيدلية. يرجى مراجعة القائمة الموضحة. نتمنى لك الشفاء العاجل 🌿";

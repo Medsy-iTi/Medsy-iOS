@@ -75,10 +75,7 @@ struct OfferDetailsView: View {
                             ProgressView()
                                 .tint(.white)
                         } else {
-                            // OLD:
-                            // Text("offers.details.selectOffer".localized)
-
-                            Text("متابعة الطلب")
+                            Text("offers.details.selectOffer".localized)
                                 .font(AppColor.sans(16, .bold))
                                 .foregroundStyle(AppColor.white)
                         }

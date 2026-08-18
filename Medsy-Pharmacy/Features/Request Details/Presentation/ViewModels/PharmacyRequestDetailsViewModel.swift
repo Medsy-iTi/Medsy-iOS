@@ -204,7 +204,7 @@ final class PharmacyRequestDetailsViewModel {
             (requestItemId: item.requestItemId, productId: item.selectedOfferProductId)
         }
         guard !offerItems.isEmpty else {
-            self.alertMessage = "يرجى تحديد صنف واحد على الأقل لتقديم العرض"
+            self.alertMessage = "pharmacy.request.alert.select_item".localized
             self.showSuccessAlert = true
             isSubmitting = false
             return
@@ -216,7 +216,7 @@ final class PharmacyRequestDetailsViewModel {
                 PharmacySubmittedOffersStore.shared.insert(self.requestId)
                 self.isOfferSubmitted = true
                 self.assignmentStatus = .offered
-                self.alertMessage = "تم إرسال العرض بنجاح"
+                self.alertMessage = "pharmacy.request.alert.offer_sent_success".localized
                 self.showSuccessAlert = true
                 if var currentModel = self.requestModel {
                     currentModel = PharmacyRequestDetailsModel(
