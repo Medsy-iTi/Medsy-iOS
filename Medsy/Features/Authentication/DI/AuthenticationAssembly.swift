@@ -52,6 +52,24 @@ struct AuthenticationAssembly: ModuleAssembly {
             )
         }
 
+        container.register(ForgotPasswordUseCaseProtocol.self) { container in
+            ForgotPasswordUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self)
+            )
+        }
+
+        container.register(VerifyPasswordResetUseCaseProtocol.self) { container in
+            VerifyPasswordResetUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self)
+            )
+        }
+
+        container.register(ResetPasswordUseCaseProtocol.self) { container in
+            ResetPasswordUseCase(
+                repository: container.resolve(AuthRepositoryProtocol.self)
+            )
+        }
+
         container.register(RefreshSessionUseCaseProtocol.self) { container in
             RefreshSessionUseCase(
                 repository: container.resolve(RefreshTokenRepositoryProtocol.self)
@@ -69,7 +87,10 @@ struct AuthenticationAssembly: ModuleAssembly {
             AuthenticationFactory(
                 loginUseCase: container.resolve(LoginUseCaseProtocol.self),
                 signupUseCase: container.resolve(SignupUseCaseProtocol.self),
-                verificationUseCase: container.resolve(VerificationUseCaseProtocol.self)
+                verificationUseCase: container.resolve(VerificationUseCaseProtocol.self),
+                forgotPasswordUseCase: container.resolve(ForgotPasswordUseCaseProtocol.self),
+                verifyPasswordResetUseCase: container.resolve(VerifyPasswordResetUseCaseProtocol.self),
+                resetPasswordUseCase: container.resolve(ResetPasswordUseCaseProtocol.self)
             )
         }
     }
