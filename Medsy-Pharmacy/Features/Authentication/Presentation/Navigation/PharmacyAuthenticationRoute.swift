@@ -14,4 +14,7 @@ enum PharmacyAuthenticationRoute: Hashable {
     case pharmacyInvitations
     case addPharmacy
     case choosePharmacyLocation
+    case forgotPassword
+    case passwordResetOTP
+    case resetPassword
 }
