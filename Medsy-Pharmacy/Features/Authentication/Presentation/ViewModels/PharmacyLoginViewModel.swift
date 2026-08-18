@@ -75,4 +75,11 @@ final class PharmacyLoginViewModel {
         guard case .error = state else { return }
         state = .idle
     }
+
+    func prepareAfterPasswordReset(email: String) {
+        self.email = email
+        password = ""
+        validationMessage = nil
+        state = .idle
+    }
 }
