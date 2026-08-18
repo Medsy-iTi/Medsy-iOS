@@ -13,6 +13,7 @@ enum TextFieldType: Equatable {
     case phone
     case email
     case password
+    case newPassword
     case confirmPassword
 
     var systemImage: String {
@@ -21,7 +22,7 @@ enum TextFieldType: Equatable {
         case .address: "house"
         case .phone: "phone"
         case .email: "envelope"
-        case .password, .confirmPassword: "lock"
+        case .password, .newPassword, .confirmPassword: "lock"
         }
     }
 
@@ -40,12 +41,12 @@ enum TextFieldType: Equatable {
         case .phone: .telephoneNumber
         case .email: .emailAddress
         case .password: .password
-        case .confirmPassword: .newPassword
+        case .newPassword, .confirmPassword: .newPassword
         }
     }
 
     var isSecure: Bool {
-        self == .password || self == .confirmPassword
+        self == .password || self == .newPassword || self == .confirmPassword
     }
 
     var usesWordCapitalization: Bool {
